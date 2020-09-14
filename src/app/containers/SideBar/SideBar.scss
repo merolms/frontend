@@ -1,0 +1,24 @@
+@import '../../../styles/index.scss';
+
+$sidebar-hover-color: #ebebeb;
+.ui.menu.fixed.side-nav {
+  background-color: #ffffff;
+  margin-top: $header-nav-height;
+  overflow-y: auto;
+  padding-bottom: $header-nav-height;
+  padding: 25px;
+
+  .sidebar-item:hover {
+    background: $sidebar-hover-color;
+  }
+
+  .subscription:hover {
+    background: #ebebeb;
+    cursor: pointer;
+  }
+}
+
+.side-nav.ui.vertical.menu {
+  width: $sidebar-left-width;
+}
+

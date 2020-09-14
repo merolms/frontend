@@ -1,0 +1,33 @@
+@import "../../../styles/index.scss";
+
+.user-profile-container {
+    display: flex;
+    align-items: center;
+  }
+  .user-profile-image{
+    width: 52px !important;
+    height: 52px !important;
+  }
+  .user-profile-details {
+    padding-left: 15px;
+  }
+  .user-profile-details-header {
+    font-family: $font-family;
+    font-size: 18px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    letter-spacing: normal;
+    text-align: left;
+    color: $secondary-color;
+  }
+  .user-profile-details-subtitle {
+    font-family: $font-family;
+    font-size: 14px;
+    font-weight: 300;
+    font-stretch: normal;
+    font-style: normal;
+    letter-spacing: normal;
+    text-align: left;
+    color: $secondary-color;
+  }

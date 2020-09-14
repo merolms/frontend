@@ -1,0 +1,49 @@
+$primary-color: #33a163;
+$background-color: #fff;
+$font-family: MicrosoftNewTaiLue;
+$secondary-color: #707070;
+
+$header-nav-height: 74px;
+$sidebar-left-width: 25rem;
+$text-color-dark: #111111;
+$avatar-diameter: 48px;
+$avatar-margin: 10px;
+
+body {
+  background-color: #fff;
+}
+
+.bg-white {
+  background: $background-color !important;
+}
+.primary {
+  color: $primary-color;
+}
+.secondary {
+  color: $secondary-color;
+}
+.h1 {
+  font-family: $font-family;
+  font-size: 35px;
+  font-weight: bolder;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.71;
+  letter-spacing: normal;
+  padding-left: 10px;
+}
+.h1:hover {
+  color: $primary-color;
+  text-decoration: none;
+
+}
+.header{
+  margin-bottom: 0px !important;
+}
+.sidebar {
+  // padding-top: 10px;
+  padding-left: 14px;
+  width: $sidebar-left-width;
+  float: left;
+  height: 100%;
+}
