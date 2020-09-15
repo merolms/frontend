@@ -16,7 +16,7 @@ class CourseContainer extends React.Component {
         super(props);
         this.state = {
           query: '',
-          view: "table",
+          view: "grid",
         };
       }
     render() {

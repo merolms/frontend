@@ -5,7 +5,7 @@ const Header = (props) => {
     return (
         <Menu secondary fixed="top" className="header bg-white">
             <Menu.Item>
-                <Button icon="bars" />
+                <Button icon="bars" size="mini" circular color="white"/>
                 <a className="primary h1" href="#home">Mero Edu</a>
             </Menu.Item>
             <Menu.Menu position='right'>

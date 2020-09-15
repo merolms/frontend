@@ -11,7 +11,7 @@ const ExtraItem = styled.div `
 const GridItem = (props) => {
     const course=props.course
     return (
-        <Card fluid={true} style={{width:'328px'}}>
+        <Card fluid={true} style={{width:'328px'}} href={"courses/12"}>
             <Image src={course.CoverImage} wrapped />
             <Card.Content>
                 <Card.Header>{course.Title}</Card.Header>

@@ -4,8 +4,8 @@ import { Table } from 'semantic-ui-react';
 const CourseTableItem=(props)=> {
     const course=props.course
     return (
-        <Table.Row>
-            <Table.Cell>{course.Title}</Table.Cell>
+        <Table.Row >
+            <Table.Cell href={"courses/1"}>{course.Title}</Table.Cell>
             <Table.Cell>{course.Category}</Table.Cell>
             <Table.Cell>{course.Lesson}</Table.Cell>
             <Table.Cell>{course.Status}</Table.Cell>
