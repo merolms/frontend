@@ -1,5 +1,5 @@
 import React from 'react';
-import { Header, Divider, Form, Input, Grid, Button, List, Dropdown,Icon, Pagination } from 'semantic-ui-react';
+import { Header, Divider, Form, Input, Grid, Button, List, Dropdown, Pagination } from 'semantic-ui-react';
 import faker from 'faker';
 
 import CourseTable from './CourseTable/CourseTable';
@@ -10,6 +10,7 @@ import CourseGridItem from './CourseGrid/CourseGridItem/CourseGridItem';
 import './Course.scss';
 import CourseTableItem from './CourseTable/CourseTableItem/CourseTableItem';
 
+import NewCourse from './NewCourse/NewCourse';
 
 class CourseContainer extends React.Component {
     constructor(props) {
@@ -89,7 +90,7 @@ class CourseContainer extends React.Component {
                         </Form>
                     </Grid.Column>
                     <Grid.Column floated='right' width={3} style={{textAlign: "right"}}>
-                        <Button positive>Create Course</Button>
+                        <NewCourse />
                     </Grid.Column>
                     </Grid>
                     <Divider hidden/>
@@ -118,6 +119,7 @@ class CourseContainer extends React.Component {
                     </Grid>
                     {viewType}
                     <div style={{display: "flex", justifyContent: "center"}}><Pagination defaultActivePage={5} totalPages={10} /></div>
+                    
                 </div>
                 
         );
