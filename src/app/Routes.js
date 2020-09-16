@@ -3,7 +3,6 @@ import React from "react";
 import CourseContainer from "./containers/course/Course";
 import CourseDetail from "./containers/course/CourseDetail/CourseDetail";
 import Dashboard from './containers/Dashboard/Dashboard';
-
 const Routes = () => {
     return (
         <Switch>
