@@ -1,11 +1,24 @@
-import React from 'react';
-import { Button, Menu } from "semantic-ui-react";
+import React, { useState } from 'react';
+import { Button, Menu, Transition } from "semantic-ui-react";
 
-const Header = (props) => {
+
+function Header(props) {
+    const [visible, setVisibility]=useState(true)
+    const toggleVisibility = () => {
+          setVisibility(true)
+    }    
+    
     return (
         <Menu secondary fixed="top" className="header bg-white">
             <Menu.Item>
-                <Button icon="bars" size="mini" circular/>
+                <Transition
+                    animation={"pulse"}
+                    duration={500}
+                    visible={visible}
+                >
+                    <Button icon="bars" size="large" style={{background: "transparent"}} onClick={props.toggleVisibiltiy} />
+                </Transition>
+                
                 <a className="primary h1" href="#home">Mero Edu</a>
             </Menu.Item>
             <Menu.Menu position='right'>

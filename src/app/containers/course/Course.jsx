@@ -78,7 +78,7 @@ class CourseContainer extends React.Component {
             break;
         }
         return (
-                <div className="courses">
+                <div className="content-center courses">
                     <Header as='h1' content='Courses' color={"grey"}/>
                     <Divider hidden/>
                     <Grid>

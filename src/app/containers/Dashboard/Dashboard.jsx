@@ -7,7 +7,7 @@ import './Dashboard.scss';
 class Dashboard extends React.Component {
     render() {
         return (
-            <div className="dashboard">
+            <div className="content-center dashboard">
                 <Header as="h1">Dashboard</Header>
             </div>
         )
