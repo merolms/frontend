@@ -7,6 +7,8 @@ import update from 'immutability-helper'
 import faker from 'faker'
 
 import "./step2.scss"
+import CreateLesson from './CreateLesson/CreateLesson';
+import CreateContent from './CreateContent/CreateContent';
 
 
 
@@ -164,7 +166,7 @@ const ParentItem=memo(({ id, text, moveCard }) => {
                     <ChildContainer />
                     <Divider hidden />
                     <div className="create-content-container">
-                        <Button basic>Create Content</Button>
+                        <CreateContent />
                     </div>
                 </div>
         </div>
@@ -219,7 +221,7 @@ class ParentContainer extends React.Component{
           return(
             <React.Fragment>
             <div className="lesson-container">
-                <Button basic>Create Lesson</Button>
+                <CreateLesson />
             </div>
             <Divider hidden />
             {cardsByIndex.map((card) => (

@@ -14,7 +14,7 @@ function NewCourse(){
         }, 3000);
         setTimeout(() => {
             setStep(step+1)
-        }, 4000);
+        }, 3500);
     }
     function onPrevious() {
         setStep(step-1)
@@ -56,6 +56,7 @@ function NewCourse(){
                     </Modal.Description>
                 </Modal.Content>
                 <Modal.Actions>
+                    <Button negative onClick={onCancel}>Previous</Button>
                     <Button negative onClick={onCancel}>Cancel</Button>
                     <Button positive onClick={onNext}>Next</Button>
                 </Modal.Actions>
