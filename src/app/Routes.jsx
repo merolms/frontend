@@ -9,6 +9,10 @@ import UserContainer from './containers/user/User';
 import UserCreate from './containers/user/UserCreate/UserCreate';
 import UserEdit from './containers/user/UserEdit/UserEdit';
 import UserDetail from './containers/user/UserDetail/UserDetail';
+import TeamContainer from './containers/team/Team';
+import TeamCreate from './containers/team/TeamCreate/TeamCreate';
+import TeamEdit from './containers/team/TeamEdit/TeamEdit';
+import TeamDetail from './containers/team/TeamDetail/TeamDetail';
 
 const AppRoutes = [
   { path: '/', element: <Dashboard /> },
@@ -21,6 +25,10 @@ const AppRoutes = [
   { path: '/users/create', element: <UserCreate /> },
   { path: '/users/:id', element: <UserDetail /> },
   { path: '/users/:id/edit', element: <UserEdit /> },
+  { path: '/teams', element: <TeamContainer /> },
+  { path: '/teams/create', element: <TeamCreate /> },
+  { path: '/teams/:id', element: <TeamDetail /> },
+  { path: '/teams/:id/edit', element: <TeamEdit /> },
 ];
 
 export default AppRoutes;

@@ -174,12 +174,6 @@ const Dashboard = () => {
             <h1 className="page-title">Dashboard</h1>
             <p className="page-subtitle">Welcome back! Here's what's happening.</p>
           </div>
-          <div className="header-right">
-            <Button icon primary>
-              <Icon name='plus' />
-              New Course
-            </Button>
-          </div>
         </div>
 
         {/* Stats Cards - Enhanced with roadmap features */}

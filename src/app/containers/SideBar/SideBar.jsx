@@ -56,9 +56,16 @@ export default class SideBar extends React.Component {
               onClick={this.handleMenuClick}
             />
             <SideBarItem 
-              path='/reports' 
-              label='Reports' 
-              icon='chart bar' 
+              path='/teams'
+              label='Teams'
+              icon='sitemap'
+              active={this.state.activePage === '/teams'}
+              onClick={this.handleMenuClick}
+            />
+            <SideBarItem 
+              path='/reports'
+              label='Reports'
+              icon='chart bar'
               active={this.state.activePage === '/reports'}
               onClick={this.handleMenuClick}
             />
