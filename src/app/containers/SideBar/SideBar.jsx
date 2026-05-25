@@ -36,16 +36,18 @@ export default class SideBar extends React.Component {
         </div>
 
         <div className='sidebar-nav'>
+          <div className='sidebar-section-title'>Main Menu</div>
           <Menu className='side-menu'>
             <SideBarItem path='/' label='Dashboard' icon='home' active={this.state.activePage === '/'} onClick={this.handleMenuClick} />
             <SideBarItem path='/courses' label='Courses' icon='book' active={this.state.activePage === '/courses'} onClick={this.handleMenuClick} />
             <SideBarItem path='/users' label='Users' icon='users' active={this.state.activePage === '/users'} onClick={this.handleMenuClick} />
             <SideBarItem path='/teams' label='Teams' icon='sitemap' active={this.state.activePage === '/teams'} onClick={this.handleMenuClick} />
+            <SideBarItem path='/categories' label='Categories' icon='tags' active={this.state.activePage === '/categories'} onClick={this.handleMenuClick} />
           </Menu>
 
           <div className='sidebar-divider' />
 
-          <div className='sidebar-section-title'>Quick Links</div>
+          <div className='sidebar-section-title'>Administration</div>
           <Menu className='side-menu side-menu-secondary'>
             <SideBarItem path='/roles' label='Roles & Permissions' icon='shield' active={this.state.activePage === '/roles'} onClick={this.handleMenuClick} />
           </Menu>
@@ -59,7 +61,6 @@ export default class SideBar extends React.Component {
   }
 }
 
-// Connected footer component with user info + logout
 const SideBarFooter = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();

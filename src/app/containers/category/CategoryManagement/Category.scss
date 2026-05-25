@@ -1,0 +1,169 @@
+@use "@/styles/index.scss" as *;
+
+// ─── Header ──────────────────────────────────────────────────
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 0 16px;
+}
+
+.category-header-left {
+  .page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: $text-color-dark;
+    margin: 0;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+    color: #888;
+    margin: 4px 0 0 0;
+  }
+}
+
+// ─── Filters ─────────────────────────────────────────────────
+
+.category-filters {
+  padding: 14px 18px !important;
+  background: #f8f9fa !important;
+  border: 1px solid #e8e8e8 !important;
+  border-radius: 10px !important;
+  margin-bottom: 16px;
+}
+
+.category-filters-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.category-search-form {
+  flex: 1;
+  min-width: 180px;
+}
+
+.category-filter-dropdown {
+  min-width: 130px;
+}
+
+// ─── Table ──────────────────────────────────────────────────
+
+.category-table-segment {
+  border-radius: 10px !important;
+  border: 1px solid #e8e8e8 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  margin-bottom: 20px;
+  background: transparent !important;
+
+  .category-table {
+    margin: 0 !important;
+    border-radius: 10px;
+    overflow: hidden;
+
+    th {
+      background: #f8f9fa !important;
+      font-weight: 600 !important;
+      font-size: 12px !important;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      padding: 10px 12px !important;
+    }
+
+    td {
+      padding: 10px 12px !important;
+      vertical-align: middle !important;
+    }
+
+    .status-inactive {
+      opacity: 0.6;
+    }
+  }
+}
+
+.category-cell-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.category-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.category-name {
+  font-weight: 600;
+  font-size: 13px;
+  color: $text-color-dark;
+}
+
+.category-slug {
+  font-size: 11px;
+  color: #aaa;
+  font-family: monospace;
+}
+
+.category-cell-desc {
+  font-size: 12px;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+// ─── Empty ───────────────────────────────────────────────────
+
+.category-empty {
+  text-align: center;
+  padding: 48px 20px;
+
+  .ui.header {
+    color: #999 !important;
+    margin: 12px 0 8px !important;
+  }
+
+  p {
+    color: #aaa;
+    margin-bottom: 16px;
+  }
+}
+
+// ─── Pagination ──────────────────────────────────────────────
+
+.category-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+// ─── Skeleton ────────────────────────────────────────────────
+
+.skeleton-line {
+  height: 12px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  width: 100%;
+}
+
+// ─── Responsive ──────────────────────────────────────────────
+
+@media (max-width: 768px) {
+  .category-filters-row {
+    flex-direction: column;
+  }
+
+  .category-search-form { width: 100%; }
+  .category-filter-dropdown { width: 100%; }
+
+  .category-header {
+    flex-direction: column;
+  }
+}
