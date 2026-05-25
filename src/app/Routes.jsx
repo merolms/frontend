@@ -15,6 +15,8 @@ import TeamCreate from '@/app/containers/team/TeamCreate/TeamCreate';
 import TeamEdit from '@/app/containers/team/TeamEdit/TeamEdit';
 import TeamDetail from '@/app/containers/team/TeamDetail/TeamDetail';
 import CategoryManagement from '@/app/containers/category/CategoryManagement/CategoryManagement';
+import Settings from '@/app/containers/user/Settings/Settings';
+import Profile from '@/app/containers/user/Profile/Profile';
 import Login from '@/app/containers/auth/Login/Login';
 import ForgotPassword from '@/app/containers/auth/ForgotPassword/ForgotPassword';
 import ResetPassword from '@/app/containers/auth/ResetPassword/ResetPassword';
@@ -46,6 +48,8 @@ const protectedRoutes = [
   { path: '/users/create', element: <ProtectedRoute permissions={['users.create']}><UserCreate /></ProtectedRoute> },
   { path: '/users/:id', element: <ProtectedRoute permissions={['users.view']}><UserDetail /></ProtectedRoute> },
   { path: '/users/:id/edit', element: <ProtectedRoute permissions={['users.edit']}><UserEdit /></ProtectedRoute> },
+  { path: '/profile', element: <ProtectedRoute><Profile /></ProtectedRoute> },
+  { path: '/settings', element: <ProtectedRoute><Settings /></ProtectedRoute> },
   { path: '/teams', element: <ProtectedRoute permissions={['teams.view']}><TeamContainer /></ProtectedRoute> },
   { path: '/teams/create', element: <ProtectedRoute permissions={['teams.create']}><TeamCreate /></ProtectedRoute> },
   { path: '/teams/:id', element: <ProtectedRoute permissions={['teams.view']}><TeamDetail /></ProtectedRoute> },

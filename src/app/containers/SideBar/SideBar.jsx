@@ -43,6 +43,8 @@ export default function SideBar({ sidebarOpen, onToggle }) {
           <SideBarItem path='/categories' label='Categories' icon='tags' active={currentPath === '/categories'} />
           <SideBarItem path='/users' label='Users' icon='users' active={currentPath === '/users' || currentPath.startsWith('/users/')} />
           <SideBarItem path='/teams' label='Teams' icon='sitemap' active={currentPath === '/teams' || currentPath.startsWith('/teams/')} />
+          <SideBarItem path='/profile' label='My Profile' icon='id card' active={currentPath === '/profile'} />
+          <SideBarItem path='/settings' label='Settings' icon='cog' active={currentPath === '/settings'} />
         </Menu>
 
         <div className='sidebar-divider' />
