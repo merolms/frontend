@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Icon, Message, Image, Label } from 'semantic-ui-react';
+import { Form, Input, Button, Icon, Message, Image, Label, TextArea } from 'semantic-ui-react';
 
 const VideoEditor = ({ content = {}, onChange }) => {
   const [url, setUrl] = useState(content.videoUrl || '');
@@ -100,8 +100,7 @@ const VideoEditor = ({ content = {}, onChange }) => {
 
       <Form.Field>
         <label>Transcript / Captions</label>
-        <Input
-          as='textarea'
+        <TextArea
           value={transcript}
           onChange={(e) => setTranscript(e.target.value)}
           placeholder='Enter video transcript or paste captions...'

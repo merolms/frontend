@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Icon } from 'semantic-ui-react';
+import { Form, Input, Button, Icon, TextArea } from 'semantic-ui-react';
 
 const AudioEditor = ({ content = {}, onChange }) => {
   const [url, setUrl] = useState(content.audioUrl || '');
@@ -66,8 +66,7 @@ const AudioEditor = ({ content = {}, onChange }) => {
 
       <Form.Field>
         <label>Transcript / Show Notes</label>
-        <Input
-          as='textarea'
+        <TextArea
           value={transcript}
           onChange={(e) => setTranscript(e.target.value)}
           placeholder='Enter audio transcript or show notes...'

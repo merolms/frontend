@@ -1,13 +1,16 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
-import { Button, Icon, Divider } from 'semantic-ui-react';
+import { Button, Icon } from 'semantic-ui-react';
 import './RichTextEditor.scss';
 
 const RichTextEditor = ({ value = '', onChange, placeholder = 'Start writing...' }) => {
+  const lastEmittedRef = useRef(value);
+  const isInternalChange = useRef(false);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -27,10 +30,24 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Start writing...'
     ],
     content: value,
     onUpdate: ({ editor }) => {
+      // Prevent emit loop when we set content programmatically
+      isInternalChange.current = true;
       const html = editor.getHTML();
+      lastEmittedRef.current = html;
       onChange(html);
+      isInternalChange.current = false;
     },
   });
+
+  // Sync external value changes (e.g., switching content types)
+  useEffect(() => {
+    if (!editor) return;
+    if (isInternalChange.current) return;
+    if (value === lastEmittedRef.current) return;
+
+    lastEmittedRef.current = value;
+    editor.commands.setContent(value || '', false);
+  }, [value, editor]);
 
   const handleImageInsert = useCallback(() => {
     const url = prompt('Enter image URL:');

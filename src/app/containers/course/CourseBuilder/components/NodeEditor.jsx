@@ -99,6 +99,7 @@ const NodeEditor = ({ node, nodeType, onSave, saving }) => {
           </Form.Group>
           {form.type === 'text' ? (
             <RichTextEditor
+              key={`topic-${form.type}`}
               value={form.content?.html || form.content || ''}
               onChange={(html) => update('content', { ...form.content, html })}
               placeholder='Write topic content...'
