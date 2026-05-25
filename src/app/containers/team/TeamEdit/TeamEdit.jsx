@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Segment, Icon, Breadcrumb, Divider } from 'semantic-ui-react';
-import SideBar from '../../SideBar/SideBar';
-import TeamForm from '../TeamForm/TeamForm';
-import { mockFetchTeamById, mockUpdateTeam } from '../../../services/teamService';
+import SideBar from '@/app/containers/SideBar/SideBar';
+import TeamForm from '@/app/containers/team/TeamForm/TeamForm';
+import { mockFetchTeamById, mockUpdateTeam } from '@/app/services/teamService';
 
 const TeamEdit = () => {
   const navigate = useNavigate();

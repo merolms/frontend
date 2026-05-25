@@ -1,7 +1,7 @@
 import React,{useState} from "react";
-// import Sidebar from "./app/components/Sidebar";
-import SideBar from './app/containers/SideBar/SideBar'
-import Header from "./app/components/Header";
+// import Sidebar from "@/app/components/Sidebar";
+import SideBar from '@/app/containers/SideBar/SideBar'
+import Header from "@/app/components/Header";
 
 const App = () => {
     const [visible, toggleVisibiltiy]=useState(false)

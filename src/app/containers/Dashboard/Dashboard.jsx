@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Header, Segment, Grid, Card, Icon, Label, Button, Menu, Dropdown } from 'semantic-ui-react';
-import SideBar from '../SideBar/SideBar';
-import StatCard from './components/StatCard';
+import SideBar from '@/app/containers/SideBar/SideBar';
+import StatCard from '@/app/containers/Dashboard/components/StatCard';
 import './Dashboard.scss';
 
 // Import dashboard service
@@ -14,7 +14,7 @@ import {
   mockDashboardActivity,
   mockEnrollmentCharts,
   mockTeamStats
-} from '../../services/dashboardService';
+} from '@/app/services/dashboardService';
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);

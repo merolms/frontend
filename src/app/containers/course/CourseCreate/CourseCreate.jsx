@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header, Segment, Icon, Breadcrumb, Divider } from 'semantic-ui-react';
-import CourseForm from '../CourseForm/CourseForm';
-import { mockCreateCourse } from '../../../services/courseService';
+import CourseForm from '@/app/containers/course/CourseForm/CourseForm';
+import { mockCreateCourse } from '@/app/services/courseService';
 
 const CourseCreate = () => {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, TextArea, Button, Message, Label, Dropdown } from 'semantic-ui-react';
-import { mockTeamColors } from '../../../services/teamService';
+import { mockTeamColors } from '@/app/services/teamService';
 
 const colorOptions = mockTeamColors.map((color) => ({
   key: color,

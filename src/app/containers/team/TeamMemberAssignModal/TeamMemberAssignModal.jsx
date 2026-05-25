@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Header, Icon, Label, Image, Divider } from 'semantic-ui-react';
-import { mockGetAvailableUsers, mockAddMemberToTeam, mockRemoveMemberFromTeam } from '../../../services/teamService';
+import { mockGetAvailableUsers, mockAddMemberToTeam, mockRemoveMemberFromTeam } from '@/app/services/teamService';
 
 const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
   const [availableUsers, setAvailableUsers] = useState([]);

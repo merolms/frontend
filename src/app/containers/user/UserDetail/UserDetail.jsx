@@ -4,9 +4,9 @@ import {
   Segment, Icon, Breadcrumb, Divider, Button, Label,
   Grid, Image, List, Card, Header,
 } from 'semantic-ui-react';
-import SideBar from '../../SideBar/SideBar';
-import { DeleteModal } from '../../course/CourseActions/CourseActions';
-import { mockFetchUserById, mockDeleteUser } from '../../../services/userService';
+import SideBar from '@/app/containers/SideBar/SideBar';
+import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
+import { mockFetchUserById, mockDeleteUser } from '@/app/services/userService';
 
 const UserDetail = () => {
   const navigate = useNavigate();

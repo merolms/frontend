@@ -4,10 +4,10 @@ import {
   Segment, Icon, Button, Input, Dropdown, Pagination,
   Label, Image, Divider, Grid, Card, Header,
 } from 'semantic-ui-react';
-import SideBar from '../SideBar/SideBar';
-import TeamMemberAssignModal from './TeamMemberAssignModal/TeamMemberAssignModal';
-import { DeleteModal } from '../course/CourseActions/CourseActions';
-import { mockFetchTeams, mockDeleteTeam } from '../../services/teamService';
+import SideBar from '@/app/containers/SideBar/SideBar';
+import TeamMemberAssignModal from '@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal';
+import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
+import { mockFetchTeams, mockDeleteTeam } from '@/app/services/teamService';
 import './Team.scss';
 
 const statusOptions = [

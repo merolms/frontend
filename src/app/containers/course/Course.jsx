@@ -4,10 +4,10 @@ import {
   Header, Segment, Grid, Card, Icon, Button, Input,
   Dropdown, Pagination, Label, Menu, Divider, Image,
 } from 'semantic-ui-react';
-import SideBar from '../SideBar/SideBar';
+import SideBar from '@/app/containers/SideBar/SideBar';
 import {
   mockFetchCourses, mockCategories,
-} from '../../services/courseService';
+} from '@/app/services/courseService';
 import './Course.scss';
 
 const statusOptions = [

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Segment, Icon, Breadcrumb, Divider } from 'semantic-ui-react';
-import SideBar from '../../SideBar/SideBar';
-import UserForm from '../UserForm/UserForm';
-import { mockFetchUserById, mockUpdateUser } from '../../../services/userService';
+import SideBar from '@/app/containers/SideBar/SideBar';
+import UserForm from '@/app/containers/user/UserForm/UserForm';
+import { mockFetchUserById, mockUpdateUser } from '@/app/services/userService';
 
 const UserEdit = () => {
   const navigate = useNavigate();

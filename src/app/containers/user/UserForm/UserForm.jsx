@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Dropdown, Button, Message, Label } from 'semantic-ui-react';
-import { mockRoles } from '../../../services/userService';
+import { mockRoles } from '@/app/services/userService';
 
 const roleOptions = mockRoles.map((role) => ({ key: role, text: role, value: role }));
 

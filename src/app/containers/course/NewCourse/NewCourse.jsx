@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Modal,Button} from 'semantic-ui-react';
-import Step1 from './step1/step1'
-import Step2 from './step2/step2'
+import Step1 from '@/app/containers/course/NewCourse/step1/step1'
+import Step2 from '@/app/containers/course/NewCourse/step2/step2'
 
 function NewCourse(){
     const [open, setOpen] = useState(false)

@@ -4,9 +4,9 @@ import {
   Segment, Icon, Button, Input, Dropdown, Pagination,
   Label, Table, Image, Divider,
 } from 'semantic-ui-react';
-import SideBar from '../SideBar/SideBar';
-import { DeleteModal } from '../course/CourseActions/CourseActions';
-import { mockFetchUsers, mockDeleteUser, mockRoles } from '../../services/userService';
+import SideBar from '@/app/containers/SideBar/SideBar';
+import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
+import { mockFetchUsers, mockDeleteUser, mockRoles } from '@/app/services/userService';
 import './User.scss';
 
 const roleOptions = [

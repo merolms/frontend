@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Form, Button, Message, Header, Icon, Input } from 'semantic-ui-react';
-import { resetPassword } from '../../../services/authService';
+import { resetPassword } from '@/app/services/authService';
 
 const ResetPassword = () => {
   const navigate = useNavigate();

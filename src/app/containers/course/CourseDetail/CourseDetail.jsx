@@ -6,8 +6,8 @@ import {
 } from 'semantic-ui-react';
 import {
   mockFetchCourseById, mockFetchLessons, mockPublishCourse, mockArchiveCourse, mockDeleteCourse,
-} from '../../../services/courseService';
-import { PublishModal, ArchiveModal, DeleteModal } from '../CourseActions/CourseActions';
+} from '@/app/services/courseService';
+import { PublishModal, ArchiveModal, DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import './CourseDetail.scss';
 
 const CourseDetail = () => {

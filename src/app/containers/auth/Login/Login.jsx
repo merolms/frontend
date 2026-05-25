@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form, Button, Message, Header, Icon, Input } from 'semantic-ui-react';
-import { loginUser } from '../../../../redux/slices/authSlice';
+import { loginUser } from '@/redux/slices/authSlice';
 
 const Login = () => {
   const navigate = useNavigate();

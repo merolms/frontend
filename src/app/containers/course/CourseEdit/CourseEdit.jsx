@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Header, Segment, Icon, Breadcrumb, Divider } from 'semantic-ui-react';
-import CourseForm from '../CourseForm/CourseForm';
-import { mockFetchCourseById, mockUpdateCourse } from '../../../services/courseService';
+import CourseForm from '@/app/containers/course/CourseForm/CourseForm';
+import { mockFetchCourseById, mockUpdateCourse } from '@/app/services/courseService';
 
 const CourseEdit = () => {
   const navigate = useNavigate();

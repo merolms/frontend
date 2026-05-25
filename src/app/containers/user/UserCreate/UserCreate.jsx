@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Segment, Icon, Breadcrumb, Divider } from 'semantic-ui-react';
-import SideBar from '../../SideBar/SideBar';
-import UserForm from '../UserForm/UserForm';
-import { mockCreateUser } from '../../../services/userService';
+import SideBar from '@/app/containers/SideBar/SideBar';
+import UserForm from '@/app/containers/user/UserForm/UserForm';
+import { mockCreateUser } from '@/app/services/userService';
 
 const UserCreate = () => {
   const navigate = useNavigate();

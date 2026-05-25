@@ -4,12 +4,12 @@ import {
   Header, Segment, Icon, Breadcrumb, Divider, Button,
   List, Card, Label, Grid
 } from 'semantic-ui-react';
-import LessonForm from '../LessonForm/LessonForm';
-import { DeleteModal } from '../CourseActions/CourseActions';
+import LessonForm from '@/app/containers/course/LessonForm/LessonForm';
+import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import {
   mockFetchCourseById, mockFetchLessons,
   mockCreateLesson, mockUpdateLesson, mockDeleteLesson,
-} from '../../../services/courseService';
+} from '@/app/services/courseService';
 
 const CourseLessons = () => {
   const navigate = useNavigate();

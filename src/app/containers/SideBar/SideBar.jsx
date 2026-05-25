@@ -2,10 +2,10 @@ import React from 'react';
 import { Menu, Icon } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import SideBarItem from './SideBarItem/SideBarItem';
-import UserProfileInfo from '../../components/UserProfileInfo';
+import SideBarItem from '@/app/containers/SideBar/SideBarItem/SideBarItem';
+import UserProfileInfo from '@/app/components/UserProfileInfo';
 import './SideBar.scss';
-import { logoutUser } from '../../../redux/slices/authSlice';
+import { logoutUser } from '@/redux/slices/authSlice';
 
 export default class SideBar extends React.Component {
   constructor(props) {

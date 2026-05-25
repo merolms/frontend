@@ -5,7 +5,7 @@ import {
   validateToken,
   getStoredAuth,
   storeAuth,
-} from '../../app/services/authService';
+} from '@/app/services/authService';
 
 // Restore session on load
 const stored = getStoredAuth();

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, TextArea, Dropdown, Button, Message, Label } from 'semantic-ui-react';
-import { mockCategories } from '../../../services/courseService';
+import { mockCategories } from '@/app/services/courseService';
 
 const tagOptions = [
   'javascript', 'react', 'python', 'css', 'html', 'nodejs', 'typescript',

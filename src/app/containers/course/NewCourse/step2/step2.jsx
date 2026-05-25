@@ -14,8 +14,8 @@ import { produce } from 'immer';
 import { faker } from '@faker-js/faker';
 
 import './step2.scss';
-import CreateLesson from './CreateLesson/CreateLesson';
-import CreateContent from './CreateContent/CreateContent';
+import CreateLesson from '@/app/containers/course/NewCourse/step2/CreateLesson/CreateLesson';
+import CreateContent from '@/app/containers/course/NewCourse/step2/CreateContent/CreateContent';
 
 const ItemTypes = {
   PARENT: 'parent',

@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import {
   Segment, Icon, Button, Input, Label, Table, Divider, Header, Grid,
 } from 'semantic-ui-react';
-import SideBar from '../../SideBar/SideBar';
-import { PermissionGuard } from '../../../components/ProtectedRoute/ProtectedRoute';
-import { getRoleDefinitions, deleteRole } from '../../../services/authService';
+import SideBar from '@/app/containers/SideBar/SideBar';
+import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
+import { getRoleDefinitions, deleteRole } from '@/app/services/authService';
 
 const getRoleColor = (name) => {
   switch (name) {
