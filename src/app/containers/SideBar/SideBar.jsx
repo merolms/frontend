@@ -57,16 +57,22 @@ export default function SideBar({ sidebarOpen, onToggle }) {
 
       <div className='sidebar-footer'>
         {user && (
-          <UserProfileInfo
-            image={user.avatar}
-            primaryText={`${user.firstName} ${user.lastName}`}
-            secondaryText={user.role}
-          />
+          <div className='sidebar-profile-card' onClick={() => navigate('/profile')} role='button' title='View profile'>
+            <UserProfileInfo
+              image={user.avatar}
+              primaryText={`${user.firstName} ${user.lastName}`}
+              secondaryText={user.role}
+            />
+          </div>
         )}
-        <button className='auth-logout-btn' onClick={handleLogout}>
-          <Icon name='sign out' className='auth-logout-icon' />
-          <span>Sign Out</span>
-        </button>
+        <div className='sidebar-footer-actions'>
+          <button className='sidebar-footer-btn' onClick={() => navigate('/settings')} title='Settings'>
+            <Icon name='cog' />
+          </button>
+          <button className='sidebar-footer-btn' onClick={handleLogout} title='Sign Out'>
+            <Icon name='sign out' />
+          </button>
+        </div>
       </div>
     </div>
   );
