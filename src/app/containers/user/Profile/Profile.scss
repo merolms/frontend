@@ -3,9 +3,12 @@
 // ─── Profile Page ───────────────────────────────────────────
 
 .profile-page {
-  padding: 20px 24px 32px;
   max-width: 1200px;
   margin: 0 auto;
+}
+
+.profile-page .dashboard-header {
+  padding: 0 0 20px;
 }
 
 // ─── Hero Banner ────────────────────────────────────────────

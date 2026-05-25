@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Header, Segment, Grid, Icon, Label, Image, Button,
   Divider, Form, Input, TextArea, Tab, Message,
@@ -248,13 +248,20 @@ const Settings = () => {
       <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
       <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
 
-        <div className='settings-page'>
-          <div className='settings-header'>
+        <div className='dashboard-header'>
+          <div className='header-left'>
             <h1 className='page-title'>Settings</h1>
             <p className='page-subtitle'>Manage your account preferences</p>
           </div>
+          <div className='header-right'>
+            <Button as={Link} to='/profile' icon>
+              <Icon name='user' /> View Profile
+            </Button>
+          </div>
+        </div>
 
-          <Segment className='settings-tabs-card'>
+        <div className='dashboard-content'>
+          <Segment className='settings-card'>
             <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
           </Segment>
         </div>

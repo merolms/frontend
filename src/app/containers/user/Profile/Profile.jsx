@@ -6,6 +6,7 @@ import {
   Divider, Statistic, Card, List,
 } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
+import './Profile.scss';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -41,7 +42,18 @@ const Profile = () => {
       <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
 
         <div className='profile-page'>
-          {/* Hero Banner */}
+          <div className='dashboard-header'>
+            <div className='header-left'>
+              <h1 className='page-title'>My Profile</h1>
+              <p className='page-subtitle'>{user.role} · {user.email}</p>
+            </div>
+            <div className='header-right'>
+              <Button as={Link} to='/settings' primary icon>
+                <Icon name='cog' /> Edit Profile
+              </Button>
+            </div>
+          </div>
+
           <div className='profile-hero'>
             <div className='profile-hero-overlay'>
               <Image src={user.avatar} circular className='profile-avatar-xl' />
@@ -58,18 +70,11 @@ const Profile = () => {
                   </span>
                 </div>
               </div>
-              <div className='profile-hero-actions'>
-                <Button as={Link} to='/settings' primary>
-                  <Icon name='cog' /> Edit Profile
-                </Button>
-              </div>
             </div>
           </div>
 
           <Grid stackable className='profile-grid'>
-            {/* Left Column */}
             <Grid.Column width={6}>
-              {/* About Card */}
               <Segment className='profile-card'>
                 <Header as='h4'><Icon name='user circle' /> About</Header>
                 {user.bio ? (
@@ -83,31 +88,12 @@ const Profile = () => {
                 )}
                 <Divider />
                 <List relaxed className='profile-details-list'>
-                  <List.Item>
-                    <Icon name='phone' color='blue' />
-                    <List.Content>
-                      <List.Header>Phone</List.Header>
-                      <List.Description>{user.phone || 'Not provided'}</List.Description>
-                    </List.Content>
-                  </List.Item>
-                  <List.Item>
-                    <Icon name='calendar' color='green' />
-                    <List.Content>
-                      <List.Header>Member Since</List.Header>
-                      <List.Description>{user.joinedAt}</List.Description>
-                    </List.Content>
-                  </List.Item>
-                  <List.Item>
-                    <Icon name='clock outline' color='orange' />
-                    <List.Content>
-                      <List.Header>Last Active</List.Header>
-                      <List.Description>{user.lastActive}</List.Description>
-                    </List.Content>
-                  </List.Item>
+                  <List.Item><Icon name='phone' color='blue' /><List.Content><List.Header>Phone</List.Header><List.Description>{user.phone || 'Not provided'}</List.Description></List.Content></List.Item>
+                  <List.Item><Icon name='calendar' color='green' /><List.Content><List.Header>Member Since</List.Header><List.Description>{user.joinedAt}</List.Description></List.Content></List.Item>
+                  <List.Item><Icon name='clock outline' color='orange' /><List.Content><List.Header>Last Active</List.Header><List.Description>{user.lastActive}</List.Description></List.Content></List.Item>
                 </List>
               </Segment>
 
-              {/* Permissions Card */}
               <Segment className='profile-card'>
                 <Header as='h4'><Icon name='shield' /> Permissions</Header>
                 <div className='profile-permissions'>
@@ -124,9 +110,7 @@ const Profile = () => {
               </Segment>
             </Grid.Column>
 
-            {/* Right Column */}
             <Grid.Column width={10}>
-              {/* Stats */}
               <Statistic.Group widths={3} className='profile-stats'>
                 <Statistic color='blue'>
                   <Statistic.Value><Icon name='book' /> {user.coursesEnrolled || 0}</Statistic.Value>
@@ -137,58 +121,32 @@ const Profile = () => {
                   <Statistic.Label>Completed</Statistic.Label>
                 </Statistic>
                 <Statistic color='teal'>
-                  <Statistic.Value>
-                    {user.coursesEnrolled > 0
-                      ? `${Math.round(((user.coursesCompleted || 0) / user.coursesEnrolled) * 100)}%`
-                      : '—'}
-                  </Statistic.Value>
+                  <Statistic.Value>{user.coursesEnrolled > 0 ? `${Math.round(((user.coursesCompleted || 0) / user.coursesEnrolled) * 100)}%` : '—'}</Statistic.Value>
                   <Statistic.Label>Completion</Statistic.Label>
                 </Statistic>
               </Statistic.Group>
 
-              {/* Teams */}
               <Segment className='profile-card'>
                 <Header as='h4'><Icon name='sitemap' /> Team Assignments</Header>
                 {user.teams?.length > 0 ? (
                   <div className='profile-teams'>
                     {user.teams.map((team, i) => (
                       <Card key={i} className='profile-team-card'>
-                        <Card.Content>
-                          <Card.Header><Icon name='users' color='teal' /> {team}</Card.Header>
-                        </Card.Content>
+                        <Card.Content><Card.Header><Icon name='users' color='teal' /> {team}</Card.Header></Card.Content>
                       </Card>
                     ))}
                   </div>
                 ) : (
-                  <div className='profile-empty-text'>
-                    <Icon name='users' color='grey' />
-                    <p>Not assigned to any teams yet.</p>
-                  </div>
+                  <div className='profile-empty-text'><Icon name='users' color='grey' /><p>Not assigned to any teams yet.</p></div>
                 )}
               </Segment>
 
-              {/* Activity */}
               <Segment className='profile-card'>
                 <Header as='h4'><Icon name='chart bar' /> Activity Summary</Header>
                 <List relaxed>
-                  <List.Item>
-                    <List.Icon name='graduation cap' color='green' />
-                    <List.Content>
-                      Completed <strong>{user.coursesCompleted || 0}</strong> of <strong>{user.coursesEnrolled || 0}</strong> enrolled courses
-                    </List.Content>
-                  </List.Item>
-                  <List.Item>
-                    <List.Icon name='users' color='teal' />
-                    <List.Content>
-                      Member of <strong>{user.teams?.length || 0}</strong> team{(user.teams?.length || 0) !== 1 ? 's' : ''}
-                    </List.Content>
-                  </List.Item>
-                  <List.Item>
-                    <List.Icon name='clock outline' color='orange' />
-                    <List.Content>
-                      Last active on <strong>{user.lastActive}</strong>
-                    </List.Content>
-                  </List.Item>
+                  <List.Item><List.Icon name='graduation cap' color='green' /><List.Content>Completed <strong>{user.coursesCompleted || 0}</strong> of <strong>{user.coursesEnrolled || 0}</strong> enrolled courses</List.Content></List.Item>
+                  <List.Item><List.Icon name='users' color='teal' /><List.Content>Member of <strong>{user.teams?.length || 0}</strong> team{(user.teams?.length || 0) !== 1 ? 's' : ''}</List.Content></List.Item>
+                  <List.Item><List.Icon name='clock outline' color='orange' /><List.Content>Last active on <strong>{user.lastActive}</strong></List.Content></List.Item>
                 </List>
               </Segment>
             </Grid.Column>
