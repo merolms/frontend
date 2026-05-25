@@ -1,8 +1,11 @@
 import React from 'react';
-import { Menu, Icon, Dropdown } from 'semantic-ui-react';
+import { Menu, Icon } from 'semantic-ui-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import SideBarItem from './SideBarItem/SideBarItem';
-import './SideBar.scss';
 import UserProfileInfo from '../../components/UserProfileInfo';
+import './SideBar.scss';
+import { logoutUser } from '../../../redux/slices/authSlice';
 
 export default class SideBar extends React.Component {
   constructor(props) {
@@ -16,97 +19,70 @@ export default class SideBar extends React.Component {
   };
 
   toggleSidebar = () => {
-    this.setState(prev => ({ sidebarVisible: !prev.sidebarVisible }));
+    this.setState((prev) => ({ sidebarVisible: !prev.sidebarVisible }));
   };
 
   render() {
     return (
       <div className={`sidebar-wrapper ${this.props.sidebarOpen ? 'open' : 'closed'}`}>
-        <div className="sidebar-header">
-          <div className="sidebar-brand">
-            <Icon name="graduation cap" size="large" className="brand-icon" />
-            <span className="brand-text">MeroEdu</span>
+        <div className='sidebar-header'>
+          <div className='sidebar-brand'>
+            <Icon name='graduation cap' size='large' className='brand-icon' />
+            <span className='brand-text'>MeroEdu</span>
           </div>
-          <button className="sidebar-toggle" onClick={this.toggleSidebar}>
+          <button className='sidebar-toggle' onClick={this.toggleSidebar}>
             <Icon name={this.state.sidebarVisible ? 'angle double left' : 'angle double right'} />
           </button>
         </div>
 
-        <div className="sidebar-nav">
-          <Menu className="side-menu">
-            <SideBarItem 
-              path='/' 
-              label='Dashboard' 
-              icon='home' 
-              active={this.state.activePage === '/'}
-              onClick={this.handleMenuClick}
-            />
-            <SideBarItem 
-              path='/courses' 
-              label='Courses' 
-              icon='book' 
-              active={this.state.activePage === '/courses'}
-              onClick={this.handleMenuClick}
-            />
-            <SideBarItem 
-              path='/users'
-              label='Users'
-              icon='users'
-              active={this.state.activePage === '/users'}
-              onClick={this.handleMenuClick}
-            />
-            <SideBarItem 
-              path='/teams'
-              label='Teams'
-              icon='sitemap'
-              active={this.state.activePage === '/teams'}
-              onClick={this.handleMenuClick}
-            />
-            <SideBarItem 
-              path='/reports'
-              label='Reports'
-              icon='chart bar'
-              active={this.state.activePage === '/reports'}
-              onClick={this.handleMenuClick}
-            />
+        <div className='sidebar-nav'>
+          <Menu className='side-menu'>
+            <SideBarItem path='/' label='Dashboard' icon='home' active={this.state.activePage === '/'} onClick={this.handleMenuClick} />
+            <SideBarItem path='/courses' label='Courses' icon='book' active={this.state.activePage === '/courses'} onClick={this.handleMenuClick} />
+            <SideBarItem path='/users' label='Users' icon='users' active={this.state.activePage === '/users'} onClick={this.handleMenuClick} />
+            <SideBarItem path='/teams' label='Teams' icon='sitemap' active={this.state.activePage === '/teams'} onClick={this.handleMenuClick} />
           </Menu>
 
-          <div className="sidebar-divider" />
+          <div className='sidebar-divider' />
 
-          <div className="sidebar-section-title">Quick Links</div>
-          <Menu className="side-menu side-menu-secondary">
-            <SideBarItem 
-              path='/calendar' 
-              label='Calendar' 
-              icon='calendar' 
-              active={this.state.activePage === '/calendar'}
-              onClick={this.handleMenuClick}
-            />
-            <SideBarItem 
-              path='/messages' 
-              label='Messages' 
-              icon='mail' 
-              active={this.state.activePage === '/messages'}
-              onClick={this.handleMenuClick}
-            />
-            <SideBarItem 
-              path='/settings' 
-              label='Settings' 
-              icon='settings' 
-              active={this.state.activePage === '/settings'}
-              onClick={this.handleMenuClick}
-            />
+          <div className='sidebar-section-title'>Quick Links</div>
+          <Menu className='side-menu side-menu-secondary'>
+            <SideBarItem path='/roles' label='Roles & Permissions' icon='shield' active={this.state.activePage === '/roles'} onClick={this.handleMenuClick} />
           </Menu>
         </div>
 
-        <div className="sidebar-footer">
-          <UserProfileInfo
-            image="https://picsum.photos/100/100"
-            primaryText="Angelina Doe"
-            secondaryText="Instructor"
-          />
+        <div className='sidebar-footer'>
+          <SideBarFooter />
         </div>
       </div>
     );
   }
 }
+
+// Connected footer component with user info + logout
+const SideBarFooter = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    navigate('/login');
+  };
+
+  return (
+    <div>
+      {user && (
+        <UserProfileInfo
+          image={user.avatar}
+          primaryText={`${user.firstName} ${user.lastName}`}
+          secondaryText={user.role}
+        />
+      )}
+      <button className='auth-logout-btn' onClick={handleLogout}>
+        <Icon name='sign out' className='auth-logout-icon' />
+        <span>Sign Out</span>
+      </button>
+    </div>
+  );
+};

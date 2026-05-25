@@ -1,34 +1,34 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import { Provider } from 'react-redux';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { configureStore } from '@reduxjs/toolkit';
-import { thunk } from 'redux-thunk';
-
-import routes from './app/Routes';
-import testSlice from './redux/slices/testSlice';
+import { Provider, useDispatch } from 'react-redux';
+import store from './redux/store';
+import { restoreSession } from './redux/slices/authSlice';
+import AppRoutes from './app/Routes';
 import 'semantic-ui-css/semantic.min.css';
 import './styles/index.scss';
+import './app/containers/auth/Auth.scss';
 
-// Configure store with Redux Toolkit
-const store = configureStore({
-  reducer: {
-    test: testSlice.reducer,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ thunk }).concat(thunk),
-  devTools: import.meta.env.DEV,
-});
+// Restore auth session on app load
+const AuthInitializer = ({ children }) => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(restoreSession());
+  }, [dispatch]);
+  return children;
+};
 
 // Router setup
-const router = createBrowserRouter(routes);
+const router = createBrowserRouter(AppRoutes);
 
-// Render with React 18 createRoot
+// Render
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <AuthInitializer>
+        <RouterProvider router={router} />
+      </AuthInitializer>
     </Provider>
   </React.StrictMode>
 );
