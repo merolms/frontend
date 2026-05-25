@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTheme } from '@/app/context/ThemeContext';
 import {
   Header, Segment, Grid, Icon, Label, Image, Button,
-  Divider, Form, Input, TextArea, Tab, Message,
+  Divider, Form, Input, TextArea, Tab, Message, Radio,
 } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { mockUpdateUser } from '@/app/services/userService';
@@ -12,6 +13,7 @@ const Settings = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const user = useSelector((state) => state.auth.user);
+  const { mode, resolvedTheme, changeMode } = useTheme();
 
   const [profileForm, setProfileForm] = useState({
     firstName: user?.firstName || '',
@@ -236,6 +238,54 @@ const Settings = () => {
                 <p style={{ fontSize: 12, color: '#888' }}>Receive real-time notifications in your browser.</p>
               </div>
               <input type='checkbox' checked={notifications.pushEnabled} onChange={(e) => setNotifications((p) => ({ ...p, pushEnabled: e.target.checked }))} />
+            </div>
+          </div>
+        </Tab.Pane>
+      ),
+    },
+    {
+      menuItem: { key: 'appearance', icon: 'paint brush', content: 'Appearance' },
+      render: () => (
+        <Tab.Pane attached={false}>
+          <div className='settings-section'>
+            <Header as='h4'>Theme</Header>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16 }}>
+              Choose how MeroEdu looks on your device.
+            </p>
+            <div className='theme-options'>
+              <div
+                className={`theme-option ${mode === 'light' ? 'active' : ''}`}
+                onClick={() => changeMode('light')}
+              >
+                <Icon name='sun' size='large' color={mode === 'light' ? 'yellow' : 'grey'} />
+                <div className='theme-option-info'>
+                  <strong>Light</strong>
+                  <p>Clean and bright appearance</p>
+                </div>
+                {mode === 'light' && <Icon name='check circle' color='green' />}
+              </div>
+              <div
+                className={`theme-option ${mode === 'dark' ? 'active' : ''}`}
+                onClick={() => changeMode('dark')}
+              >
+                <Icon name='moon' size='large' color={mode === 'dark' ? 'blue' : 'grey'} />
+                <div className='theme-option-info'>
+                  <strong>Dark</strong>
+                  <p>Easier on the eyes at night</p>
+                </div>
+                {mode === 'dark' && <Icon name='check circle' color='green' />}
+              </div>
+              <div
+                className={`theme-option ${mode === 'system' ? 'active' : ''}`}
+                onClick={() => changeMode('system')}
+              >
+                <Icon name='desktop' size='large' color={mode === 'system' ? 'teal' : 'grey'} />
+                <div className='theme-option-info'>
+                  <strong>System</strong>
+                  <p>Follows your device settings ({resolvedTheme})</p>
+                </div>
+                {mode === 'system' && <Icon name='check circle' color='green' />}
+              </div>
             </div>
           </div>
         </Tab.Pane>
