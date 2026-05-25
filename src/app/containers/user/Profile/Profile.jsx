@@ -18,7 +18,7 @@ const Profile = () => {
       <div className='dashboard-layout'>
         <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
         <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-          <div className='profile-page'>
+          <div className='dashboard-content'>
             <Segment placeholder>
               <Header icon><Icon name='lock' /> Please log in</Header>
               <Button primary onClick={() => navigate('/login')}>Sign In</Button>
@@ -41,18 +41,19 @@ const Profile = () => {
       <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
       <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
 
-        <div className='profile-page'>
-          <div className='dashboard-header'>
-            <div className='header-left'>
-              <h1 className='page-title'>My Profile</h1>
-              <p className='page-subtitle'>{user.role} · {user.email}</p>
-            </div>
-            <div className='header-right'>
-              <Button as={Link} to='/settings' primary icon>
-                <Icon name='cog' /> Edit Profile
-              </Button>
-            </div>
+        <div className='dashboard-header'>
+          <div className='header-left'>
+            <h1 className='page-title'>My Profile</h1>
+            <p className='page-subtitle'>{user.role} &middot; {user.email}</p>
           </div>
+          <div className='header-right'>
+            <Button as={Link} to='/settings' primary icon>
+              <Icon name='cog' /> Edit Profile
+            </Button>
+          </div>
+        </div>
+
+        <div className='dashboard-content'>
 
           <div className='profile-hero'>
             <div className='profile-hero-overlay'>
@@ -151,8 +152,8 @@ const Profile = () => {
               </Segment>
             </Grid.Column>
           </Grid>
-        </div>
 
+        </div>
       </div>
     </div>
   );
