@@ -18,6 +18,8 @@ import ForgotPassword from '@/app/containers/auth/ForgotPassword/ForgotPassword'
 import ResetPassword from '@/app/containers/auth/ResetPassword/ResetPassword';
 import Unauthorized from '@/app/containers/auth/Unauthorized/Unauthorized';
 import RoleManagement from '@/app/containers/role/RoleManagement/RoleManagement';
+import RoleCreate from '@/app/containers/role/RoleCreate/RoleCreate';
+import RoleEdit from '@/app/containers/role/RoleEdit/RoleEdit';
 import ProtectedRoute from '@/app/components/ProtectedRoute/ProtectedRoute';
 
 // Public routes — no auth needed
@@ -45,6 +47,8 @@ const protectedRoutes = [
   { path: '/teams/:id', element: <ProtectedRoute permissions={['teams.view']}><TeamDetail /></ProtectedRoute> },
   { path: '/teams/:id/edit', element: <ProtectedRoute permissions={['teams.edit']}><TeamEdit /></ProtectedRoute> },
   { path: '/roles', element: <ProtectedRoute permissions={['roles.view']}><RoleManagement /></ProtectedRoute> },
+  { path: '/roles/create', element: <ProtectedRoute permissions={['roles.create']}><RoleCreate /></ProtectedRoute> },
+  { path: '/roles/:id/edit', element: <ProtectedRoute permissions={['roles.edit']}><RoleEdit /></ProtectedRoute> },
 ];
 
 const AppRoutes = [...publicRoutes, ...protectedRoutes];

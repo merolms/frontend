@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Segment, Icon, Button, Input, Label, Table, Divider, Header, Grid,
+  Segment, Icon, Button, Input, Label, Table, Divider, Header,
 } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
@@ -69,7 +69,7 @@ const RoleManagement = () => {
           </div>
           <div className='header-right'>
             <PermissionGuard permissions={['roles.create']}>
-              <Button icon primary>
+              <Button icon primary onClick={() => navigate('/roles/create')}>
                 <Icon name='plus' /> New Role
               </Button>
             </PermissionGuard>
@@ -118,7 +118,7 @@ const RoleManagement = () => {
                     <Table.Row key={role.id}>
                       <Table.Cell>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <Label color={getRoleRoleColor(role.name)} size='small'>{role.name}</Label>
+                          <Label color={getRoleColor(role.name)} size='small'>{role.name}</Label>
                           {role.permissions.includes('*') && (
                             <Label color='red' size='tiny' circular style={{ padding: '2px 6px' }}>
                               <Icon name='star' size='mini' />
@@ -148,7 +148,7 @@ const RoleManagement = () => {
                       </Table.Cell>
                       <Table.Cell textAlign='center'>
                         <PermissionGuard permissions={['roles.edit']}>
-                          <Button size='small' icon title='Edit'>
+                          <Button size='small' icon title='Edit' onClick={() => navigate(`/roles/${role.id}/edit`)}>
                             <Icon name='pencil' />
                           </Button>
                         </PermissionGuard>
@@ -215,16 +215,5 @@ const RoleManagement = () => {
     </div>
   );
 };
-
-// Helper to map role name to color
-function getRoleRoleColor(name) {
-  switch (name) {
-    case 'Administrator': return 'red';
-    case 'Instructor': return 'blue';
-    case 'Team Lead': return 'purple';
-    case 'Student': return 'teal';
-    default: return 'grey';
-  }
-}
 
 export default RoleManagement;
