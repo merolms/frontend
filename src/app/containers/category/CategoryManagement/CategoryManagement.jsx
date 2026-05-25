@@ -121,7 +121,7 @@ const CategoryManagement = () => {
   return (
     <div className='dashboard-layout'>
       <SideBar sidebarOpen={sidebarOpen} onNavigate={(path) => navigate(path)} />
-      <div className={`dashboard-header ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         <div className='dashboard-content'>
           {/* Header */}
           <div className='category-header'>
