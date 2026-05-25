@@ -122,22 +122,21 @@ const CategoryManagement = () => {
     <div className='dashboard-layout'>
       <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
       <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-        <div className='dashboard-content'>
-          {/* Header */}
-          <div className='category-header'>
-            <div className='category-header-left'>
-              <h1 className='page-title'>Categories</h1>
-              <p className='page-subtitle'>{total} categor{total === 1 ? 'y' : 'ies'} total</p>
-            </div>
-            <div className='category-header-right'>
-              <PermissionGuard permissions={['courses.create']}>
-                <Button primary icon onClick={handleCreate}>
-                  <Icon name='plus' /> New Category
-                </Button>
-              </PermissionGuard>
-            </div>
+        <div className='dashboard-header'>
+          <div className='header-left'>
+            <h1 className='page-title'>Categories</h1>
+            <p className='page-subtitle'>{total} categor{total === 1 ? 'y' : 'ies'} total</p>
           </div>
+          <div className='header-right'>
+            <PermissionGuard permissions={['courses.create']}>
+              <Button primary icon onClick={handleCreate}>
+                <Icon name='plus' /> New Category
+              </Button>
+            </PermissionGuard>
+          </div>
+        </div>
 
+        <div className='dashboard-content'>
           {/* Filters */}
           <Segment className='category-filters' secondary>
             <div className='category-filters-row'>

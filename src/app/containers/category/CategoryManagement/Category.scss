@@ -1,29 +1,5 @@
 @use "@/styles/index.scss" as *;
 
-// ─── Header ──────────────────────────────────────────────────
-
-.category-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 20px 0 16px;
-}
-
-.category-header-left {
-  .page-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: $text-color-dark;
-    margin: 0;
-  }
-
-  .page-subtitle {
-    font-size: 14px;
-    color: #888;
-    margin: 4px 0 0 0;
-  }
-}
-
 // ─── Filters ─────────────────────────────────────────────────
 
 .category-filters {
@@ -162,8 +138,4 @@
 
   .category-search-form { width: 100%; }
   .category-filter-dropdown { width: 100%; }
-
-  .category-header {
-    flex-direction: column;
-  }
 }
