@@ -30,6 +30,7 @@ const GridView = ({ courses, navigate, loading }) => {
             className='course-card'
             onClick={() => navigate(`/courses/${course.id}`)}
           >
+            {/* Cover Image */}
             {course.coverImage ? (
               <Image src={course.coverImage} wrapped ui={false} className='course-card-image' />
             ) : (
@@ -39,38 +40,50 @@ const GridView = ({ courses, navigate, loading }) => {
             )}
 
             <div className='course-card-body'>
-              <h3 className='course-card-title'>{course.title}</h3>
-              <p className='course-card-meta'>
-                <Icon name='user' size='mini' /> {course.author}
-              </p>
-              <p className='course-card-description'>{course.description}</p>
-            </div>
-
-            <div className='course-card-footer'>
-              <Label color={getCategoryColor(course.category)} size='tiny' basic>
-                {course.category}
-              </Label>
-              <div className='course-card-stats'>
-                <span><Icon name='list' size='mini' /> {course.totalLessons}</span>
-                <span><Icon name='users' size='mini' /> {course.enrolledUsers}</span>
+              {/* Meta Row */}
+              <div className='course-card-meta-row'>
+                <span className='course-card-category'>
+                  <Label color={getCategoryColor(course.category)} size='tiny' basic>{course.category}</Label>
+                </span>
+                <span className='course-card-author'>
+                  <Icon name='user' size='mini' /> {course.author}
+                </span>
               </div>
+
+              {/* Title */}
+              <h3 className='course-card-title'>{course.title}</h3>
+
+              {/* Description */}
+              <p className='course-card-description'>{course.description}</p>
+
+              {/* Stats & Rating */}
+              <div className='course-card-info-row'>
+                <div className='course-card-stats'>
+                  <span><Icon name='list' size='mini' /> {course.totalLessons} Lessons</span>
+                  <span><Icon name='users' size='mini' /> {course.enrolledUsers}</span>
+                  <span><Icon name='clock outline' size='mini' /> {course.duration}</span>
+                </div>
+              </div>
+
+              {/* Tags */}
+              {course.tags?.length > 0 && (
+                <div className='course-card-tags'>
+                  {course.tags.slice(0, 3).map((tag) => (
+                    <Label key={tag} size='mini' basic>{tag}</Label>
+                  ))}
+                  {course.tags.length > 3 && (
+                    <Label size='mini' basic>+{course.tags.length - 3}</Label>
+                  )}
+                </div>
+              )}
+
+              {/* Status */}
               {status && (
-                <Label color={status.color} size='tiny' basic>
-                  {status.text}
-                </Label>
+                <div className='course-card-status'>
+                  <Label color={status.color} size='tiny' basic>{status.text}</Label>
+                </div>
               )}
             </div>
-
-            {course.tags?.length > 0 && (
-              <div className='course-card-tags'>
-                {course.tags.slice(0, 3).map((tag) => (
-                  <Label key={tag} size='mini' basic>{tag}</Label>
-                ))}
-                {course.tags.length > 3 && (
-                  <Label size='mini' basic>+{course.tags.length - 3}</Label>
-                )}
-              </div>
-            )}
           </div>
         );
       })}

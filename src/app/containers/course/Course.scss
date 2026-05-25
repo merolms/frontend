@@ -70,12 +70,12 @@
 }
 
 // ═══════════════════════════════════════════════════════════════
-// GRID VIEW — CSS Grid cards
+// GRID VIEW
 // ═══════════════════════════════════════════════════════════════
 
 .courses-view-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 20px;
 }
 
@@ -94,63 +94,76 @@
 }
 
 .course-card-image {
-  height: 150px !important;
+  height: 180px !important;
   object-fit: cover;
   width: 100%;
   display: block;
 }
 
 .course-card-no-image {
-  height: 150px;
+  height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .course-card-body {
-  padding: 14px 16px 8px;
+  padding: 16px;
+}
+
+.course-card-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #888;
+  flex-wrap: wrap;
+}
+
+.course-card-author {
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
 
 .course-card-title {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   color: $text-color-dark;
-  margin: 0 0 4px;
+  margin: 0 0 10px;
   line-height: 1.3;
-}
-
-.course-card-meta {
-  font-size: 12px;
-  color: #888;
-  margin: 0 0 6px;
 }
 
 .course-card-description {
   font-size: 13px;
   color: #666;
-  line-height: 1.5;
+  line-height: 1.6;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin: 0;
+  margin: 0 0 14px;
 }
 
-.course-card-footer {
-  padding: 8px 16px;
+.course-card-info-row {
+  margin-bottom: 12px;
 }
 
 .course-card-stats {
   display: flex;
-  gap: 12px;
-  font-size: 11px;
+  gap: 14px;
+  font-size: 12px;
   color: #888;
+  padding: 10px 0;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
 
   span {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
   }
 }
 
@@ -158,7 +171,12 @@
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  padding: 8px 16px 14px;
+  margin-bottom: 8px;
+}
+
+.course-card-status {
+  display: flex;
+  margin-top: 4px;
 }
 
 // Grid skeletons
