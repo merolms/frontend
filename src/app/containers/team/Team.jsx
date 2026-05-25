@@ -202,73 +202,48 @@ const TeamContainer = () => {
             </Segment>
           ) : (
             <>
-              <Grid columns={4} stackable className='team-grid'>
+              <div className='teams-grid'>
                 {teams.map((team) => (
-                  <Grid.Column key={team.id}>
-                    <Card
-                      className='team-card-item'
-                      onClick={() => navigate(`/teams/${team.id}`)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <div className='team-card-header' style={{ background: team.color }}>
-                        <Icon name='users' size='large' color='white' />
-                        <Label
-                          floating
-                          circular
-                          style={{ background: team.status === 'active' ? '#33a163' : '#999', color: '#fff', border: 'none' }}
-                        >
-                          {team.memberCount}
-                        </Label>
-                      </div>
-                      <Card.Content>
-                        <Card.Header>{team.name}</Card.Header>
-                        <Card.Meta>
-                          <span className='team-description'>{team.description}</span>
-                        </Card.Meta>
-                      </Card.Content>
-                      <Card.Content extra>
-                        <div className='team-card-stats'>
-                          <div className='team-stat'>
-                            <div className='team-stat-value'>{team.memberCount}</div>
-                            <div className='team-stat-label'>Members</div>
-                          </div>
-                          <div className='team-stat'>
-                            <div className='team-stat-value'>{team.coursesAssigned}</div>
-                            <div className='team-stat-label'>Courses</div>
-                          </div>
-                          <div className='team-stat'>
-                            <div className='team-stat-value' style={{ color: getProgressColor(team.avgProgress) }}>
-                              {team.avgProgress}%
-                            </div>
-                            <div className='team-stat-label'>Progress</div>
-                          </div>
+                  <div key={team.id} className='team-card' onClick={() => navigate(`/teams/${team.id}`)}>
+                    <div className='team-card-header' style={{ background: team.color }}>
+                      <Icon name='users' size='large' color='white' />
+                      <Label floating circular style={{ background: team.status === 'active' ? '#33a163' : '#999', color: '#fff', border: 'none' }}>
+                        {team.memberCount}
+                      </Label>
+                    </div>
+                    <div className='team-card-body'>
+                      <h3 className='team-card-title'>{team.name}</h3>
+                      <p className='team-card-desc'>{team.description}</p>
+                    </div>
+                    <div className='team-card-footer'>
+                      <div className='team-card-stats'>
+                        <div className='team-stat'>
+                          <div className='team-stat-value'>{team.memberCount}</div>
+                          <div className='team-stat-label'>Members</div>
                         </div>
-
-                        {/* Member avatars */}
-                        {team.members.length > 0 && (
-                          <div className='team-avatars' style={{ marginTop: 12 }}>
-                            {team.members.slice(0, 5).map((member) => (
-                              <Image
-                                key={member.id}
-                                src={member.avatar}
-                                circular
-                                size='mini'
-                                className='team-member-avatar'
-                                title={`${member.firstName} ${member.lastName}`}
-                              />
-                            ))}
-                            {team.members.length > 5 && (
-                              <span style={{ fontSize: '11px', color: '#888', marginLeft: 4 }}>
-                                +{team.members.length - 5}
-                              </span>
-                            )}
+                        <div className='team-stat'>
+                          <div className='team-stat-value'>{team.coursesAssigned}</div>
+                          <div className='team-stat-label'>Courses</div>
+                        </div>
+                        <div className='team-stat'>
+                          <div className='team-stat-value' style={{ color: getProgressColor(team.avgProgress) }}>
+                            {team.avgProgress}%
                           </div>
-                        )}
-                      </Card.Content>
-                    </Card>
-                  </Grid.Column>
+                          <div className='team-stat-label'>Progress</div>
+                        </div>
+                      </div>
+                      {team.members.length > 0 && (
+                        <div className='team-avatars'>
+                          {team.members.slice(0, 5).map((member) => (
+                            <Image key={member.id} src={member.avatar} circular size='mini' className='team-member-avatar' title={`${member.firstName} ${member.lastName}`} />
+                          ))}
+                          {team.members.length > 5 && <span className='team-avatar-more'>+{team.members.length - 5}</span>}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 ))}
-              </Grid>
+              </div>
 
               {totalPages > 1 && (
                 <div className='teams-pagination'>
