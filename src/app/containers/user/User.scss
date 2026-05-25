@@ -1,0 +1,298 @@
+@use "../../../styles/index.scss" as *;
+
+// ===== User Filters =====
+
+.user-filters {
+  padding: 16px 20px !important;
+  background: #f8f9fa !important;
+  border: 1px solid #e8e8e8 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  margin-bottom: 24px;
+}
+
+.user-filters-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.user-search-form {
+  flex: 1;
+  min-width: 200px;
+}
+
+.user-filter-dropdown {
+  min-width: 140px;
+}
+
+// ===== User Table =====
+
+.user-table-segment {
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #e8e8e8 !important;
+  margin-bottom: 24px;
+}
+
+.user-table {
+  margin: 0 !important;
+
+  th {
+    background: #f8f9fa !important;
+    font-weight: 600 !important;
+    color: #555 !important;
+    font-size: 13px !important;
+    padding: 14px 16px !important;
+  }
+
+  td {
+    padding: 12px 16px !important;
+    vertical-align: middle !important;
+  }
+}
+
+.user-table-row {
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: #f8f9fa !important;
+  }
+}
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.user-avatar-small {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.user-cell-info {
+  min-width: 0;
+}
+
+.user-cell-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: $text-color-dark;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-cell-email {
+  font-size: 12px;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ===== User Profile =====
+
+.user-profile-card {
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #e8e8e8 !important;
+  text-align: center;
+  padding: 32px 24px !important;
+}
+
+.user-profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.user-avatar-large {
+  width: 100px !important;
+  height: 100px !important;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e8f5e9;
+}
+
+.user-profile-email {
+  color: #888;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.user-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 8px;
+
+  &.active {
+    background: #e8f5e9;
+    color: #33a163;
+  }
+
+  &.inactive {
+    background: #f5f5f5;
+    color: #999;
+  }
+}
+
+.user-profile-bio {
+  text-align: left;
+  margin-top: 20px;
+
+  h4 {
+    font-size: 14px !important;
+    color: #555;
+    margin-bottom: 8px !important;
+  }
+
+  p {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+}
+
+.user-profile-details {
+  text-align: left;
+
+  .item {
+    padding: 6px 0 !important;
+    font-size: 13px;
+    color: #666;
+
+    strong {
+      color: #333;
+    }
+  }
+}
+
+// ===== User Detail =====
+
+.user-detail-segment {
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #e8e8e8 !important;
+  margin-bottom: 20px;
+
+  h3 {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    margin-bottom: 16px !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.user-teams-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.user-stat-card {
+  text-align: center;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  border: 1px solid #e8e8e8 !important;
+}
+
+.user-stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: $primary-color;
+}
+
+.user-stat-label {
+  font-size: 13px;
+  color: #888;
+  margin-top: 4px;
+}
+
+// ===== User Form =====
+
+.user-form-segment {
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #e8e8e8 !important;
+  padding: 32px !important;
+  max-width: 700px;
+}
+
+.user-form-heading {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px !important;
+}
+
+.user-form-subtitle {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.user-form-error {
+  background: #fff5f5;
+  border: 1px solid #feb2b2;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  color: #c53030;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// ===== Pagination =====
+
+.users-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+// ===== Empty State =====
+
+.user-empty {
+  text-align: center;
+  padding: 60px 20px !important;
+}
+
+// ===== Responsive =====
+
+@media (max-width: 768px) {
+  .user-filters-row {
+    flex-direction: column;
+  }
+
+  .user-search-form {
+    width: 100%;
+  }
+
+  .user-filter-dropdown {
+    width: 100%;
+  }
+
+  .user-form-segment {
+    padding: 20px !important;
+  }
+}

@@ -49,17 +49,10 @@ export default class SideBar extends React.Component {
               onClick={this.handleMenuClick}
             />
             <SideBarItem 
-              path='/courses/new' 
-              label='Create Course' 
-              icon='plus circle' 
-              active={this.state.activePage === '/courses/new'}
-              onClick={this.handleMenuClick}
-            />
-            <SideBarItem 
-              path='/students' 
-              label='Students' 
-              icon='users' 
-              active={this.state.activePage === '/students'}
+              path='/users'
+              label='Users'
+              icon='users'
+              active={this.state.activePage === '/users'}
               onClick={this.handleMenuClick}
             />
             <SideBarItem 

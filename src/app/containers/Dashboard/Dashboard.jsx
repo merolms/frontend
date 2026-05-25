@@ -1,109 +1,109 @@
-import React, { useState } from 'react';
-import { Header, Segment, Grid, Card, Icon, Statistic, Label, Button, Menu, Dropdown } from 'semantic-ui-react';
+import React, { useState, useEffect } from 'react';
+import { Header, Segment, Grid, Card, Icon, Label, Button, Menu, Dropdown } from 'semantic-ui-react';
 import SideBar from '../SideBar/SideBar';
+import StatCard from './components/StatCard';
 import './Dashboard.scss';
 
-// Sample data for the dashboard
-const statsData = [
-  {
-    title: 'Total Courses',
-    value: 24,
-    icon: 'book',
-    color: 'green',
-    trend: '+3 this month',
-    trendUp: true
-  },
-  {
-    title: 'Active Students',
-    value: 342,
-    icon: 'users',
-    color: 'blue',
-    trend: '+18 this month',
-    trendUp: true
-  },
-  {
-    title: 'Completed Lessons',
-    value: 156,
-    icon: 'check circle',
-    color: 'orange',
-    trend: '+24 this week',
-    trendUp: true
-  },
-  {
-    title: 'Avg. Completion',
-    value: '78%',
-    icon: 'chart line',
-    color: 'purple',
-    trend: '+5% vs last month',
-    trendUp: true
-  }
-];
-
-const recentCourses = [
-  {
-    id: 1,
-    title: 'Introduction to React',
-    students: 45,
-    progress: 75,
-    status: 'active',
-    image: 'https://picsum.photos/seed/react/120/80'
-  },
-  {
-    id: 2,
-    title: 'Advanced CSS Techniques',
-    students: 32,
-    progress: 45,
-    status: 'active',
-    image: 'https://picsum.photos/seed/css/120/80'
-  },
-  {
-    id: 3,
-    title: 'Python for Data Science',
-    students: 67,
-    progress: 90,
-    status: 'active',
-    image: 'https://picsum.photos/seed/python/120/80'
-  },
-  {
-    id: 4,
-    title: 'Machine Learning Basics',
-    students: 28,
-    progress: 30,
-    status: 'draft',
-    image: 'https://picsum.photos/seed/ml/120/80'
-  }
-];
-
-const upcomingActivities = [
-  {
-    id: 1,
-    title: 'React Quiz - Chapter 5',
-    type: 'quiz',
-    date: 'Today, 2:00 PM',
-    course: 'Introduction to React'
-  },
-  {
-    id: 2,
-    title: 'Live Session: CSS Grid',
-    type: 'live',
-    date: 'Tomorrow, 10:00 AM',
-    course: 'Advanced CSS Techniques'
-  },
-  {
-    id: 3,
-    title: 'Assignment: Data Visualization',
-    type: 'assignment',
-    date: 'Next Week',
-    course: 'Python for Data Science'
-  }
-];
+// Import dashboard service
+import {
+  fetchDashboardStats,
+  fetchDashboardActivity,
+  fetchEnrollmentCharts,
+  fetchTeamStats,
+  mockDashboardStats,
+  mockDashboardActivity,
+  mockEnrollmentCharts,
+  mockTeamStats
+} from '../../services/dashboardService';
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [stats, setStats] = useState(null);
+  const [activity, setActivity] = useState(null);
+  const [enrollment, setEnrollment] = useState(null);
+  const [teams, setTeams] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const handleNavigate = (path) => {
     // Navigation handled by react-router
   };
+
+  // Fetch all dashboard data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        // Try to fetch real data, fall back to mock data if API fails
+        try {
+          const [
+            statsData,
+            activityData,
+            enrollmentData,
+            teamsData
+          ] = await Promise.all([
+            fetchDashboardStats(),
+            fetchDashboardActivity(),
+            fetchEnrollmentCharts(),
+            fetchTeamStats()
+          ]);
+          setStats(statsData);
+          setActivity(activityData);
+          setEnrollment(enrollmentData);
+          setTeams(teamsData);
+        } catch (apiError) {
+          console.warn('Using mock data due to API error:', apiError);
+          // Fall back to mock data
+          setStats(mockDashboardStats);
+          setActivity(mockDashboardActivity);
+          setEnrollment(mockEnrollmentCharts);
+          setTeams(mockTeamStats);
+        }
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError('Failed to load dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="dashboard-layout">
+        <SideBar sidebarOpen={sidebarOpen} onNavigate={handleNavigate} />
+        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+          <div className="dashboard-header">
+            <div className="header-left">
+              <h1 className="page-title">Dashboard</h1>
+              <p className="page-subtitle">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="dashboard-layout">
+        <SideBar sidebarOpen={sidebarOpen} onNavigate={handleNavigate} />
+        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+          <div className="dashboard-header">
+            <div className="header-left">
+              <h1 className="page-title">Dashboard</h1>
+              <p className="page-subtitle">Error loading data</p>
+            </div>
+          </div>
+          <div className="dashboard-content">
+            <div className="error-message">{error}</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -133,6 +133,12 @@ const Dashboard = () => {
         return 'video';
       case 'assignment':
         return 'file alternate';
+      case 'course':
+        return 'book';
+      case 'team':
+        return 'users';
+      case 'certificate':
+        return 'award';
       default:
         return 'calendar';
     }
@@ -146,6 +152,12 @@ const Dashboard = () => {
         return 'red';
       case 'assignment':
         return 'orange';
+      case 'course':
+        return 'green';
+      case 'team':
+        return 'teal';
+      case 'certificate':
+        return 'purple';
       default:
         return 'grey';
     }
@@ -160,7 +172,7 @@ const Dashboard = () => {
         <div className="dashboard-header">
           <div className="header-left">
             <h1 className="page-title">Dashboard</h1>
-            <p className="page-subtitle">Welcome back, Angelina! Here's what's happening.</p>
+            <p className="page-subtitle">Welcome back! Here's what's happening.</p>
           </div>
           <div className="header-right">
             <Button icon primary>
@@ -170,29 +182,57 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Stats Cards */}
+        {/* Stats Cards - Enhanced with roadmap features */}
         <div className="dashboard-content">
           <Segment className="stats-segment" secondary>
             <Grid columns={4} stackable>
-              {statsData.map((stat, index) => (
-                <Grid.Column key={index}>
-                  <Card className="stat-card">
-                    <Card.Content>
-                      <Card.Header className="stat-title">{stat.title}</Card.Header>
-                      <Card.Description>
-                        <div className="stat-value">
-                          <Icon name={stat.icon} color={stat.color} size='large' />
-                          <span>{stat.value}</span>
-                        </div>
-                        <div className={`stat-trend ${stat.trendUp ? 'trend-up' : 'trend-down'}`}>
-                          <Icon name={stat.trendUp ? 'arrow up' : 'arrow down'} size='small' />
-                          <span>{stat.trend}</span>
-                        </div>
-                      </Card.Description>
-                    </Card.Content>
-                  </Card>
-                </Grid.Column>
-              ))}
+              {/* Total Courses */}
+              <Grid.Column>
+                <StatCard
+                  title="Total Courses"
+                  value={stats?.totalCourses || 0}
+                  icon="book"
+                  color="green"
+                  trend={stats?.courseGrowth || '+0 this month'}
+                  trendUp={stats?.courseGrowth?.includes('+') || true}
+                />
+              </Grid.Column>
+
+              {/* Total Users */}
+              <Grid.Column>
+                <StatCard
+                  title="Total Users"
+                  value={stats?.totalUsers || 0}
+                  icon="user"
+                  color="teal"
+                  trend={stats?.userGrowth || '+0 this month'}
+                  trendUp={stats?.userGrowth?.includes('+') || true}
+                />
+              </Grid.Column>
+
+              {/* Total Teams */}
+              <Grid.Column>
+                <StatCard
+                  title="Total Teams"
+                  value={stats?.totalTeams || 0}
+                  icon="users"
+                  color="orange"
+                  trend={stats?.teamGrowth || '+0 this month'}
+                  trendUp={stats?.teamGrowth?.includes('+') || true}
+                />
+              </Grid.Column>
+
+              {/* Avg. Completion */}
+              <Grid.Column>
+                <StatCard
+                  title="Avg. Completion"
+                  value={stats?.avgCompletion || '0%'}
+                  icon="chart line"
+                  color="purple"
+                  trend={stats?.completionTrend || '+0% vs last month'}
+                  trendUp={stats?.completionTrend?.includes('+') || true}
+                />
+              </Grid.Column>
             </Grid>
           </Segment>
 
@@ -204,7 +244,7 @@ const Dashboard = () => {
                 Recent Courses
               </Header>
               <Card.Group itemsPerRow={1}>
-                {recentCourses.map((course) => (
+                {stats?.recentCourses?.map((course) => (
                   <Card key={course.id} className="course-card">
                     <Card.Content>
                       <Card.Header>
@@ -212,9 +252,9 @@ const Dashboard = () => {
                         {getStatusBadge(course.status)}
                       </Card.Header>
                       <Card.Meta>
-                        <span className="course-students">
+                        <span className="course-users">
                           <Icon name='users' size='small' />
-                          {course.students} students
+                          {course.users} users
                         </span>
                       </Card.Meta>
                       <Card.Description>
@@ -240,23 +280,28 @@ const Dashboard = () => {
               </Card.Group>
             </Segment>
 
-            {/* Upcoming Activities */}
+            {/* Enhanced Activity Feed */}
             <Segment className="content-card">
               <Header as='h2'>
                 <Icon name='clock' color='blue' />
-                Upcoming Activities
+                Activity Feed
               </Header>
               <div className="activities-list">
-                {upcomingActivities.map((activity) => (
-                  <div key={activity.id} className="activity-item">
-                    <div className={`activity-icon ${getColorForType(activity.type)}`}>
-                      <Icon name={getIconForType(activity.type)} size='large' />
+                {activity?.map((activityItem) => (
+                  <div key={activityItem.id} className="activity-item">
+                    <div className={`activity-icon ${getColorForType(activityItem.type)}`}>
+                      <Icon name={getIconForType(activityItem.type)} size='large' />
                     </div>
                     <div className="activity-content">
-                      <div className="activity-title">{activity.title}</div>
+                      <div className="activity-title">{activityItem.title}</div>
                       <div className="activity-meta">
-                        <span className="activity-course">{activity.course}</span>
-                        <span className="activity-date">{activity.date}</span>
+                        {activityItem.course && (
+                          <span className="activity-course">{activityItem.course}</span>
+                        )}
+                        {activityItem.user && (
+                          <span className="activity-user">{activityItem.user}</span>
+                        )}
+                        <span className="activity-date">{activityItem.date}</span>
                       </div>
                     </div>
                   </div>
@@ -268,6 +313,75 @@ const Dashboard = () => {
               </Button>
             </Segment>
           </Grid>
+
+          {/* Enrollment Charts Section */}
+          <Segment className="charts-card">
+            <Header as='h2'>
+              <Icon name='chart area' color='teal' />
+              Enrollment Trends
+            </Header>
+            <div className="charts-container">
+              {/* Monthly Enrollment Chart */}
+              <div className="chart-card">
+                <Header as='h3'>Monthly Enrollment</Header>
+                <div className="chart-placeholder">
+                  {/* In a real implementation, this would render an actual chart */}
+                  <div className="chart-info">
+                    <Icon name='chart line' size='big' color='teal' />
+                    <div>
+                      <p>Line chart showing enrollment trends over time</p>
+                      <p>Data: {enrollment?.monthlyEnrollment?.length || 0} months</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Course Popularity Chart */}
+              <div className="chart-card">
+                <Header as='h3'>Course Popularity</Header>
+                <div className="chart-placeholder">
+                  {/* In a real implementation, this would render an actual chart */}
+                  <div className="chart-info">
+                    <Icon name='pie chart' size='big' color='orange' />
+                    <div>
+                      <p>Pie chart showing distribution across courses</p>
+                      <p>Data: {enrollment?.coursePopularity?.length || 0} courses</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Segment>
+
+          {/* Team Performance Section */}
+          <Segment className="team-performance-card">
+            <Header as='h2'>
+              <Icon name='users' color='teal' />
+              Team Performance
+            </Header>
+            <div className="teams-list">
+              {teams?.teamPerformance?.map((team) => (
+                <div key={team.name} className="team-performance-item">
+                  <div className="team-info">
+                    <div className="team-name">{team.name}</div>
+                    <div className="team-progress">
+                      <span>Progress:</span>
+                      <div className="progress-bar">
+                        <div
+                          className="progress-fill"
+                          style={{
+                            width: `${team.progress}%`,
+                            backgroundColor: team.color
+                          }}
+                        />
+                      </div>
+                      <span>{team.progress}%</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Segment>
 
           {/* Quick Actions */}
           <Segment className="quick-actions-card">
@@ -286,7 +400,7 @@ const Dashboard = () => {
                 <Button fluid secondary icon size='large'>
                   <Icon name='user plus' />
                 </Button>
-                <div className="quick-action-label">Add Student</div>
+                <div className="quick-action-label">Add User</div>
               </Grid.Column>
               <Grid.Column>
                 <Button fluid secondary icon size='large'>

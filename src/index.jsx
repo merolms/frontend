@@ -5,8 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import { thunk } from 'redux-thunk';
 
-import App from './App';
-import Routes from './app/Routes';
+import routes from './app/Routes';
 import testSlice from './redux/slices/testSlice';
 import 'semantic-ui-css/semantic.min.css';
 import './styles/index.scss';
@@ -18,16 +17,11 @@ const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk }).concat(thunk),
-  devTools: process.env.NODE_ENV !== 'production',
+  devTools: import.meta.env.DEV,
 });
 
-// Router setup (v6 style)
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Routes />,
-  },
-]);
+// Router setup
+const router = createBrowserRouter(routes);
 
 // Render with React 18 createRoot
 const root = ReactDOM.createRoot(document.getElementById('root'));

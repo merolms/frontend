@@ -168,7 +168,7 @@
     padding: 0 20px 8px 20px;
   }
 
-  .course-students {
+  .course-users {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -346,5 +346,158 @@
 
   .stat-card {
     margin-bottom: 12px;
+  }
+}
+
+// Charts Section
+.charts-card {
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e8e8e8;
+  margin-bottom: 24px;
+
+  .segment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    color: $text-color-dark;
+    padding: 20px 24px !important;
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+  }
+
+  .charts-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 24px;
+  }
+
+  .chart-card {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    padding: 20px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: $text-color-dark;
+      margin: 0 0 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chart-placeholder {
+      min-height: 180px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chart-info {
+      text-align: center;
+      color: #666;
+
+      p {
+        margin: 8px 0;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// Team Performance Section
+.team-performance-card {
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e8e8e8;
+  margin-bottom: 24px;
+
+  .segment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    color: $text-color-dark;
+    padding: 20px 24px !important;
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+  }
+
+  .teams-list {
+    padding: 24px;
+  }
+
+  .team-performance-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .team-info {
+      flex: 1;
+
+      .team-name {
+        font-weight: 600;
+        color: $text-color-dark;
+        margin-bottom: 4px;
+      }
+
+      .team-progress {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .progress-bar {
+          width: 100px;
+          height: 6px;
+          background: #f0f0f0;
+          border-radius: 3px;
+          overflow: hidden;
+
+          .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+          }
+        }
+
+        span {
+          font-weight: 500;
+          color: #666;
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments for new sections
+@media (max-width: 1024px) {
+  .charts-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-segment {
+    grid-template-columns: 1fr;
   }
 }
