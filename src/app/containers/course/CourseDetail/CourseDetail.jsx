@@ -271,7 +271,7 @@ const CourseDetail = () => {
                 {course.tags?.length > 0 && (
                   <div className='course-hero-tags'>
                     {course.tags.map((tag) => (
-                      <Label key={tag} size='tiny' basic inverted>{tag}</Label>
+                      <Label key={tag} size='tiny' inverted>{tag}</Label>
                     ))}
                   </div>
                 )}
