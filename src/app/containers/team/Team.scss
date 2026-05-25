@@ -26,8 +26,6 @@
   min-width: 130px;
 }
 
-// ─── Teams Grid (CSS Grid) ───────────────────────────────────
-
 .teams-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -44,6 +42,7 @@
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
 
   &:hover {
     transform: translateY(-3px);
@@ -57,10 +56,29 @@
   align-items: center;
   justify-content: center;
   position: relative;
+}
 
-  .ui.floating.label {
-    top: -8px !important;
-    right: -8px !important;
+.team-card-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border-radius: 50%;
+  min-width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  padding: 0 6px;
+
+  &.active {
+    background: #33a163;
+  }
+
+  &.inactive {
+    background: #999;
   }
 }
 

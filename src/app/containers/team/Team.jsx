@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import {
   Segment, Icon, Button, Input, Dropdown, Pagination,
-  Label, Image, Divider, Grid, Card, Header,
+  Label, Image, Divider, Header,Grid,Card
 } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import TeamMemberAssignModal from '@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal';
@@ -207,9 +207,7 @@ const TeamContainer = () => {
                   <div key={team.id} className='team-card' onClick={() => navigate(`/teams/${team.id}`)}>
                     <div className='team-card-header' style={{ background: team.color }}>
                       <Icon name='users' size='large' color='white' />
-                      <Label floating circular style={{ background: team.status === 'active' ? '#33a163' : '#999', color: '#fff', border: 'none' }}>
-                        {team.memberCount}
-                      </Label>
+                      <span className={`team-card-badge ${team.status}`}>{team.memberCount}</span>
                     </div>
                     <div className='team-card-body'>
                       <h3 className='team-card-title'>{team.name}</h3>
