@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon, Label, Image } from 'semantic-ui-react';
+import { Icon, Label } from 'semantic-ui-react';
 import { getStatusLabel, getCategoryColor } from './viewHelpers';
 
 const GridView = ({ courses, navigate, loading }) => {
@@ -32,7 +32,7 @@ const GridView = ({ courses, navigate, loading }) => {
           >
             {/* Cover Image */}
             {course.coverImage ? (
-              <Image src={course.coverImage} wrapped ui={false} className='course-card-image' />
+              <img src={course.coverImage} alt={course.title} className='course-card-image' />
             ) : (
               <div className='course-card-image course-card-no-image'>
                 <Icon name='book' size='huge' color='grey' />
