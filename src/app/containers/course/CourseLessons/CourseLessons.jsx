@@ -70,7 +70,7 @@ const CourseLessons = () => {
   if (loading) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onNavigate={(path) => navigate(path)} />
+        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
         <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
           <div className='course-form-page'><Segment loading><Header as='h2'>Loading...</Header></Segment></div>
         </div>
@@ -80,7 +80,7 @@ const CourseLessons = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onNavigate={(path) => navigate(path)} />
+      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
       <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
 
         <div className='course-form-page'>

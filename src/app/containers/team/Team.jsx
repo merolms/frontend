@@ -102,7 +102,7 @@ const TeamContainer = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onNavigate={(path) => navigate(path)} />
+      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
 
       <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         <div className='dashboard-header'>

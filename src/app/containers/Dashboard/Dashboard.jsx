@@ -73,7 +73,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="dashboard-layout">
-        <SideBar sidebarOpen={sidebarOpen} onNavigate={handleNavigate} />
+        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
         <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
           <div className="dashboard-header">
             <div className="header-left">
@@ -89,7 +89,7 @@ const Dashboard = () => {
   if (error) {
     return (
       <div className="dashboard-layout">
-        <SideBar sidebarOpen={sidebarOpen} onNavigate={handleNavigate} />
+        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
         <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
           <div className="dashboard-header">
             <div className="header-left">
@@ -165,7 +165,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-layout">
-      <SideBar sidebarOpen={sidebarOpen} onNavigate={handleNavigate} />
+      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
 
       <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         {/* Top Header Bar */}

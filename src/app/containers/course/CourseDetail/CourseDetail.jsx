@@ -198,7 +198,7 @@ const CourseDetail = () => {
   if (loading) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onNavigate={(path) => navigate(path)} />
+        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
         <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
           <div className='course-detail-loading'>
             <Segment loading>
@@ -215,7 +215,7 @@ const CourseDetail = () => {
   if (!course) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onNavigate={(path) => navigate(path)} />
+        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
         <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
           <div className='course-detail-notfound'>
             <Segment placeholder>
@@ -233,7 +233,7 @@ const CourseDetail = () => {
   // ─── Main View ──────────────────────────────────────────────
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onNavigate={(path) => navigate(path)} />
+      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
       <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
 
         {/* Breadcrumb */}

@@ -59,7 +59,7 @@ const UserDetail = () => {
   if (loading) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onNavigate={(path) => navigate(path)} />
+        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
         <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
           <div className='dashboard-content'>
             <Segment loading><h2>Loading user...</h2></Segment>
@@ -72,7 +72,7 @@ const UserDetail = () => {
   if (!user) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onNavigate={(path) => navigate(path)} />
+        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
         <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
           <div className='dashboard-content'>
             <Segment placeholder>
@@ -87,7 +87,7 @@ const UserDetail = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onNavigate={(path) => navigate(path)} />
+      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
       <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         <div className='dashboard-header'>
           <div className='header-left'>

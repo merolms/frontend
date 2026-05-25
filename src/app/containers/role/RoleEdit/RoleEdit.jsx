@@ -53,7 +53,7 @@ const RoleEdit = () => {
   if (fetching) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onNavigate={(path) => navigate(path)} />
+        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
         <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
           <div className='dashboard-content'>
             <Segment loading className='role-form-segment'><Header as='h2'>Loading...</Header></Segment>
@@ -66,7 +66,7 @@ const RoleEdit = () => {
   if (error && !role) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onNavigate={(path) => navigate(path)} />
+        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
         <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
           <div className='dashboard-content'>
             <Segment placeholder>
@@ -81,7 +81,7 @@ const RoleEdit = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onNavigate={(path) => navigate(path)} />
+      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
       <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         <div className='dashboard-header'>
           <div className='header-left'>
