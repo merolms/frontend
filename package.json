@@ -10,11 +10,16 @@
     "lint": "eslint . --ext .js,.jsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@reduxjs/toolkit": "^2.0.1",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.1",
     "@testing-library/user-event": "^14.5.2",
-    "@faker-js/faker": "^8.4.1",
+    "@tiptap/extension-image": "^3.23.6",
+    "@tiptap/extension-link": "^3.23.6",
+    "@tiptap/extension-placeholder": "^3.23.6",
+    "@tiptap/react": "^3.23.6",
+    "@tiptap/starter-kit": "^3.23.6",
     "immer": "^10.0.4",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",

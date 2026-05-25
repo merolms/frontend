@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { Form, Input, Select, TextArea, Button, Label, Icon } from 'semantic-ui-react';
+import { Form, Input, Select, TextArea, Button, Label, Icon, Segment, Divider } from 'semantic-ui-react';
+import RichTextEditor from './RichTextEditor';
+import VideoEditor from './VideoEditor';
+import AudioEditor from './AudioEditor';
+import PdfEditor from './PdfEditor';
 
 const nodeTypeLabels = {
   section: { label: 'Section', icon: 'folder', color: 'blue' },
@@ -9,9 +13,9 @@ const nodeTypeLabels = {
 };
 
 const lessonTypes = [
-  { key: 'text', text: 'Text / HTML', icon: 'file text', value: 'text' },
+  { key: 'text', text: 'Text / Article', icon: 'file text', value: 'text' },
   { key: 'video', text: 'Video', icon: 'video', value: 'video' },
-  { key: 'audio', text: 'Audio', icon: 'volume up', value: 'audio' },
+  { key: 'audio', text: 'Audio / Podcast', icon: 'volume up', value: 'audio' },
   { key: 'pdf', text: 'PDF Document', icon: 'file pdf', value: 'pdf' },
   { key: 'quiz', text: 'Quiz', icon: 'question circle', value: 'quiz' },
   { key: 'assignment', text: 'Assignment', icon: 'edit', value: 'assignment' },
@@ -71,6 +75,131 @@ const NodeEditor = ({ node, nodeType, onSave, saving }) => {
     onSave(form);
   };
 
+  // ─── Content Editor Switch ──────────────────────────────────
+  const renderContentEditor = () => {
+    if (nodeType === 'topic') {
+      return (
+        <Form.Field>
+          <label>Content</label>
+          <Form.Group widths='equal' style={{ marginBottom: 8 }}>
+            <Select
+              options={[
+                { key: 'text', text: 'Text', value: 'text' },
+                { key: 'video', text: 'Video', value: 'video' },
+                { key: 'audio', text: 'Audio', value: 'audio' },
+              ]}
+              value={form.type}
+              onChange={(e, { value }) => update('type', value)}
+            />
+            <Input
+              value={form.duration}
+              onChange={(e) => update('duration', e.target.value)}
+              placeholder='Duration (e.g., 5 mins)'
+            />
+          </Form.Group>
+          {form.type === 'text' ? (
+            <RichTextEditor
+              value={form.content?.html || form.content || ''}
+              onChange={(html) => update('content', { ...form.content, html })}
+              placeholder='Write topic content...'
+            />
+          ) : (
+            <div className='node-editor-placeholder'>
+              <Icon name={form.type === 'video' ? 'video' : 'volume up'} size='large' color='grey' />
+              <p>Use the lesson editor to configure {form.type} content.</p>
+            </div>
+          )}
+        </Form.Field>
+      );
+    }
+
+    if (nodeType !== 'lesson') return null;
+
+    switch (form.type) {
+      case 'text':
+        return (
+          <Form.Field>
+            <label>Content</label>
+            <RichTextEditor
+              value={form.content?.html || ''}
+              onChange={(html) => update('content', { ...form.content, html })}
+              placeholder='Write your lesson content...'
+            />
+          </Form.Field>
+        );
+
+      case 'video':
+        return (
+          <Form.Field>
+            <label>Video Content</label>
+            <VideoEditor
+              content={form.content}
+              onChange={(content) => update('content', content)}
+            />
+          </Form.Field>
+        );
+
+      case 'audio':
+        return (
+          <Form.Field>
+            <label>Audio Content</label>
+            <AudioEditor
+              content={form.content}
+              onChange={(content) => update('content', content)}
+            />
+          </Form.Field>
+        );
+
+      case 'pdf':
+        return (
+          <Form.Field>
+            <label>PDF Document</label>
+            <PdfEditor
+              content={form.content}
+              onChange={(content) => update('content', content)}
+            />
+          </Form.Field>
+        );
+
+      case 'quiz':
+        return (
+          <div className='node-editor-placeholder'>
+            <Icon name='question circle' size='large' color='grey' />
+            <p style={{ margin: '8px 0 4px' }}>Quiz Builder</p>
+            <p style={{ fontSize: 12, color: '#aaa' }}>
+              Create and configure quizzes in the Quiz Builder.
+            </p>
+            <Button size='small' disabled style={{ marginTop: 8 }}>
+              <Icon name='plus' /> Create Quiz
+            </Button>
+            <p style={{ fontSize: 10, color: '#ccc', marginTop: 4 }}>
+              Quiz builder coming in a future phase
+            </p>
+          </div>
+        );
+
+      case 'assignment':
+        return (
+          <div className='node-editor-placeholder'>
+            <Icon name='edit' size='large' color='grey' />
+            <p style={{ margin: '8px 0 4px' }}>Assignment Builder</p>
+            <p style={{ fontSize: 12, color: '#aaa' }}>
+              Create assignments with instructions and submission requirements.
+            </p>
+            <Button size='small' disabled style={{ marginTop: 8 }}>
+              <Icon name='plus' /> Create Assignment
+            </Button>
+            <p style={{ fontSize: 10, color: '#ccc', marginTop: 4 }}>
+              Assignment builder coming in a future phase
+            </p>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className='node-editor'>
       <div className='node-editor-header'>
@@ -81,6 +210,7 @@ const NodeEditor = ({ node, nodeType, onSave, saving }) => {
       </div>
 
       <Form loading={saving}>
+        {/* ─── Basic Fields ─────────────────────────────────── */}
         <Form.Field required error={!!errors.title}>
           <label>Title</label>
           <Input
@@ -113,7 +243,7 @@ const NodeEditor = ({ node, nodeType, onSave, saving }) => {
 
           {nodeType === 'lesson' && (
             <Form.Field>
-              <label>Type</label>
+              <label>Content Type</label>
               <Select
                 options={lessonTypes}
                 value={form.type}
@@ -134,7 +264,7 @@ const NodeEditor = ({ node, nodeType, onSave, saving }) => {
           )}
         </Form.Group>
 
-        {/* Lesson-specific fields */}
+        {/* ─── Lesson-specific Fields ────────────────────────── */}
         {nodeType === 'lesson' && (
           <>
             <Form.Group widths='equal'>
@@ -158,93 +288,22 @@ const NodeEditor = ({ node, nodeType, onSave, saving }) => {
               </Form.Field>
             </Form.Group>
 
-            {/* Content editor based on type */}
-            {form.type === 'text' && (
-              <Form.Field>
-                <label>Content (HTML)</label>
-                <TextArea
-                  value={form.content?.html || ''}
-                  onChange={(e) => update('content', { ...form.content, html: e.target.value })}
-                  placeholder='<h2>Title</h2><p>Your content here...</p>'
-                  style={{ minHeight: 100, fontFamily: 'monospace', fontSize: 12 }}
-                />
-              </Form.Field>
-            )}
+            <Divider style={{ margin: '20px 0' }} />
 
-            {(form.type === 'video' || form.type === 'audio') && (
-              <>
-                <Form.Field>
-                  <label>{form.type === 'video' ? 'Video' : 'Audio'} URL</label>
-                  <Input
-                    value={form.content?.videoUrl || form.content?.audioUrl || ''}
-                    onChange={(e) => {
-                      const key = form.type === 'video' ? 'videoUrl' : 'audioUrl';
-                      update('content', { ...form.content, [key]: e.target.value });
-                    }}
-                    placeholder='https://example.com/media.mp4'
-                  />
-                </Form.Field>
-                <Form.Field>
-                  <label>Transcript</label>
-                  <TextArea
-                    value={form.content?.transcript || ''}
-                    onChange={(e) => update('content', { ...form.content, transcript: e.target.value })}
-                    placeholder='Video transcript or notes...'
-                    style={{ minHeight: 60 }}
-                  />
-                </Form.Field>
-              </>
-            )}
-
-            {form.type === 'pdf' && (
-              <Form.Field>
-                <label>PDF URL</label>
-                <Input
-                  value={form.content?.pdfUrl || ''}
-                  onChange={(e) => update('content', { ...form.content, pdfUrl: e.target.value })}
-                  placeholder='https://example.com/document.pdf'
-                />
-              </Form.Field>
-            )}
-
-            {(form.type === 'quiz' || form.type === 'assignment') && (
-              <div className='node-editor-placeholder'>
-                <Icon name={form.type === 'quiz' ? 'question circle' : 'edit'} size='large' color='grey' />
-                <p>Use the {form.type === 'quiz' ? 'Quiz' : 'Assignment'} builder to configure this content.</p>
-              </div>
-            )}
+            {/* ─── Content Editor ─────────────────────────────── */}
+            {renderContentEditor()}
           </>
         )}
 
-        {/* Topic content */}
+        {/* ─── Topic Content ─────────────────────────────────── */}
         {nodeType === 'topic' && (
-          <Form.Field>
-            <label>Content</label>
-            <Form.Group widths='equal' style={{ marginBottom: 8 }}>
-              <Select
-                options={[
-                  { key: 'text', text: 'Text', value: 'text' },
-                  { key: 'video', text: 'Video', value: 'video' },
-                  { key: 'audio', text: 'Audio', value: 'audio' },
-                ]}
-                value={form.type}
-                onChange={(e, { value }) => update('type', value)}
-              />
-              <Input
-                value={form.duration}
-                onChange={(e) => update('duration', e.target.value)}
-                placeholder='Duration (e.g., 5 mins)'
-              />
-            </Form.Group>
-            <TextArea
-              value={form.content?.html || form.content || ''}
-              onChange={(e) => update('content', e.target.value)}
-              placeholder='Topic content...'
-              style={{ minHeight: 80 }}
-            />
-          </Form.Field>
+          <>
+            <Divider style={{ margin: '20px 0' }} />
+            {renderContentEditor()}
+          </>
         )}
 
+        {/* ─── Actions ──────────────────────────────────────── */}
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
           <Button type='button' onClick={() => onSave(null)}>
             Cancel

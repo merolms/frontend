@@ -170,7 +170,7 @@
 }
 
 .node-editor {
-  max-width: 600px;
+  max-width: 700px;
 }
 
 .node-editor-header {
@@ -193,6 +193,27 @@
 
   .ui.icon {
     margin-bottom: 8px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+  }
+}
+
+// ─── Media Upload Zone ─────────────────────────────────────
+
+.media-upload-zone {
+  text-align: center;
+  padding: 24px;
+  background: #fafbfc;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  color: #aaa;
+  margin-top: 12px;
+
+  .ui.icon {
+    margin-bottom: 4px;
   }
 
   p {
