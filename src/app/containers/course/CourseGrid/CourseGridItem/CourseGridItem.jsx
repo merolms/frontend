@@ -5,22 +5,37 @@ import './CourseGridItem.scss';
 
 const GridItem = (props) => {
   const course = props.course;
+
   return (
-    <Card fluid={true} style={{ width: '328px' }} href="courses/12">
-      <Image src={course.CoverImage} wrapped />
+    <Card className="course-grid-item" href="courses/12">
+      <Image
+        src={course.CoverImage}
+        wrapped
+        ui={false}
+        className="course-grid-image"
+      />
+
       <Card.Content>
-        <Card.Header>{course.Title}</Card.Header>
-        <Card.Description>{course.Description}</Card.Description>
+        <Card.Header className="course-grid-title">
+          {course.Title}
+        </Card.Header>
+
+        <Card.Description className="course-grid-description">
+          {course.Description}
+        </Card.Description>
       </Card.Content>
-      <Card.Content extra style={{ display: 'inline-flex' }}>
+
+      <Card.Content extra className="course-grid-extra">
         <span className="extra-item">
-          <Icon name="user" /> Course Type
+          <Icon name="book" /> Course Type
         </span>
+
         <span className="extra-item">
-          <Icon name="user" /> 11 Dec 2020
+          <Icon name="calendar" /> 11 Dec 2020
         </span>
+
         <span className="extra-item">
-          <Icon name="user" /> 50
+          <Icon name="users" /> 50
         </span>
       </Card.Content>
     </Card>

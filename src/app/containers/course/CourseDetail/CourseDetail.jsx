@@ -226,6 +226,9 @@ const CourseDetail = () => {
       {/* Action Bar */}
       <div className='course-detail-actions'>
         <div className='action-left'>
+          <Button as={Link} to={`/courses/${id}/builder`} icon>
+            <Icon name='sitemap' /> Open Builder
+          </Button>
           <Button as={Link} to={`/courses/${id}/edit`} icon>
             <Icon name='pencil' /> Edit
           </Button>
