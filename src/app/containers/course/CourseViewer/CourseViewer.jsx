@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import {
   Header, Icon, Button, Image, Label, Segment, Breadcrumb,
-  Grid, List, Progress,
+  Grid, List, Progress,Divider
 } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { mockFetchCourseById, mockFetchLessons } from '@/app/services/courseService';
