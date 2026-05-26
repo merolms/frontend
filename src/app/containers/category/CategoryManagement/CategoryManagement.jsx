@@ -6,23 +6,25 @@ import {
 } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import {
-  fetchCategories, deleteCategory, toggleCategoryStatus,
+  fetchCategoriesWithPagination, deleteCategory, toggleCategoryStatus,
+  createCategory, updateCategory,
 } from '@/app/services/categoryService';
 import CategoryForm from '../components/CategoryForm';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
 import './Category.scss';
 
+export { fetchCategoriesWithPagination, deleteCategory, toggleCategoryStatus };
+
 const statusOptions = [
   { key: '', text: 'All Status', value: '' },
-  { key: 'active', text: 'Active', value: 'active' },
-  { key: 'inactive', text: 'Inactive', value: 'inactive' },
+  { key: 'active', text: 'Active', value: '1' },
+  { key: 'inactive', text: 'Inactive', value: '0' },
 ];
 
 const sortOptions = [
   { key: '', text: 'Default', value: '' },
   { key: 'name', text: 'Name A-Z', value: 'name' },
-  { key: 'courses', text: 'Most Courses', value: 'courses' },
   { key: 'recent', text: 'Recently Updated', value: 'recent' },
 ];
 
@@ -30,12 +32,13 @@ const CategoryManagement = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
-  const [status, setStatus] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
   const [sort, setSort] = useState('');
   const [formOpen, setFormOpen] = useState(false);
   const [editingCat, setEditingCat] = useState(null);
@@ -47,16 +50,40 @@ const CategoryManagement = () => {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await fetchCategories({ search, status, sort, page, limit });
+      setError(null);
+      const start = (page - 1) * limit;
+      let { categories: data, total: totalCount } = await fetchCategoriesWithPagination({
+        start,
+        limit,
+      });
+
+      // Client-side filtering
+      if (search) {
+        const q = search.toLowerCase();
+        data = data.filter(
+          (c) => (c.name || '').toLowerCase().includes(q) || (c.description || '').toLowerCase().includes(q)
+        );
+      }
+      if (statusFilter) {
+        data = data.filter((c) => String(c.status) === statusFilter);
+      }
+      // Client-side sorting
+      if (sort === 'name') {
+        data.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      } else if (sort === 'recent') {
+        data.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+      }
+
       setCategories(data);
-      setTotal(data.length);
-      setTotalPages(Math.ceil(data.length / limit));
+      setTotal(totalCount);
+      setTotalPages(Math.ceil(totalCount / limit) || 1);
     } catch (err) {
+      setError(err.message || 'Failed to load categories');
       console.error('Error fetching categories:', err);
     } finally {
       setLoading(false);
     }
-  }, [search, status, sort, page]);
+  }, [search, statusFilter, sort, page]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -136,6 +163,12 @@ const CategoryManagement = () => {
         </div>
 
         <div className='dashboard-content'>
+          {error && (
+            <Segment negative>
+              <Icon name='warning circle' /> {error}
+            </Segment>
+          )}
+
           {/* Filters */}
           <Segment className='category-filters' secondary>
             <div className='category-filters-row'>
@@ -147,9 +180,9 @@ const CategoryManagement = () => {
                   onChange={(e) => setSearchInput(e.target.value)}
                 />
               </form>
-              <Dropdown placeholder='Status' selection options={statusOptions} value={status} onChange={(e, { value }) => { setStatus(value); setPage(1); }} className='category-filter-dropdown' />
+              <Dropdown placeholder='Status' selection options={statusOptions} value={statusFilter} onChange={(e, { value }) => { setStatusFilter(value); setPage(1); }} className='category-filter-dropdown' />
               <Dropdown placeholder='Sort' selection options={sortOptions} value={sort} onChange={(e, { value }) => { setSort(value); setPage(1); }} className='category-filter-dropdown' />
-              <Button basic onClick={() => { setSearchInput(''); setSearch(''); setStatus(''); setSort(''); setPage(1); }}>Clear</Button>
+              <Button basic onClick={() => { setSearchInput(''); setSearch(''); setStatusFilter(''); setSort(''); setPage(1); }}>Clear</Button>
             </div>
           </Segment>
 
@@ -202,36 +235,40 @@ const CategoryManagement = () => {
                 </Table.Header>
                 <Table.Body>
                   {categories.map((cat) => (
-                    <Table.Row key={cat.id} className={`status-${cat.status}`}>
+                    <Table.Row key={cat.id} className={cat.status === 0 ? 'status-inactive' : ''}>
                       <Table.Cell>
                         <div className='category-cell-main'>
-                          <span className='category-dot' style={{ background: cat.color }} />
+                          <span className='category-dot' style={{ background: cat.color || '#1976d2' }} />
                           <div>
                             <div className='category-name'>{cat.name}</div>
-                            <div className='category-slug'>{cat.slug}</div>
+                            {cat.slug && <div className='category-slug'>{cat.slug}</div>}
                           </div>
                         </div>
                       </Table.Cell>
                       <Table.Cell className='category-cell-desc'>{cat.description || '—'}</Table.Cell>
                       <Table.Cell textAlign='center'>
-                        <Label color={cat.courseCount > 0 ? 'blue' : 'grey'} size='tiny'>
-                          {cat.courseCount}
+                        <Label color={(cat.courseCount || 0) > 0 ? 'blue' : 'grey'} size='tiny'>
+                          {cat.courseCount || 0}
                         </Label>
                       </Table.Cell>
                       <Table.Cell>
-                        <Label color={cat.status === 'active' ? 'green' : 'grey'} size='tiny' basic>
-                          {cat.status === 'active' ? 'Active' : 'Inactive'}
+                        <Label color={cat.status === 1 ? 'green' : 'grey'} size='tiny' basic>
+                          {cat.status === 1 ? 'Active' : 'Inactive'}
                         </Label>
                       </Table.Cell>
-                      <Table.Cell>{cat.updatedAt}</Table.Cell>
+                      <Table.Cell>
+                        <span style={{ fontSize: '12px', color: '#888' }}>
+                          {cat.updatedAt ? new Date(cat.updatedAt * 1000).toLocaleDateString() : '—'}
+                        </span>
+                      </Table.Cell>
                       <Table.Cell textAlign='center'>
                         <PermissionGuard permissions={['courses.edit']}>
                           <Button size='small' icon onClick={() => handleEdit(cat)} title='Edit'>
                             <Icon name='pencil' />
                           </Button>
                         </PermissionGuard>
-                        <Button size='small' icon onClick={() => handleToggleStatus(cat)} title={cat.status === 'active' ? 'Deactivate' : 'Activate'}>
-                          <Icon name={cat.status === 'active' ? 'pause' : 'check'} />
+                        <Button size='small' icon onClick={() => handleToggleStatus(cat)} title={cat.status === 1 ? 'Deactivate' : 'Activate'}>
+                          <Icon name={cat.status === 1 ? 'pause' : 'check'} />
                         </Button>
                         <PermissionGuard permissions={['courses.delete']}>
                           <Button size='small' icon color='red' onClick={() => setDeleteTarget(cat)} title='Delete'>
