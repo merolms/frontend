@@ -8,10 +8,12 @@ import SideBar from '@/app/containers/SideBar/SideBar';
 import TeamMemberAssignModal from '@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { fetchTeamById, fetchTeamMembers, deleteTeam } from '@/app/services/teamService';
+import { useToast } from '@/app/context/ToastContext';
 
 const TeamDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { addToast } = useToast();
   const [team, setTeam] = useState(null);
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,9 +49,11 @@ const TeamDetail = () => {
   };
 
   const handleDelete = async () => {
+    const teamName = team?.name;
     try {
       setActionLoading(true);
       await deleteTeam(id);
+      addToast(`Team "${teamName}" deleted successfully`, 'success');
       navigate('/teams');
     } catch (err) {
       console.error('Error deleting team:', err);

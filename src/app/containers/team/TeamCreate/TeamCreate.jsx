@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { Segment, Icon, Breadcrumb, Divider } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { createTeam } from '@/app/services/teamService';
+import { useToast } from '@/app/context/ToastContext';
 
 const PRESET_COLORS = ['#1976d2', '#7b1fa2', '#e65100', '#33a163', '#c62828', '#00838f', '#f57f17', '#4a148c', '#2185d0', '#d32f2f', '#388e3c', '#f57c00'];
 
 const TeamCreate = () => {
   const navigate = useNavigate();
+  const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
@@ -32,6 +34,7 @@ const TeamCreate = () => {
       setLoading(true);
       setError(null);
       const team = await createTeam(formData);
+      addToast(`Team "${team.name}" created successfully`, 'success');
       navigate(`/teams/${team.id}`);
     } catch (err) {
       setError(err.message || 'Failed to create team. Please try again.');

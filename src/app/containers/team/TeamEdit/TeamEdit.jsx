@@ -4,10 +4,12 @@ import { Segment, Icon, Breadcrumb, Divider } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import TeamForm from '@/app/containers/team/TeamForm/TeamForm';
 import { fetchTeamById, updateTeam } from '@/app/services/teamService';
+import { useToast } from '@/app/context/ToastContext';
 
 const TeamEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [team, setTeam] = useState(null);
@@ -33,6 +35,7 @@ const TeamEdit = () => {
       setLoading(true);
       setError(null);
       const updated = await updateTeam(id, formData);
+      addToast(`Team "${formData.name}" updated successfully`, 'success');
       navigate(`/teams/${updated.id}`);
     } catch (err) {
       setError('Failed to update team. Please try again.');

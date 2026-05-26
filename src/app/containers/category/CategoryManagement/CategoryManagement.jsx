@@ -12,6 +12,7 @@ import {
 import CategoryForm from '../components/CategoryForm';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
+import { useToast } from '@/app/context/ToastContext';
 import './Category.scss';
 
 export { fetchCategoriesWithPagination, deleteCategory, toggleCategoryStatus };
@@ -30,6 +31,7 @@ const sortOptions = [
 
 const CategoryManagement = () => {
   const navigate = useNavigate();
+  const { addToast } = useToast();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -108,8 +110,10 @@ const CategoryManagement = () => {
     try {
       if (editingCat) {
         await updateCategory(editingCat.id, formData);
+        addToast(`Category "${formData.name}" updated successfully`, 'success');
       } else {
         await createCategory(formData);
+        addToast(`Category "${formData.name}" created successfully`, 'success');
       }
       setFormOpen(false);
       setEditingCat(null);
@@ -127,6 +131,7 @@ const CategoryManagement = () => {
       setActionLoading(true);
       await deleteCategory(deleteTarget.id);
       setDeleteTarget(null);
+      addToast(`Category "${deleteTarget.name}" deleted successfully`, 'success');
       await fetchData();
     } catch (err) {
       alert(err.message);
