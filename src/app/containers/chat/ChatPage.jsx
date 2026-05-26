@@ -11,7 +11,6 @@ import {
 import './Chat.scss';
 
 const ChatPage = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const user = useSelector((s) => s.auth.user);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -151,8 +150,8 @@ const ChatPage = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className='dashboard-main'>
 
         <div className='dashboard-header'>
           <div className='header-left'>

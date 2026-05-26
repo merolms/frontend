@@ -272,36 +272,35 @@ export const getStoredAuth = () => {
   return null;
 };
 
-// ==================== ROLE FUNCTIONS (static UI data) ====================
+// ==================== ROLES (real backend API) ====================
+
+export const fetchRoles = async () => {
+  return await apiGet('/roles');
+};
+
+export const fetchRoleById = async (id) => {
+  return await apiGet(`/roles/${id}`);
+};
+
+export const createRole = async (roleData) => {
+  return await apiPost('/roles', roleData);
+};
+
+export const updateRole = async (id, roleData) => {
+  return await apiPut(`/roles/${id}`, roleData);
+};
+
+export const deleteRole = async (id) => {
+  return await apiDelete(`/roles/${id}`);
+};
+
+// ==================== ROLE DEFINITIONS (static UI data) ====================
 
 export const getRoleDefinitions = () => Promise.resolve([...roleDefinitions]);
 
 export const getRoleById = (id) => {
   const role = roleDefinitions.find((r) => r.id === id);
   return Promise.resolve(role ? { ...role } : null);
-};
-
-export const createRole = async (roleData) => {
-  await new Promise((r) => setTimeout(r, 400));
-  const newRole = { id: `role_${Date.now()}`, ...roleData };
-  roleDefinitions.push(newRole);
-  return Promise.resolve(newRole);
-};
-
-export const updateRole = async (id, roleData) => {
-  await new Promise((r) => setTimeout(r, 400));
-  const index = roleDefinitions.findIndex((r) => r.id === id);
-  if (index === -1) return Promise.reject(new Error('Role not found'));
-  roleDefinitions[index] = { ...roleDefinitions[index], ...roleData };
-  return Promise.resolve(roleDefinitions[index]);
-};
-
-export const deleteRole = async (id) => {
-  await new Promise((r) => setTimeout(r, 400));
-  const index = roleDefinitions.findIndex((r) => r.id === id);
-  if (index === -1) return Promise.reject(new Error('Role not found'));
-  roleDefinitions.splice(index, 1);
-  return Promise.resolve();
 };
 
 // ==================== PASSWORD RESET (mock - no backend endpoint yet) ====================

@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import {
   Segment, Icon, Breadcrumb, Divider, Button, Label,
-  Grid, Image, List, Card, Header,
+  Grid, Image, List, Card, Header, Message,
 } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
-import { mockFetchUserById, mockDeleteUser } from '@/app/services/userService';
+import { fetchUserById, deleteUser } from '@/app/services/userService';
 
 const UserDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
 
@@ -24,9 +24,11 @@ const UserDetail = () => {
   const loadUser = async () => {
     try {
       setLoading(true);
-      const data = await mockFetchUserById(id);
+      setError(null);
+      const data = await fetchUserById(id);
       setUser(data);
     } catch (err) {
+      setError('Failed to load user data.');
       console.error('Error loading user:', err);
     } finally {
       setLoading(false);
@@ -36,10 +38,11 @@ const UserDetail = () => {
   const handleDelete = async () => {
     try {
       setActionLoading(true);
-      await mockDeleteUser(id);
+      await deleteUser(id);
       navigate('/users');
     } catch (err) {
       console.error('Error deleting user:', err);
+      setError('Failed to delete user.');
     } finally {
       setActionLoading(false);
       setShowDelete(false);
@@ -59,10 +62,27 @@ const UserDetail = () => {
   if (loading) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='dashboard-content'>
             <Segment loading><h2>Loading user...</h2></Segment>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className='dashboard-layout'>
+        <SideBar />
+        <div className='dashboard-main'>
+          <div className='dashboard-content'>
+            <Message negative>
+              <Message.Header>Error</Message.Header>
+              <p>{error}</p>
+            </Message>
+            <Button primary onClick={() => navigate('/users')}>Back to Users</Button>
           </div>
         </div>
       </div>
@@ -72,8 +92,8 @@ const UserDetail = () => {
   if (!user) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='dashboard-content'>
             <Segment placeholder>
               <Header icon><Icon name='warning circle' /> User not found</Header>
@@ -87,8 +107,8 @@ const UserDetail = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'>
             <h1 className='page-title'>Users</h1>
@@ -117,7 +137,7 @@ const UserDetail = () => {
               {/* Profile Card */}
               <Segment className='user-profile-card'>
                 <div className='user-profile-header'>
-                  <Image src={user.avatar} circular className='user-avatar-large' />
+                  <Image src={user.avatar || 'https://i.pravatar.cc/150?img=1'} circular className='user-avatar-large' />
                   <Header as='h2' style={{ margin: '12px 0 4px' }}>
                     {user.firstName} {user.lastName}
                   </Header>
@@ -125,9 +145,9 @@ const UserDetail = () => {
                   <p className='user-profile-email'>
                     <Icon name='mail' /> {user.email}
                   </p>
-                  <div className={`user-status-badge ${user.status}`}>
-                    <Icon name={user.status === 'active' ? 'check circle' : 'pause circle'} />
-                    {user.status === 'active' ? 'Active' : 'Inactive'}
+                  <div className={`user-status-badge ${user.status === 1 ? 'active' : 'inactive'}`}>
+                    <Icon name={user.status === 1 ? 'check circle' : 'pause circle'} />
+                    {user.status === 1 ? 'Active' : 'Inactive'}
                   </div>
                 </div>
 
@@ -150,13 +170,13 @@ const UserDetail = () => {
                   <List.Item>
                     <Icon name='calendar' />
                     <List.Content>
-                      <strong>Joined:</strong> {user.joinedAt}
+                      <strong>Joined:</strong> {user.created_at ? new Date(user.created_at * 1000).toLocaleDateString() : 'N/A'}
                     </List.Content>
                   </List.Item>
                   <List.Item>
                     <Icon name='clock outline' />
                     <List.Content>
-                      <strong>Last Active:</strong> {user.lastActive}
+                      <strong>Last Online:</strong> {user.last_online ? new Date(user.last_online * 1000).toLocaleDateString() : 'N/A'}
                     </List.Content>
                   </List.Item>
                 </List>
@@ -164,82 +184,53 @@ const UserDetail = () => {
             </Grid.Column>
 
             <Grid.Column width={10}>
-              {/* Teams */}
+              {/* Permissions */}
               <Segment className='user-detail-segment'>
                 <Header as='h3'>
-                  <Icon name='users' color='teal' />
-                  Team Assignments
+                  <Icon name='shield' color='purple' />
+                  Permissions
                 </Header>
-                {user.teams && user.teams.length > 0 ? (
-                  <div className='user-teams-list'>
-                    {user.teams.map((team, i) => (
-                      <Label key={i} color='teal' size='large' style={{ marginRight: 8, marginBottom: 8 }}>
-                        <Icon name='users' /> {team}
-                      </Label>
-                    ))}
+                {user.permissions && user.permissions.length > 0 ? (
+                  <div>
+                    {user.permissions.includes('*') ? (
+                      <Label color='red' size='medium'><Icon name='star' /> Full Administrator Access</Label>
+                    ) : (
+                      <div>
+                        {user.permissions.map((perm, i) => (
+                          <Label key={i} size='tiny' basic style={{ margin: '2px' }}>{perm}</Label>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ) : (
-                  <p style={{ color: '#888' }}>Not assigned to any teams yet.</p>
+                  <p style={{ color: '#888' }}>No specific permissions assigned.</p>
                 )}
-              </Segment>
-
-              {/* Learning Progress */}
-              <Segment className='user-detail-segment'>
-                <Header as='h3'>
-                  <Icon name='book' color='blue' />
-                  Learning Progress
-                </Header>
-                <Grid columns={2} stackable>
-                  <Grid.Column>
-                    <Card className='user-stat-card'>
-                      <Card.Content>
-                        <div className='user-stat-value'>{user.coursesEnrolled}</div>
-                        <div className='user-stat-label'>Courses Enrolled</div>
-                      </Card.Content>
-                    </Card>
-                  </Grid.Column>
-                  <Grid.Column>
-                    <Card className='user-stat-card'>
-                      <Card.Content>
-                        <div className='user-stat-value'>{user.coursesCompleted}</div>
-                        <div className='user-stat-label'>Courses Completed</div>
-                      </Card.Content>
-                    </Card>
-                  </Grid.Column>
-                </Grid>
               </Segment>
 
               {/* Activity Summary */}
               <Segment className='user-detail-segment'>
                 <Header as='h3'>
                   <Icon name='chart bar' color='orange' />
-                  Activity Summary
+                  Account Summary
                 </Header>
-                <List>
-                  <List.Item>
-                    <List.Icon name='graduation cap' color='green' />
-                    <List.Content>
-                      <strong>{user.coursesCompleted}</strong> of <strong>{user.coursesEnrolled}</strong> courses completed
-                      {user.coursesEnrolled > 0 && (
-                        <span style={{ color: '#888', marginLeft: 8 }}>
-                          ({Math.round((user.coursesCompleted / user.coursesEnrolled) * 100)}%)
-                        </span>
-                      )}
-                    </List.Content>
-                  </List.Item>
-                  <List.Item>
-                    <List.Icon name='users' color='teal' />
-                    <List.Content>
-                      Member of <strong>{user.teams?.length || 0}</strong> team{(user.teams?.length || 0) !== 1 ? 's' : ''}
-                    </List.Content>
-                  </List.Item>
-                  <List.Item>
-                    <List.Icon name='clock outline' color='blue' />
-                    <List.Content>
-                      Last active on <strong>{user.lastActive}</strong>
-                    </List.Content>
-                  </List.Item>
-                </List>
+                <Grid columns={2} stackable>
+                  <Grid.Column>
+                    <Card className='user-stat-card'>
+                      <Card.Content>
+                        <div className='user-stat-value'>{user.status === 1 ? 'Active' : 'Inactive'}</div>
+                        <div className='user-stat-label'>Account Status</div>
+                      </Card.Content>
+                    </Card>
+                  </Grid.Column>
+                  <Grid.Column>
+                    <Card className='user-stat-card'>
+                      <Card.Content>
+                        <div className='user-stat-value'>{user.role}</div>
+                        <div className='user-stat-label'>Role</div>
+                      </Card.Content>
+                    </Card>
+                  </Grid.Column>
+                </Grid>
               </Segment>
             </Grid.Column>
           </Grid>

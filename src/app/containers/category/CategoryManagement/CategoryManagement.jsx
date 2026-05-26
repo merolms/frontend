@@ -28,7 +28,6 @@ const sortOptions = [
 
 const CategoryManagement = () => {
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -120,8 +119,8 @@ const CategoryManagement = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'>
             <h1 className='page-title'>Categories</h1>

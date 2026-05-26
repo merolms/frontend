@@ -2,22 +2,18 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import {
   Segment, Icon, Button, Input, Dropdown, Pagination,
-  Label, Table, Image, Divider,
+  Label, Table, Image, Divider, Header,
 } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
-import { mockFetchUsers, mockDeleteUser, mockRoles } from '@/app/services/userService';
+import { fetchUsers, deleteUser } from '@/app/services/userService';
+import { fetchRoles } from '@/app/services/authService';
 import './User.scss';
-
-const roleOptions = [
-  { key: 'all', text: 'All Roles', value: '' },
-  ...mockRoles.map((r) => ({ key: r, text: r, value: r })),
-];
 
 const statusOptions = [
   { key: 'all', text: 'All Status', value: '' },
-  { key: 'active', text: 'Active', value: 'active' },
-  { key: 'inactive', text: 'Inactive', value: 'inactive' },
+  { key: 'active', text: 'Active', value: '1' },
+  { key: 'inactive', text: 'Inactive', value: '0' },
 ];
 
 const sortOptions = [
@@ -40,14 +36,15 @@ const getRoleColor = (role) => {
 const UserContainer = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [roleOptions, setRoleOptions] = useState([{ key: 'all', text: 'All Roles', value: '' }]);
 
   const page = parseInt(searchParams.get('page')) || 1;
   const search = searchParams.get('search') || '';
@@ -57,14 +54,38 @@ const UserContainer = () => {
 
   const [searchInput, setSearchInput] = useState(search);
 
+  // Load role options for filter dropdown
+  useEffect(() => {
+    const loadRoles = async () => {
+      try {
+        const roles = await fetchRoles();
+        const opts = [
+          { key: 'all', text: 'All Roles', value: '' },
+          ...roles.map((r) => ({ key: r.name, text: r.name, value: r.name })),
+        ];
+        setRoleOptions(opts);
+      } catch (err) {
+        console.error('Error loading roles:', err);
+      }
+    };
+    loadRoles();
+  }, []);
+
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await mockFetchUsers({ search, role, status, sort, page, limit: 8 });
-      setUsers(data.users);
-      setTotalPages(data.totalPages);
-      setTotal(data.total);
+      setError(null);
+      const params = { page, limit: 10 };
+      if (search) params.search = search;
+      if (role) params.role = role;
+      if (status) params.status = status;
+      if (sort) params.sort = sort;
+      const data = await fetchUsers(params);
+      setUsers(data || []);
+      setTotal(data?.length || 0);
+      setTotalPages(1);
     } catch (err) {
+      setError(err.message || 'Failed to load users');
       console.error('Error fetching users:', err);
     } finally {
       setLoading(false);
@@ -96,7 +117,7 @@ const UserContainer = () => {
     if (!deleteTarget) return;
     try {
       setActionLoading(true);
-      await mockDeleteUser(deleteTarget.id);
+      await deleteUser(deleteTarget.id);
       setDeleteTarget(null);
       fetchData();
     } catch (err) {
@@ -108,9 +129,9 @@ const UserContainer = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
+      <SideBar />
 
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'>
             <h1 className='page-title'>Users</h1>
@@ -185,12 +206,19 @@ const UserContainer = () => {
                     <Label size='small' color='purple' onRemove={() => updateParams({ role: '', page: 1 })}>{role}</Label>
                   )}
                   {status && (
-                    <Label size='small' color='green' onRemove={() => updateParams({ status: '', page: 1 })}>{status}</Label>
+                    <Label size='small' color='green' onRemove={() => updateParams({ status: '', page: 1 })}>{status === '1' ? 'Active' : 'Inactive'}</Label>
                   )}
                 </div>
               </>
             )}
           </Segment>
+
+          {/* Error message */}
+          {error && (
+            <Segment className='user-error' negative>
+              <Icon name='warning circle' /> {error}
+            </Segment>
+          )}
 
           {/* User Table */}
           {loading ? (
@@ -217,8 +245,7 @@ const UserContainer = () => {
                       <Table.HeaderCell width={4}>User</Table.HeaderCell>
                       <Table.HeaderCell width={3}>Role</Table.HeaderCell>
                       <Table.HeaderCell width={3}>Status</Table.HeaderCell>
-                      <Table.HeaderCell width={3}>Teams</Table.HeaderCell>
-                      <Table.HeaderCell width={2}>Joined</Table.HeaderCell>
+                      <Table.HeaderCell width={3}>Joined</Table.HeaderCell>
                       <Table.HeaderCell width={1} textAlign='center'>Actions</Table.HeaderCell>
                     </Table.Row>
                   </Table.Header>
@@ -227,7 +254,7 @@ const UserContainer = () => {
                       <Table.Row key={user.id} className='user-table-row'>
                         <Table.Cell>
                           <div className='user-cell' onClick={() => navigate(`/users/${user.id}`)}>
-                            <Image src={user.avatar} circular className='user-avatar-small' />
+                            <Image src={user.avatar || 'https://i.pravatar.cc/150?img=1'} circular className='user-avatar-small' />
                             <div className='user-cell-info'>
                               <div className='user-cell-name'>
                                 {user.firstName} {user.lastName}
@@ -240,26 +267,15 @@ const UserContainer = () => {
                           <Label color={getRoleColor(user.role)} size='small'>{user.role}</Label>
                         </Table.Cell>
                         <Table.Cell>
-                          <Label color={user.status === 'active' ? 'green' : 'grey'} size='small' circular empty
+                          <Label color={user.status === 1 ? 'green' : 'grey'} size='small' circular empty
                             style={{ marginRight: 4 }}
                           />
-                          {user.status === 'active' ? 'Active' : 'Inactive'}
+                          {user.status === 1 ? 'Active' : 'Inactive'}
                         </Table.Cell>
                         <Table.Cell>
-                          {user.teams && user.teams.length > 0 ? (
-                            <div>
-                              {user.teams.map((team, i) => (
-                                <Label key={i} size='mini' color='teal' style={{ margin: '2px 2px' }}>
-                                  {team}
-                                </Label>
-                              ))}
-                            </div>
-                          ) : (
-                            <span style={{ color: '#aaa', fontSize: '12px' }}>—</span>
-                          )}
-                        </Table.Cell>
-                        <Table.Cell>
-                          <span style={{ fontSize: '13px', color: '#666' }}>{user.joinedAt}</span>
+                          <span style={{ fontSize: '13px', color: '#666' }}>
+                            {user.created_at ? new Date(user.created_at * 1000).toLocaleDateString() : '—'}
+                          </span>
                         </Table.Cell>
                         <Table.Cell textAlign='center'>
                           <Button size='small' icon as={Link} to={`/users/${user.id}/edit`}>

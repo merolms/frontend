@@ -6,7 +6,6 @@ import { mockDashboardStats, mockDashboardActivity } from '@/app/services/dashbo
 import './Dashboard.scss';
 
 const Dashboard = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const user = useSelector((s) => s.auth.user);
 
   // Use mock data directly (no API calls needed)
@@ -15,8 +14,8 @@ const Dashboard = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className="dashboard-main">
 
         {/* Header */}
         <div className='dashboard-header'>

@@ -7,12 +7,11 @@ import {
 import SideBar from '@/app/containers/SideBar/SideBar';
 import TeamMemberAssignModal from '@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
-import { mockFetchTeamById, mockDeleteTeam } from '@/app/services/teamService';
+import { fetchTeamById, deleteTeam } from '@/app/services/teamService';
 
 const TeamDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [team, setTeam] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
@@ -24,7 +23,7 @@ const TeamDetail = () => {
   const loadTeam = async () => {
     try {
       setLoading(true);
-      const data = await mockFetchTeamById(id);
+      const data = await fetchTeamById(id);
       setTeam(data);
     } catch (err) {
       console.error('Error loading team:', err);
@@ -36,7 +35,7 @@ const TeamDetail = () => {
   const handleDelete = async () => {
     try {
       setActionLoading(true);
-      await mockDeleteTeam(id);
+      await deleteTeam(id);
       navigate('/teams');
     } catch (err) {
       console.error('Error deleting team:', err);
@@ -49,8 +48,8 @@ const TeamDetail = () => {
   if (loading) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='dashboard-content'>
             <Segment loading><h2>Loading team...</h2></Segment>
           </div>
@@ -62,8 +61,8 @@ const TeamDetail = () => {
   if (!team) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='dashboard-content'>
             <Segment placeholder>
               <Header icon><Icon name='warning circle' /> Team not found</Header>
@@ -87,8 +86,8 @@ const TeamDetail = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'>
             <h1 className='page-title'>Teams</h1>

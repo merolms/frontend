@@ -17,7 +17,6 @@ import './CourseLessons.scss';
 const CourseLessons = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -70,8 +69,8 @@ const CourseLessons = () => {
   if (loading) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='course-form-page'><Segment loading><Header as='h2'>Loading...</Header></Segment></div>
         </div>
       </div>
@@ -80,8 +79,8 @@ const CourseLessons = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className='dashboard-main'>
 
         <div className='course-form-page'>
           <Breadcrumb>

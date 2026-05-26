@@ -1,49 +1,53 @@
-@use "../../../../styles/index.scss" as *;
-
 .sidebar-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 10px 16px;
+  justify-content: center;
+  padding: 8px 4px;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
   text-decoration: none;
   color: inherit;
-
-  &:hover {
-    background: var(--sidebar-item-hover, rgba(51, 161, 99, 0.1));
-  }
-
-  &.active-item {
-    background: $primary-color;
-    box-shadow: 0 2px 8px rgba(51, 161, 99, 0.3);
-
-    .sidebar-item-label {
-      color: #fff;
-      font-weight: 600;
-    }
-
-    .sidebar-item-icon {
-      color: #fff;
-    }
-  }
-}
-
-.sidebar-item-alignment-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
+  gap: 4px;
 }
 
 .sidebar-item-icon {
-  min-width: 20px;
-  text-align: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: inherit;
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: scale(1.15);
+    background: var(--sidebar-item-icon-hover);
+    color: var(--sidebar-text-hover);
+  }
+
+  &.selected {
+    background: var(--sidebar-item-icon-active-bg);
+    color: var(--sidebar-item-icon-active-color) !important;
+    box-shadow: 0 0 0 2px var(--sidebar-item-icon-active-border);
+    transform: scale(1.08);
+  }
 }
 
 .sidebar-item-label {
-  font-size: 14px;
+  font-size: 10px;
   font-weight: 500;
   white-space: nowrap;
+  text-align: center;
+  line-height: 1.2;
+  color: inherit;
+  transition: color 0.2s ease;
+
+  &.selected {
+    color: var(--sidebar-item-label-active);
+    font-weight: 600;
+  }
 }

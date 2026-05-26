@@ -3,12 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Segment, Icon, Breadcrumb, Divider, Header, Button } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import RoleForm from '@/app/containers/role/RoleForm/RoleForm';
-import { getRoleById, updateRole } from '@/app/services/authService';
+import { fetchRoleById, updateRole } from '@/app/services/authService';
 
 const RoleEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [role, setRole] = useState(null);
@@ -18,7 +17,7 @@ const RoleEdit = () => {
     const loadRole = async () => {
       try {
         setFetching(true);
-        const data = await getRoleById(id);
+        const data = await fetchRoleById(id);
         if (!data) {
           setError('Role not found.');
           return;
@@ -53,8 +52,8 @@ const RoleEdit = () => {
   if (fetching) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='dashboard-content'>
             <Segment loading className='role-form-segment'><Header as='h2'>Loading...</Header></Segment>
           </div>
@@ -66,8 +65,8 @@ const RoleEdit = () => {
   if (error && !role) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='dashboard-content'>
             <Segment placeholder>
               <Header icon><Icon name='warning circle' /> {error}</Header>
@@ -81,8 +80,8 @@ const RoleEdit = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'>
             <h1 className='page-title'>Roles & Permissions</h1>

@@ -7,11 +7,10 @@ import {
   Divider, Form, Input, TextArea, Tab, Message, Radio,
 } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
-import { mockUpdateUser } from '@/app/services/userService';
+import { updateProfile, changePassword } from '@/app/services/authService';
 
 const Settings = () => {
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const user = useSelector((state) => state.auth.user);
   const { mode, resolvedTheme, changeMode } = useTheme();
 
@@ -53,7 +52,7 @@ const Settings = () => {
     setError(null);
     setSuccess(null);
     try {
-      await mockUpdateUser(user.id, profileForm);
+      await updateProfile(profileForm);
       setSuccess('Profile updated successfully.');
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
@@ -78,12 +77,15 @@ const Settings = () => {
       return;
     }
     try {
-      // In static mode, password change always succeeds
+      await changePassword({
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+      });
       setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
       setSuccess('Password changed successfully.');
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
-      setError('Failed to change password.');
+      setError(err.message || 'Failed to change password.');
     } finally {
       setSaving(false);
     }
@@ -295,8 +297,8 @@ const Settings = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className='dashboard-main'>
 
         <div className='dashboard-header'>
           <div className='header-left'>

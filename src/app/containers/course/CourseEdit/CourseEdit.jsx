@@ -8,7 +8,6 @@ import '../CourseForm/CourseForm.scss';
 const CourseEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [course, setCourse] = useState(null);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState(null);
@@ -25,8 +24,8 @@ const CourseEdit = () => {
   if (fetching) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='course-form-page'><Segment loading><Header as='h2'>Loading...</Header></Segment></div>
         </div>
       </div>
@@ -35,8 +34,8 @@ const CourseEdit = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className='dashboard-main'>
 
         <div className='course-form-page'>
           <Breadcrumb>

@@ -10,7 +10,6 @@ import { mockCourses } from '@/app/services/courseService';
 
 const MyLearning = () => {
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const user = useSelector((s) => s.auth.user);
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,8 +42,8 @@ const MyLearning = () => {
   if (!user) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='dashboard-content'>
             <Segment placeholder>
               <Header icon><Icon name='lock' /> Please log in</Header>
@@ -58,8 +57,8 @@ const MyLearning = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className='dashboard-main'>
 
         <div className='dashboard-header'>
           <div className='header-left'>

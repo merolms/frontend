@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Segment, Icon, Breadcrumb, Divider } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import TeamForm from '@/app/containers/team/TeamForm/TeamForm';
-import { mockFetchTeamById, mockUpdateTeam } from '@/app/services/teamService';
+import { fetchTeamById, updateTeam } from '@/app/services/teamService';
 
 const TeamEdit = () => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const TeamEdit = () => {
     const loadTeam = async () => {
       try {
         setFetching(true);
-        const data = await mockFetchTeamById(id);
+        const data = await fetchTeamById(id);
         setTeam(data);
       } catch (err) {
         setError('Failed to load team data.');
@@ -33,7 +33,7 @@ const TeamEdit = () => {
     try {
       setLoading(true);
       setError(null);
-      const updated = await mockUpdateTeam(id, formData);
+      const updated = await updateTeam(id, formData);
       navigate(`/teams/${updated.id}`);
     } catch (err) {
       setError('Failed to update team. Please try again.');
@@ -49,8 +49,8 @@ const TeamEdit = () => {
   if (fetching) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='dashboard-content'>
             <Segment loading className='team-form-segment'><h2>Loading...</h2></Segment>
           </div>
@@ -61,8 +61,8 @@ const TeamEdit = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'>
             <h1 className='page-title'>Teams</h1>

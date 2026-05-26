@@ -18,7 +18,6 @@ const CourseDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const user = useSelector((s) => s.auth.user);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -231,8 +230,8 @@ const CourseDetail = () => {
   if (loading) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='course-detail-loading'>
             <Segment loading>
               <div className='skeleton-hero' />
@@ -248,8 +247,8 @@ const CourseDetail = () => {
   if (!course) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='course-detail-notfound'>
             <Segment placeholder>
               <Header icon><Icon name='warning circle' /> Course not found</Header>
@@ -266,8 +265,8 @@ const CourseDetail = () => {
   // ─── Main View ──────────────────────────────────────────────
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className='dashboard-main'>
 
         {/* Breadcrumb */}
         <div className='course-detail-breadcrumb'>

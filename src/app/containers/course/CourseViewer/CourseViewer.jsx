@@ -14,7 +14,6 @@ const CourseViewer = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const user = useSelector((s) => s.auth.user);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -65,8 +64,8 @@ const CourseViewer = () => {
   if (loading) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='dashboard-content' style={{ textAlign: 'center', padding: 60 }}>
             <Segment loading><h2>Loading course...</h2></Segment>
           </div>
@@ -78,8 +77,8 @@ const CourseViewer = () => {
   if (!course) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='dashboard-content'>
             <Segment placeholder>
               <Header icon><Icon name='warning circle' /> Course not found</Header>
@@ -95,8 +94,8 @@ const CourseViewer = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className='dashboard-main'>
         <div className='dashboard-content'>
 
           <Breadcrumb>

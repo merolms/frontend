@@ -7,7 +7,6 @@ import '../CourseForm/CourseForm.scss';
 
 const CourseCreate = () => {
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleSubmit = async (formData) => {
     const course = await mockCreateCourse(formData);
@@ -18,8 +17,8 @@ const CourseCreate = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className='dashboard-main'>
 
         <div className='course-form-page'>
           <Breadcrumb>

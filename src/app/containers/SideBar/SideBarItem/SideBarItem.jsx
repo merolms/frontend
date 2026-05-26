@@ -12,16 +12,14 @@ export class SideBarItem extends React.Component {
 
   render() {
     const { path, label, icon, active, onClick } = this.props;
-    
+
     return (
       <Link to={path} onClick={this.handleClick}>
-        <div className={`sidebar-item ${active ? 'active-item' : ''}`}>
-          <div className='sidebar-item-alignment-container'>
-            <span className='sidebar-item-icon'>
-              <Icon size="large" name={icon} />
-            </span>
-            <span className='sidebar-item-label'>{label}</span>
+        <div className='sidebar-item'>
+          <div className={`sidebar-item-icon${active ? ' selected' : ''}`}>
+            <Icon name={icon} />
           </div>
+          <span className={`sidebar-item-label${active ? ' selected' : ''}`}>{label}</span>
         </div>
       </Link>
     );

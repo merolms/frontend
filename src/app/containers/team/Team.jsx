@@ -2,12 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import {
   Segment, Icon, Button, Input, Dropdown, Pagination,
-  Label, Image, Divider, Header,Grid,Card
+  Label, Image, Divider, Header, Grid, Card,
 } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import TeamMemberAssignModal from '@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
-import { mockFetchTeams, mockDeleteTeam } from '@/app/services/teamService';
+import { fetchTeams, deleteTeam } from '@/app/services/teamService';
 import './Team.scss';
 
 const statusOptions = [
@@ -20,16 +20,15 @@ const sortOptions = [
   { key: 'newest', text: 'Newest First', value: 'newest' },
   { key: 'name', text: 'Name A-Z', value: 'name' },
   { key: 'members', text: 'Most Members', value: 'members' },
-  { key: 'progress', text: 'Highest Progress', value: 'progress' },
 ];
 
 const TeamContainer = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
 
@@ -47,11 +46,17 @@ const TeamContainer = () => {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await mockFetchTeams({ search, status, sort, page, limit: 8 });
-      setTeams(data.teams);
-      setTotalPages(data.totalPages);
-      setTotal(data.total);
+      setError(null);
+      const params = { page, limit: 8 };
+      if (search) params.search = search;
+      if (status) params.status = status;
+      if (sort) params.sort = sort;
+      const data = await fetchTeams(params);
+      setTeams(data || []);
+      setTotal(data?.length || 0);
+      setTotalPages(1);
     } catch (err) {
+      setError(err.message || 'Failed to load teams');
       console.error('Error fetching teams:', err);
     } finally {
       setLoading(false);
@@ -83,7 +88,7 @@ const TeamContainer = () => {
     if (!deleteTarget) return;
     try {
       setActionLoading(true);
-      await mockDeleteTeam(deleteTarget.id);
+      await deleteTeam(deleteTarget.id);
       setDeleteTarget(null);
       fetchData();
     } catch (err) {
@@ -93,18 +98,11 @@ const TeamContainer = () => {
     }
   };
 
-  const getProgressColor = (progress) => {
-    if (progress >= 75) return '#33a163';
-    if (progress >= 50) return '#f0a500';
-    if (progress >= 25) return '#ff9800';
-    return '#e53935';
-  };
-
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
+      <SideBar />
 
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'>
             <h1 className='page-title'>Teams</h1>
@@ -118,6 +116,12 @@ const TeamContainer = () => {
         </div>
 
         <div className='dashboard-content'>
+          {error && (
+            <Segment negative>
+              <Icon name='warning circle' /> {error}
+            </Segment>
+          )}
+
           {/* Filters */}
           <Segment className='team-filters' secondary>
             <div className='team-filters-row'>
@@ -205,39 +209,23 @@ const TeamContainer = () => {
               <div className='teams-grid'>
                 {teams.map((team) => (
                   <div key={team.id} className='team-card' onClick={() => navigate(`/teams/${team.id}`)}>
-                    <div className='team-card-header' style={{ background: team.color }}>
+                    <div className='team-card-header' style={{ background: team.color || '#2185d0' }}>
                       <Icon name='users' size='large' color='white' />
-                      <span className={`team-card-badge ${team.status}`}>{team.memberCount}</span>
+                      <span className={`team-card-badge ${team.status === 1 ? 'active' : 'inactive'}`}>
+                        {team.memberCount || 0}
+                      </span>
                     </div>
                     <div className='team-card-body'>
                       <h3 className='team-card-title'>{team.name}</h3>
-                      <p className='team-card-desc'>{team.description}</p>
+                      <p className='team-card-desc'>{team.description || 'No description'}</p>
                     </div>
                     <div className='team-card-footer'>
                       <div className='team-card-stats'>
                         <div className='team-stat'>
-                          <div className='team-stat-value'>{team.memberCount}</div>
+                          <div className='team-stat-value'>{team.memberCount || 0}</div>
                           <div className='team-stat-label'>Members</div>
                         </div>
-                        <div className='team-stat'>
-                          <div className='team-stat-value'>{team.coursesAssigned}</div>
-                          <div className='team-stat-label'>Courses</div>
-                        </div>
-                        <div className='team-stat'>
-                          <div className='team-stat-value' style={{ color: getProgressColor(team.avgProgress) }}>
-                            {team.avgProgress}%
-                          </div>
-                          <div className='team-stat-label'>Progress</div>
-                        </div>
                       </div>
-                      {team.members.length > 0 && (
-                        <div className='team-avatars'>
-                          {team.members.slice(0, 5).map((member) => (
-                            <Image key={member.id} src={member.avatar} circular size='mini' className='team-member-avatar' title={`${member.firstName} ${member.lastName}`} />
-                          ))}
-                          {team.members.length > 5 && <span className='team-avatar-more'>+{team.members.length - 5}</span>}
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}

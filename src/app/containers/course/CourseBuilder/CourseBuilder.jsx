@@ -16,7 +16,6 @@ import './CourseBuilder.scss';
 const CourseBuilder = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -155,8 +154,8 @@ const CourseBuilder = () => {
   if (loading) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='dashboard-content'>
             <Segment loading><Header as='h2'>Loading course builder...</Header></Segment>
           </div>
@@ -167,9 +166,9 @@ const CourseBuilder = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
+      <SideBar />
 
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <div className='dashboard-main'>
         {/* Header */}
         <div className='dashboard-header'>
           <div className='header-left'>

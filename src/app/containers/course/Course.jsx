@@ -35,7 +35,6 @@ const sortOptions = [
 const CourseContainer = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -99,9 +98,9 @@ const CourseContainer = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
+      <SideBar />
 
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <div className='dashboard-main'>
         {/* Header */}
         <div className='dashboard-header'>
           <div className='header-left'>

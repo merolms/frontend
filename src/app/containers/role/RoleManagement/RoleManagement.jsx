@@ -5,7 +5,7 @@ import {
 } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
-import { getRoleDefinitions, deleteRole } from '@/app/services/authService';
+import { fetchRoles, deleteRole } from '@/app/services/authService';
 
 const getRoleColor = (name) => {
   switch (name) {
@@ -19,7 +19,6 @@ const getRoleColor = (name) => {
 
 const RoleManagement = () => {
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
@@ -31,7 +30,7 @@ const RoleManagement = () => {
   const loadRoles = async () => {
     try {
       setLoading(true);
-      const data = await getRoleDefinitions();
+      const data = await fetchRoles();
       setRoles(data);
     } catch (err) {
       console.error('Error loading roles:', err);
@@ -59,9 +58,9 @@ const RoleManagement = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
+      <SideBar />
 
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'>
             <h1 className='page-title'>Roles & Permissions</h1>

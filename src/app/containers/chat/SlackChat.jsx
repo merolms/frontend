@@ -8,7 +8,6 @@ import './Slack.scss';
 const EMOJI_LIST = ['👍', '❤️', '🔥', '🎉', '😂', '🚀', '👀', '💯', '✅', '🙌'];
 
 const SlackChat = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const user = useSelector((s) => s.auth.user);
   const [storeState, setStoreState] = useState(chatStore.getState());
   const [input, setInput] = useState('');
@@ -87,8 +86,8 @@ const SlackChat = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className='dashboard-main'>
 
         <div className='slack-layout'>
 
