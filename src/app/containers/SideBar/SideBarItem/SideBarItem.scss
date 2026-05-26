@@ -11,7 +11,7 @@
   color: inherit;
 
   &:hover {
-    background: rgba(51, 161, 99, 0.1);
+    background: var(--sidebar-item-hover, rgba(51, 161, 99, 0.1));
   }
 
   &.active-item {

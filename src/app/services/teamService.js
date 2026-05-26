@@ -1,16 +1,14 @@
 // Team API Service
 // Handles all API calls related to teams
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000/api';
+import { apiGet, apiPost, apiPut, apiDelete } from '@/app/services/http';
 
 // ==================== TEAMS ====================
 
 export const fetchTeams = async (params = {}) => {
   try {
     const queryParams = new URLSearchParams(params);
-    const response = await fetch(`${API_BASE}/teams?${queryParams}`);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiGet(`/teams?${queryParams}`);
   } catch (error) {
     console.error('Error fetching teams:', error);
     throw error;
@@ -19,9 +17,7 @@ export const fetchTeams = async (params = {}) => {
 
 export const fetchTeamById = async (id) => {
   try {
-    const response = await fetch(`${API_BASE}/teams/${id}`);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiGet(`/teams/${id}`);
   } catch (error) {
     console.error('Error fetching team:', error);
     throw error;
@@ -30,13 +26,7 @@ export const fetchTeamById = async (id) => {
 
 export const createTeam = async (teamData) => {
   try {
-    const response = await fetch(`${API_BASE}/teams`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(teamData),
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiPost('/teams', teamData);
   } catch (error) {
     console.error('Error creating team:', error);
     throw error;
@@ -45,13 +35,7 @@ export const createTeam = async (teamData) => {
 
 export const updateTeam = async (id, teamData) => {
   try {
-    const response = await fetch(`${API_BASE}/teams/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(teamData),
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiPut(`/teams/${id}`, teamData);
   } catch (error) {
     console.error('Error updating team:', error);
     throw error;
@@ -60,8 +44,7 @@ export const updateTeam = async (id, teamData) => {
 
 export const deleteTeam = async (id) => {
   try {
-    const response = await fetch(`${API_BASE}/teams/${id}`, { method: 'DELETE' });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    await apiDelete(`/teams/${id}`);
   } catch (error) {
     console.error('Error deleting team:', error);
     throw error;
@@ -70,13 +53,7 @@ export const deleteTeam = async (id) => {
 
 export const addMemberToTeam = async (teamId, userId) => {
   try {
-    const response = await fetch(`${API_BASE}/teams/${teamId}/members`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId }),
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiPost(`/teams/${teamId}/members`, { userId });
   } catch (error) {
     console.error('Error adding member:', error);
     throw error;
@@ -85,10 +62,7 @@ export const addMemberToTeam = async (teamId, userId) => {
 
 export const removeMemberFromTeam = async (teamId, userId) => {
   try {
-    const response = await fetch(`${API_BASE}/teams/${teamId}/members/${userId}`, {
-      method: 'DELETE',
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    await apiDelete(`/teams/${teamId}/members/${userId}`);
   } catch (error) {
     console.error('Error removing member:', error);
     throw error;
@@ -97,9 +71,7 @@ export const removeMemberFromTeam = async (teamId, userId) => {
 
 export const fetchTeamMembers = async (teamId) => {
   try {
-    const response = await fetch(`${API_BASE}/teams/${teamId}/members`);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiGet(`/teams/${teamId}/members`);
   } catch (error) {
     console.error('Error fetching team members:', error);
     throw error;

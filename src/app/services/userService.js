@@ -1,16 +1,14 @@
 // User API Service
 // Handles all API calls related to users
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000/api';
+import { apiGet, apiPost, apiPut, apiDelete } from '@/app/services/http';
 
 // ==================== USERS ====================
 
 export const fetchUsers = async (params = {}) => {
   try {
     const queryParams = new URLSearchParams(params);
-    const response = await fetch(`${API_BASE}/users?${queryParams}`);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiGet(`/users?${queryParams}`);
   } catch (error) {
     console.error('Error fetching users:', error);
     throw error;
@@ -19,9 +17,7 @@ export const fetchUsers = async (params = {}) => {
 
 export const fetchUserById = async (id) => {
   try {
-    const response = await fetch(`${API_BASE}/users/${id}`);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiGet(`/users/${id}`);
   } catch (error) {
     console.error('Error fetching user:', error);
     throw error;
@@ -30,13 +26,7 @@ export const fetchUserById = async (id) => {
 
 export const createUser = async (userData) => {
   try {
-    const response = await fetch(`${API_BASE}/users`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData),
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiPost('/users', userData);
   } catch (error) {
     console.error('Error creating user:', error);
     throw error;
@@ -45,13 +35,7 @@ export const createUser = async (userData) => {
 
 export const updateUser = async (id, userData) => {
   try {
-    const response = await fetch(`${API_BASE}/users/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData),
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiPut(`/users/${id}`, userData);
   } catch (error) {
     console.error('Error updating user:', error);
     throw error;
@@ -60,8 +44,7 @@ export const updateUser = async (id, userData) => {
 
 export const deleteUser = async (id) => {
   try {
-    const response = await fetch(`${API_BASE}/users/${id}`, { method: 'DELETE' });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    await apiDelete(`/users/${id}`);
   } catch (error) {
     console.error('Error deleting user:', error);
     throw error;
@@ -70,13 +53,7 @@ export const deleteUser = async (id) => {
 
 export const assignUserToTeam = async (userId, teamId) => {
   try {
-    const response = await fetch(`${API_BASE}/users/${userId}/teams`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ teamId }),
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiPost(`/users/${userId}/teams`, { teamId });
   } catch (error) {
     console.error('Error assigning user to team:', error);
     throw error;
@@ -85,10 +62,7 @@ export const assignUserToTeam = async (userId, teamId) => {
 
 export const removeUserFromTeam = async (userId, teamId) => {
   try {
-    const response = await fetch(`${API_BASE}/users/${userId}/teams/${teamId}`, {
-      method: 'DELETE',
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    await apiDelete(`/users/${userId}/teams/${teamId}`);
   } catch (error) {
     console.error('Error removing user from team:', error);
     throw error;

@@ -66,12 +66,13 @@ export const logoutUser = () => (dispatch) => {
   dispatch(clearAuth());
 };
 
+// Restore session: validate the stored token by calling /auth/me
 export const restoreSession = () => async (dispatch) => {
   const stored = getStoredAuth();
   if (!stored?.token) return;
   try {
     dispatch(setLoading(true));
-    const user = await validateToken(stored.token);
+    const user = await validateToken();
     dispatch(setAuth({ user, token: stored.token }));
   } catch {
     authLogout();

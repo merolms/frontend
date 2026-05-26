@@ -1,7 +1,7 @@
 // Dashboard API Service
 // This service handles all API calls related to the dashboard
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000/api';
+import { apiGet } from '@/app/services/http';
 
 /**
  * Fetch dashboard statistics (KPIs)
@@ -9,11 +9,7 @@ const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000/api';
  */
 export const fetchDashboardStats = async () => {
   try {
-    const response = await fetch(`${API_BASE}/dashboard/stats`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return await response.json();
+    return await apiGet('/dashboard/stats');
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
     throw error;
@@ -28,11 +24,7 @@ export const fetchDashboardStats = async () => {
 export const fetchDashboardActivity = async (options = {}) => {
   try {
     const queryParams = new URLSearchParams(options);
-    const response = await fetch(`${API_BASE}/dashboard/activity?${queryParams}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return await response.json();
+    return await apiGet(`/dashboard/activity?${queryParams}`);
   } catch (error) {
     console.error('Error fetching dashboard activity:', error);
     throw error;
@@ -47,11 +39,7 @@ export const fetchDashboardActivity = async (options = {}) => {
 export const fetchEnrollmentCharts = async (options = {}) => {
   try {
     const queryParams = new URLSearchParams(options);
-    const response = await fetch(`${API_BASE}/dashboard/enrollment?${queryParams}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return await response.json();
+    return await apiGet(`/dashboard/enrollment?${queryParams}`);
   } catch (error) {
     console.error('Error fetching enrollment charts:', error);
     throw error;
@@ -64,11 +52,7 @@ export const fetchEnrollmentCharts = async (options = {}) => {
  */
 export const fetchTeamStats = async () => {
   try {
-    const response = await fetch(`${API_BASE}/dashboard/teams`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return await response.json();
+    return await apiGet('/dashboard/teams');
   } catch (error) {
     console.error('Error fetching team stats:', error);
     throw error;

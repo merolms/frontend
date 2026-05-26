@@ -1,7 +1,7 @@
 // Course API Service
 // Handles all API calls related to courses and lessons
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000/api';
+import { apiGet, apiPost, apiPut, apiDelete, getApiBase } from '@/app/services/http';
 
 // ==================== COURSES ====================
 
@@ -12,10 +12,14 @@ const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000/api';
  */
 export const fetchCourses = async (params = {}) => {
   try {
-    const queryParams = new URLSearchParams(params);
-    const response = await fetch(`${API_BASE}/courses?${queryParams}`);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    const queryParts = [];
+    for (const [key, value] of Object.entries(params)) {
+      if (value !== undefined && value !== null && value !== '') {
+        queryParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+      }
+    }
+    const queryString = queryParts.length ? `?${queryParts.join('&')}` : '';
+    return await apiGet(`/courses${queryString}`);
   } catch (error) {
     console.error('Error fetching courses:', error);
     throw error;
@@ -29,9 +33,7 @@ export const fetchCourses = async (params = {}) => {
  */
 export const fetchCourseById = async (id) => {
   try {
-    const response = await fetch(`${API_BASE}/courses/${id}`);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiGet(`/courses/${id}`);
   } catch (error) {
     console.error('Error fetching course:', error);
     throw error;
@@ -45,13 +47,7 @@ export const fetchCourseById = async (id) => {
  */
 export const createCourse = async (courseData) => {
   try {
-    const response = await fetch(`${API_BASE}/courses`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(courseData),
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiPost('/courses', courseData);
   } catch (error) {
     console.error('Error creating course:', error);
     throw error;
@@ -66,13 +62,7 @@ export const createCourse = async (courseData) => {
  */
 export const updateCourse = async (id, courseData) => {
   try {
-    const response = await fetch(`${API_BASE}/courses/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(courseData),
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiPut(`/courses/${id}`, courseData);
   } catch (error) {
     console.error('Error updating course:', error);
     throw error;
@@ -86,10 +76,7 @@ export const updateCourse = async (id, courseData) => {
  */
 export const deleteCourse = async (id) => {
   try {
-    const response = await fetch(`${API_BASE}/courses/${id}`, {
-      method: 'DELETE',
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await apiDelete(`/courses/${id}`);
   } catch (error) {
     console.error('Error deleting course:', error);
     throw error;
@@ -103,11 +90,7 @@ export const deleteCourse = async (id) => {
  */
 export const publishCourse = async (id) => {
   try {
-    const response = await fetch(`${API_BASE}/courses/${id}/publish`, {
-      method: 'POST',
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiPost(`/courses/${id}/publish`);
   } catch (error) {
     console.error('Error publishing course:', error);
     throw error;
@@ -121,11 +104,7 @@ export const publishCourse = async (id) => {
  */
 export const archiveCourse = async (id) => {
   try {
-    const response = await fetch(`${API_BASE}/courses/${id}/archive`, {
-      method: 'POST',
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiPost(`/courses/${id}/archive`);
   } catch (error) {
     console.error('Error archiving course:', error);
     throw error;
@@ -141,9 +120,7 @@ export const archiveCourse = async (id) => {
  */
 export const fetchLessons = async (courseId) => {
   try {
-    const response = await fetch(`${API_BASE}/courses/${courseId}/lessons`);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiGet(`/courses/${courseId}/lessons`);
   } catch (error) {
     console.error('Error fetching lessons:', error);
     throw error;
@@ -158,13 +135,7 @@ export const fetchLessons = async (courseId) => {
  */
 export const createLesson = async (courseId, lessonData) => {
   try {
-    const response = await fetch(`${API_BASE}/courses/${courseId}/lessons`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(lessonData),
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiPost(`/courses/${courseId}/lessons`, lessonData);
   } catch (error) {
     console.error('Error creating lesson:', error);
     throw error;
@@ -180,13 +151,7 @@ export const createLesson = async (courseId, lessonData) => {
  */
 export const updateLesson = async (courseId, lessonId, lessonData) => {
   try {
-    const response = await fetch(`${API_BASE}/courses/${courseId}/lessons/${lessonId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(lessonData),
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return await apiPut(`/courses/${courseId}/lessons/${lessonId}`, lessonData);
   } catch (error) {
     console.error('Error updating lesson:', error);
     throw error;
@@ -201,10 +166,7 @@ export const updateLesson = async (courseId, lessonId, lessonData) => {
  */
 export const deleteLesson = async (courseId, lessonId) => {
   try {
-    const response = await fetch(`${API_BASE}/courses/${courseId}/lessons/${lessonId}`, {
-      method: 'DELETE',
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await apiDelete(`/courses/${courseId}/lessons/${lessonId}`);
   } catch (error) {
     console.error('Error deleting lesson:', error);
     throw error;

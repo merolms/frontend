@@ -1,13 +1,13 @@
 // Auth Service
 // Authentication via backend API (JWT-based).
-// Falls back to demo mode with static users if VITE_DEMO_MODE=true or backend is unreachable.
+// All auth calls go through the centralized http client which handles
+// JWT injection and the { message, data } response envelope.
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:9090/api';
-const DEMO_MODE = true //import.meta.env.VITE_DEMO_MODE === 'false' ; //|| import.meta.env.DEV;
+import { apiPost, apiGet, apiPut } from '@/app/services/http';
 
-// ==================== STATIC USERS ====================
-// Default static users for authentication. Passwords are plaintext for now
-// (in production, never do this — the real API will handle hashing).
+// ==================== STATIC USERS (for role management UI) ====================
+// These are reference data for the role/permission management pages.
+// Login/Register go through the real backend API.
 
 const staticUsers = [
   {
@@ -40,9 +40,7 @@ const staticUsers = [
     permissions: [
       'dashboard.view',
       'courses.view', 'courses.create', 'courses.edit',
-      'users.view',
-      'teams.view',
-      'reports.view',
+      'users.view', 'teams.view', 'reports.view',
     ],
     joinedAt: '2024-02-15',
     lastActive: '2025-03-24',
@@ -62,8 +60,7 @@ const staticUsers = [
     avatar: 'https://i.pravatar.cc/150?img=10',
     status: 'active',
     permissions: [
-      'dashboard.view',
-      'courses.view',
+      'dashboard.view', 'courses.view', 'courses.create',
       'users.view', 'users.edit',
       'teams.view', 'teams.edit', 'teams.manage_members',
       'reports.view',
@@ -85,10 +82,7 @@ const staticUsers = [
     role: 'Student',
     avatar: 'https://i.pravatar.cc/150?img=3',
     status: 'active',
-    permissions: [
-      'dashboard.view',
-      'courses.view',
-    ],
+    permissions: ['dashboard.view', 'courses.view'],
     joinedAt: '2024-06-01',
     lastActive: '2025-03-25',
     phone: '+1 555-0104',
@@ -118,9 +112,7 @@ const roleDefinitions = [
       'dashboard.view',
       'courses.view', 'courses.create', 'courses.edit', 'courses.delete',
       'courses.lessons.manage',
-      'users.view',
-      'teams.view',
-      'reports.view',
+      'users.view', 'teams.view', 'reports.view',
     ],
   },
   {
@@ -129,8 +121,7 @@ const roleDefinitions = [
     description: 'Can manage their team members and view team progress.',
     color: 'purple',
     permissions: [
-      'dashboard.view',
-      'courses.view', 'courses.create',
+      'dashboard.view', 'courses.view', 'courses.create',
       'users.view', 'users.edit',
       'teams.view', 'teams.edit', 'teams.manage_members',
       'reports.view',
@@ -141,22 +132,16 @@ const roleDefinitions = [
     name: 'Student',
     description: 'Can view dashboard and enrolled courses.',
     color: 'teal',
-    permissions: [
-      'dashboard.view',
-      'courses.view',
-    ],
+    permissions: ['dashboard.view', 'courses.view'],
   },
 ];
 
 // ==================== PERMISSION CATALOG ====================
-// All possible permissions in the system, grouped by domain.
 
 export const permissionCatalog = {
   dashboard: {
     label: 'Dashboard',
-    permissions: [
-      { key: 'dashboard.view', label: 'View Dashboard' },
-    ],
+    permissions: [{ key: 'dashboard.view', label: 'View Dashboard' }],
   },
   courses: {
     label: 'Courses',
@@ -207,223 +192,58 @@ export const permissionCatalog = {
   },
 };
 
-// Flatten all permissions into a single array
 export const allPermissions = Object.values(permissionCatalog).flatMap(
   (domain) => domain.permissions
 );
 
-// ==================== DEMO HELPER ====================
-
-const generateDemoToken = (user) => {
-  return btoa(JSON.stringify({ userId: user.id, role: user.role, exp: Date.now() + 86400000 }));
-};
-
-const findStaticUser = (email) => {
-  return staticUsers.find(
-    (u) => u.email.toLowerCase() === email.toLowerCase()
-  );
-};
-
-// ==================== AUTH FUNCTIONS ====================
+// ==================== AUTH FUNCTIONS (real backend API) ====================
 
 /**
  * Login with email and password.
- * In demo mode or when backend is unreachable, uses static users.
+ * Backend POST /auth/login returns { token, user }.
  */
 export const login = async (email, password) => {
-  // Try backend first (unless in explicit demo mode)
-  if (!DEMO_MODE) {
-    try {
-      const response = await fetch(`${API_BASE}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const { token, user } = data.data;
-        return { user, token };
-      }
-
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.message || 'Invalid email or password.');
-    } catch (err) {
-      // If it's a network error, fall through to demo mode
-      if (err.message !== 'Failed to fetch' && !err.message.includes('fetch')) {
-        throw err;
-      }
-      // Network failed — fall through to demo fallback
-    }
-  }
-
-  // Demo mode: authenticate against static users
-  await new Promise((r) => setTimeout(r, 500)); // Simulate network delay
-
-  const user = findStaticUser(email);
-  if (!user || user.password !== password) {
-    throw new Error('Invalid email or password.');
-  }
-
-  const token = generateDemoToken(user);
-  return { user, token };
-};
-
-/**
- * Validate a stored token.
- * In demo mode, decodes the base64 token and looks up the static user.
- */
-export const validateToken = async (token) => {
-  if (!DEMO_MODE) {
-    try {
-      const response = await fetch(`${API_BASE}/auth/me`, {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        return data.data;
-      }
-      throw new Error('Invalid token.');
-    } catch (err) {
-      if (err.message !== 'Failed to fetch' && !err.message.includes('fetch')) {
-        throw err;
-      }
-      // Fall through to demo
-    }
-  }
-
-  // Demo mode: decode base64 token
-  try {
-    const payload = JSON.parse(atob(token));
-    const user = staticUsers.find((u) => u.id === payload.userId);
-    if (!user) throw new Error('User not found.');
-    return user;
-  } catch {
-    throw new Error('Invalid token.');
-  }
+  const data = await apiPost('/auth/login', { email, password });
+  return { user: data.user, token: data.token };
 };
 
 /**
  * Register a new user account.
+ * Backend POST /auth/register returns { token, user }.
  */
 export const register = async (userData) => {
-  if (!DEMO_MODE) {
-    try {
-      const response = await fetch(`${API_BASE}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const { token, user } = data.data;
-        return { user, token };
-      }
-
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.message || 'Registration failed.');
-    } catch (err) {
-      if (err.message !== 'Failed to fetch' && !err.message.includes('fetch')) {
-        throw err;
-      }
-    }
-  }
-
-  // Demo mode
-  await new Promise((r) => setTimeout(r, 500));
-  const existing = findStaticUser(userData.email);
-  if (existing) throw new Error('An account with this email already exists.');
-
-  const newUser = {
-    id: staticUsers.length + 1,
-    email: userData.email,
-    password: userData.password,
-    firstName: userData.firstName || '',
-    lastName: userData.lastName || '',
-    role: 'Student',
-    avatar: 'https://i.pravatar.cc/150?img=3',
-    status: 'active',
-    permissions: ['dashboard.view', 'courses.view'],
-    joinedAt: new Date().toISOString().split('T')[0],
-    lastActive: new Date().toISOString().split('T')[0],
-  };
-  staticUsers.push(newUser);
-  const token = generateDemoToken(newUser);
-  return { user: newUser, token };
+  const data = await apiPost('/auth/register', userData);
+  return { user: data.user, token: data.token };
 };
 
 /**
- * Fetch the current user's profile.
+ * Fetch the current user's profile from the backend.
+ * Backend GET /auth/me returns the user object.
  */
-export const getProfile = async (token) => {
-  if (!DEMO_MODE) {
-    try {
-      const response = await fetch(`${API_BASE}/auth/me`, {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        return data.data;
-      }
-      throw new Error('Failed to fetch profile.');
-    } catch (err) {
-      if (err.message !== 'Failed to fetch' && !err.message.includes('fetch')) {
-        throw err;
-      }
-    }
-  }
-  return validateToken(token);
+export const getProfile = async () => {
+  return await apiGet('/auth/me');
 };
 
 /**
  * Update the current user's profile.
  */
-export const updateProfile = async (_token, profileData) => {
-  await new Promise((r) => setTimeout(r, 400));
-  // In demo mode, just return the updated data
-  return { ...profileData };
+export const updateProfile = async (profileData) => {
+  return await apiPut('/auth/profile', profileData);
 };
 
 /**
  * Change the current user's password.
  */
-export const changePassword = async (_token, _passwordData) => {
-  await new Promise((r) => setTimeout(r, 400));
-  return true;
+export const changePassword = async (passwordData) => {
+  return await apiPut('/auth/password', passwordData);
 };
 
 /**
- * Forgot password — send reset email.
+ * Validate a stored token by calling the backend.
+ * Backend GET /auth/me validates the JWT and returns the user.
  */
-export const forgotPassword = async (email) => {
-  if (!DEMO_MODE) {
-    try {
-      const response = await fetch(`${API_BASE}/auth/forgot-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        return data.data || { message: 'If an account with that email exists, a reset link has been sent.' };
-      }
-    } catch {
-      // Fall through
-    }
-  }
-
-  await new Promise((r) => setTimeout(r, 500));
-  return { message: 'If an account with that email exists, a reset link has been sent.' };
-};
-
-/**
- * Reset password.
- */
-export const resetPassword = async (_token, _newPassword) => {
-  await new Promise((r) => setTimeout(r, 400));
-  return { message: 'Password has been reset successfully.' };
+export const validateToken = async () => {
+  return await apiGet('/auth/me');
 };
 
 /**
@@ -434,7 +254,25 @@ export const logout = () => {
   localStorage.removeItem('auth_user');
 };
 
-// ==================== ROLE FUNCTIONS ====================
+// ==================== SESSION HELPERS ====================
+
+export const storeAuth = (user, token) => {
+  localStorage.setItem('auth_token', token);
+  localStorage.setItem('auth_user', JSON.stringify(user));
+};
+
+export const getStoredAuth = () => {
+  try {
+    const token = localStorage.getItem('auth_token');
+    const user = JSON.parse(localStorage.getItem('auth_user') || 'null');
+    if (token && user) return { token, user };
+  } catch {
+    // ignore
+  }
+  return null;
+};
+
+// ==================== ROLE FUNCTIONS (static UI data) ====================
 
 export const getRoleDefinitions = () => Promise.resolve([...roleDefinitions]);
 
@@ -466,6 +304,18 @@ export const deleteRole = async (id) => {
   return Promise.resolve();
 };
 
+// ==================== PASSWORD RESET (mock - no backend endpoint yet) ====================
+
+export const forgotPassword = async (email) => {
+  await new Promise((r) => setTimeout(r, 500));
+  return { message: 'If an account with that email exists, a reset link has been sent.' };
+};
+
+export const resetPassword = async (_token, _newPassword) => {
+  await new Promise((r) => setTimeout(r, 400));
+  return { message: 'Password has been reset successfully.' };
+};
+
 // ==================== PERMISSION HELPERS ====================
 
 export const hasPermission = (user, permission) => {
@@ -487,23 +337,8 @@ export const getRolePermissions = (roleName) => {
   return role ? role.permissions : [];
 };
 
-// ==================== SESSION HELPERS ====================
-
-export const getStoredAuth = () => {
-  try {
-    const token = localStorage.getItem('auth_token');
-    const user = JSON.parse(localStorage.getItem('auth_user') || 'null');
-    if (token && user) return { token, user };
-  } catch {
-    // ignore
-  }
-  return null;
-};
-
-export const storeAuth = (user, token) => {
-  localStorage.setItem('auth_token', token);
-  localStorage.setItem('auth_user', JSON.stringify(user));
-};
+// Export static users for demo login page
+export { staticUsers };
 
 // ==================== DEMO: mockUpdateUser for Settings page ====================
 
@@ -515,6 +350,3 @@ export const mockUpdateUser = async (userId, updates) => {
   }
   return user;
 };
-
-// Export static users for demo login page
-export { staticUsers };

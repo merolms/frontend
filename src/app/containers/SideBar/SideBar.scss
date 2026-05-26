@@ -1,17 +1,48 @@
 @use "../../../styles/index.scss" as *;
 
+// ─── Sidebar CSS Variables (theme-aware) ─────────────────────
+
+.sidebar-wrapper {
+  --sidebar-bg: linear-gradient(180deg, #1a2332 0%, #232f3e 100%);
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-text: rgba(255, 255, 255, 0.75);
+  --sidebar-text-hover: rgba(255, 255, 255, 0.95);
+  --sidebar-text-muted: rgba(255, 255, 255, 0.4);
+  --sidebar-text-bright: #fff;
+  --sidebar-item-hover: rgba(255, 255, 255, 0.08);
+  --sidebar-footer-bg: rgba(0, 0, 0, 0.2);
+  --sidebar-divider: rgba(255, 255, 255, 0.1);
+  --sidebar-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+
+  [data-theme='light'] & {
+    --sidebar-bg: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+    --sidebar-border: #e0e0e0;
+    --sidebar-text: #555;
+    --sidebar-text-hover: #333;
+    --sidebar-text-muted: #999;
+    --sidebar-text-bright: #111;
+    --sidebar-item-hover: rgba(0, 0, 0, 0.06);
+    --sidebar-footer-bg: #f0f2f5;
+    --sidebar-divider: #e0e0e0;
+    --sidebar-shadow: 2px 0 10px rgba(0, 0, 0, 0.06);
+  }
+}
+
+// ─── Sidebar Wrapper ─────────────────────────────────────────
+
 .sidebar-wrapper {
   position: fixed;
   left: 0;
   top: 0;
   height: 100vh;
   width: $sidebar-left-width;
-  background: linear-gradient(180deg, #1a2332 0%, #232f3e 100%);
+  background: var(--sidebar-bg);
   display: flex;
   flex-direction: column;
   z-index: 100;
   transition: width 0.3s ease;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--sidebar-shadow);
+  color: var(--sidebar-text);
 
   &.open {
     width: $sidebar-left-width;
@@ -46,12 +77,14 @@
   }
 }
 
+// ─── Header ──────────────────────────────────────────────────
+
 .sidebar-header {
   padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--sidebar-border);
   min-height: 60px;
 }
 
@@ -68,14 +101,14 @@
 .brand-text {
   font-size: 20px;
   font-weight: 700;
-  color: #fff;
+  color: var(--sidebar-text-bright);
   letter-spacing: 0.5px;
 }
 
 .sidebar-toggle {
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--sidebar-text);
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -90,6 +123,8 @@
   }
 }
 
+// ─── Navigation ──────────────────────────────────────────────
+
 .sidebar-nav {
   flex: 1;
   overflow-y: auto;
@@ -98,7 +133,7 @@
 
 .sidebar-divider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--sidebar-divider);
   margin: 12px 20px;
 }
 
@@ -107,16 +142,12 @@
   padding: 8px 20px;
   font-size: 11px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--sidebar-text-muted);
   text-transform: uppercase;
   letter-spacing: 1.2px;
 }
 
-.sidebar-footer {
-  padding: 16px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.2);
-}
+// ─── Sidebar Items ───────────────────────────────────────────
 
 .side-menu {
   display: flex;
@@ -131,13 +162,22 @@
   opacity: 0.85;
 }
 
-.side-menu .sidebar-item {
+.sidebar-item {
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px !important;
   margin: 2px 12px;
+  border: none !important;
   border-radius: 8px;
   background: transparent !important;
+  color: var(--sidebar-text) !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08) !important;
+    background: var(--sidebar-item-hover) !important;
+    color: var(--sidebar-text-hover) !important;
   }
 
   &.active-item {
@@ -152,23 +192,6 @@
     .sidebar-item-icon {
       color: #fff !important;
     }
-  }
-}
-
-.sidebar-item {
-  display: flex !important;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 16px !important;
-  border: none !important;
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.75) !important;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.95);
   }
 
   &.highlight-item {
@@ -191,6 +214,26 @@
   text-align: center;
 }
 
+.side-menu .sidebar-item {
+  // Reset semantic-ui menu item styles
+  &:hover {
+    background: var(--sidebar-item-hover) !important;
+  }
+
+  &.active-item {
+    background: $primary-color !important;
+
+    .sidebar-item-label {
+      color: #fff !important;
+      font-weight: 600;
+    }
+
+    .sidebar-item-icon {
+      color: #fff !important;
+    }
+  }
+}
+
 .sidebar-item-label {
   font-size: 14px;
   font-weight: 500;
@@ -198,6 +241,16 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+// ─── Footer ──────────────────────────────────────────────────
+
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--sidebar-border);
+  background: var(--sidebar-footer-bg);
+}
+
+// ─── User Profile ────────────────────────────────────────────
 
 .user-profile-container {
   display: flex !important;
@@ -219,7 +272,7 @@
 }
 
 .user-profile-details-header {
-  color: #fff !important;
+  color: var(--sidebar-text-bright) !important;
   font-weight: 600;
   font-size: 13px;
   white-space: nowrap;
@@ -228,14 +281,14 @@
 }
 
 .user-profile-details-subtitle {
-  color: rgba(255, 255, 255, 0.5) !important;
+  color: var(--sidebar-text-muted) !important;
   font-size: 11px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-// ─── Sidebar Footer Actions ─────────────────────────────────
+// ─── Footer Actions ──────────────────────────────────────────
 
 .sidebar-profile-card {
   cursor: pointer;
@@ -245,7 +298,7 @@
   margin-bottom: 8px;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--sidebar-item-hover);
   }
 
   .user-profile-container {
@@ -264,7 +317,7 @@
   flex: 1;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--sidebar-text);
   cursor: pointer;
   padding: 8px;
   display: flex;
@@ -274,8 +327,8 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.95);
+    background: var(--sidebar-item-hover);
+    color: var(--sidebar-text-hover);
   }
 
   .icon {
