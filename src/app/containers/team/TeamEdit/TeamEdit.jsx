@@ -8,7 +8,6 @@ import { fetchTeamById, updateTeam } from '@/app/services/teamService';
 const TeamEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [team, setTeam] = useState(null);

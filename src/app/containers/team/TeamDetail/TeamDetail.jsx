@@ -7,19 +7,22 @@ import {
 import SideBar from '@/app/containers/SideBar/SideBar';
 import TeamMemberAssignModal from '@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
-import { fetchTeamById, deleteTeam } from '@/app/services/teamService';
+import { fetchTeamById, fetchTeamMembers, deleteTeam } from '@/app/services/teamService';
 
 const TeamDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [team, setTeam] = useState(null);
+  const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [showAssign, setShowAssign] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
 
-  useEffect(() => { loadTeam(); }, [id]);
+  useEffect(() => {
+    loadTeam();
+  }, [id]);
 
   const loadTeam = async () => {
     try {
@@ -27,6 +30,14 @@ const TeamDetail = () => {
       setError(null);
       const data = await fetchTeamById(id);
       setTeam(data);
+      // Also load members separately
+      try {
+        const memberData = await fetchTeamMembers(id);
+        setMembers(memberData);
+      } catch (memberErr) {
+        console.error('Error loading members:', memberErr);
+        setMembers([]);
+      }
     } catch (err) {
       setError('Failed to load team data.');
       console.error('Error loading team:', err);
@@ -137,7 +148,7 @@ const TeamDetail = () => {
               <Grid.Column width={6}>
                 <div className='team-quick-stats'>
                   <div className='team-quick-stat'>
-                    <div className='team-quick-stat-value'>{team.memberCount || 0}</div>
+                    <div className='team-quick-stat-value'>{members.length}</div>
                     <div className='team-quick-stat-label'>Members</div>
                   </div>
                 </div>
@@ -151,10 +162,10 @@ const TeamDetail = () => {
               <Segment className='team-detail-segment'>
                 <Header as='h3'>
                   <Icon name='users' color='teal' />
-                  Team Members
+                  Team Members ({members.length})
                 </Header>
 
-                {!team.members || team.members.length === 0 ? (
+                {members.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: 30 }}>
                     <Icon name='users' size='huge' color='grey' />
                     <Header as='h4' color='grey'>No members yet</Header>
@@ -165,19 +176,21 @@ const TeamDetail = () => {
                   </div>
                 ) : (
                   <List divided relaxed className='team-members-list'>
-                    {team.members.map((member) => (
-                      <List.Item key={member.id} className='team-member-item'>
-                        <Image src={member.avatar || 'https://i.pravatar.cc/150?img=1'} circular className='team-member-avatar' />
-                        <List.Content>
-                          <List.Header>
-                            {member.firstName} {member.lastName}
-                          </List.Header>
-                          <List.Description>
-                            <Label color={getRoleColor(member.role)} size='tiny'>{member.role}</Label>
-                          </List.Description>
-                        </List.Content>
-                      </List.Item>
-                    ))}
+                    {members.map((member) => {
+                      const userId = member.userId;
+                      const userName = member.userName || 'Unknown';
+                      return (
+                        <List.Item key={userId} className='team-member-item'>
+                          <Image src={member.avatar || 'https://i.pravatar.cc/150?img=1'} circular className='team-member-avatar' />
+                          <List.Content>
+                            <List.Header>{userName}</List.Header>
+                            <List.Description>
+                              <Label color={getRoleColor(member.role)} size='tiny'>{member.role || 'N/A'}</Label>
+                            </List.Description>
+                          </List.Content>
+                        </List.Item>
+                      );
+                    })}
                   </List>
                 )}
               </Segment>
@@ -197,7 +210,7 @@ const TeamDetail = () => {
                   </List.Item>
                   <List.Item>
                     <Icon name='users' />
-                    <List.Content>Members: <strong>{team.memberCount || 0}</strong></List.Content>
+                    <List.Content>Members: <strong>{members.length}</strong></List.Content>
                   </List.Item>
                   <List.Item>
                     <Icon name='flag' />

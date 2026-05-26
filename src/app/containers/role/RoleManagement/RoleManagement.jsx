@@ -19,7 +19,6 @@ const getRoleColor = (name) => {
 
 const RoleManagement = () => {
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -62,9 +61,9 @@ const RoleManagement = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
+      <SideBar />
 
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'>
             <h1 className='page-title'>Roles & Permissions</h1>

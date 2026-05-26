@@ -35,7 +35,6 @@ const getRoleColor = (role) => {
 const UserContainer = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -139,9 +138,9 @@ const UserContainer = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
+      <SideBar />
 
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'>
             <h1 className='page-title'>Users</h1>

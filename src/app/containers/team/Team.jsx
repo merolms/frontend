@@ -24,7 +24,6 @@ const sortOptions = [
 const TeamContainer = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -102,9 +101,9 @@ const TeamContainer = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
+      <SideBar />
 
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'>
             <h1 className='page-title'>Teams</h1>

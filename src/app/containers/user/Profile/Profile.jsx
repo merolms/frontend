@@ -12,7 +12,6 @@ import './Profile.scss';
 const Profile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const reduxUser = useSelector((state) => state.auth.user);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -43,8 +42,8 @@ const Profile = () => {
   if (!user && !loading) {
     return (
       <div className='dashboard-layout'>
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <SideBar />
+        <div className='dashboard-main'>
           <div className='dashboard-content'>
             <Segment placeholder>
               <Header icon><Icon name='lock' /> Please log in</Header>
@@ -65,8 +64,8 @@ const Profile = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <SideBar />
+      <div className='dashboard-main'>
 
         <div className='dashboard-header'>
           <div className='header-left'>

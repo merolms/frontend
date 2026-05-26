@@ -6,10 +6,12 @@ import { setAuthErrorHandler } from '@/app/services/http';
 import store from '@/redux/store';
 import { clearAuth, restoreSession } from '@/redux/slices/authSlice';
 import { ThemeProvider } from '@/app/context/ThemeContext';
+import { ToastProvider } from '@/app/context/ToastContext';
 import AppRoutes from '@/app/Routes';
 import 'semantic-ui-css/semantic.min.css';
 import './styles/index.scss';
 import './app/containers/auth/Auth.scss';
+import './app/context/Toast.scss';
 
 // Wire up 401/403 handler → clear Redux auth + redirect to login
 // Uses window.location (not useNavigate) because this sits outside <RouterProvider>
@@ -45,7 +47,9 @@ root.render(
       <ThemeProvider>
         <AuthErrorBridge>
           <AuthInitializer>
-            <RouterProvider router={router} />
+            <ToastProvider>
+              <RouterProvider router={router} />
+            </ToastProvider>
           </AuthInitializer>
         </AuthErrorBridge>
       </ThemeProvider>

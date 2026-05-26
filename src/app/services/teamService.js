@@ -1,5 +1,5 @@
 // Team API Service
-// Handles all API calls related to teams
+// Handles all API calls related to teams and team members
 // Backend response envelope: { message: "success", data: ... }
 
 import { apiGet, apiPost, apiPut, apiDelete } from '@/app/services/http';
@@ -73,18 +73,62 @@ export const deleteTeam = async (id) => {
   }
 };
 
-// ==================== TEAM MEMBERS (not yet supported by backend) ====================
-// The backend doesn't have /teams/{id}/members endpoints yet.
-// These are stubs that return empty data gracefully.
+// ==================== TEAM MEMBERS ====================
+// GET /teams/{id}/members       → returns TeamMember[] (array in data)
+// POST /teams/{id}/members      → body: { userId }, returns "Member added successfully"
+// DELETE /teams/{id}/members/{userId} → returns "Member removed successfully"
 
-export const getAvailableUsers = async () => {
-  return [];
+export const fetchTeamMembers = async (teamId) => {
+  try {
+    const data = await apiGet(`/teams/${teamId}/members`);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Error fetching team members:', error);
+    throw error;
+  }
 };
 
-export const addMemberToTeam = async () => {
-  throw new Error('Team member management is not yet supported by the backend.');
+export const addMemberToTeam = async (teamId, userId) => {
+  try {
+    return await apiPost(`/teams/${teamId}/members`, { userId });
+  } catch (error) {
+    console.error('Error adding member:', error);
+    throw error;
+  }
 };
 
-export const removeMemberFromTeam = async () => {
-  throw new Error('Team member management is not yet supported by the backend.');
+export const removeMemberFromTeam = async (teamId, userId) => {
+  try {
+    await apiDelete(`/teams/${teamId}/members/${userId}`);
+  } catch (error) {
+    console.error('Error removing member:', error);
+    throw error;
+  }
+};
+
+// ==================== USERS (for member assignment) ====================
+// GET /users?start=0&limit=100  → returns UserResponse[]
+
+export const fetchUsers = async (params = {}) => {
+  try {
+    const queryParams = new URLSearchParams();
+    if (params.start !== undefined) queryParams.set('start', params.start);
+    if (params.limit !== undefined) queryParams.set('limit', params.limit);
+    if (params.search) queryParams.set('search', params.search);
+    const data = await apiGet(`/users?${queryParams}`);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw error;
+  }
+};
+
+export const getAvailableUsers = async (teamId) => {
+  try {
+    const data = await apiGet(`/teams/${teamId}/available-users`);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Error fetching available users:', error);
+    throw error;
+  }
 };
