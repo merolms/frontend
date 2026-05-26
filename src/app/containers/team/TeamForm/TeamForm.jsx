@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, TextArea, Button, Message, Label, Dropdown } from 'semantic-ui-react';
 
-const TEAM_COLORS = ['#1976d2', '#7b1fa2', '#e65100', '#33a163', '#c62828', '#00838f', '#f57f17', '#4a148c'];
+const TEAM_COLORS = ['#1976d2', '#7b1fa2', '#e65100', '#33a163', '#c62828', '#00838f', '#f57f17', '#4a148c', '#2185d0', '#d32f2f', '#388e3c', '#f57c00'];
 
 const colorOptions = TEAM_COLORS.map((color) => ({
   key: color,
@@ -20,14 +20,18 @@ const TeamForm = ({ initialData = null, onSubmit, onCancel, loading = false, sub
     name: '',
     description: '',
     color: TEAM_COLORS[0],
-    ...initialData,
   });
 
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (initialData) {
-      setFormData({ ...initialData });
+      setFormData({
+        name: initialData.name || '',
+        description: initialData.description || '',
+        color: initialData.color || TEAM_COLORS[0],
+        status: initialData.status !== undefined ? initialData.status : 1,
+      });
     }
   }, [initialData]);
 
@@ -92,6 +96,10 @@ const TeamForm = ({ initialData = null, onSubmit, onCancel, loading = false, sub
           value={formData.color}
           onChange={handleChange}
         />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
+          <div style={{ width: 24, height: 24, borderRadius: 4, background: formData.color, border: '1px solid #e8e8e8' }} />
+          <span style={{ fontSize: 12, color: '#888', fontFamily: 'monospace' }}>{formData.color}</span>
+        </div>
       </Form.Field>
 
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>

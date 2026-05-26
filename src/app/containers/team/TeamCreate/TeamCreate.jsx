@@ -4,6 +4,8 @@ import { Segment, Icon, Breadcrumb, Divider } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { createTeam } from '@/app/services/teamService';
 
+const PRESET_COLORS = ['#1976d2', '#7b1fa2', '#e65100', '#33a163', '#c62828', '#00838f', '#f57f17', '#4a148c', '#2185d0', '#d32f2f', '#388e3c', '#f57c00'];
+
 const TeamCreate = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -88,7 +90,30 @@ const TeamCreate = () => {
               <Divider hidden />
               <div>
                 <label style={{ fontWeight: 600, fontSize: 13 }}>Color</label>
-                <input name='color' type='color' value={formData.color} onChange={handleChange} style={{ width: 60, height: 36, marginTop: 4, border: '1px solid #ddd', borderRadius: 4, cursor: 'pointer' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
+                  <input name='color' type='color' value={formData.color} onChange={handleChange} style={{ width: 48, height: 36, border: '1px solid #ddd', borderRadius: 4, cursor: 'pointer', padding: 2 }} />
+                  <div style={{ width: 32, height: 32, borderRadius: 6, background: formData.color, border: '1px solid #e8e8e8', flexShrink: 0 }} />
+                  <span style={{ fontSize: 13, color: '#888', fontFamily: 'monospace' }}>{formData.color}</span>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
+                  {PRESET_COLORS.map((c) => (
+                    <button
+                      key={c}
+                      type='button'
+                      onClick={() => setFormData((prev) => ({ ...prev, color: c }))}
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 4,
+                        background: c,
+                        border: formData.color === c ? '2px solid #333' : '1px solid #e8e8e8',
+                        cursor: 'pointer',
+                        padding: 0,
+                      }}
+                      title={c}
+                    />
+                  ))}
+                </div>
               </div>
               <Divider hidden />
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: 8 }}>
