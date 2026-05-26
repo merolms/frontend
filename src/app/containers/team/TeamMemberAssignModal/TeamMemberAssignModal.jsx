@@ -13,16 +13,16 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
 
   useEffect(() => {
     if (open && team) {
-      loadMembers();
-      loadAvailableUsers();
+      loadAll();
     }
   }, [open, team]);
 
-  const loadMembers = async () => {
+  const loadAll = async () => {
     try {
       setLoading(true);
-      const data = await fetchTeamMembers(team.id);
-      setMembers(data);
+      const membersData = await fetchTeamMembers(team.id);
+      setMembers(membersData);
+      await loadAvailableUsers(membersData);
     } catch (err) {
       setError('Failed to load team members.');
     } finally {
@@ -30,10 +30,10 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
     }
   };
 
-  const loadAvailableUsers = async () => {
+  const loadAvailableUsers = async (membersData) => {
     try {
       const allUsers = await fetchUsers({ limit: 100 });
-      const memberIds = new Set(members.map((m) => m.userId));
+      const memberIds = new Set((membersData || []).map((m) => m.userID || m.userId));
       const available = allUsers.filter((u) => !memberIds.has(u.id));
       setAvailableUsers(available);
     } catch (err) {
@@ -62,7 +62,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
     try {
       setSaving(true);
       setError(null);
-      const userId = member.userId;
+      const userId = member.userID || member.userId;
       await removeMemberFromTeam(team.id, userId);
       const updatedMembers = await fetchTeamMembers(team.id);
       setMembers(updatedMembers);
@@ -122,7 +122,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 24 }}>
             {members.map((member) => {
-              const userId = member.userId;
+              const userId = member.userID || member.userId;
               const userName = member.userName || `${member.firstName || ''} ${member.lastName || ''}`.trim() || 'Unknown';
               return (
                 <div key={userId} className='team-assign-member' style={{
