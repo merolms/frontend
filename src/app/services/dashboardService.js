@@ -86,7 +86,22 @@ export const mockDashboardStats = {
   courseGrowth: '+3 this month',
   userGrowth: '+28 this month',
   teamGrowth: '+3 this month',
-  completionTrend: '+5% vs last month'
+  completionTrend: '+5% vs last month',
+  totalEnrollments: 342,
+  activeEnrollments: 289,
+  completedEnrollments: 53,
+  recentCourses: [
+    { id: 1, title: 'Introduction to React', users: 45, progress: 72, status: 'published' },
+    { id: 2, title: 'Advanced CSS Techniques', users: 32, progress: 58, status: 'published' },
+    { id: 4, title: 'JavaScript Fundamentals', users: 78, progress: 85, status: 'published' },
+    { id: 6, title: 'UI/UX Design Principles', users: 56, progress: 41, status: 'published' },
+  ],
+  teamPerformance: [
+    { name: 'Team Alpha', progress: 85, color: '#33a163' },
+    { name: 'Team Beta', progress: 72, color: '#2185d0' },
+    { name: 'Team Gamma', progress: 63, color: '#f2711c' },
+    { name: 'Team Delta', progress: 91, color: '#6435c9' },
+  ],
 };
 
 export const mockDashboardActivity = [

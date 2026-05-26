@@ -1,415 +1,197 @@
-import React, { useState, useEffect } from 'react';
-import { Header, Segment, Grid, Card, Icon, Label, Button, Menu, Dropdown } from 'semantic-ui-react';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Icon } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
-import StatCard from '@/app/containers/Dashboard/components/StatCard';
+import { mockDashboardStats, mockDashboardActivity } from '@/app/services/dashboardService';
 import './Dashboard.scss';
-
-// Import dashboard service
-import {
-  fetchDashboardStats,
-  fetchDashboardActivity,
-  fetchEnrollmentCharts,
-  fetchTeamStats,
-  mockDashboardStats,
-  mockDashboardActivity,
-  mockEnrollmentCharts,
-  mockTeamStats
-} from '@/app/services/dashboardService';
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [stats, setStats] = useState(null);
-  const [activity, setActivity] = useState(null);
-  const [enrollment, setEnrollment] = useState(null);
-  const [teams, setTeams] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const user = useSelector((s) => s.auth.user);
 
-  const handleNavigate = (path) => {
-    // Navigation handled by react-router
-  };
-
-  // Fetch all dashboard data on component mount
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        // Try to fetch real data, fall back to mock data if API fails
-        try {
-          const [
-            statsData,
-            activityData,
-            enrollmentData,
-            teamsData
-          ] = await Promise.all([
-            fetchDashboardStats(),
-            fetchDashboardActivity(),
-            fetchEnrollmentCharts(),
-            fetchTeamStats()
-          ]);
-          setStats(statsData);
-          setActivity(activityData);
-          setEnrollment(enrollmentData);
-          setTeams(teamsData);
-        } catch (apiError) {
-          console.warn('Using mock data due to API error:', apiError);
-          // Fall back to mock data
-          setStats(mockDashboardStats);
-          setActivity(mockDashboardActivity);
-          setEnrollment(mockEnrollmentCharts);
-          setTeams(mockTeamStats);
-        }
-      } catch (err) {
-        console.error('Error fetching dashboard data:', err);
-        setError('Failed to load dashboard data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="dashboard-layout">
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-          <div className="dashboard-header">
-            <div className="header-left">
-              <h1 className="page-title">Dashboard</h1>
-              <p className="page-subtitle">Loading...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="dashboard-layout">
-        <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-        <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-          <div className="dashboard-header">
-            <div className="header-left">
-              <h1 className="page-title">Dashboard</h1>
-              <p className="page-subtitle">Error loading data</p>
-            </div>
-          </div>
-          <div className="dashboard-content">
-            <div className="error-message">{error}</div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case 'active':
-        return <Label color='green' basic size='tiny'>Active</Label>;
-      case 'draft':
-        return <Label color='grey' basic size='tiny'>Draft</Label>;
-      case 'archived':
-        return <Label color='red' basic size='tiny'>Archived</Label>;
-      default:
-        return null;
-    }
-  };
-
-  const getProgressColor = (progress) => {
-    if (progress >= 75) return 'green';
-    if (progress >= 50) return 'orange';
-    if (progress >= 25) return 'yellow';
-    return 'red';
-  };
-
-  const getIconForType = (type) => {
-    switch (type) {
-      case 'quiz':
-        return 'question circle';
-      case 'live':
-        return 'video';
-      case 'assignment':
-        return 'file alternate';
-      case 'course':
-        return 'book';
-      case 'team':
-        return 'users';
-      case 'certificate':
-        return 'award';
-      default:
-        return 'calendar';
-    }
-  };
-
-  const getColorForType = (type) => {
-    switch (type) {
-      case 'quiz':
-        return 'blue';
-      case 'live':
-        return 'red';
-      case 'assignment':
-        return 'orange';
-      case 'course':
-        return 'green';
-      case 'team':
-        return 'teal';
-      case 'certificate':
-        return 'purple';
-      default:
-        return 'grey';
-    }
-  };
+  // Use mock data directly (no API calls needed)
+  const stats = mockDashboardStats;
+  const activity = mockDashboardActivity;
 
   return (
-    <div className="dashboard-layout">
+    <div className='dashboard-layout'>
       <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
-
       <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-        {/* Top Header Bar */}
-        <div className="dashboard-header">
-          <div className="header-left">
-            <h1 className="page-title">Dashboard</h1>
-            <p className="page-subtitle">Welcome back! Here's what's happening.</p>
+
+        {/* Header */}
+        <div className='dashboard-header'>
+          <div className='header-left'>
+            <h1 className='page-title'>Dashboard</h1>
+            <p className='page-subtitle'>Welcome back{user ? `, ${user.firstName}` : ''}! Here's your overview.</p>
           </div>
         </div>
 
-        {/* Stats Cards - Enhanced with roadmap features */}
-        <div className="dashboard-content">
-          <Segment className="stats-segment" secondary>
-            <Grid columns={4} stackable>
-              {/* Total Courses */}
-              <Grid.Column>
-                <StatCard
-                  title="Total Courses"
-                  value={stats?.totalCourses || 0}
-                  icon="book"
-                  color="green"
-                  trend={stats?.courseGrowth || '+0 this month'}
-                  trendUp={stats?.courseGrowth?.includes('+') || true}
-                />
-              </Grid.Column>
+        <div className='dashboard-content'>
 
-              {/* Total Users */}
-              <Grid.Column>
-                <StatCard
-                  title="Total Users"
-                  value={stats?.totalUsers || 0}
-                  icon="user"
-                  color="teal"
-                  trend={stats?.userGrowth || '+0 this month'}
-                  trendUp={stats?.userGrowth?.includes('+') || true}
-                />
-              </Grid.Column>
+          {/* Stats Row */}
+          <div className='stats-row'>
+            <div className='stat-card'>
+              <div className='stat-icon green'><Icon name='book' /></div>
+              <div className='stat-info'>
+                <div className='stat-value'>{stats.totalCourses}</div>
+                <div className='stat-label'>Total Courses</div>
+                <div className='stat-trend up'><Icon name='arrow up' /> {stats.courseGrowth}</div>
+              </div>
+            </div>
+            <div className='stat-card'>
+              <div className='stat-icon teal'><Icon name='users' /></div>
+              <div className='stat-info'>
+                <div className='stat-value'>{stats.totalUsers}</div>
+                <div className='stat-label'>Total Users</div>
+                <div className='stat-trend up'><Icon name='arrow up' /> {stats.userGrowth}</div>
+              </div>
+            </div>
+            <div className='stat-card'>
+              <div className='stat-icon orange'><Icon name='sitemap' /></div>
+              <div className='stat-info'>
+                <div className='stat-value'>{stats.totalTeams}</div>
+                <div className='stat-label'>Total Teams</div>
+                <div className='stat-trend up'><Icon name='arrow up' /> {stats.teamGrowth}</div>
+              </div>
+            </div>
+            <div className='stat-card'>
+              <div className='stat-icon purple'><Icon name='chart line' /></div>
+              <div className='stat-info'>
+                <div className='stat-value'>{stats.avgCompletion}</div>
+                <div className='stat-label'>Avg. Completion</div>
+                <div className='stat-trend up'><Icon name='arrow up' /> {stats.completionTrend}</div>
+              </div>
+            </div>
+          </div>
 
-              {/* Total Teams */}
-              <Grid.Column>
-                <StatCard
-                  title="Total Teams"
-                  value={stats?.totalTeams || 0}
-                  icon="users"
-                  color="orange"
-                  trend={stats?.teamGrowth || '+0 this month'}
-                  trendUp={stats?.teamGrowth?.includes('+') || true}
-                />
-              </Grid.Column>
+          {/* Main Content: Two Columns */}
+          <div className='dashboard-columns'>
 
-              {/* Avg. Completion */}
-              <Grid.Column>
-                <StatCard
-                  title="Avg. Completion"
-                  value={stats?.avgCompletion || '0%'}
-                  icon="chart line"
-                  color="purple"
-                  trend={stats?.completionTrend || '+0% vs last month'}
-                  trendUp={stats?.completionTrend?.includes('+') || true}
-                />
-              </Grid.Column>
-            </Grid>
-          </Segment>
+            {/* Left Column */}
+            <div className='dashboard-left'>
 
-          <Grid columns={2} stackable className="main-grid">
-            {/* Recent Courses */}
-            <Segment className="content-card">
-              <Header as='h2'>
-                <Icon name='book' color='green' />
-                Recent Courses
-              </Header>
-              <Card.Group itemsPerRow={1}>
-                {stats?.recentCourses?.map((course) => (
-                  <Card key={course.id} className="course-card">
-                    <Card.Content>
-                      <Card.Header>
-                        <span>{course.title}</span>
-                        {getStatusBadge(course.status)}
-                      </Card.Header>
-                      <Card.Meta>
-                        <span className="course-users">
-                          <Icon name='users' size='small' />
-                          {course.users} users
+              {/* Recent Courses */}
+              <div className='dashboard-card'>
+                <div className='card-header'>
+                  <h3><Icon name='book' color='green' /> Recent Courses</h3>
+                </div>
+                <div className='card-body'>
+                  {stats.recentCourses?.map((course) => (
+                    <div key={course.id} className='course-item'>
+                      <div className='course-item-info'>
+                        <h4>{course.title}</h4>
+                        <span className='course-item-meta'>
+                          <Icon name='users' size='mini' /> {course.users} users
                         </span>
-                      </Card.Meta>
-                      <Card.Description>
-                        <div className="progress-bar-container">
-                          <div className="progress-label">
-                            <span>Progress</span>
-                            <span>{course.progress}%</span>
-                          </div>
-                          <div className="progress-bar">
-                            <div
-                              className="progress-fill"
-                              style={{
-                                width: `${course.progress}%`,
-                                backgroundColor: getProgressColor(course.progress)
-                              }}
-                            />
-                          </div>
+                      </div>
+                      <div className='course-item-progress'>
+                        <div className='progress-bar-sm'>
+                          <div className='progress-fill' style={{ width: `${course.progress}%` }} />
                         </div>
-                      </Card.Description>
-                    </Card.Content>
-                  </Card>
-                ))}
-              </Card.Group>
-            </Segment>
-
-            {/* Enhanced Activity Feed */}
-            <Segment className="content-card">
-              <Header as='h2'>
-                <Icon name='clock' color='blue' />
-                Activity Feed
-              </Header>
-              <div className="activities-list">
-                {activity?.map((activityItem) => (
-                  <div key={activityItem.id} className="activity-item">
-                    <div className={`activity-icon ${getColorForType(activityItem.type)}`}>
-                      <Icon name={getIconForType(activityItem.type)} size='large' />
-                    </div>
-                    <div className="activity-content">
-                      <div className="activity-title">{activityItem.title}</div>
-                      <div className="activity-meta">
-                        {activityItem.course && (
-                          <span className="activity-course">{activityItem.course}</span>
-                        )}
-                        {activityItem.user && (
-                          <span className="activity-user">{activityItem.user}</span>
-                        )}
-                        <span className="activity-date">{activityItem.date}</span>
+                        <span>{course.progress}%</span>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
-              <Button basic color='blue' className="view-all-btn">
-                View All Activities
-              </Button>
-            </Segment>
-          </Grid>
-
-          {/* Enrollment Charts Section */}
-          <Segment className="charts-card">
-            <Header as='h2'>
-              <Icon name='chart area' color='teal' />
-              Enrollment Trends
-            </Header>
-            <div className="charts-container">
-              {/* Monthly Enrollment Chart */}
-              <div className="chart-card">
-                <Header as='h3'>Monthly Enrollment</Header>
-                <div className="chart-placeholder">
-                  {/* In a real implementation, this would render an actual chart */}
-                  <div className="chart-info">
-                    <Icon name='chart line' size='big' color='teal' />
-                    <div>
-                      <p>Line chart showing enrollment trends over time</p>
-                      <p>Data: {enrollment?.monthlyEnrollment?.length || 0} months</p>
+              {/* Activity Feed */}
+              <div className='dashboard-card'>
+                <div className='card-header'>
+                  <h3><Icon name='clock' color='blue' /> Activity Feed</h3>
+                </div>
+                <div className='card-body'>
+                  {activity?.map((item) => (
+                    <div key={item.id} className='activity-item'>
+                      <div className={`activity-dot ${item.type}`} />
+                      <div className='activity-content'>
+                        <div className='activity-title'>{item.title}</div>
+                        <div className='activity-meta'>
+                          {item.course && <span>{item.course}</span>}
+                          {item.user && <span>{item.user}</span>}
+                          <span className='activity-date'>{item.date}</span>
+                        </div>
+                      </div>
                     </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column */}
+            <div className='dashboard-right'>
+
+              {/* Quick Actions */}
+              <div className='dashboard-card quick-actions-card'>
+                <div className='card-header'>
+                  <h3><Icon name='bolt' color='orange' /> Quick Actions</h3>
+                </div>
+                <div className='card-body'>
+                  <div className='quick-actions-grid'>
+                    <button className='quick-action-btn'>
+                      <Icon name='plus circle' color='green' />
+                      <span>Create Course</span>
+                    </button>
+                    <button className='quick-action-btn'>
+                      <Icon name='user plus' color='blue' />
+                      <span>Add User</span>
+                    </button>
+                    <button className='quick-action-btn'>
+                      <Icon name='upload' color='orange' />
+                      <span>Upload Content</span>
+                    </button>
+                    <button className='quick-action-btn'>
+                      <Icon name='chart bar' color='teal' />
+                      <span>View Reports</span>
+                    </button>
                   </div>
                 </div>
               </div>
-              
-              {/* Course Popularity Chart */}
-              <div className="chart-card">
-                <Header as='h3'>Course Popularity</Header>
-                <div className="chart-placeholder">
-                  {/* In a real implementation, this would render an actual chart */}
-                  <div className="chart-info">
-                    <Icon name='pie chart' size='big' color='orange' />
-                    <div>
-                      <p>Pie chart showing distribution across courses</p>
-                      <p>Data: {enrollment?.coursePopularity?.length || 0} courses</p>
+
+              {/* Team Performance */}
+              <div className='dashboard-card'>
+                <div className='card-header'>
+                  <h3><Icon name='users' color='teal' /> Team Performance</h3>
+                </div>
+                <div className='card-body'>
+                  {stats.teamPerformance?.map((team) => (
+                    <div key={team.name} className='team-item'>
+                      <div className='team-info'>
+                        <span className='team-name'>{team.name}</span>
+                        <span className='team-progress-text'>{team.progress}%</span>
+                      </div>
+                      <div className='progress-bar-sm'>
+                        <div className='progress-fill' style={{ width: `${team.progress}%`, background: team.color }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Enrollment Summary */}
+              <div className='dashboard-card'>
+                <div className='card-header'>
+                  <h3><Icon name='chart area' color='purple' /> Enrollment Summary</h3>
+                </div>
+                <div className='card-body'>
+                  <div className='enrollment-summary'>
+                    <div className='enrollment-stat'>
+                      <div className='enrollment-value'>{stats.totalEnrollments || 0}</div>
+                      <div className='enrollment-label'>Total Enrollments</div>
+                    </div>
+                    <div className='enrollment-stat'>
+                      <div className='enrollment-value'>{stats.activeEnrollments || 0}</div>
+                      <div className='enrollment-label'>Active</div>
+                    </div>
+                    <div className='enrollment-stat'>
+                      <div className='enrollment-value'>{stats.completedEnrollments || 0}</div>
+                      <div className='enrollment-label'>Completed</div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </Segment>
-
-          {/* Team Performance Section */}
-          <Segment className="team-performance-card">
-            <Header as='h2'>
-              <Icon name='users' color='teal' />
-              Team Performance
-            </Header>
-            <div className="teams-list">
-              {teams?.teamPerformance?.map((team) => (
-                <div key={team.name} className="team-performance-item">
-                  <div className="team-info">
-                    <div className="team-name">{team.name}</div>
-                    <div className="team-progress">
-                      <span>Progress:</span>
-                      <div className="progress-bar">
-                        <div
-                          className="progress-fill"
-                          style={{
-                            width: `${team.progress}%`,
-                            backgroundColor: team.color
-                          }}
-                        />
-                      </div>
-                      <span>{team.progress}%</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Segment>
-
-          {/* Quick Actions */}
-          <Segment className="quick-actions-card">
-            <Header as='h3'>
-              <Icon name='bolt' color='orange' />
-              Quick Actions
-            </Header>
-            <Grid columns={4} divided stackable>
-              <Grid.Column>
-                <Button fluid primary icon size='large'>
-                  <Icon name='plus circle' />
-                </Button>
-                <div className="quick-action-label">Create Course</div>
-              </Grid.Column>
-              <Grid.Column>
-                <Button fluid secondary icon size='large'>
-                  <Icon name='user plus' />
-                </Button>
-                <div className="quick-action-label">Add User</div>
-              </Grid.Column>
-              <Grid.Column>
-                <Button fluid secondary icon size='large'>
-                  <Icon name='upload' />
-                </Button>
-                <div className="quick-action-label">Upload Content</div>
-              </Grid.Column>
-              <Grid.Column>
-                <Button fluid secondary icon size='large'>
-                  <Icon name='chart bar' />
-                </Button>
-                <div className="quick-action-label">View Reports</div>
-              </Grid.Column>
-            </Grid>
-          </Segment>
+          </div>
         </div>
       </div>
     </div>

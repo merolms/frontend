@@ -3,7 +3,7 @@
 // Falls back to demo mode with static users if VITE_DEMO_MODE=true or backend is unreachable.
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:9090/api';
-const DEMO_MODE = false //import.meta.env.VITE_DEMO_MODE === 'false' ; //|| import.meta.env.DEV;
+const DEMO_MODE = true //import.meta.env.VITE_DEMO_MODE === 'false' ; //|| import.meta.env.DEV;
 
 // ==================== STATIC USERS ====================
 // Default static users for authentication. Passwords are plaintext for now
