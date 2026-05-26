@@ -1,16 +1,23 @@
 import React from 'react';
 import { Menu, Icon } from 'semantic-ui-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import SideBarItem from '@/app/containers/SideBar/SideBarItem/SideBarItem';
 import UserProfileInfo from '@/app/components/UserProfileInfo';
-import { useSelector } from 'react-redux';
+import { logoutUser } from '@/redux/slices/authSlice';
 import './SideBar.scss';
 
 export default function SideBar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const currentPath = location.pathname;
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    navigate('/login');
+  };
 
   return (
     <div className='sidebar-wrapper'>
@@ -38,13 +45,19 @@ export default function SideBar() {
 
       <div className='sidebar-footer'>
         {user && (
-          <div className='sidebar-profile-card' onClick={() => navigate('/profile')} role='button' title='View profile'>
-            <UserProfileInfo
-              image={user.avatar}
-              primaryText={`${user.firstName} ${user.lastName}`}
-              secondaryText={user.role}
-            />
-          </div>
+          <>
+            <div className='sidebar-profile-card' onClick={() => navigate('/profile')} role='button' title='View profile'>
+              <UserProfileInfo
+                image={user.avatar}
+                primaryText={`${user.firstName} ${user.lastName}`}
+                secondaryText={user.role}
+              />
+            </div>
+            <button className='sidebar-logout-btn' onClick={handleLogout} title='Sign Out'>
+              <Icon name='sign out' />
+              <span>Sign Out</span>
+            </button>
+          </>
         )}
       </div>
     </div>
