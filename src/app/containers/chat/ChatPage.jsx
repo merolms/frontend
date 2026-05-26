@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import {
-  Segment, Icon, Button, Input, Dropdown, Header,
+  Icon, Button, Input, Dropdown, Header, Segment, Message, Modal,
 } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
-import { sendMessage } from '@/app/services/chatService';
+import {
+  sendMessage, getChatSettings, saveChatSettings,
+  AVAILABLE_MODELS, API_PRESETS, testConnection,
+} from '@/app/services/chatService';
 import './Chat.scss';
 
 const ChatPage = () => {
@@ -13,30 +16,22 @@ const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [model, setModel] = useState('gpt-5-nano');
-  const [availableModels, setAvailableModels] = useState([]);
   const [streamText, setStreamText] = useState('');
+  const [showSettings, setShowSettings] = useState(false);
+  const [settings, setSettings] = useState(getChatSettings);
+  const [testStatus, setTestStatus] = useState(null);
+  const [selectedPreset, setSelectedPreset] = useState('OpenAI');
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
   useEffect(() => {
-    // Load welcome message
-    setMessages([
-      {
-        id: 'welcome',
-        role: 'assistant',
-        content: `Hello${user ? `, ${user.firstName}` : ''}! I'm your MeroEdu AI assistant. I can help you with:\n\n• **Course recommendations** — Find the right courses for your goals\n• **Learning guidance** — Plan your curriculum and track progress\n• **Platform help** — Navigate MeroEdu features\n\nHow can I help you today?`,
-        timestamp: new Date(),
-      },
-    ]);
-  }, [user]);
-
-  useEffect(() => {
-    // Load available models
-    import('@/app/services/chatService').then(({ listModels }) => {
-      listModels().then(setAvailableModels).catch(() => {});
-    });
-  }, []);
+    setMessages([{
+      id: 'welcome',
+      role: 'assistant',
+      content: `Hello${user ? `, ${user.firstName}` : ''}! I'm your MeroEdu AI assistant.\n\nI can help you with:\n• **Course recommendations** — Find the right courses\n• **Learning guidance** — Plan your curriculum\n• **Platform help** — Navigate MeroEdu features\n• **Team collaboration** — Work with your peers\n\n${!settings.enabled ? '⚠️ *Configure your AI settings using the gear icon to enable real AI responses. For now, I\'ll use built-in responses.*' : ''}\n\nHow can I help you today?`,
+      timestamp: new Date(),
+    }]);
+  }, [user, settings.enabled]);
 
   useEffect(() => {
     scrollToBottom();
@@ -66,32 +61,29 @@ const ChatPage = () => {
       const result = await sendMessage(
         [...messages, userMessage],
         {
-          model,
           stream: true,
-          onChunk: (chunk) => {
-            setStreamText((prev) => prev + chunk);
-          },
+          onChunk: (chunk) => setStreamText((prev) => prev + chunk),
         }
       );
 
       const assistantMessage = {
         id: `assistant_${Date.now()}`,
         role: 'assistant',
-        content: result.text || streamText || 'I apologize, but I was unable to generate a response.',
+        content: result.text || 'Sorry, I could not generate a response.',
         timestamp: new Date(),
+        mock: result.mock,
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
       setStreamText('');
     } catch (err) {
-      const errorMessage = {
+      setMessages((prev) => [...prev, {
         id: `error_${Date.now()}`,
         role: 'assistant',
         content: 'Sorry, something went wrong. Please try again.',
         timestamp: new Date(),
         error: true,
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      }]);
     } finally {
       setIsLoading(false);
       inputRef.current?.focus();
@@ -105,35 +97,56 @@ const ChatPage = () => {
     }
   };
 
+  const handleSaveSettings = () => {
+    saveChatSettings(settings);
+    setShowSettings(false);
+    // Show confirmation in chat
+    setMessages((prev) => [...prev, {
+      id: `system_${Date.now()}`,
+      role: 'assistant',
+      content: settings.enabled
+        ? `✅ AI settings saved! Model: **${settings.model}**\n\nI'm now connected and ready to help you with real AI responses.`
+        : 'ℹ️ AI mode disabled. I\'ll use built-in responses. Enable AI in settings for smarter answers.',
+      timestamp: new Date(),
+    }]);
+  };
+
+  const handleTestConnection = async () => {
+    setTestStatus({ testing: true });
+    const result = await testConnection(settings);
+    setTestStatus(result);
+    setTimeout(() => setTestStatus(null), 4000);
+  };
+
+  const handlePresetChange = (_, { value }) => {
+    setSelectedPreset(value);
+    const preset = API_PRESETS.find((p) => p.name === value);
+    if (preset) {
+      setSettings((s) => ({
+        ...s,
+        apiBase: preset.base,
+        model: preset.models[0] || s.model,
+      }));
+    }
+  };
+
   const formatContent = (text) => {
     if (!text) return null;
-    // Simple markdown-like formatting
     return text.split('\n').map((line, i) => {
-      // Bold
       let formatted = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-      // Bullet points
-      if (formatted.startsWith('• ')) {
-        return (
-          <div key={i} className='chat-bullet'>
-            <span dangerouslySetInnerHTML={{ __html: formatted.substring(2) }} />
-          </div>
-        );
+      formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      if (formatted.startsWith('• ') || formatted.startsWith('- ')) {
+        return <div key={i} className='chat-bullet'><span dangerouslySetInnerHTML={{ __html: formatted.substring(2) }} /></div>;
       }
       if (formatted.trim() === '') return <div key={i} className='chat-line-break' />;
       return <div key={i} dangerouslySetInnerHTML={{ __html: formatted }} />;
     });
   };
 
-  const modelOptions = availableModels.map((m) => ({
+  const modelOptions = AVAILABLE_MODELS.map((m) => ({
     key: m.id,
     value: m.id,
     text: m.name,
-    content: (
-      <span>
-        {m.name}
-        <span style={{ opacity: 0.5, fontSize: 11, marginLeft: 8 }}>{m.provider}</span>
-      </span>
-    ),
   }));
 
   return (
@@ -145,90 +158,58 @@ const ChatPage = () => {
           <div className='header-left'>
             <h1 className='page-title'>AI Chat</h1>
             <p className='page-subtitle'>
-              {isLoading ? 'Thinking...' : streamText ? 'Typing...' : 'Ask me anything about your courses'}
+              {isLoading ? 'Thinking...' : streamText ? 'Typing...' : settings.enabled ? `Connected • ${settings.model}` : 'Built-in responses'}
             </p>
           </div>
           <div className='header-right'>
-            {modelOptions.length > 0 && (
-              <Dropdown
-                selection
-                options={modelOptions}
-                value={model}
-                onChange={(_, { value }) => setModel(value)}
-                className='chat-model-dropdown'
-              />
-            )}
+            <Button icon onClick={() => setShowSettings(true)} title='AI Settings'>
+              <Icon name='cog' />
+            </Button>
           </div>
         </div>
 
         <div className='chat-page'>
-
-          {/* Messages Area */}
+          {/* Messages */}
           <div className='chat-messages'>
             {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`chat-message ${msg.role} ${msg.error ? 'error' : ''}`}
-              >
+              <div key={msg.id} className={`chat-message ${msg.role} ${msg.error ? 'error' : ''} ${msg.mock ? 'mock' : ''}`}>
                 <div className='chat-avatar'>
                   {msg.role === 'user' ? (
-                    <img
-                      src={user?.avatar || 'https://i.pravatar.cc/150?img=3'}
-                      alt='You'
-                    />
+                    <img src={user?.avatar || 'https://i.pravatar.cc/150?img=3'} alt='You' />
                   ) : (
-                    <div className='ai-avatar'>
-                      <Icon name='robot' />
-                    </div>
+                    <div className='ai-avatar'><Icon name='robot' /></div>
                   )}
                 </div>
                 <div className='chat-bubble'>
-                  <div className='chat-content'>
-                    {formatContent(msg.content)}
-                  </div>
+                  <div className='chat-content'>{formatContent(msg.content)}</div>
                   <div className='chat-time'>
                     {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {msg.mock && <span className='mock-badge'>demo</span>}
                   </div>
                 </div>
               </div>
             ))}
 
-            {/* Streaming response */}
             {streamText && (
               <div className='chat-message assistant'>
-                <div className='chat-avatar'>
-                  <div className='ai-avatar'>
-                    <Icon name='robot' />
-                  </div>
-                </div>
-                <div className='chat-bubble'>
-                  <div className='chat-content'>{formatContent(streamText)}</div>
-                </div>
+                <div className='chat-avatar'><div className='ai-avatar'><Icon name='robot' /></div></div>
+                <div className='chat-bubble'><div className='chat-content'>{formatContent(streamText)}</div></div>
               </div>
             )}
 
-            {/* Typing indicator */}
             {isLoading && !streamText && (
               <div className='chat-message assistant'>
-                <div className='chat-avatar'>
-                  <div className='ai-avatar'>
-                    <Icon name='robot' />
-                  </div>
-                </div>
-                <div className='chat-bubble typing'>
-                  <div className='typing-dots'>
-                    <span /><span /><span />
-                  </div>
-                </div>
+                <div className='chat-avatar'><div className='ai-avatar'><Icon name='robot' /></div></div>
+                <div className='chat-bubble typing'><div className='typing-dots'><span /><span /><span /></div></div>
               </div>
             )}
 
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Area */}
+          {/* Input */}
           <div className='chat-input-area'>
-            <Segment className='chat-input-segment'>
+            <Segment className='chat-input-segment' style={{ padding: '12px 16px' }}>
               <div className='chat-input-wrapper'>
                 <textarea
                   ref={inputRef}
@@ -240,22 +221,80 @@ const ChatPage = () => {
                   disabled={isLoading}
                   className='chat-textarea'
                 />
-                <Button
-                  primary
-                  icon
-                  onClick={handleSend}
-                  disabled={!input.trim() || isLoading}
-                  className='chat-send-btn'
-                >
+                <Button primary icon onClick={handleSend} disabled={!input.trim() || isLoading} className='chat-send-btn'>
                   <Icon name='send' />
                 </Button>
-              </div>
-              <div className='chat-input-hint'>
-                Powered by AI • Responses may not always be accurate
               </div>
             </Segment>
           </div>
         </div>
+
+        {/* Settings Modal */}
+        <Modal open={showSettings} onClose={() => setShowSettings(false)} size='small'>
+          <Header icon='cog' content='AI Chat Settings' />
+          <Modal.Content>
+            <Segment>
+              <h4>API Provider</h4>
+              <Dropdown
+                selection
+                options={API_PRESETS.map((p) => ({ key: p.name, value: p.name, text: p.name }))}
+                value={selectedPreset}
+                onChange={handlePresetChange}
+                fluid
+                style={{ marginBottom: 12 }}
+              />
+
+              <h4>API Key</h4>
+              <Input
+                type='password'
+                placeholder='sk-... or your API key'
+                value={settings.apiKey}
+                onChange={(e) => setSettings((s) => ({ ...s, apiKey: e.target.value }))}
+                fluid
+                style={{ marginBottom: 12 }}
+              />
+
+              <h4>API Base URL</h4>
+              <Input
+                placeholder='https://api.openai.com/v1'
+                value={settings.apiBase}
+                onChange={(e) => setSettings((s) => ({ ...s, apiBase: e.target.value }))}
+                fluid
+                style={{ marginBottom: 12 }}
+              />
+
+              <h4>Model</h4>
+              <Dropdown
+                selection
+                options={modelOptions}
+                value={settings.model}
+                onChange={(e, { value }) => setSettings((s) => ({ ...s, model: value }))}
+                fluid
+                style={{ marginBottom: 16 }}
+              />
+
+              <Button primary onClick={handleTestConnection} loading={testStatus?.testing} style={{ marginRight: 8 }}>
+                Test Connection
+              </Button>
+
+              {testStatus && !testStatus.testing && (
+                <Message success={testStatus.success} error={!testStatus.success}>
+                  <p>{testStatus.success ? '✅ Connection successful!' : `❌ ${testStatus.error}`}</p>
+                </Message>
+              )}
+            </Segment>
+          </Modal.Content>
+          <Modal.Actions>
+            <Button onClick={() => setShowSettings(false)}>Cancel</Button>
+            <Button
+              primary
+              onClick={handleSaveSettings}
+              disabled={!settings.apiKey}
+            >
+              Save & Enable
+            </Button>
+          </Modal.Actions>
+        </Modal>
       </div>
     </div>
   );
