@@ -336,6 +336,8 @@ let mockCourses = [
   },
 ];
 
+export { mockCourses };
+
 const mockLessons = {
   1: [
     { id: 1, title: 'Getting Started with React', description: 'Introduction to React and its ecosystem', duration: '30 mins', order: 1 },

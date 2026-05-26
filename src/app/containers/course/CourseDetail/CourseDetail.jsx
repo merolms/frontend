@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import {
   Breadcrumb, Header, Divider, Tab, List, Grid, Card,
   Icon, Button, Image, Label, Segment, Statistic, Progress,
@@ -10,17 +11,20 @@ import {
 } from '@/app/services/courseService';
 import { PublishModal, ArchiveModal, DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
+import { isEnrolled, enrollInCourse, dropCourse } from '@/app/services/enrollmentService';
 import './CourseDetail.scss';
 
 const CourseDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const user = useSelector((s) => s.auth.user);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
+  const [enrollment, setEnrollment] = useState(null);
 
   useEffect(() => { loadData(); }, [id]);
 
@@ -33,10 +37,39 @@ const CourseDetail = () => {
       ]);
       setCourse(courseData);
       setLessons(lessonsData);
+      if (user) {
+        setEnrollment(isEnrolled(user.id, parseInt(id)));
+      }
     } catch (err) {
       console.error('Error loading course:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleEnroll = async () => {
+    if (!user) { navigate('/login'); return; }
+    try {
+      setActionLoading(true);
+      const result = await enrollInCourse(user.id, parseInt(id));
+      setEnrollment(result);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDrop = async () => {
+    if (!confirm('Are you sure you want to drop this course?')) return;
+    try {
+      setActionLoading(true);
+      await dropCourse(user.id, parseInt(id));
+      setEnrollment(isEnrolled(user.id, parseInt(id)));
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -316,6 +349,31 @@ const CourseDetail = () => {
             </PermissionGuard>
           </div>
           <div className='action-right'>
+            {enrollment?.status === 'active' && (
+              <Button primary as={Link} to={`/courses/${id}/learn`}>
+                <Icon name='play' /> Continue Learning
+              </Button>
+            )}
+            {enrollment?.status === 'completed' && (
+              <Button as={Link} to={`/courses/${id}/learn`}>
+                <Icon name='eye' /> Review Course
+              </Button>
+            )}
+            {enrollment?.status === 'dropped' && (
+              <Button color='green' onClick={handleEnroll} loading={actionLoading}>
+                <Icon name='plus' /> Re-enroll
+              </Button>
+            )}
+            {enrollment?.status === 'active' && (
+              <Button basic color='red' onClick={handleDrop} loading={actionLoading}>
+                <Icon name='minus circle' /> Drop
+              </Button>
+            )}
+            {!enrollment && user && course.status === 'published' && (
+              <Button color='green' onClick={handleEnroll} loading={actionLoading}>
+                <Icon name='plus' /> Enroll Now
+              </Button>
+            )}
             {course.status !== 'published' && (
               <PermissionGuard permissions={['courses.publish']}>
                 <Button color='green' icon onClick={() => setActiveModal('publish')}>

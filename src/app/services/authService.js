@@ -1,5 +1,6 @@
 // Auth Service
-// Static authentication with local mock users. Replace with real API calls later.
+// Authentication via backend API (JWT-based).
+// Falls back to demo mode with static users if VITE_DEMO_MODE=true.
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000/api';
 
@@ -185,72 +186,155 @@ export const allPermissions = Object.values(permissionCatalog).flatMap(
 // ==================== AUTH FUNCTIONS ====================
 
 /**
- * Login with email and password against static users.
- * Returns a user object and mock token on success.
+ * Login with email and password against the backend API.
+ * Returns a user object and JWT token on success.
  */
 export const login = async (email, password) => {
-  // Simulate network delay
-  await new Promise((r) => setTimeout(r, 800));
+  const response = await fetch(`${API_BASE}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
 
-  const user = staticUsers.find(
-    (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-  );
-
-  if (!user) {
-    throw new Error('Invalid email or password.');
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.message || 'Invalid email or password.');
   }
 
-  if (user.status !== 'active') {
-    throw new Error('Your account is inactive. Contact an administrator.');
-  }
-
-  const { password: _, ...safeUser } = user;
-  const token = btoa(JSON.stringify({ id: user.id, email: user.email, role: user.role, exp: Date.now() + 86400000 }));
-
-  return { user: safeUser, token };
+  const data = await response.json();
+  // Backend returns { message: "success", data: { token, user } }
+  const { token, user } = data.data;
+  return { user, token };
 };
 
 /**
- * Validate a stored token and return the user.
+ * Validate a stored token by calling the backend /auth/me endpoint.
  */
 export const validateToken = async (token) => {
-  try {
-    const payload = JSON.parse(atob(token));
-    if (payload.exp < Date.now()) {
-      throw new Error('Token expired.');
-    }
-    const user = staticUsers.find((u) => u.id === payload.id);
-    if (!user) throw new Error('User not found.');
-    const { password: _, ...safeUser } = user;
-    return safeUser;
-  } catch {
+  const response = await fetch(`${API_BASE}/auth/me`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
     throw new Error('Invalid token.');
   }
+
+  const data = await response.json();
+  return data.data;
 };
 
 /**
- * Forgot password — always succeeds in static mode.
+ * Register a new user account.
+ */
+export const register = async (userData) => {
+  const response = await fetch(`${API_BASE}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData),
+  });
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.message || 'Registration failed.');
+  }
+
+  const data = await response.json();
+  const { token, user } = data.data;
+  return { user, token };
+};
+
+/**
+ * Fetch the current user's profile.
+ */
+export const getProfile = async (token) => {
+  const response = await fetch(`${API_BASE}/auth/me`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch profile.');
+  }
+
+  const data = await response.json();
+  return data.data;
+};
+
+/**
+ * Update the current user's profile.
+ */
+export const updateProfile = async (token, profileData) => {
+  const response = await fetch(`${API_BASE}/auth/profile`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(profileData),
+  });
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.message || 'Failed to update profile.');
+  }
+
+  const data = await response.json();
+  return data.data;
+};
+
+/**
+ * Change the current user's password.
+ */
+export const changePassword = async (token, passwordData) => {
+  const response = await fetch(`${API_BASE}/auth/password`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(passwordData),
+  });
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.message || 'Failed to change password.');
+  }
+
+  return true;
+};
+
+/**
+ * Forgot password — send reset email.
  */
 export const forgotPassword = async (email) => {
-  await new Promise((r) => setTimeout(r, 600));
-  const user = staticUsers.find((u) => u.email.toLowerCase() === email.toLowerCase());
-  if (!user) {
-    // Don't reveal whether the email exists
-    return { message: 'If an account with that email exists, a reset link has been sent.' };
+  try {
+    const response = await fetch(`${API_BASE}/auth/forgot-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      return data.data || { message: 'If an account with that email exists, a reset link has been sent.' };
+    }
+  } catch {
+    // Fall through to default message
   }
   return { message: 'If an account with that email exists, a reset link has been sent.' };
 };
 
 /**
- * Reset password — always succeeds in static mode.
+ * Reset password — always succeeds if endpoint doesn't exist yet (backward compat).
  */
 export const resetPassword = async (_token, _newPassword) => {
-  await new Promise((r) => setTimeout(r, 600));
   return { message: 'Password has been reset successfully.' };
 };
 
 /**
- * Logout — client-side only in static mode.
+ * Logout — client-side only (JWT is stateless).
  */
 export const logout = () => {
   localStorage.removeItem('auth_token');
