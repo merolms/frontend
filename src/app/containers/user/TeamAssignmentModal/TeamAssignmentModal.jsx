@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Header, Icon, Label, Message } from 'semantic-ui-react';
-import { mockGetTeams, mockAssignUserToTeam, mockRemoveUserFromTeam } from '@/app/services/userService';
+import { fetchTeams } from '@/app/services/teamService';
 
 const TeamAssignmentModal = ({ open, onClose, user, onUpdated }) => {
   const [teams, setTeams] = useState([]);
@@ -19,8 +19,8 @@ const TeamAssignmentModal = ({ open, onClose, user, onUpdated }) => {
   const loadTeams = async () => {
     try {
       setLoading(true);
-      const data = await mockGetTeams();
-      setTeams(data);
+      const data = await fetchTeams();
+      setTeams(Array.isArray(data) ? data : []);
     } catch (err) {
       setError('Failed to load teams.');
     } finally {
@@ -31,22 +31,8 @@ const TeamAssignmentModal = ({ open, onClose, user, onUpdated }) => {
   const isAssigned = (teamName) => assignedTeams.includes(teamName);
 
   const handleToggleTeam = async (team) => {
-    try {
-      setSaving(true);
-      setError(null);
-      if (isAssigned(team.name)) {
-        await mockRemoveUserFromTeam(user.id, team.id);
-        setAssignedTeams((prev) => prev.filter((t) => t !== team.name));
-      } else {
-        await mockAssignUserToTeam(user.id, team.id);
-        setAssignedTeams((prev) => [...prev, team.name]);
-      }
-      if (onUpdated) onUpdated();
-    } catch (err) {
-      setError('Failed to update team assignment.');
-    } finally {
-      setSaving(false);
-    }
+    // Team assignment via backend not yet implemented
+    setError('Team assignment is not yet supported by the backend.');
   };
 
   if (!user) return null;

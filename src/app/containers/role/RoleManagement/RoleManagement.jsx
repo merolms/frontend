@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Segment, Icon, Button, Input, Label, Table, Divider, Header,
+  Segment, Icon, Button, Input, Label, Table, Divider, Header, Message,
 } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
@@ -19,8 +19,10 @@ const getRoleColor = (name) => {
 
 const RoleManagement = () => {
   const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchInput, setSearchInput] = useState('');
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [showPermissionModal, setShowPermissionModal] = useState(null);
@@ -30,9 +32,11 @@ const RoleManagement = () => {
   const loadRoles = async () => {
     try {
       setLoading(true);
+      setError(null);
       const data = await fetchRoles();
-      setRoles(data);
+      setRoles(Array.isArray(data) ? data : []);
     } catch (err) {
+      setError('Failed to load roles.');
       console.error('Error loading roles:', err);
     } finally {
       setLoading(false);
@@ -41,8 +45,8 @@ const RoleManagement = () => {
 
   const filteredRoles = roles.filter(
     (r) =>
-      r.name.toLowerCase().includes(searchInput.toLowerCase()) ||
-      r.description.toLowerCase().includes(searchInput.toLowerCase())
+      (r.name || '').toLowerCase().includes(searchInput.toLowerCase()) ||
+      (r.description || '').toLowerCase().includes(searchInput.toLowerCase())
   );
 
   const handleDelete = async () => {
@@ -58,9 +62,9 @@ const RoleManagement = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar />
+      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
 
-      <div className='dashboard-main'>
+      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         <div className='dashboard-header'>
           <div className='header-left'>
             <h1 className='page-title'>Roles & Permissions</h1>
@@ -76,6 +80,12 @@ const RoleManagement = () => {
         </div>
 
         <div className='dashboard-content'>
+          {error && (
+            <Message negative onDismiss={() => setError(null)}>
+              <Icon name='warning circle' /> {error}
+            </Message>
+          )}
+
           <Segment className='role-filters' secondary>
             <div className='role-filters-row'>
               <form className='role-search-form' onSubmit={(e) => e.preventDefault()}>
@@ -118,7 +128,7 @@ const RoleManagement = () => {
                       <Table.Cell>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <Label color={getRoleColor(role.name)} size='small'>{role.name}</Label>
-                          {role.permissions.includes('*') && (
+                          {role.permissions && role.permissions.includes('*') && (
                             <Label color='red' size='tiny' circular style={{ padding: '2px 6px' }}>
                               <Icon name='star' size='mini' />
                             </Label>
@@ -133,16 +143,16 @@ const RoleManagement = () => {
                           onClick={() => setShowPermissionModal(role)}
                           style={{ fontSize: '12px' }}
                         >
-                          <Icon name='eye' /> {role.permissions.includes('*') ? 'All' : `${role.permissions.length} permissions`}
+                          <Icon name='eye' /> {role.permissions && role.permissions.includes('*') ? 'All' : `${(role.permissions || []).length} permissions`}
                         </Button>
                       </Table.Cell>
                       <Table.Cell>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                           <span style={{
                             display: 'inline-block', width: 16, height: 16, borderRadius: 3,
-                            background: role.color === 'red' ? '#db2828' : role.color === 'blue' ? '#2185d0' : role.color === 'purple' ? '#a333c8' : role.color === 'teal' ? '#00b5ad' : '#767676',
+                            background: role.color || '#767676',
                           }} />
-                          <span style={{ fontSize: '12px', color: '#888' }}>{role.color}</span>
+                          <span style={{ fontSize: '12px', color: '#888' }}>{role.color || 'default'}</span>
                         </div>
                       </Table.Cell>
                       <Table.Cell textAlign='center'>
@@ -175,14 +185,14 @@ const RoleManagement = () => {
               {showPermissionModal.name} — Permissions
             </Header>
             <Divider />
-            {showPermissionModal.permissions.includes('*') ? (
+            {showPermissionModal.permissions && showPermissionModal.permissions.includes('*') ? (
               <div style={{ textAlign: 'center', padding: 20 }}>
                 <Icon name='star' color='red' size='huge' />
                 <p style={{ marginTop: 12, color: '#666' }}>This role has <strong>full administrative access</strong> to all features.</p>
               </div>
             ) : (
               <div className='role-permission-list'>
-                {showPermissionModal.permissions.map((perm) => (
+                {(showPermissionModal.permissions || []).map((perm) => (
                   <div key={perm} className='role-permission-item'>
                     <Icon name='check circle' color='green' />
                     <span>{perm}</span>

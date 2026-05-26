@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, TextArea, Button, Message, Label, Dropdown } from 'semantic-ui-react';
-import { mockTeamColors } from '@/app/services/teamService';
 
-const colorOptions = mockTeamColors.map((color) => ({
+const TEAM_COLORS = ['#1976d2', '#7b1fa2', '#e65100', '#33a163', '#c62828', '#00838f', '#f57f17', '#4a148c'];
+
+const colorOptions = TEAM_COLORS.map((color) => ({
   key: color,
   text: color,
   value: color,
@@ -18,7 +19,7 @@ const TeamForm = ({ initialData = null, onSubmit, onCancel, loading = false, sub
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    color: mockTeamColors[0],
+    color: TEAM_COLORS[0],
     ...initialData,
   });
 
@@ -33,7 +34,6 @@ const TeamForm = ({ initialData = null, onSubmit, onCancel, loading = false, sub
   const validate = () => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = 'Team name is required';
-    if (!formData.description.trim()) newErrors.description = 'Description is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -64,38 +64,34 @@ const TeamForm = ({ initialData = null, onSubmit, onCancel, loading = false, sub
         <label>Team Name</label>
         <Input
           name='name'
-          placeholder='e.g., Team Alpha'
+          placeholder='Engineering Team'
           value={formData.name}
           onChange={handleChange}
         />
         {errors.name && <Label basic color='red' pointing='left'>{errors.name}</Label>}
       </Form.Field>
 
-      <Form.Field required error={!!errors.description}>
+      <Form.Field>
         <label>Description</label>
         <TextArea
           name='description'
           placeholder='What is this team about?'
-          style={{ minHeight: 100 }}
           value={formData.description}
           onChange={handleChange}
+          style={{ minHeight: 80 }}
         />
-        {errors.description && <Label basic color='red' pointing='left'>{errors.description}</Label>}
       </Form.Field>
 
       <Form.Field>
-        <label>Team Color</label>
+        <label>Color</label>
         <Dropdown
           name='color'
+          placeholder='Select a color'
           selection
           options={colorOptions}
           value={formData.color}
           onChange={handleChange}
         />
-        <div style={{ marginTop: 8 }}>
-          <span style={{ display: 'inline-block', width: 24, height: 24, borderRadius: 4, background: formData.color, border: '1px solid #ddd' }} />
-          <span style={{ marginLeft: 8, color: '#888', fontSize: '12px' }}>Preview</span>
-        </div>
       </Form.Field>
 
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>

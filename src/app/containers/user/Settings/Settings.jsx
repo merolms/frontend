@@ -94,7 +94,7 @@ const Settings = () => {
   const handleAvatarChange = () => {
     const url = prompt('Enter new avatar URL:', user?.avatar || '');
     if (url) {
-      mockUpdateUser(user.id, { avatar: url }).then(() => {
+      updateProfile({ avatar: url }).then(() => {
         window.location.reload();
       }).catch(() => {});
     }

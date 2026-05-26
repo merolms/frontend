@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Header, Icon, Label, Image, Divider } from 'semantic-ui-react';
-import { mockGetAvailableUsers, mockAddMemberToTeam, mockRemoveMemberFromTeam } from '@/app/services/teamService';
+import { getAvailableUsers, addMemberToTeam, removeMemberFromTeam } from '@/app/services/teamService';
 
 const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
   const [availableUsers, setAvailableUsers] = useState([]);
@@ -19,7 +19,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
   const loadAvailableUsers = async () => {
     try {
       setLoading(true);
-      const users = await mockGetAvailableUsers(team.id);
+      const users = await getAvailableUsers(team.id);
       setAvailableUsers(users);
     } catch (err) {
       setError('Failed to load available users.');
@@ -32,7 +32,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
     try {
       setSaving(true);
       setError(null);
-      await mockAddMemberToTeam(team.id, user.id);
+      await addMemberToTeam(team.id, user.id);
       setMembers((prev) => [...prev, { id: user.id, firstName: user.firstName, lastName: user.lastName, role: user.role, avatar: user.avatar }]);
       setAvailableUsers((prev) => prev.filter((u) => u.id !== user.id));
       if (onUpdated) onUpdated();
@@ -47,7 +47,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
     try {
       setSaving(true);
       setError(null);
-      await mockRemoveMemberFromTeam(team.id, user.id);
+      await removeMemberFromTeam(team.id, user.id);
       setMembers((prev) => prev.filter((m) => m.id !== user.id));
       setAvailableUsers((prev) => [...prev, { id: user.id, firstName: user.firstName, lastName: user.lastName, role: user.role, avatar: user.avatar, email: user.email }]);
       if (onUpdated) onUpdated();

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, TextArea, Button, Message, Label, Grid, Icon, Segment } from 'semantic-ui-react';
 import { permissionCatalog } from '@/app/services/authService';
-import { mockTeamColors } from '@/app/services/teamService';
+
+const ROLE_COLORS = ['red', 'blue', 'purple', 'teal', 'green', 'orange', 'pink', 'yellow', 'brown', 'grey', 'black', 'violet', 'olive', 'cyan'];
 
 
 const RoleForm = ({ initialData = null, onSubmit, onCancel, loading = false, submitLabel = 'Save Role' }) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    color: mockTeamColors[0],
+    color: ROLE_COLORS[0],
     permissions: [],
     ...initialData,
   });
@@ -132,7 +133,7 @@ const RoleForm = ({ initialData = null, onSubmit, onCancel, loading = false, sub
       <Form.Field>
         <label>Color</label>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {mockTeamColors.map((color) => (
+          {ROLE_COLORS.map((color) => (
             <button
               key={color}
               type='button'

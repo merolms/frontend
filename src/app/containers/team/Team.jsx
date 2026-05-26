@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import {
   Segment, Icon, Button, Input, Dropdown, Pagination,
-  Label, Image, Divider, Header, Grid, Card,
+  Label, Image, Divider, Header, Grid, Card, Message,
 } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import TeamMemberAssignModal from '@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal';
@@ -12,24 +12,23 @@ import './Team.scss';
 
 const statusOptions = [
   { key: 'all', text: 'All', value: '' },
-  { key: 'active', text: 'Active', value: 'active' },
-  { key: 'inactive', text: 'Inactive', value: 'inactive' },
+  { key: 'active', text: 'Active', value: '1' },
+  { key: 'inactive', text: 'Inactive', value: '0' },
 ];
 
 const sortOptions = [
   { key: 'newest', text: 'Newest First', value: 'newest' },
   { key: 'name', text: 'Name A-Z', value: 'name' },
-  { key: 'members', text: 'Most Members', value: 'members' },
 ];
 
 const TeamContainer = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
 
   const [assignTeam, setAssignTeam] = useState(null);
@@ -38,8 +37,8 @@ const TeamContainer = () => {
 
   const page = parseInt(searchParams.get('page')) || 1;
   const search = searchParams.get('search') || '';
-  const status = searchParams.get('status') || '';
-  const sort = searchParams.get('sort') || 'newest';
+  const statusFilter = searchParams.get('status') || '';
+  const sort = searchParams.get('sort') || '';
 
   const [searchInput, setSearchInput] = useState(search);
 
@@ -47,21 +46,28 @@ const TeamContainer = () => {
     try {
       setLoading(true);
       setError(null);
-      const params = { page, limit: 8 };
-      if (search) params.search = search;
-      if (status) params.status = status;
+      const params = { start: (page - 1) * 8, limit: 8 };
       if (sort) params.sort = sort;
       const data = await fetchTeams(params);
-      setTeams(data || []);
-      setTotal(data?.length || 0);
-      setTotalPages(1);
+      const teamList = Array.isArray(data) ? data : [];
+      // Client-side filtering
+      let filtered = teamList;
+      if (statusFilter) filtered = filtered.filter((t) => String(t.status) === statusFilter);
+      if (search) {
+        const q = search.toLowerCase();
+        filtered = filtered.filter(
+          (t) => (t.name || '').toLowerCase().includes(q) || (t.description || '').toLowerCase().includes(q)
+        );
+      }
+      setTeams(filtered);
+      setTotal(filtered.length);
     } catch (err) {
       setError(err.message || 'Failed to load teams');
       console.error('Error fetching teams:', err);
     } finally {
       setLoading(false);
     }
-  }, [search, status, sort, page]);
+  }, [search, statusFilter, sort, page]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -80,10 +86,6 @@ const TeamContainer = () => {
     updateParams({ search: searchInput, page: 1 });
   };
 
-  const handlePageChange = (e, { activePage }) => {
-    updateParams({ page: activePage });
-  };
-
   const handleDelete = async () => {
     if (!deleteTarget) return;
     try {
@@ -100,9 +102,9 @@ const TeamContainer = () => {
 
   return (
     <div className='dashboard-layout'>
-      <SideBar />
+      <SideBar sidebarOpen={sidebarOpen} onToggle={setSidebarOpen} />
 
-      <div className='dashboard-main'>
+      <div className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         <div className='dashboard-header'>
           <div className='header-left'>
             <h1 className='page-title'>Teams</h1>
@@ -117,9 +119,9 @@ const TeamContainer = () => {
 
         <div className='dashboard-content'>
           {error && (
-            <Segment negative>
+            <Message negative onDismiss={() => setError(null)}>
               <Icon name='warning circle' /> {error}
-            </Segment>
+            </Message>
           )}
 
           {/* Filters */}
@@ -138,7 +140,7 @@ const TeamContainer = () => {
                 placeholder='Status'
                 selection
                 options={statusOptions}
-                value={status}
+                value={statusFilter}
                 onChange={(e, { value }) => updateParams({ status: value, page: 1 })}
                 className='team-filter-dropdown'
               />
@@ -157,23 +159,6 @@ const TeamContainer = () => {
                 Clear
               </Button>
             </div>
-
-            {(status || search) && (
-              <>
-                <Divider hidden />
-                <div className='active-filters'>
-                  <span style={{ fontSize: '12px', color: '#888', marginRight: '8px' }}>Filters:</span>
-                  {search && (
-                    <Label size='small' color='blue' onRemove={() => { setSearchInput(''); updateParams({ search: '', page: 1 }); }}>
-                      Search: {search}
-                    </Label>
-                  )}
-                  {status && (
-                    <Label size='small' color='green' onRemove={() => updateParams({ status: '', page: 1 })}>{status}</Label>
-                  )}
-                </div>
-              </>
-            )}
           </Segment>
 
           {/* Teams Grid */}
@@ -205,42 +190,30 @@ const TeamContainer = () => {
               </Button>
             </Segment>
           ) : (
-            <>
-              <div className='teams-grid'>
-                {teams.map((team) => (
-                  <div key={team.id} className='team-card' onClick={() => navigate(`/teams/${team.id}`)}>
-                    <div className='team-card-header' style={{ background: team.color || '#2185d0' }}>
-                      <Icon name='users' size='large' color='white' />
-                      <span className={`team-card-badge ${team.status === 1 ? 'active' : 'inactive'}`}>
-                        {team.memberCount || 0}
-                      </span>
-                    </div>
-                    <div className='team-card-body'>
-                      <h3 className='team-card-title'>{team.name}</h3>
-                      <p className='team-card-desc'>{team.description || 'No description'}</p>
-                    </div>
-                    <div className='team-card-footer'>
-                      <div className='team-card-stats'>
-                        <div className='team-stat'>
-                          <div className='team-stat-value'>{team.memberCount || 0}</div>
-                          <div className='team-stat-label'>Members</div>
-                        </div>
+            <div className='teams-grid'>
+              {teams.map((team) => (
+                <div key={team.id} className='team-card' onClick={() => navigate(`/teams/${team.id}`)}>
+                  <div className='team-card-header' style={{ background: team.color || '#2185d0' }}>
+                    <Icon name='users' size='large' color='white' />
+                    <span className={`team-card-badge ${team.status === 1 ? 'active' : 'inactive'}`}>
+                      {team.memberCount || 0}
+                    </span>
+                  </div>
+                  <div className='team-card-body'>
+                    <h3 className='team-card-title'>{team.name}</h3>
+                    <p className='team-card-desc'>{team.description || 'No description'}</p>
+                  </div>
+                  <div className='team-card-footer'>
+                    <div className='team-card-stats'>
+                      <div className='team-stat'>
+                        <div className='team-stat-value'>{team.memberCount || 0}</div>
+                        <div className='team-stat-label'>Members</div>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-
-              {totalPages > 1 && (
-                <div className='teams-pagination'>
-                  <Pagination
-                    activePage={page}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                  />
                 </div>
-              )}
-            </>
+              ))}
+            </div>
           )}
         </div>
       </div>

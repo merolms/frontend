@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Dropdown, Button, Message, Label } from 'semantic-ui-react';
-import { mockRoles } from '@/app/services/userService';
-
-const roleOptions = mockRoles.map((role) => ({ key: role, text: role, value: role }));
+import { fetchRoles } from '@/app/services/authService';
 
 const UserForm = ({ initialData = null, onSubmit, onCancel, loading = false, submitLabel = 'Save User' }) => {
   const [formData, setFormData] = useState({
@@ -16,6 +14,26 @@ const UserForm = ({ initialData = null, onSubmit, onCancel, loading = false, sub
   });
 
   const [errors, setErrors] = useState({});
+  const [roleOptions, setRoleOptions] = useState([]);
+
+  useEffect(() => {
+    const loadRoles = async () => {
+      try {
+        const roles = await fetchRoles();
+        const opts = roles.map((role) => ({ key: role.name, text: role.name, value: role.name }));
+        setRoleOptions(opts);
+      } catch (err) {
+        // Fallback to default roles
+        setRoleOptions([
+          { key: 'Student', text: 'Student', value: 'Student' },
+          { key: 'Instructor', text: 'Instructor', value: 'Instructor' },
+          { key: 'Team Lead', text: 'Team Lead', value: 'Team Lead' },
+          { key: 'Administrator', text: 'Administrator', value: 'Administrator' },
+        ]);
+      }
+    };
+    loadRoles();
+  }, []);
 
   useEffect(() => {
     if (initialData) {

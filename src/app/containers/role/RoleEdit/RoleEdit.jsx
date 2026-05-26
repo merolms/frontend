@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Segment, Icon, Breadcrumb, Divider, Header, Button } from 'semantic-ui-react';
+import { Segment, Icon, Breadcrumb, Divider, Header, Button, Message } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import RoleForm from '@/app/containers/role/RoleForm/RoleForm';
-import { fetchRoleById, updateRole } from '@/app/services/authService';
+import { fetchRoles, updateRole } from '@/app/services/authService';
 
 const RoleEdit = () => {
   const navigate = useNavigate();
@@ -14,15 +14,17 @@ const RoleEdit = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // No GET /roles/{id} endpoint exists. Load all roles and find the one we need.
     const loadRole = async () => {
       try {
         setFetching(true);
-        const data = await fetchRoleById(id);
-        if (!data) {
+        const roles = await fetchRoles();
+        const found = roles.find((r) => String(r.id) === String(id));
+        if (!found) {
           setError('Role not found.');
           return;
         }
-        setRole(data);
+        setRole(found);
       } catch (err) {
         setError('Failed to load role data.');
       } finally {
@@ -68,10 +70,11 @@ const RoleEdit = () => {
         <SideBar />
         <div className='dashboard-main'>
           <div className='dashboard-content'>
-            <Segment placeholder>
-              <Header icon><Icon name='warning circle' /> {error}</Header>
-              <Button primary onClick={() => navigate('/roles')}>Back to Roles</Button>
-            </Segment>
+            <Message negative>
+              <Message.Header>Error</Message.Header>
+              <p>{error}</p>
+            </Message>
+            <Button primary onClick={() => navigate('/roles')}>Back to Roles</Button>
           </div>
         </div>
       </div>
@@ -105,9 +108,9 @@ const RoleEdit = () => {
             <p className='role-form-subtitle'>Update the role details and permissions.</p>
 
             {error && (
-              <div className='role-form-error'>
-                <Icon name='warning circle' /> {error}
-              </div>
+              <Message negative onDismiss={() => setError(null)}>
+                <p>{error}</p>
+              </Message>
             )}
 
             <RoleForm
