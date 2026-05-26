@@ -45,6 +45,7 @@ export default function SideBar({ sidebarOpen, onToggle }) {
           <SideBarItem path='/teams' label='Teams' icon='sitemap' active={currentPath === '/teams' || currentPath.startsWith('/teams/')} />
           <SideBarItem path='/my-learning' label='My Learning' icon='graduation cap' active={currentPath === '/my-learning'} />
           <SideBarItem path='/chat' label='AI Chat' icon='comments' active={currentPath === '/chat'} />
+          <SideBarItem path='/slack' label='Team Chat' icon='hashtag' active={currentPath === '/slack'} />
           <SideBarItem path='/profile' label='My Profile' icon='id card' active={currentPath === '/profile'} />
           <SideBarItem path='/settings' label='Settings' icon='cog' active={currentPath === '/settings'} />
         </Menu>

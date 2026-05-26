@@ -17,6 +17,7 @@ import TeamDetail from '@/app/containers/team/TeamDetail/TeamDetail';
 import CategoryManagement from '@/app/containers/category/CategoryManagement/CategoryManagement';
 import CourseViewer from '@/app/containers/course/CourseViewer/CourseViewer';
 import MyLearning from '@/app/containers/course/MyLearning/MyLearning';
+import SlackChat from '@/app/containers/chat/SlackChat';
 import ChatPage from '@/app/containers/chat/ChatPage';
 import Settings from '@/app/containers/user/Settings/Settings';
 import Profile from '@/app/containers/user/Profile/Profile';
@@ -50,6 +51,7 @@ const protectedRoutes = [
   { path: '/categories', element: <ProtectedRoute permissions={['courses.view']}><CategoryManagement /></ProtectedRoute> },
   { path: '/my-learning', element: <ProtectedRoute><MyLearning /></ProtectedRoute> },
   { path: '/chat', element: <ProtectedRoute><ChatPage /></ProtectedRoute> },
+  { path: '/slack', element: <ProtectedRoute><SlackChat /></ProtectedRoute> },
   { path: '/users', element: <ProtectedRoute permissions={['users.view']}><UserContainer /></ProtectedRoute> },
   { path: '/users/create', element: <ProtectedRoute permissions={['users.create']}><UserCreate /></ProtectedRoute> },
   { path: '/users/:id', element: <ProtectedRoute permissions={['users.view']}><UserDetail /></ProtectedRoute> },
