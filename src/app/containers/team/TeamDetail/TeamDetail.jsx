@@ -53,7 +53,7 @@ const TeamDetail = () => {
     try {
       setActionLoading(true);
       await deleteTeam(id);
-      addToast(`Team "${teamName}" deleted successfully`, 'success');
+      addToast(`Team "${teamName}" deleted`, 'error');
       navigate('/teams');
     } catch (err) {
       console.error('Error deleting team:', err);

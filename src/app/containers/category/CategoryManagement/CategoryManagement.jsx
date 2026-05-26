@@ -131,7 +131,7 @@ const CategoryManagement = () => {
       setActionLoading(true);
       await deleteCategory(deleteTarget.id);
       setDeleteTarget(null);
-      addToast(`Category "${deleteTarget.name}" deleted successfully`, 'success');
+      addToast(`Category "${deleteTarget.name}" deleted`, 'error');
       await fetchData();
     } catch (err) {
       alert(err.message);

@@ -79,7 +79,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
           },
         ]);
       }
-      addToast(`${member.userName || 'Member'} removed from team`, 'warning');
+      addToast(`${member.userName || 'Member'} removed from team`, 'error');
       if (onUpdated) onUpdated();
     } catch (err) {
       setError(err.message || 'Failed to remove member.');
