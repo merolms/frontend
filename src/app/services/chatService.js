@@ -1,6 +1,6 @@
 // Chat Service
 // Wrapper around Puter.js AI chat API with fallback to mock responses
-import puter from 'puter';
+import * as puter from 'puter';
 
 const MOCK_RESPONSES = [
   "That's a great question! Let me think about that...",
