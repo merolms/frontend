@@ -44,6 +44,7 @@ export default function SideBar({ sidebarOpen, onToggle }) {
           <SideBarItem path='/users' label='Users' icon='users' active={currentPath === '/users' || currentPath.startsWith('/users/')} />
           <SideBarItem path='/teams' label='Teams' icon='sitemap' active={currentPath === '/teams' || currentPath.startsWith('/teams/')} />
           <SideBarItem path='/my-learning' label='My Learning' icon='graduation cap' active={currentPath === '/my-learning'} />
+          <SideBarItem path='/chat' label='AI Chat' icon='comments' active={currentPath === '/chat'} />
           <SideBarItem path='/profile' label='My Profile' icon='id card' active={currentPath === '/profile'} />
           <SideBarItem path='/settings' label='Settings' icon='cog' active={currentPath === '/settings'} />
         </Menu>
