@@ -3,16 +3,16 @@
 // ─── Sidebar CSS Variables (theme-aware) ─────────────────────
 
 .sidebar-wrapper {
-  --sidebar-bg: linear-gradient(180deg, #1a2332 0%, #232f3e 100%);
-  --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-text: rgba(255, 255, 255, 0.75);
-  --sidebar-text-hover: rgba(255, 255, 255, 0.95);
-  --sidebar-text-muted: rgba(255, 255, 255, 0.4);
+  --sidebar-bg: linear-gradient(180deg, #111827 0%, #1a2332 100%);
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-text: rgba(255, 255, 255, 0.7);
+  --sidebar-text-hover: rgba(255, 255, 255, 0.9);
+  --sidebar-text-muted: rgba(255, 255, 255, 0.35);
   --sidebar-text-bright: #fff;
-  --sidebar-item-hover: rgba(255, 255, 255, 0.08);
-  --sidebar-footer-bg: rgba(0, 0, 0, 0.2);
-  --sidebar-divider: rgba(255, 255, 255, 0.1);
-  --sidebar-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  --sidebar-item-hover: rgba(255, 255, 255, 0.06);
+  --sidebar-footer-bg: rgba(0, 0, 0, 0.25);
+  --sidebar-divider: rgba(255, 255, 255, 0.08);
+  --sidebar-shadow: 2px 0 10px rgba(0, 0, 0, 0.25);
 
   [data-theme='light'] & {
     --sidebar-bg: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);

@@ -225,6 +225,28 @@ body {
   border-bottom-color: var(--primary-color) !important;
 }
 
+.ui.tab.segment {
+  background: var(--bg-card) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.ui.tab.segment .ui.header,
+.ui.tab.segment h1, .ui.tab.segment h2,
+.ui.tab.segment h3, .ui.tab.segment h4 {
+  color: var(--text-primary) !important;
+}
+
+.ui.tab.segment p,
+.ui.tab.segment span,
+.ui.tab.segment div {
+  color: var(--text-primary) !important;
+}
+
+.ui.tab.segment .ui.label {
+  color: var(--text-secondary) !important;
+}
+
 .ui.header {
   color: var(--text-primary) !important;
 }
