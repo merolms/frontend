@@ -8,8 +8,8 @@ import SideBar from '@/app/containers/SideBar/SideBar';
 import LessonForm from '@/app/containers/course/LessonForm/LessonForm';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import {
-  mockFetchCourseById, mockFetchLessons,
-  mockCreateLesson, mockUpdateLesson, mockDeleteLesson,
+  fetchCourseById, fetchLessons,
+  createLesson, updateLesson, deleteLesson as apiDeleteLesson,
 } from '@/app/services/courseService';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
 import './CourseLessons.scss';
@@ -30,9 +30,11 @@ const CourseLessons = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [c, l] = await Promise.all([mockFetchCourseById(id), mockFetchLessons(id)]);
+      const [c, l] = await Promise.all([fetchCourseById(id), fetchLessons(id)]);
       setCourse(c);
-      setLessons(l);
+      setLessons(l || []);
+    } catch (err) {
+      console.error('Error loading lessons:', err);
     } finally {
       setLoading(false);
     }
@@ -42,13 +44,15 @@ const CourseLessons = () => {
     setSaving(true);
     try {
       if (editingLesson) {
-        await mockUpdateLesson(id, editingLesson.id, formData);
+        await updateLesson(id, editingLesson.id, formData);
       } else {
-        await mockCreateLesson(id, formData);
+        await createLesson(id, formData);
       }
       setLessonModalOpen(false);
       setEditingLesson(null);
       await loadData();
+    } catch (err) {
+      alert(err.message || 'Failed to save lesson.');
     } finally {
       setSaving(false);
     }
@@ -58,9 +62,11 @@ const CourseLessons = () => {
     if (!deleteModal.lesson) return;
     setSaving(true);
     try {
-      await mockDeleteLesson(id, deleteModal.lesson.id);
+      await apiDeleteLesson(id, deleteModal.lesson.id);
       setDeleteModal({ open: false, lesson: null });
       await loadData();
+    } catch (err) {
+      alert(err.message || 'Failed to delete lesson.');
     } finally {
       setSaving(false);
     }

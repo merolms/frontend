@@ -7,13 +7,18 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
   const [members, setMembers] = useState([]);
   const [availableUsers, setAvailableUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [busyIds, setBusyIds] = useState(new Set());
   const [error, setError] = useState(null);
   const { addToast } = useToast();
 
   useEffect(() => {
     if (open && team) {
       loadAll();
+    } else if (!open) {
+      setMembers([]);
+      setAvailableUsers([]);
+      setBusyIds(new Set());
+      setError(null);
     }
   }, [open, team]);
 
@@ -41,50 +46,74 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
     }
   };
 
+  const markBusy = (id, busy) => {
+    setBusyIds((prev) => {
+      const next = new Set(prev);
+      if (busy) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  };
+
   const handleAddMember = async (user) => {
+    const key = `add-${user.id}`;
+    if (busyIds.has(key)) return;
     try {
-      setSaving(true);
+      markBusy(key, true);
       setError(null);
       await addMemberToTeam(team.id, user.id);
-      const updatedMembers = await fetchTeamMembers(team.id);
-      setMembers(updatedMembers);
+      // Optimistically move user from available to members
       setAvailableUsers((prev) => prev.filter((u) => u.id !== user.id));
+      setMembers((prev) => [
+        ...prev,
+        {
+          userID: user.id,
+          userId: user.id,
+          userName: `${user.firstName} ${user.lastName}`.trim(),
+          avatar: user.avatar || '',
+          role: user.role || '',
+          userEmail: user.email || '',
+        },
+      ]);
       addToast(`${user.firstName} ${user.lastName} added to team`, 'success');
       if (onUpdated) onUpdated();
     } catch (err) {
       setError(err.message || 'Failed to add member.');
+      // Revert: reload to be safe
+      await loadAll();
     } finally {
-      setSaving(false);
+      markBusy(key, false);
     }
   };
 
   const handleRemoveMember = async (member) => {
+    const userId = member.userID || member.userId;
+    const key = `remove-${userId}`;
+    if (busyIds.has(key)) return;
     try {
-      setSaving(true);
+      markBusy(key, true);
       setError(null);
-      const userId = member.userID || member.userId;
       await removeMemberFromTeam(team.id, userId);
-      const updatedMembers = await fetchTeamMembers(team.id);
-      setMembers(updatedMembers);
-      if (member.userName) {
-        setAvailableUsers((prev) => [
-          ...prev,
-          {
-            id: userId,
-            firstName: member.userName.split(' ')[0] || '',
-            lastName: member.userName.split(' ').slice(1).join(' ') || '',
-            email: member.userEmail || '',
-            avatar: member.avatar || '',
-            role: member.role || '',
-          },
-        ]);
-      }
+      // Optimistically remove from members and add back to available
+      setMembers((prev) => prev.filter((m) => (m.userID || m.userId) !== userId));
+      setAvailableUsers((prev) => [
+        ...prev,
+        {
+          id: userId,
+          firstName: member.userName ? member.userName.split(' ')[0] : '',
+          lastName: member.userName ? member.userName.split(' ').slice(1).join(' ') : '',
+          email: member.userEmail || '',
+          avatar: member.avatar || '',
+          role: member.role || '',
+        },
+      ]);
       addToast(`${member.userName || 'Member'} removed from team`, 'error');
       if (onUpdated) onUpdated();
     } catch (err) {
       setError(err.message || 'Failed to remove member.');
+      await loadAll();
     } finally {
-      setSaving(false);
+      markBusy(key, false);
     }
   };
 
@@ -101,7 +130,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
   };
 
   return (
-    <Modal open={open} onClose={onClose} size='large' closeOnDimmerClick={!saving}>
+    <Modal open={open} onClose={onClose} size='large' closeOnDimmerClick={busyIds.size === 0}>
       <Header icon='users' content={`Manage Members — ${team.name}`} />
       <Modal.Content>
         {error && (
@@ -124,6 +153,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
             {members.map((member) => {
               const userId = member.userID || member.userId;
               const userName = member.userName || `${member.firstName || ''} ${member.lastName || ''}`.trim() || 'Unknown';
+              const isBusy = busyIds.has(`remove-${userId}`);
               return (
                 <div key={userId} className='team-assign-member' style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -136,7 +166,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
                       <Label color={getRoleColor(member.role)} size='tiny'>{member.role || 'N/A'}</Label>
                     </div>
                   </div>
-                  <Button size='small' icon='minus circle' color='red' onClick={() => handleRemoveMember(member)} disabled={saving} />
+                  <Button size='small' icon='minus circle' color='red' onClick={() => handleRemoveMember(member)} disabled={isBusy} loading={isBusy} />
                 </div>
               );
             })}
@@ -154,29 +184,32 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
           <p style={{ color: '#aaa', padding: '8px 0' }}>All users are already assigned or no users found.</p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {availableUsers.map((user) => (
-              <div key={user.id} className='team-assign-user' style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '10px 14px', background: '#fff', borderRadius: 8, border: '1px solid #e8e8e8',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <Image src={user.avatar || 'https://i.pravatar.cc/150?img=1'} circular size='mini' />
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: '14px' }}>{user.firstName} {user.lastName}</div>
-                    <div style={{ fontSize: '12px', color: '#888' }}>{user.email}</div>
+            {availableUsers.map((user) => {
+              const isBusy = busyIds.has(`add-${user.id}`);
+              return (
+                <div key={user.id} className='team-assign-user' style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '10px 14px', background: '#fff', borderRadius: 8, border: '1px solid #e8e8e8',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <Image src={user.avatar || 'https://i.pravatar.cc/150?img=1'} circular size='mini' />
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: '14px' }}>{user.firstName} {user.lastName}</div>
+                      <div style={{ fontSize: '12px', color: '#888' }}>{user.email}</div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Label color={getRoleColor(user.role)} size='tiny'>{user.role}</Label>
+                    <Button size='small' icon='plus circle' color='green' onClick={() => handleAddMember(user)} disabled={isBusy} loading={isBusy} />
                   </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Label color={getRoleColor(user.role)} size='tiny'>{user.role}</Label>
-                  <Button size='small' icon='plus circle' color='green' onClick={() => handleAddMember(user)} disabled={saving} />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </Modal.Content>
       <Modal.Actions>
-        <Button onClick={onClose} disabled={saving}>Done</Button>
+        <Button onClick={onClose} disabled={busyIds.size > 0}>Done</Button>
       </Modal.Actions>
     </Modal>
   );

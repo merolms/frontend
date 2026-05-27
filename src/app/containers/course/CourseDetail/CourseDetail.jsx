@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
-  Breadcrumb, Header, Divider, Tab, List, Grid, Card,
-  Icon, Button, Image, Label, Segment, Statistic, Progress,
+  Breadcrumb, Header, Divider, Tab, List, Grid, Icon, Button, Image, Label, Segment,
 } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import {
-  mockFetchCourseById, mockFetchLessons, mockPublishCourse, mockArchiveCourse, mockDeleteCourse,
+  fetchCourseById, fetchLessons, publishCourse, archiveCourse, deleteCourse,
 } from '@/app/services/courseService';
 import { PublishModal, ArchiveModal, DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
@@ -24,27 +23,29 @@ const CourseDetail = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
   const [enrollment, setEnrollment] = useState(null);
+  const [error, setError] = useState(null);
 
-  useEffect(() => { loadData(); }, [id]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
+      setError(null);
       const [courseData, lessonsData] = await Promise.all([
-        mockFetchCourseById(id),
-        mockFetchLessons(id),
+        fetchCourseById(id),
+        fetchLessons(id),
       ]);
       setCourse(courseData);
-      setLessons(lessonsData);
+      setLessons(lessonsData || []);
       if (user) {
         setEnrollment(isEnrolled(user.id, parseInt(id)));
       }
     } catch (err) {
-      console.error('Error loading course:', err);
+      setError(err.message || 'Failed to load course');
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, user]);
+
+  useEffect(() => { loadData(); }, [loadData]);
 
   const handleEnroll = async () => {
     if (!user) { navigate('/login'); return; }
@@ -75,7 +76,10 @@ const CourseDetail = () => {
   const handlePublish = async () => {
     try {
       setActionLoading(true);
-      setCourse(await mockPublishCourse(id));
+      const updated = await publishCourse(id);
+      setCourse(updated);
+    } catch (err) {
+      alert(err.message);
     } finally {
       setActionLoading(false);
       setActiveModal(null);
@@ -85,7 +89,10 @@ const CourseDetail = () => {
   const handleArchive = async () => {
     try {
       setActionLoading(true);
-      setCourse(await mockArchiveCourse(id));
+      const updated = await archiveCourse(id);
+      setCourse(updated);
+    } catch (err) {
+      alert(err.message);
     } finally {
       setActionLoading(false);
       setActiveModal(null);
@@ -95,18 +102,19 @@ const CourseDetail = () => {
   const handleDelete = async () => {
     try {
       setActionLoading(true);
-      await mockDeleteCourse(id);
+      await deleteCourse(id);
       navigate('/courses');
-    } finally {
+    } catch (err) {
+      alert(err.message);
       setActionLoading(false);
       setActiveModal(null);
     }
   };
 
   const statusConfig = {
-    published: { color: 'green', icon: 'check circle', text: 'Published' },
-    draft: { color: 'grey', icon: 'edit', text: 'Draft' },
-    archived: { color: 'orange', icon: 'archive', text: 'Archived' },
+    Published: { color: 'green', icon: 'check circle', text: 'Published' },
+    DRAFT: { color: 'grey', icon: 'edit', text: 'Draft' },
+    Archived: { color: 'orange', icon: 'archive', text: 'Archived' },
   };
 
   const panes = [
@@ -139,14 +147,14 @@ const CourseDetail = () => {
                     <Icon name='user' color='blue' />
                     <List.Content>
                       <List.Header>Instructor</List.Header>
-                      <List.Description>{course?.author}</List.Description>
+                      <List.Description>{course?.author || 'N/A'}</List.Description>
                     </List.Content>
                   </List.Item>
                   <List.Item>
                     <Icon name='folder' color='violet' />
                     <List.Content>
                       <List.Header>Category</List.Header>
-                      <List.Description>{course?.category}</List.Description>
+                      <List.Description>{course?.category || 'N/A'}</List.Description>
                     </List.Content>
                   </List.Item>
                   <List.Item>
@@ -161,24 +169,24 @@ const CourseDetail = () => {
               <Grid.Column>
                 <List relaxed>
                   <List.Item>
-                    <Icon name='users' color='green' />
+                    <Icon name='list' color='green' />
                     <List.Content>
-                      <List.Header>Enrolled</List.Header>
-                      <List.Description>{course?.enrolledUsers || 0} users</List.Description>
+                      <List.Header>Lessons</List.Header>
+                      <List.Description>{course?.totalLessons || 0}</List.Description>
                     </List.Content>
                   </List.Item>
                   <List.Item>
                     <Icon name='calendar' color='blue' />
                     <List.Content>
                       <List.Header>Created</List.Header>
-                      <List.Description>{course?.createdAt}</List.Description>
+                      <List.Description>{course?.createdAt || 'N/A'}</List.Description>
                     </List.Content>
                   </List.Item>
                   <List.Item>
                     <Icon name='refresh' color='grey' />
                     <List.Content>
                       <List.Header>Last Updated</List.Header>
-                      <List.Description>{course?.updatedAt}</List.Description>
+                      <List.Description>{course?.updatedAt || 'N/A'}</List.Description>
                     </List.Content>
                   </List.Item>
                 </List>
@@ -226,43 +234,35 @@ const CourseDetail = () => {
     },
   ];
 
-  // ─── Loading ────────────────────────────────────────────────
+  // Loading
   if (loading) {
     return (
       <div className='dashboard-layout'>
         <SideBar />
         <div className='dashboard-main'>
-          <div className='course-detail-loading'>
-            <Segment loading>
-              <div className='skeleton-hero' />
-              <div className='skeleton-content' />
-            </Segment>
-          </div>
+          <Segment loading style={{ marginTop: 40 }}><Header as='h2'>Loading...</Header></Segment>
         </div>
       </div>
     );
   }
 
-  // ─── Not Found ──────────────────────────────────────────────
-  if (!course) {
+  // Error / Not Found
+  if (error || !course) {
     return (
       <div className='dashboard-layout'>
         <SideBar />
         <div className='dashboard-main'>
-          <div className='course-detail-notfound'>
-            <Segment placeholder>
-              <Header icon><Icon name='warning circle' /> Course not found</Header>
-              <Button primary onClick={() => navigate('/courses')}>Back to Courses</Button>
-            </Segment>
-          </div>
+          <Segment placeholder style={{ marginTop: 40 }}>
+            <Header icon><Icon name='warning circle' /> {error || 'Course not found'}</Header>
+            <Button primary onClick={() => navigate('/courses')}>Back to Courses</Button>
+          </Segment>
         </div>
       </div>
     );
   }
 
-  const status = statusConfig[course.status] || statusConfig.draft;
+  const status = statusConfig[course.status] || statusConfig.DRAFT;
 
-  // ─── Main View ──────────────────────────────────────────────
   return (
     <div className='dashboard-layout'>
       <SideBar />
@@ -277,7 +277,7 @@ const CourseDetail = () => {
           </Breadcrumb>
         </div>
 
-        {/* Hero Section */}
+        {/* Hero */}
         <div className='course-detail-hero'>
           <div className='course-hero-bg' style={{
             background: course.coverImage
@@ -309,20 +309,29 @@ const CourseDetail = () => {
                 )}
               </div>
               <div className='course-hero-right'>
-                <Statistic.Group size='tiny' widths='3' className='course-hero-stats'>
-                  <Statistic color='blue'>
-                    <Statistic.Value><Icon name='list' /> {course.totalLessons}</Statistic.Value>
-                    <Statistic.Label>Lessons</Statistic.Label>
-                  </Statistic>
-                  <Statistic color='green'>
-                    <Statistic.Value><Icon name='users' /> {course.enrolledUsers}</Statistic.Value>
-                    <Statistic.Label>Enrolled</Statistic.Label>
-                  </Statistic>
-                  <Statistic color='teal'>
-                    <Statistic.Value><Icon name='star' /> {course.avgCompletion || '78%'}</Statistic.Value>
-                    <Statistic.Label>Completion</Statistic.Label>
-                  </Statistic>
-                </Statistic.Group>
+                <Grid columns={3} className='course-hero-stats'>
+                  <Grid.Column>
+                    <div className='course-stat'>
+                      <Icon name='list' color='blue' size='large' />
+                      <div className='course-stat-value'>{course.totalLessons}</div>
+                      <div className='course-stat-label'>Lessons</div>
+                    </div>
+                  </Grid.Column>
+                  <Grid.Column>
+                    <div className='course-stat'>
+                      <Icon name='users' color='green' size='large' />
+                      <div className='course-stat-value'>0</div>
+                      <div className='course-stat-label'>Enrolled</div>
+                    </div>
+                  </Grid.Column>
+                  <Grid.Column>
+                    <div className='course-stat'>
+                      <Icon name='star' color='yellow' size='large' />
+                      <div className='course-stat-value'>—</div>
+                      <div className='course-stat-label'>Rating</div>
+                    </div>
+                  </Grid.Column>
+                </Grid>
               </div>
             </div>
           </div>
@@ -368,19 +377,19 @@ const CourseDetail = () => {
                 <Icon name='minus circle' /> Drop
               </Button>
             )}
-            {!enrollment && user && course.status === 'published' && (
+            {!enrollment && user && course.status === 'Published' && (
               <Button color='green' onClick={handleEnroll} loading={actionLoading}>
                 <Icon name='plus' /> Enroll Now
               </Button>
             )}
-            {course.status !== 'published' && (
+            {course.status !== 'Published' && (
               <PermissionGuard permissions={['courses.publish']}>
                 <Button color='green' icon onClick={() => setActiveModal('publish')}>
                   <Icon name='check circle' /> Publish
                 </Button>
               </PermissionGuard>
             )}
-            {course.status !== 'archived' && (
+            {course.status !== 'Archived' && (
               <Button color='orange' icon onClick={() => setActiveModal('archive')}>
                 <Icon name='archive' /> Archive
               </Button>
@@ -402,13 +411,6 @@ const CourseDetail = () => {
           </Grid.Column>
 
           <Grid.Column width={6}>
-            {/* Progress Card */}
-            <Segment className='course-sidebar-card'>
-              <Header as='h4'><Icon name='chart line' color='blue' /> Progress</Header>
-              <Progress percent={course.avgCompletion || 78} color='teal' progress size='small' />
-              <p className='course-sidebar-note'>Average completion rate</p>
-            </Segment>
-
             {/* Content Card */}
             <Segment className='course-sidebar-card'>
               <Header as='h4'><Icon name='list' color='green' /> Course Content</Header>

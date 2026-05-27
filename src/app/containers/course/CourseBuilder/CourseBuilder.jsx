@@ -4,13 +4,7 @@ import { Segment, Icon, Breadcrumb, Divider, Button, Header, Message } from 'sem
 import SideBar from '@/app/containers/SideBar/SideBar';
 import StructureTree from './components/StructureTree';
 import NodeEditor from './components/NodeEditor';
-import {
-  mockFetchCourseStructure,
-  mockCreateSection, mockUpdateSection, mockDeleteSection,
-  mockCreateModule, mockUpdateModule, mockDeleteModule,
-  mockCreateLesson, mockUpdateLesson, mockDeleteLesson,
-  mockCreateTopic, mockUpdateTopic, mockDeleteTopic,
-} from '@/app/services/courseBuilderService';
+import { fetchCourseById, fetchLessons, createLesson, updateLesson, deleteLesson as apiDeleteLesson } from '@/app/services/courseService';
 import './CourseBuilder.scss';
 
 const CourseBuilder = () => {
@@ -25,18 +19,75 @@ const CourseBuilder = () => {
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
 
-  useEffect(() => {
-    loadCourse();
-  }, [id]);
+  // Local hierarchical structure built from flat lessons
+  const [sections, setSections] = useState([]);
 
-  const loadCourse = async () => {
+  useEffect(() => { loadData(); }, [id]);
+
+  const loadData = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await mockFetchCourseStructure(id);
-      setCourse(data);
+      const [courseData, lessonsData] = await Promise.all([
+        fetchCourseById(id),
+        fetchLessons(id),
+      ]);
+      setCourse(courseData);
+
+      // Build hierarchical structure from flat lessons
+      if (lessonsData && lessonsData.length > 0) {
+        const section = {
+          id: 's1',
+          title: 'Course Content',
+          description: '',
+          order: 0,
+          status: 'published',
+          isCollapsed: false,
+          modules: [
+            {
+              id: 'm1',
+              title: 'Lessons',
+              description: '',
+              order: 0,
+              lessons: lessonsData.map((l, idx) => ({
+                id: `l_${l.id}`,
+                realId: l.id,
+                title: l.title,
+                description: l.description,
+                type: 'text',
+                duration: l.duration || '',
+                order: idx,
+                status: 'published',
+                isLocked: false,
+                unlockCondition: null,
+                points: 0,
+                content: { html: l.content || '', videoUrl: '', transcript: '' },
+                topics: [],
+              })),
+            },
+          ],
+        };
+        setSections([section]);
+
+        // Auto-select first lesson
+        if (section.modules[0].lessons.length > 0) {
+          setSelectedNode(section.modules[0].lessons[0]);
+          setSelectedType('lesson');
+        }
+      } else {
+        // Empty course — create a default section
+        setSections([{
+          id: 's1',
+          title: 'Course Content',
+          description: '',
+          order: 0,
+          status: 'draft',
+          isCollapsed: false,
+          modules: [],
+        }]);
+      }
     } catch (err) {
-      setError('Failed to load course structure.');
+      setError(err.message || 'Failed to load course structure.');
     } finally {
       setLoading(false);
     }
@@ -47,118 +98,175 @@ const CourseBuilder = () => {
     setTimeout(() => setSuccessMsg(null), 3000);
   };
 
-  // ─── Selection ───────────────────────────────────────────────
   const handleSelect = (node, type) => {
     setSelectedNode(node);
     setSelectedType(type);
   };
 
-  // ─── Add ─────────────────────────────────────────────────────
-  const handleAdd = async (type, parentId) => {
+  // ─── Add Section (local only) ────────────────────────────────
+  const handleAddSection = () => {
+    const newSection = {
+      id: `s_${Date.now()}`,
+      title: 'New Section',
+      description: '',
+      order: sections.length,
+      status: 'draft',
+      isCollapsed: false,
+      modules: [],
+    };
+    setSections(prev => [...prev, newSection]);
+    setSelectedNode(newSection);
+    setSelectedType('section');
+    showSuccess('Section added.');
+  };
+
+  // ─── Add Lesson (real API) ───────────────────────────────────
+  const handleAddLesson = async (moduleId) => {
     if (!course) return;
     try {
       setSaving(true);
-      let newNode;
-
-      if (type === 'section') {
-        newNode = await mockCreateSection(course.id, { title: 'New Section' });
-      } else if (type === 'module') {
-        newNode = await mockCreateModule(course.id, parentId, { title: 'New Module' });
-      } else if (type === 'lesson') {
-        newNode = await mockCreateLesson(course.id, parentId, { title: 'New Lesson' });
-      } else if (type === 'topic') {
-        newNode = await mockCreateTopic(course.id, parentId, { title: 'New Topic' });
-      }
-
-      await loadCourse();
-      if (newNode) {
-        setSelectedNode(newNode);
-        setSelectedType(type);
-      }
-      showSuccess(`${type.charAt(0).toUpperCase() + type.slice(1)} added.`);
+      const newLesson = await createLesson(id, { title: 'New Lesson', description: '' });
+      // Add to local structure
+      setSections(prev => prev.map(s => ({
+        ...s,
+        modules: s.modules.map(m => {
+          if (m.id === moduleId) {
+            return {
+              ...m,
+              lessons: [...m.lessons, {
+                id: `l_${newLesson.id}`,
+                realId: newLesson.id,
+                title: newLesson.title,
+                description: newLesson.description,
+                type: 'text',
+                duration: '',
+                order: m.lessons.length,
+                status: 'draft',
+                isLocked: false,
+                unlockCondition: null,
+                points: 0,
+                content: { html: '', videoUrl: '', transcript: '' },
+                topics: [],
+              }],
+            };
+          }
+          return m;
+        }),
+      })));
+      showSuccess('Lesson added.');
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Failed to create lesson.');
     } finally {
       setSaving(false);
     }
   };
 
-  // ─── Delete ──────────────────────────────────────────────────
+  // ─── Dispatcher: handleAdd(type, parentId) ───────────────────
+  const handleAdd = async (type, parentId) => {
+    if (type === 'section') {
+      handleAddSection();
+    } else if (type === 'lesson') {
+      await handleAddLesson(parentId);
+    } else {
+      // module, topic — local only for now
+      showSuccess(`${type} creation is local only.`);
+    }
+  };
+
+  // ─── Delete Lesson (real API) ────────────────────────────────
   const handleDelete = async (nodeId, type) => {
     if (!course) return;
-    const label = type.charAt(0).toUpperCase() + type.slice(1);
-    if (!window.confirm(`Delete this ${label.toLowerCase()}? This cannot be undone.`)) return;
 
-    try {
-      setSaving(true);
-      if (type === 'section') await mockDeleteSection(course.id, nodeId);
-      else if (type === 'module') await mockDeleteModule(course.id, nodeId);
-      else if (type === 'lesson') await mockDeleteLesson(course.id, nodeId);
-      else if (type === 'topic') await mockDeleteTopic(course.id, selectedNode?.parentId || nodeId, nodeId);
-
-      await loadCourse();
-      if (selectedNode?.id === nodeId) {
-        setSelectedNode(null);
-        setSelectedType(null);
+    if (type === 'lesson') {
+      const realId = nodeId.startsWith('l_') ? parseInt(nodeId.replace('l_', ''), 10) : parseInt(nodeId, 10);
+      if (!window.confirm('Delete this lesson? This cannot be undone.')) return;
+      try {
+        setSaving(true);
+        await apiDeleteLesson(id, realId);
+        // Remove from local structure
+        setSections(prev => prev.map(s => ({
+          ...s,
+          modules: s.modules.map(m => ({
+            ...m,
+            lessons: m.lessons.filter(l => l.id !== nodeId),
+          })),
+        })));
+        if (selectedNode?.id === nodeId) {
+          setSelectedNode(null);
+          setSelectedType(null);
+        }
+        showSuccess('Lesson deleted.');
+      } catch (err) {
+        setError(err.message || 'Failed to delete lesson.');
+      } finally {
+        setSaving(false);
       }
-      showSuccess(`${label} deleted.`);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setSaving(false);
+    } else {
+      // section, module — local only
+      showSuccess(`${type} deletion is local only.`);
     }
   };
 
-  // ─── Save (from NodeEditor) ──────────────────────────────────
+  // ─── Save Lesson (real API) ──────────────────────────────────
   const handleSave = async (formData) => {
     if (!selectedNode || !selectedType || !course) return;
-    try {
-      setSaving(true);
-      const { id: nodeId } = selectedNode;
 
-      if (selectedType === 'section') {
-        await mockUpdateSection(course.id, nodeId, formData);
-      } else if (selectedType === 'module') {
-        await mockUpdateModule(course.id, nodeId, formData);
-      } else if (selectedType === 'lesson') {
-        await mockUpdateLesson(course.id, nodeId, formData);
-      } else if (selectedType === 'topic') {
-        // Find parent lesson id from the tree
-        const parentLessonId = findParentLessonId(course, nodeId);
-        if (parentLessonId) {
-          await mockUpdateTopic(course.id, parentLessonId, nodeId, formData);
-        }
+    if (selectedType === 'lesson') {
+      const realId = selectedNode.realId;
+      if (!realId) {
+        setError('Cannot save: lesson has no backend ID yet.');
+        return;
       }
-
-      await loadCourse();
-      // Re-select the updated node
-      showSuccess('Changes saved.');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setSaving(false);
+      try {
+        setSaving(true);
+        await updateLesson(id, realId, {
+          title: formData.title,
+          description: formData.description || '',
+        });
+        // Update local structure
+        setSections(prev => prev.map(s => ({
+          ...s,
+          modules: s.modules.map(m => ({
+            ...m,
+            lessons: m.lessons.map(l => l.id === selectedNode.id ? { ...l, ...formData } : l),
+          })),
+        })));
+        setSelectedNode(prev => ({ ...prev, ...formData }));
+        showSuccess('Lesson saved.');
+      } catch (err) {
+        setError(err.message || 'Failed to save lesson.');
+      } finally {
+        setSaving(false);
+      }
+    } else {
+      // section, module — update local only
+      setSections(prev => prev.map(s => {
+        if (s.id === selectedNode.id) return { ...s, ...formData };
+        return {
+          ...s,
+          modules: s.modules.map(m => m.id === selectedNode.id ? { ...m, ...formData } : m),
+        };
+      }));
+      setSelectedNode(prev => ({ ...prev, ...formData }));
+      showSuccess('Changes saved locally.');
     }
   };
 
-  // ─── Collapse toggle ─────────────────────────────────────────
   const handleToggleCollapse = (sectionId) => {
-    setCourse((prev) => {
-      if (!prev) return prev;
-      const updated = { ...prev, sections: prev.sections.map((s) =>
-        s.id === sectionId ? { ...s, isCollapsed: !s.isCollapsed } : s
-      )};
-      return updated;
-    });
+    setSections(prev => prev.map(s =>
+      s.id === sectionId ? { ...s, isCollapsed: !s.isCollapsed } : s
+    ));
   };
+
+  // Build course object for StructureTree
+  const courseForTree = course ? { ...course, sections } : null;
 
   if (loading) {
     return (
       <div className='dashboard-layout'>
         <SideBar />
         <div className='dashboard-main'>
-          <div className='dashboard-content'>
-            <Segment loading><Header as='h2'>Loading course builder...</Header></Segment>
-          </div>
+          <Segment loading style={{ marginTop: 40 }}><Header as='h2'>Loading course builder...</Header></Segment>
         </div>
       </div>
     );
@@ -208,7 +316,6 @@ const CourseBuilder = () => {
 
           {/* Builder Layout: Tree (left) + Editor (right) */}
           <div className='course-builder-layout'>
-            {/* Left: Structure Tree */}
             <div className='course-builder-tree'>
               <div className='course-builder-tree-header'>
                 <Header as='h4' style={{ margin: 0 }}>
@@ -219,7 +326,7 @@ const CourseBuilder = () => {
                 </Button>
               </div>
               <StructureTree
-                course={course}
+                course={courseForTree}
                 selectedId={selectedNode?.id}
                 onSelect={handleSelect}
                 onAdd={handleAdd}
@@ -228,7 +335,6 @@ const CourseBuilder = () => {
               />
             </div>
 
-            {/* Right: Node Editor */}
             <div className='course-builder-editor'>
               <NodeEditor
                 node={selectedNode}
@@ -243,19 +349,5 @@ const CourseBuilder = () => {
     </div>
   );
 };
-
-// Helper: find the parent lesson id of a topic
-function findParentLessonId(course, topicId) {
-  for (const section of course.sections || []) {
-    for (const mod of section.modules || []) {
-      for (const lesson of mod.lessons || []) {
-        if (lesson.topics?.some((t) => t.id === topicId)) {
-          return lesson.id;
-        }
-      }
-    }
-  }
-  return null;
-}
 
 export default CourseBuilder;

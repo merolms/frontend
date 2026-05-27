@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import {
-  Segment, Icon, Button, Input,
-  Dropdown, Pagination, Label, Divider, Header,
-} from 'semantic-ui-react';
+import { Segment, Icon, Button, Input, Dropdown, Pagination, Label } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
-import { mockFetchCourses, mockCategories } from '@/app/services/courseService';
+import { fetchCourses, mockCategories } from '@/app/services/courseService';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
 import ViewModeSwitcher from './views/ViewModeSwitcher';
 import GridView from './views/GridView';
@@ -16,9 +13,9 @@ import './Course.scss';
 
 const statusOptions = [
   { key: 'all', text: 'All', value: '' },
-  { key: 'published', text: 'Published', value: 'published' },
-  { key: 'draft', text: 'Draft', value: 'draft' },
-  { key: 'archived', text: 'Archived', value: 'archived' },
+  { key: 'Published', text: 'Published', value: 'Published' },
+  { key: 'DRAFT', text: 'Draft', value: 'DRAFT' },
+  { key: 'Archived', text: 'Archived', value: 'Archived' },
 ];
 
 const categoryOptions = [
@@ -27,9 +24,8 @@ const categoryOptions = [
 ];
 
 const sortOptions = [
-  { key: 'date', text: 'Newest First', value: 'date' },
+  { key: 'date', text: 'Newest First', value: '' },
   { key: 'title', text: 'Title A-Z', value: 'title' },
-  { key: 'enrolled', text: 'Most Enrolled', value: 'enrolled' },
 ];
 
 const CourseContainer = () => {
@@ -38,6 +34,7 @@ const CourseContainer = () => {
 
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
 
@@ -45,7 +42,7 @@ const CourseContainer = () => {
   const search = searchParams.get('search') || '';
   const status = searchParams.get('status') || '';
   const category = searchParams.get('category') || '';
-  const sort = searchParams.get('sort') || 'date';
+  const sort = searchParams.get('sort') || '';
   const viewMode = searchParams.get('view') || 'grid';
 
   const [searchInput, setSearchInput] = useState(search);
@@ -53,12 +50,14 @@ const CourseContainer = () => {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
+      setError(null);
       const limit = viewMode === 'list' ? 10 : viewMode === 'compact' ? 15 : 8;
-      const data = await mockFetchCourses({ search, status, category, sort, page, limit });
+      const data = await fetchCourses({ search, status, category, sort, page, limit });
       setCourses(data.courses);
       setTotalPages(data.totalPages);
       setTotal(data.total);
     } catch (err) {
+      setError(err.message || 'Failed to load courses');
       console.error('Error fetching courses:', err);
     } finally {
       setLoading(false);
@@ -66,6 +65,11 @@ const CourseContainer = () => {
   }, [search, status, category, sort, page, viewMode]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  // Refetch after create/delete to update counts
+  const refreshList = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
 
   const updateParams = (updates) => {
     const newParams = new URLSearchParams(searchParams);
@@ -87,7 +91,7 @@ const CourseContainer = () => {
   };
 
   const renderView = () => {
-    const props = { courses, navigate, loading };
+    const props = { courses, navigate, loading, onRefresh: refreshList };
     switch (viewMode) {
       case 'table': return <TableView {...props} />;
       case 'list': return <ListView {...props} />;
@@ -127,7 +131,8 @@ const CourseContainer = () => {
                     placeholder='Search courses...'
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
-                  />
+                  fluid
+ />
                 </form>
                 <Dropdown
                   placeholder='Status'
@@ -188,21 +193,27 @@ const CourseContainer = () => {
             )}
           </Segment>
 
-          {/* Course Views */}
-          {courses.length === 0 && !loading ? (
+          {/* Error State */}
+          {error && !loading && (
             <Segment placeholder className='courses-empty'>
-              <Header icon>
-                <Icon name='search' />
-                No courses found
-              </Header>
-              <p>Try adjusting your filters or create a new course.</p>
+              <Icon name='warning circle' color='red' size='huge' />
+              <p style={{ marginTop: 12, color: '#666' }}>{error}</p>
+              <Button onClick={fetchData}><Icon name='refresh' /> Retry</Button>
+            </Segment>
+          )}
+
+          {/* Course Views */}
+          {!error && courses.length === 0 && !loading ? (
+            <Segment placeholder className='courses-empty'>
+              <Icon name='search' size='huge' color='grey' />
+              <p style={{ marginTop: 12 }}>No courses found. Try adjusting your filters or create a new course.</p>
               <PermissionGuard permissions={['courses.create']}>
                 <Button primary onClick={() => navigate('/courses/create')}>
                   <Icon name='plus' /> Create Course
                 </Button>
               </PermissionGuard>
             </Segment>
-          ) : (
+          ) : !error && (
             <>
               {renderView()}
               {totalPages > 1 && (

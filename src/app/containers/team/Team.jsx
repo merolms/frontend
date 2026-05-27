@@ -7,7 +7,7 @@ import {
 import SideBar from '@/app/containers/SideBar/SideBar';
 import TeamMemberAssignModal from '@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
-import { fetchTeams, deleteTeam } from '@/app/services/teamService';
+import { fetchTeams, fetchTeamMembers, deleteTeam } from '@/app/services/teamService';
 import './Team.scss';
 
 const statusOptions = [
@@ -20,6 +20,8 @@ const sortOptions = [
   { key: 'newest', text: 'Newest First', value: 'newest' },
   { key: 'name', text: 'Name A-Z', value: 'name' },
 ];
+
+const AVATAR_COUNT = 4;
 
 const TeamContainer = () => {
   const navigate = useNavigate();
@@ -58,8 +60,28 @@ const TeamContainer = () => {
           (t) => (t.name || '').toLowerCase().includes(q) || (t.description || '').toLowerCase().includes(q)
         );
       }
-      setTeams(filtered);
-      setTotal(filtered.length);
+
+      // Fetch member counts + avatars for each team in parallel
+      const teamsWithMembers = await Promise.all(
+        filtered.map(async (team) => {
+          try {
+            const members = await fetchTeamMembers(team.id);
+            return {
+              ...team,
+              memberCount: members.length,
+              memberAvatars: members.slice(0, AVATAR_COUNT).map((m) => ({
+                avatar: m.avatar || 'https://i.pravatar.cc/150?img=1',
+                userName: m.userName || 'Unknown',
+              })),
+            };
+          } catch {
+            return { ...team, memberCount: 0, memberAvatars: [] };
+          }
+        })
+      );
+
+      setTeams(teamsWithMembers);
+      setTotal(teamsWithMembers.length);
     } catch (err) {
       setError(err.message || 'Failed to load teams');
       console.error('Error fetching teams:', err);
@@ -195,17 +217,34 @@ const TeamContainer = () => {
                   <div className='team-card-header' style={{ background: team.color || '#2185d0' }}>
                     <Icon name='users' size='large' color='grey' />
                     <span className={`team-card-badge ${team.status === 1 ? 'active' : 'inactive'}`}>
-                      {team.memberCount || 0}
+                      {team.status === 1 ? 'Active' : 'Inactive'}
                     </span>
                   </div>
                   <div className='team-card-body'>
                     <h3 className='team-card-title'>{team.name}</h3>
                     <p className='team-card-desc'>{team.description || 'No description'}</p>
+                    <div className='team-avatars'>
+                      {team.memberAvatars && team.memberAvatars.map((m, idx) => (
+                        <Image
+                          key={idx}
+                          src={m.avatar}
+                          circular
+                          className='team-member-avatar'
+                          title={m.userName}
+                        />
+                      ))}
+                      {team.memberCount > AVATAR_COUNT && (
+                        <span className='team-avatar-more'>+{team.memberCount - AVATAR_COUNT}</span>
+                      )}
+                      {team.memberCount === 0 && (
+                        <span className='team-avatar-more'>No members</span>
+                      )}
+                    </div>
                   </div>
                   <div className='team-card-footer'>
                     <div className='team-card-stats'>
                       <div className='team-stat'>
-                        <div className='team-stat-value'>{team.memberCount || 0}</div>
+                        <div className='team-stat-value'>{team.memberCount}</div>
                         <div className='team-stat-label'>Members</div>
                       </div>
                     </div>

@@ -183,7 +183,8 @@ const CategoryManagement = () => {
                   placeholder='Search categories...'
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                />
+                fluid
+ />
               </form>
               <Dropdown placeholder='Status' selection options={statusOptions} value={statusFilter} onChange={(e, { value }) => { setStatusFilter(value); setPage(1); }} className='category-filter-dropdown' />
               <Dropdown placeholder='Sort' selection options={sortOptions} value={sort} onChange={(e, { value }) => { setSort(value); setPage(1); }} className='category-filter-dropdown' />

@@ -1,5 +1,6 @@
 export const getStatusLabel = (status) => {
-  switch (status) {
+  const s = String(status).toLowerCase();
+  switch (s) {
     case 'published': return { color: 'green', text: 'Published' };
     case 'draft': return { color: 'grey', text: 'Draft' };
     case 'archived': return { color: 'orange', text: 'Archived' };
