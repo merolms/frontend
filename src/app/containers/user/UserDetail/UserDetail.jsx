@@ -7,6 +7,7 @@ import {
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { fetchUserById, deleteUser } from '@/app/services/userService';
+import { adminResetPassword } from '@/app/services/authService';
 import { useToast } from '@/app/context/ToastContext';
 
 const UserDetail = () => {
@@ -18,6 +19,9 @@ const UserDetail = () => {
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [resetPasswordError, setResetPasswordError] = useState(null);
 
   useEffect(() => {
     loadUser();
@@ -49,6 +53,25 @@ const UserDetail = () => {
     } finally {
       setActionLoading(false);
       setShowDelete(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!newPassword || newPassword.length < 6) {
+      setResetPasswordError('Password must be at least 6 characters.');
+      return;
+    }
+    try {
+      setActionLoading(true);
+      setResetPasswordError(null);
+      await adminResetPassword(id, newPassword);
+      addToast(`Password reset for ${user.firstName} ${user.lastName}`, 'success');
+      setShowResetPassword(false);
+      setNewPassword('');
+    } catch (err) {
+      setResetPasswordError(err.message || 'Failed to reset password.');
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -120,6 +143,9 @@ const UserDetail = () => {
           <div className='header-right'>
             <Button as={Link} to={`/users/${id}/edit`} icon>
               <Icon name='pencil' /> Edit
+            </Button>
+            <Button icon onClick={() => setShowResetPassword(true)} title='Reset Password'>
+              <Icon name='key' /> Reset Password
             </Button>
             <Button color='red' icon onClick={() => setShowDelete(true)}>
               <Icon name='trash' /> Delete
@@ -248,6 +274,35 @@ const UserDetail = () => {
         itemType='user'
         loading={actionLoading}
       />
+
+      {/* Reset Password Modal */}
+      {showResetPassword && (
+        <div className='role-delete-overlay' onClick={() => { setShowResetPassword(false); setNewPassword(''); setResetPasswordError(null); }}>
+          <div className='role-delete-modal' onClick={(e) => e.stopPropagation()}>
+            <Header as='h3'><Icon name='key' /> Reset Password</Header>
+            <p>Enter a new password for <strong>{user?.firstName} {user?.lastName}</strong>.</p>
+            {resetPasswordError && (
+              <Message negative size='small' onDismiss={() => setResetPasswordError(null)}>
+                <p>{resetPasswordError}</p>
+              </Message>
+            )}
+            <div style={{ margin: '12px 0' }}>
+              <label style={{ fontWeight: 600, fontSize: 13 }}>New Password</label>
+              <input
+                type='password'
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder='Minimum 6 characters'
+                style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4 }}
+              />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 16 }}>
+              <Button onClick={() => { setShowResetPassword(false); setNewPassword(''); setResetPasswordError(null); }}>Cancel</Button>
+              <Button primary onClick={handleResetPassword} loading={actionLoading}>Reset Password</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -307,6 +307,10 @@ export const deleteRole = async (id) => {
   return await apiDelete(`/roles/${id}`);
 };
 
+export const adminResetPassword = async (userId, newPassword) => {
+  return await apiPost('/auth/admin/reset-password', { userId: parseInt(userId, 10), newPassword });
+};
+
 // ==================== ROLE DEFINITIONS (static UI data) ====================
 
 export const getRoleDefinitions = () => Promise.resolve([...roleDefinitions]);

@@ -42,7 +42,7 @@ const router = createBrowserRouter(AppRoutes);
 // Render
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <Provider store={store}>
       <ThemeProvider>
         <AuthErrorBridge>
@@ -54,5 +54,5 @@ root.render(
         </AuthErrorBridge>
       </ThemeProvider>
     </Provider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );

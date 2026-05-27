@@ -133,6 +133,8 @@ const UserForm = ({ initialData = null, onSubmit, onCancel, loading = false, sub
           placeholder='+1 555-0100'
           value={formData.phone}
           onChange={handleChange}
+          pattern='[0-9+\-() ]*'
+          title='Only digits, spaces, +, -, (, ) allowed'
         />
       </Form.Field>
 
