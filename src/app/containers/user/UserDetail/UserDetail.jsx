@@ -7,10 +7,12 @@ import {
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { fetchUserById, deleteUser } from '@/app/services/userService';
+import { useToast } from '@/app/context/ToastContext';
 
 const UserDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { addToast } = useToast();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -39,6 +41,7 @@ const UserDetail = () => {
     try {
       setActionLoading(true);
       await deleteUser(id);
+      addToast(`${user.firstName} ${user.lastName} deleted`, 'error');
       navigate('/users');
     } catch (err) {
       console.error('Error deleting user:', err);

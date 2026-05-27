@@ -4,10 +4,12 @@ import { Segment, Icon, Breadcrumb, Divider, Dropdown } from 'semantic-ui-react'
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { fetchUserById, updateUser } from '@/app/services/userService';
 import { fetchRoles } from '@/app/services/authService';
+import { useToast } from '@/app/context/ToastContext';
 
 const UserEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [user, setUser] = useState(null);
@@ -20,6 +22,7 @@ const UserEdit = () => {
     role: 'Student',
     phone: '',
     bio: '',
+    status: 1,
   });
 
   useEffect(() => {
@@ -52,6 +55,7 @@ const UserEdit = () => {
           role: data.role || 'Student',
           phone: data.phone || '',
           bio: data.bio || '',
+          status: data.status !== undefined ? data.status : 1,
         });
       } catch (err) {
         setError('Failed to load user data.');
@@ -72,6 +76,7 @@ const UserEdit = () => {
       setLoading(true);
       setError(null);
       const updated = await updateUser(id, formData);
+      addToast(`${formData.firstName} ${formData.lastName} updated successfully`, 'success');
       navigate(`/users/${id}`);
     } catch (err) {
       setError(err.message || 'Failed to update user. Please try again.');
@@ -167,8 +172,23 @@ const UserEdit = () => {
               </div>
               <Divider hidden />
               <div>
+                <label style={{ fontWeight: 600, fontSize: 13 }}>Status</label>
+                <Dropdown
+                  name='status'
+                  selection
+                  options={[
+                    { key: 1, text: 'Active', value: 1 },
+                    { key: 0, text: 'Inactive', value: 0 },
+                  ]}
+                  value={formData.status}
+                  onChange={handleChange}
+                  style={{ marginTop: 4 }}
+                />
+              </div>
+              <Divider hidden />
+              <div>
                 <label style={{ fontWeight: 600, fontSize: 13 }}>Phone</label>
-                <input name='phone' value={formData.phone} onChange={(e) => handleChange(e, { name: 'phone', value: e.target.value })} placeholder='+1 555-0100' style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4 }} />
+                <input name='phone' value={formData.phone} onChange={(e) => handleChange(e, { name: 'phone', value: e.target.value })} placeholder='+1 555-0100' pattern='[0-9+\-() ]*' title='Only digits, spaces, +, -, (, ) allowed' style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4 }} />
               </div>
               <Divider hidden />
               <div>

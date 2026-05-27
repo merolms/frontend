@@ -4,9 +4,11 @@ import { Segment, Icon, Breadcrumb, Divider, Dropdown } from 'semantic-ui-react'
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { createUser } from '@/app/services/userService';
 import { fetchRoles } from '@/app/services/authService';
+import { useToast } from '@/app/context/ToastContext';
 
 const UserCreate = () => {
   const navigate = useNavigate();
+  const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [roleOptions, setRoleOptions] = useState([]);
@@ -52,6 +54,7 @@ const UserCreate = () => {
       setLoading(true);
       setError(null);
       const user = await createUser(formData);
+      addToast(`${formData.firstName} ${formData.lastName} created successfully`, 'success');
       navigate(`/users/${user.id}`);
     } catch (err) {
       setError(err.message || 'Failed to create user. Please try again.');
@@ -134,7 +137,7 @@ const UserCreate = () => {
               <Divider hidden />
               <div>
                 <label style={{ fontWeight: 600, fontSize: 13 }}>Phone</label>
-                <input name='phone' value={formData.phone} onChange={(e) => handleChange(e, { name: 'phone', value: e.target.value })} placeholder='+1 555-0100' style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4 }} />
+                <input name='phone' value={formData.phone} onChange={(e) => handleChange(e, { name: 'phone', value: e.target.value })} placeholder='+1 555-0100' pattern='[0-9+\-() ]*' title='Only digits, spaces, +, -, (, ) allowed' style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4 }} />
               </div>
               <Divider hidden />
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: 8 }}>

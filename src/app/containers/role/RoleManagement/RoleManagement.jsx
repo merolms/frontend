@@ -6,9 +6,11 @@ import {
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
 import { fetchRoles, deleteRole } from '@/app/services/authService';
+import { useToast } from '@/app/context/ToastContext';
 
 const RoleManagement = () => {
   const navigate = useNavigate();
+  const { addToast } = useToast();
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -50,6 +52,7 @@ const RoleManagement = () => {
     try {
       await deleteRole(deleteTarget.id);
       setDeleteTarget(null);
+      addToast(`Role "${deleteTarget.name}" deleted`, 'error');
       await loadRoles();
     } catch (err) {
       console.error('Error deleting role:', err);

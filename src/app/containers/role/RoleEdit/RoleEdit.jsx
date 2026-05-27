@@ -4,10 +4,12 @@ import { Segment, Icon, Breadcrumb, Divider, Header, Button, Message } from 'sem
 import SideBar from '@/app/containers/SideBar/SideBar';
 import RoleForm from '@/app/containers/role/RoleForm/RoleForm';
 import { fetchRoleById, updateRole } from '@/app/services/authService';
+import { useToast } from '@/app/context/ToastContext';
 
 const RoleEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [role, setRole] = useState(null);
@@ -37,6 +39,7 @@ const RoleEdit = () => {
       setLoading(true);
       setError(null);
       await updateRole(id, formData);
+      addToast(`Role "${formData.name}" updated successfully`, 'success');
       navigate('/roles');
     } catch (err) {
       setError(err.message || 'Failed to update role.');

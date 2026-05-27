@@ -8,6 +8,7 @@ import SideBar from '@/app/containers/SideBar/SideBar';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { fetchUsers, deleteUser } from '@/app/services/userService';
 import { fetchRoles } from '@/app/services/authService';
+import { useToast } from '@/app/context/ToastContext';
 import './User.scss';
 
 const statusOptions = [
@@ -34,6 +35,7 @@ const getRoleColor = (role) => {
 
 const UserContainer = () => {
   const navigate = useNavigate();
+  const { addToast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [users, setUsers] = useState([]);
@@ -128,6 +130,7 @@ const UserContainer = () => {
       setActionLoading(true);
       await deleteUser(deleteTarget.id);
       setDeleteTarget(null);
+      addToast(`${deleteTarget.firstName} ${deleteTarget.lastName} deleted`, 'error');
       fetchData();
     } catch (err) {
       console.error('Error deleting user:', err);

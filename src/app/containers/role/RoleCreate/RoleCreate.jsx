@@ -4,9 +4,11 @@ import { Segment, Icon, Breadcrumb, Divider, Header } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import RoleForm from '@/app/containers/role/RoleForm/RoleForm';
 import { createRole } from '@/app/services/authService';
+import { useToast } from '@/app/context/ToastContext';
 
 const RoleCreate = () => {
   const navigate = useNavigate();
+  const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -15,6 +17,7 @@ const RoleCreate = () => {
       setLoading(true);
       setError(null);
       await createRole(formData);
+      addToast(`Role "${formData.name}" created successfully`, 'success');
       navigate('/roles');
     } catch (err) {
       setError(err.message || 'Failed to create role.');
