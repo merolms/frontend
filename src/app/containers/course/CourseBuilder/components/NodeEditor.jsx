@@ -137,6 +137,7 @@ const NodeEditor = ({ node, nodeType, onSave, saving }) => {
           <Form.Field>
             <label>Content</label>
             <RichTextEditor
+              key={`rte-${node?.id}-${form.type}`}
               value={form.content?.html || ''}
               onChange={(html) => update('content', { ...form.content, html })}
               placeholder='Write your lesson content...'
@@ -149,6 +150,7 @@ const NodeEditor = ({ node, nodeType, onSave, saving }) => {
           <Form.Field>
             <label>Video Content</label>
             <VideoEditor
+              key={`video-${node?.id}`}
               content={form.content}
               onChange={(content) => update('content', content)}
             />
@@ -160,6 +162,7 @@ const NodeEditor = ({ node, nodeType, onSave, saving }) => {
           <Form.Field>
             <label>Audio Content</label>
             <AudioEditor
+              key={`audio-${node?.id}`}
               content={form.content}
               onChange={(content) => update('content', content)}
             />
@@ -171,6 +174,7 @@ const NodeEditor = ({ node, nodeType, onSave, saving }) => {
           <Form.Field>
             <label>PDF Document</label>
             <PdfEditor
+              key={`pdf-${node?.id}`}
               content={form.content}
               onChange={(content) => update('content', content)}
             />

@@ -1,0 +1,417 @@
+@use "@/styles/index.scss" as *;
+
+// ─── Block Editor Container ─────────────────────────────────
+.block-editor {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+// ─── Status Indicators ───────────────────────────────────────
+.autosave-indicator {
+  text-align: right;
+  font-size: 12px;
+  color: #aaa;
+  padding: 4px 0;
+}
+
+// ─── Empty State ─────────────────────────────────────────────
+.block-editor-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #aaa;
+  text-align: center;
+  border: 2px dashed #ddd;
+  border-radius: 12px;
+  margin-bottom: 16px;
+
+  .ui.icon {
+    margin-bottom: 12px;
+  }
+
+  p {
+    margin: 0 0 16px;
+    font-size: 14px;
+  }
+}
+
+// ─── Block List ──────────────────────────────────────────────
+.block-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+// ─── Individual Block ───────────────────────────────────────
+.block-item {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  position: relative;
+
+  &:hover {
+    border-color: #c8d6e5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  &.selected {
+    border-color: $primary-color;
+    box-shadow: 0 2px 12px rgba($primary-color, 0.15);
+  }
+
+  // Drag states
+  &[draggable='true'] {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+}
+
+.drag-over {
+  border-top: 3px solid $primary-color;
+}
+
+// ─── Block Toolbar ──────────────────────────────────────────
+.block-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: #fafbfc;
+  border-bottom: 1px solid #eee;
+  min-height: 36px;
+}
+
+.block-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.block-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+
+  .button {
+    padding: 4px !important;
+    margin: 0 !important;
+
+    .icon {
+      margin: 0 !important;
+      font-size: 12px !important;
+    }
+  }
+}
+
+.block-item.selected .block-toolbar-right,
+.block-item:hover .block-toolbar-right {
+  opacity: 1;
+}
+
+.block-drag-handle {
+  cursor: grab;
+  color: #ccc;
+  padding: 2px 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    color: #999;
+    background: #eee;
+  }
+}
+
+// ─── Block Content ──────────────────────────────────────────
+.block-content {
+  padding: 16px;
+}
+
+.block-heading-input {
+  width: 100%;
+  border: none;
+  font-size: 1.5em;
+  font-weight: 600;
+  padding: 8px 0;
+  outline: none;
+  background: transparent;
+
+  &:focus {
+    border-bottom: 2px solid $primary-color;
+  }
+
+  &::placeholder {
+    color: #ccc;
+  }
+}
+
+// ─── Slash Command Menu ─────────────────────────────────────
+.block-text-wrapper {
+  position: relative;
+}
+
+.slash-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  width: 320px;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 4px;
+}
+
+.slash-menu-header {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.slash-menu-items {
+  padding: 4px;
+}
+
+.slash-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+
+  &:hover {
+    background: #f0f4f8;
+  }
+
+  .icon {
+    font-size: 18px;
+    color: #666;
+    width: 24px;
+    text-align: center;
+  }
+}
+
+.slash-menu-item-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.slash-menu-item-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+}
+
+.slash-menu-item-desc {
+  font-size: 11px;
+  color: #999;
+}
+
+// ─── AI Action Menu ─────────────────────────────────────────
+.ai-action-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  min-width: 180px;
+}
+
+// ─── Code Block ─────────────────────────────────────────────
+.block-code-editor {
+  background: #f8f9fa;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.block-code-header {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.block-code-lang {
+  max-width: 160px;
+}
+
+.block-code-textarea {
+  width: 100%;
+  border: none !important;
+  background: #1e1e1e !important;
+  color: #d4d4d4;
+  font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', monospace !important;
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 16px !important;
+  resize: vertical;
+  border-radius: 0 0 6px 6px !important;
+
+  &:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2px rgba($primary-color, 0.3);
+  }
+}
+
+// ─── Media Blocks ───────────────────────────────────────────
+.block-media-editor {
+  text-align: center;
+}
+
+.block-media-upload {
+  padding: 24px;
+  background: #fafbfc;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  color: #aaa;
+
+  .ui.icon {
+    margin-bottom: 8px;
+  }
+
+  p {
+    margin: 0 0 12px;
+    font-size: 13px;
+  }
+}
+
+.block-image-preview,
+.block-video-preview,
+.block-audio-preview {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+
+  img {
+    max-width: 100%;
+    border-radius: 6px;
+  }
+
+  .button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
+}
+
+// ─── Quiz Block ─────────────────────────────────────────────
+.block-quiz-editor {
+  padding: 24px;
+  background: #fafbfc;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  color: #aaa;
+
+  .ui.icon {
+    margin-bottom: 8px;
+  }
+
+  p {
+    margin: 0 0 4px;
+    font-size: 13px;
+  }
+}
+
+// ─── Attachment Block ───────────────────────────────────────
+.block-attachment-editor {
+  padding: 24px;
+  background: #fafbfc;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  color: #aaa;
+  text-align: center;
+
+  .ui.icon {
+    margin-bottom: 8px;
+  }
+
+  p {
+    margin: 0 0 12px;
+  }
+}
+
+// ─── AI Summary Block ───────────────────────────────────────
+.block-ai-summary {
+  position: relative;
+}
+
+.block-ai-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #f3e8ff 0%, #ede9fe 100%);
+  border-radius: 6px 6px 0 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: #7c3aed;
+}
+
+// ─── Embed Block ────────────────────────────────────────────
+.block-embed-editor {
+  .block-embed-preview {
+    margin-top: 12px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f8f9fa;
+  }
+}
+
+// ─── Add Block Buttons ──────────────────────────────────────
+.block-add-after {
+  display: flex;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  padding: 4px 0;
+}
+
+.block-item:hover + div .block-add-after,
+.block-add-after:hover {
+  opacity: 1;
+}
+
+.block-add-bottom {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+.block-editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 0;
+  border-top: 1px solid #eee;
+  margin-top: 16px;
+}
+
+// ─── Responsive ─────────────────────────────────────────────
+@media (max-width: 768px) {
+  .block-editor {
+    max-width  : 100%;
+    padding: 0 8px;
+  }
+
+  .slash-menu {
+    width: 100%;
+    left: 0;
+    right: 0;
+  }
+
+  .block-toolbar {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+}

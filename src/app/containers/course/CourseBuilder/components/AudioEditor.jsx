@@ -6,7 +6,14 @@ const AudioEditor = ({ content = {}, onChange }) => {
   const [transcript, setTranscript] = useState(content.transcript || '');
   const [duration, setDuration] = useState(content.duration || '');
 
-  const handleSave = () => {
+  // Sync from parent when content prop changes (e.g., switching lessons)
+  React.useEffect(() => {
+    setUrl(content.audioUrl || '');
+    setTranscript(content.transcript || '');
+    setDuration(content.duration || '');
+  }, [content.audioUrl, content.transcript, content.duration]);
+
+  const emit = () => {
     onChange({
       audioUrl: url,
       transcript,
@@ -20,7 +27,7 @@ const AudioEditor = ({ content = {}, onChange }) => {
         <label>Audio URL</label>
         <Input
           value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          onChange={(e) => { setUrl(e.target.value); emit(); }}
           placeholder='https://example.com/audio.mp3'
           icon='volume up'
           iconPosition='left'
@@ -51,7 +58,7 @@ const AudioEditor = ({ content = {}, onChange }) => {
           <label>Duration</label>
           <Input
             value={duration}
-            onChange={(e) => setDuration(e.target.value)}
+            onChange={(e) => { setDuration(e.target.value); emit(); }}
             placeholder='e.g., 8:45'
           />
         </Form.Field>
@@ -68,7 +75,7 @@ const AudioEditor = ({ content = {}, onChange }) => {
         <label>Transcript / Show Notes</label>
         <TextArea
           value={transcript}
-          onChange={(e) => setTranscript(e.target.value)}
+          onChange={(e) => { setTranscript(e.target.value); emit(); }}
           placeholder='Enter audio transcript or show notes...'
           style={{ minHeight: 80, fontFamily: 'inherit', fontSize: 13 }}
         />
@@ -87,11 +94,6 @@ const AudioEditor = ({ content = {}, onChange }) => {
         </p>
       </div>
 
-      <div style={{ textAlign: 'right', marginTop: 16 }}>
-        <Button primary onClick={handleSave}>
-          <Icon name='check' /> Apply Audio
-        </Button>
-      </div>
     </Form>
   );
 };

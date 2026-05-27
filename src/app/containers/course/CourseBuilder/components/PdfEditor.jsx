@@ -6,7 +6,14 @@ const PdfEditor = ({ content = {}, onChange }) => {
   const [title, setTitle] = useState(content.title || '');
   const [pages, setPages] = useState(content.pages || '');
 
-  const handleSave = () => {
+  // Sync from parent when content prop changes (e.g., switching lessons)
+  React.useEffect(() => {
+    setUrl(content.pdfUrl || '');
+    setTitle(content.title || '');
+    setPages(content.pages || '');
+  }, [content.pdfUrl, content.title, content.pages]);
+
+  const emit = () => {
     onChange({
       pdfUrl: url,
       title,
@@ -20,7 +27,7 @@ const PdfEditor = ({ content = {}, onChange }) => {
         <label>PDF URL</label>
         <Input
           value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          onChange={(e) => { setUrl(e.target.value); emit(); }}
           placeholder='https://example.com/document.pdf'
           icon='file pdf'
           iconPosition='left'
@@ -53,7 +60,7 @@ const PdfEditor = ({ content = {}, onChange }) => {
           <label>Document Title</label>
           <Input
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => { setTitle(e.target.value); emit(); }}
             placeholder='e.g., Chapter 3 Workbook'
           />
         </Form.Field>
@@ -63,7 +70,7 @@ const PdfEditor = ({ content = {}, onChange }) => {
             type='number'
             min={1}
             value={pages}
-            onChange={(e) => setPages(e.target.value)}
+            onChange={(e) => { setPages(e.target.value); emit(); }}
             placeholder='e.g., 24'
           />
         </Form.Field>
@@ -82,11 +89,6 @@ const PdfEditor = ({ content = {}, onChange }) => {
         </p>
       </div>
 
-      <div style={{ textAlign: 'right', marginTop: 16 }}>
-        <Button primary onClick={handleSave}>
-          <Icon name='check' /> Apply PDF
-        </Button>
-      </div>
     </Form>
   );
 };

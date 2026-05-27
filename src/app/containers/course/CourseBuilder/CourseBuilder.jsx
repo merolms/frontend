@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Segment, Icon, Breadcrumb, Divider, Button, Header, Message } from 'semantic-ui-react';
+import { Segment, Icon, Breadcrumb, Divider, Button, Header, Message, Label } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
-import StructureTree from './components/StructureTree';
-import NodeEditor from './components/NodeEditor';
-import { fetchCourseById, fetchLessons, createLesson, updateLesson, deleteLesson as apiDeleteLesson } from '@/app/services/courseService';
+import BlockEditor from './components/BlockEditor';
+import {
+  fetchBlocks, createBlock, updateBlock, deleteBlock as apiDeleteBlock,
+  reorderBlocks, saveAutosave, fetchAutosave, generateAIContent,
+  BLOCK_TYPE_LABELS, BLOCK_TYPE_ICONS,
+} from '@/app/services/blockService';
+import { fetchCourseById, fetchLessons, createLesson } from '@/app/services/courseService';
 import './CourseBuilder.scss';
 
 const CourseBuilder = () => {
@@ -14,13 +18,11 @@ const CourseBuilder = () => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [selectedNode, setSelectedNode] = useState(null);
-  const [selectedType, setSelectedType] = useState(null);
+  const [autosaving, setAutosaving] = useState(false);
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
-
-  // Local hierarchical structure built from flat lessons
-  const [sections, setSections] = useState([]);
+  const [blocks, setBlocks] = useState([]);
+  const [lessonId, setLessonId] = useState(null);
 
   useEffect(() => { loadData(); }, [id]);
 
@@ -28,67 +30,38 @@ const CourseBuilder = () => {
     try {
       setLoading(true);
       setError(null);
-      const [courseData, lessonsData] = await Promise.all([
-        fetchCourseById(id),
-        fetchLessons(id),
-      ]);
+      const courseData = await fetchCourseById(id);
       setCourse(courseData);
 
-      // Build hierarchical structure from flat lessons
-      if (lessonsData && lessonsData.length > 0) {
-        const section = {
-          id: 's1',
-          title: 'Course Content',
-          description: '',
-          order: 0,
-          status: 'published',
-          isCollapsed: false,
-          modules: [
-            {
-              id: 'm1',
-              title: 'Lessons',
-              description: '',
-              order: 0,
-              lessons: lessonsData.map((l, idx) => ({
-                id: `l_${l.id}`,
-                realId: l.id,
-                title: l.title,
-                description: l.description,
-                type: 'text',
-                duration: l.duration || '',
-                order: idx,
-                status: 'published',
-                isLocked: false,
-                unlockCondition: null,
-                points: 0,
-                content: { html: l.content || '', videoUrl: '', transcript: '' },
-                topics: [],
-              })),
-            },
-          ],
-        };
-        setSections([section]);
+      // Load lessons for thiscourse
+      const lessons = await fetchLessons(id);
+      if (lessons && lessons.length > 0) {
+        setLessonId(lessons[0].id);
+        // Load blocks for the first lesson
+        const blocksData = await fetchBlocks(lessons[0].id);
+        setBlocks(blocksData);
 
-        // Auto-select first lesson
-        if (section.modules[0].lessons.length > 0) {
-          setSelectedNode(section.modules[0].lessons[0]);
-          setSelectedType('lesson');
+        // Check for autosave
+        const autosave = await fetchAutosave(lessons[0].id);
+        if (autosave && autosave.snapshot) {
+          try {
+            const snapshot = JSON.parse(autosave.snapshot);
+            if (snapshot && snapshot.length > 0) {
+              // Merge snapshot with server blocks (prefer server blocks)
+              setBlocks(snapshot);
+            }
+          } catch {
+            // ignore parse error
+          }
         }
       } else {
-        // Empty course — create a default section
-        setSections([{
-          id: 's1',
-          title: 'Course Content',
-          description: '',
-          order: 0,
-          status: 'draft',
-          isCollapsed: false,
-          modules: [],
-        }]);
+        // No lessons yet — create one
+        const newLesson = await createLesson(id, { title: 'Lesson 1', description: 'Auto-created lesson' });
+        setLessonId(newLesson.id);
+        setBlocks([]);
       }
     } catch (err) {
-      setError(err.message || 'Failed to load course structure.');
-    } finally {
+      setError(err.message || 'Failed to load course.')    } finally {
       setLoading(false);
     }
   };
@@ -98,175 +71,82 @@ const CourseBuilder = () => {
     setTimeout(() => setSuccessMsg(null), 3000);
   };
 
-  const handleSelect = (node, type) => {
-    setSelectedNode(node);
-    setSelectedType(type);
-  };
+  // ─── Block Operations ─────────────────────────────────────
 
-  // ─── Add Section (local only) ────────────────────────────────
-  const handleAddSection = () => {
-    const newSection = {
-      id: `s_${Date.now()}`,
-      title: 'New Section',
-      description: '',
-      order: sections.length,
-      status: 'draft',
-      isCollapsed: false,
-      modules: [],
-    };
-    setSections(prev => [...prev, newSection]);
-    setSelectedNode(newSection);
-    setSelectedType('section');
-    showSuccess('Section added.');
-  };
+  const handleBlocksChange = useCallback((newBlocks) => {
+    setBlocks(newBlocks);
+  }, []);
 
-  // ─── Add Lesson (real API) ───────────────────────────────────
-  const handleAddLesson = async (moduleId) => {
-    if (!course) return;
+  const handleSave = async (blocksToSave) => {
+    if (!lessonId) return;
     try {
       setSaving(true);
-      const newLesson = await createLesson(id, { title: 'New Lesson', description: '' });
-      // Add to local structure
-      setSections(prev => prev.map(s => ({
-        ...s,
-        modules: s.modules.map(m => {
-          if (m.id === moduleId) {
-            return {
-              ...m,
-              lessons: [...m.lessons, {
-                id: `l_${newLesson.id}`,
-                realId: newLesson.id,
-                title: newLesson.title,
-                description: newLesson.description,
-                type: 'text',
-                duration: '',
-                order: m.lessons.length,
-                status: 'draft',
-                isLocked: false,
-                unlockCondition: null,
-                points: 0,
-                content: { html: '', videoUrl: '', transcript: '' },
-                topics: [],
-              }],
-            };
-          }
-          return m;
-        }),
-      })));
-      showSuccess('Lesson added.');
+      setError(null);
+
+      // For each block, create or update on server
+      const savedBlocks = [];
+      for (let i = 0; i < blocksToSave.length; i++) {
+        const block = { ...blocksToSave[i], order: i, lessonId };
+        if (block.id && String(block.id).startsWith('temp_')) {
+          // New block — create on server
+          const created = await createBlock(lessonId, block);
+          savedBlocks.push(created);
+        } else {
+          // Existing block — update
+          const updated = await updateBlock(block.id, block);
+          savedBlocks.push(updated);
+        }
+      }
+      setBlocks(savedBlocks);
+      showSuccess(`${savedBlocks.length} blocks saved.`);
     } catch (err) {
-      setError(err.message || 'Failed to create lesson.');
+      setError(err.message || 'Failed to save blocks.');
     } finally {
       setSaving(false);
     }
   };
 
-  // ─── Dispatcher: handleAdd(type, parentId) ───────────────────
-  const handleAdd = async (type, parentId) => {
-    if (type === 'section') {
-      handleAddSection();
-    } else if (type === 'lesson') {
-      await handleAddLesson(parentId);
-    } else {
-      // module, topic — local only for now
-      showSuccess(`${type} creation is local only.`);
+  const handleAutosave = async (autosaveBlocks) => {
+    if (!lessonId) return;
+    try {
+      setAutosaving(true);
+      const snapshot = JSON.stringify(autosaveBlocks);
+      await saveAutosave(lessonId, snapshot);
+    } catch (err) {
+      // Non-fatal: autosave failures shouldn't disrupt UX
+      console.error('Autosave failed:', err);
+    } finally {
+      setAutosaving(false);
     }
   };
 
-  // ─── Delete Lesson (real API) ────────────────────────────────
-  const handleDelete = async (nodeId, type) => {
-    if (!course) return;
-
-    if (type === 'lesson') {
-      const realId = nodeId.startsWith('l_') ? parseInt(nodeId.replace('l_', ''), 10) : parseInt(nodeId, 10);
-      if (!window.confirm('Delete this lesson? This cannot be undone.')) return;
-      try {
-        setSaving(true);
-        await apiDeleteLesson(id, realId);
-        // Remove from local structure
-        setSections(prev => prev.map(s => ({
-          ...s,
-          modules: s.modules.map(m => ({
-            ...m,
-            lessons: m.lessons.filter(l => l.id !== nodeId),
-          })),
-        })));
-        if (selectedNode?.id === nodeId) {
-          setSelectedNode(null);
-          setSelectedType(null);
-        }
-        showSuccess('Lesson deleted.');
-      } catch (err) {
-        setError(err.message || 'Failed to delete lesson.');
-      } finally {
-        setSaving(false);
-      }
-    } else {
-      // section, module — local only
-      showSuccess(`${type} deletion is local only.`);
+  const handleAIGenerate = async (block, action, prompt) => {
+    if (!lessonId) return null;
+    try {
+      setError(null);
+      const context = block.content || '';
+      const result = await generateAIContent(
+        lessonId,
+        block.type,
+        prompt || `Generate ${action} for this ${block.type} block`,
+        context
+      );
+      showSuccess('AI content generated.');
+      return result;
+    } catch (err) {
+      setError(err.message || 'AI generation failed.');
+      return null;
     }
   };
-
-  // ─── Save Lesson (real API) ──────────────────────────────────
-  const handleSave = async (formData) => {
-    if (!selectedNode || !selectedType || !course) return;
-
-    if (selectedType === 'lesson') {
-      const realId = selectedNode.realId;
-      if (!realId) {
-        setError('Cannot save: lesson has no backend ID yet.');
-        return;
-      }
-      try {
-        setSaving(true);
-        await updateLesson(id, realId, {
-          title: formData.title,
-          description: formData.description || '',
-        });
-        // Update local structure
-        setSections(prev => prev.map(s => ({
-          ...s,
-          modules: s.modules.map(m => ({
-            ...m,
-            lessons: m.lessons.map(l => l.id === selectedNode.id ? { ...l, ...formData } : l),
-          })),
-        })));
-        setSelectedNode(prev => ({ ...prev, ...formData }));
-        showSuccess('Lesson saved.');
-      } catch (err) {
-        setError(err.message || 'Failed to save lesson.');
-      } finally {
-        setSaving(false);
-      }
-    } else {
-      // section, module — update local only
-      setSections(prev => prev.map(s => {
-        if (s.id === selectedNode.id) return { ...s, ...formData };
-        return {
-          ...s,
-          modules: s.modules.map(m => m.id === selectedNode.id ? { ...m, ...formData } : m),
-        };
-      }));
-      setSelectedNode(prev => ({ ...prev, ...formData }));
-      showSuccess('Changes saved locally.');
-    }
-  };
-
-  const handleToggleCollapse = (sectionId) => {
-    setSections(prev => prev.map(s =>
-      s.id === sectionId ? { ...s, isCollapsed: !s.isCollapsed } : s
-    ));
-  };
-
-  // Build course object for StructureTree
-  const courseForTree = course ? { ...course, sections } : null;
 
   if (loading) {
     return (
       <div className='dashboard-layout'>
         <SideBar />
         <div className='dashboard-main'>
-          <Segment loading style={{ marginTop: 40 }}><Header as='h2'>Loading course builder...</Header></Segment>
+          <Segment loading style={{ marginTop: 40 }}>
+            <Header as='h2'>Loading block editor...</Header>
+          </Segment>
         </div>
       </div>
     );
@@ -280,15 +160,15 @@ const CourseBuilder = () => {
         {/* Header */}
         <div className='dashboard-header'>
           <div className='header-left'>
-            <h1 className='page-title'>Course Builder</h1>
+            <h1 className='page-title'>Block Editor</h1>
             <p className='page-subtitle'>{course?.title}</p>
           </div>
           <div className='header-right'>
             <Button onClick={() => navigate(`/courses/${id}`)}>
               <Icon name='eye' /> Preview
             </Button>
-            <Button primary>
-              <Icon name='save' /> Publish
+            <Button primary onClick={() => handleSave(blocks)} loading={saving}>
+              <Icon name='save' /> Save All
             </Button>
           </div>
         </div>
@@ -299,50 +179,45 @@ const CourseBuilder = () => {
             <Breadcrumb.Divider />
             <Breadcrumb.Section link onClick={() => navigate(`/courses/${id}`)}>{course?.title}</Breadcrumb.Section>
             <Breadcrumb.Divider />
-            <Breadcrumb.Section active>Builder</Breadcrumb.Section>
+            <Breadcrumb.Section active>Block Editor</Breadcrumb.Section>
           </Breadcrumb>
           <Divider hidden />
 
-          {error && (
-            <Message error onDismiss={() => setError(null)} style={{ marginBottom: 16 }}>
-              <Icon name='warning circle' /> {error}
-            </Message>
-          )}
-          {successMsg && (
-            <Message success onDismiss={() => setSuccessMsg(null)} style={{ marginBottom: 16 }}>
-              <Icon name='check circle' /> {successMsg}
-            </Message>
-          )}
-
-          {/* Builder Layout: Tree (left) + Editor (right) */}
-          <div className='course-builder-layout'>
-            <div className='course-builder-tree'>
-              <div className='course-builder-tree-header'>
-                <Header as='h4' style={{ margin: 0 }}>
-                  <Icon name='sitemap' /> Structure
-                </Header>
-                <Button primary size='small' onClick={() => handleAdd('section', null)} disabled={saving}>
-                  <Icon name='plus' /> Section
-                </Button>
-              </div>
-              <StructureTree
-                course={courseForTree}
-                selectedId={selectedNode?.id}
-                onSelect={handleSelect}
-                onAdd={handleAdd}
-                onDelete={handleDelete}
-                onToggleCollapse={handleToggleCollapse}
-              />
+          {/* Block Info Bar */}
+          <div className='block-editor-info-bar'>
+            <div className='block-editor-stats'>
+              <Label size='small'>
+                <Icon name='cubes' /> {blocks.length} block{blocks.length !== 1 ? 's' : ''}
+              </Label>
+              {blocks.length > 0 && (
+                <Label size='small' color='grey'>
+                  Types: {[...new Set(blocks.map(b => b.type))].map(t => BLOCK_TYPE_LABELS[t] || t).join(', ')}
+                </Label>
+              )}
             </div>
-
-            <div className='course-builder-editor'>
-              <NodeEditor
-                node={selectedNode}
-                nodeType={selectedType}
-                onSave={handleSave}
-                saving={saving}
-              />
+            <div className='block-editor-hint'>
+              <Icon name='info circle' style={{ color: '#aaa' }} />
+              <span style={{ fontSize: 12, color: '#aaa' }}>
+                Type <kbd>/</kbd> at the start of a text block to use slash commands. Drag blocks to reorder.
+              </span>
             </div>
+          </div>
+
+          <Divider hidden />
+
+          {/* Block Editor */}
+          <div className='block-editor-wrapper'>
+            <BlockEditor
+              blocks={blocks}
+              onBlocksChange={handleBlocksChange}
+              onSave={handleSave}
+              onAutosave={handleAutosave}
+              onAIGenerate={handleAIGenerate}
+              saving={saving}
+              autosaving={autosaving}
+              error={error}
+              successMsg={successMsg}
+            />
           </div>
         </div>
       </div>

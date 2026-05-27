@@ -171,19 +171,33 @@ export const archiveCourse = async (id) => {
 
 // Backend API shape for lessons from GET /courses/:id/lessons
 // { id, courseId, title, description, updatedAt, createdAt }
-const normalizeLesson = (l) => ({
-  id: l.id,
-  courseId: l.courseId || l.course_id,
-  title: l.title || '',
-  description: l.description || '',
-  duration: l.duration || '',
-  content: l.content || '',
-  updatedAt: l.updated_at ? new Date(l.updated_at * 1000).toISOString().split('T')[0] : (l.updatedAt || ''),
-  createdAt: l.created_at ? new Date(l.created_at * 1000).toISOString().split('T')[0] : (l.createdAt || ''),
-  // Preserve raw content array from backend
-  contents: l.contents || [],
-  tags: l.tags || [],
-});
+const normalizeLesson = (l) => {
+  // Content may be a plain HTML string or a JSON-stringified object
+  let content = l.content || '';
+  if (typeof content === 'string' && content.startsWith('{')) {
+    try {
+      content = JSON.parse(content);
+    } catch {
+      // keep as string
+    }
+  }
+
+  return {
+    id: l.id,
+    courseId: l.courseId || l.course_id,
+    title: l.title || '',
+    description: l.description || '',
+    duration: l.duration || '',
+    content,
+    type: l.type || 'text',
+    status: l.status || 'published',
+    points: l.points || 0,
+    updatedAt: l.updated_at ? new Date(l.updated_at * 1000).toISOString().split('T')[0] : (l.updatedAt || ''),
+    createdAt: l.created_at ? new Date(l.created_at * 1000).toISOString().split('T')[0] : (l.createdAt || ''),
+    contents: l.contents || [],
+    tags: l.tags || [],
+  };
+};
 
 export const fetchLessons = async (courseId) => {
   try {
@@ -218,6 +232,8 @@ export const updateLesson = async (courseId, lessonId, lessonData) => {
       course_id: parseInt(courseId, 10),
       title: lessonData.title,
       description: lessonData.description || '',
+      content: lessonData.content || '',
+      type: lessonData.type || 'text',
     };
     const data = await apiPut(`/lessons/${lessonId}`, payload);
     return normalizeLesson(data);

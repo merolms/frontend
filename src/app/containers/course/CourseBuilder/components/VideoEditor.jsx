@@ -7,7 +7,15 @@ const VideoEditor = ({ content = {}, onChange }) => {
   const [thumbnail, setThumbnail] = useState(content.thumbnail || '');
   const [duration, setDuration] = useState(content.duration || '');
 
-  const handleSave = () => {
+  // Sync from parent when content prop changes (e.g., switching lessons)
+  React.useEffect(() => {
+    setUrl(content.videoUrl || '');
+    setTranscript(content.transcript || '');
+    setThumbnail(content.thumbnail || '');
+    setDuration(content.duration || '');
+  }, [content.videoUrl, content.transcript, content.thumbnail, content.duration]);
+
+  const emit = () => {
     onChange({
       videoUrl: url,
       transcript,
@@ -36,7 +44,7 @@ const VideoEditor = ({ content = {}, onChange }) => {
         <label>Video URL</label>
         <Input
           value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          onChange={(e) => { setUrl(e.target.value); emit(); }}
           placeholder='https://youtube.com/watch?v=... or direct video URL'
           icon='video'
           iconPosition='left'
@@ -84,7 +92,7 @@ const VideoEditor = ({ content = {}, onChange }) => {
           <label>Thumbnail URL</label>
           <Input
             value={thumbnail}
-            onChange={(e) => setThumbnail(e.target.value)}
+            onChange={(e) => { setThumbnail(e.target.value); emit(); }}
             placeholder='https://example.com/thumb.jpg'
           />
         </Form.Field>
@@ -92,7 +100,7 @@ const VideoEditor = ({ content = {}, onChange }) => {
           <label>Duration</label>
           <Input
             value={duration}
-            onChange={(e) => setDuration(e.target.value)}
+            onChange={(e) => { setDuration(e.target.value); emit(); }}
             placeholder='e.g., 12:34'
           />
         </Form.Field>
@@ -102,7 +110,7 @@ const VideoEditor = ({ content = {}, onChange }) => {
         <label>Transcript / Captions</label>
         <TextArea
           value={transcript}
-          onChange={(e) => setTranscript(e.target.value)}
+          onChange={(e) => { setTranscript(e.target.value); emit(); }}
           placeholder='Enter video transcript or paste captions...'
           style={{ minHeight: 80, fontFamily: 'inherit', fontSize: 13 }}
         />
@@ -122,12 +130,6 @@ const VideoEditor = ({ content = {}, onChange }) => {
         <p style={{ fontSize: 10, color: '#ccc', marginTop: 4 }}>
           File upload coming soon — use URL for now
         </p>
-      </div>
-
-      <div style={{ textAlign: 'right', marginTop: 16 }}>
-        <Button primary onClick={handleSave}>
-          <Icon name='check' /> Apply Video
-        </Button>
       </div>
     </Form>
   );

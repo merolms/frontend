@@ -1,244 +1,55 @@
 @use "@/styles/index.scss" as *;
 
-.course-builder-layout {
+// ─── Info Bar ────────────────────────────────────────────────
+.block-editor-info-bar {
   display: flex;
-  gap: 0;
-  height: calc(100vh - 180px);
-  min-height: 500px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #fafbfc;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  margin-bottom: 8px;
+}
+
+.block-editor-stats {
+  display: flex;
+  gap: 8px;
+}
+
+.block-editor-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  kbd {
+    background: #eee;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 11px;
+    font-family: monospace;
+  }
+}
+
+// ─── Block Editor Wrapper ────────────────────────────────────
+.block-editor-wrapper {
   background: #fff;
   border-radius: 12px;
   border: 1px solid #e8e8e8;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  overflow: hidden;
-}
-
-// ─── Left Panel: Structure Tree ─────────────────────────────
-
-.course-builder-tree {
-  width: 380px;
-  min-width: 320px;
-  border-right: 1px solid #e8e8e8;
-  display: flex;
-  flex-direction: column;
-  background: #fafbfc;
-}
-
-.course-builder-tree-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 16px;
-  border-bottom: 1px solid #e8e8e8;
-  background: #fff;
-
-  h4 {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-  }
-}
-
-.structure-tree {
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px 0;
-}
-
-.structure-tree-empty {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #aaa;
-  padding: 40px;
-
-  .ui.header {
-    color: #bbb !important;
-    margin-top: 12px;
-  }
-
-  p {
-    margin: 4px 0;
-  }
-}
-
-// ─── Tree Nodes ─────────────────────────────────────────────
-
-.tree-node {
-  user-select: none;
-}
-
-.tree-node-row {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 8px;
-  cursor: pointer;
-  transition: background 0.1s ease;
-  border-left: 3px solid transparent;
-
-  &:hover {
-    background: #f0f4f8;
-  }
-}
-
-.tree-node.selected > .tree-node-row {
-  background: #e8f5e9;
-  border-left-color: $primary-color;
-}
-
-.tree-node-toggle {
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.tree-node-spacer {
-  width: 20px;
-  flex-shrink: 0;
-}
-
-.tree-node-icon {
-  flex-shrink: 0;
-}
-
-.tree-node-title {
-  flex: 1;
-  font-size: 13px;
-  color: #333;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.tree-node-actions {
-  display: flex;
-  gap: 2px;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-  flex-shrink: 0;
-
-  .button {
-    padding: 4px !important;
-    margin: 0 !important;
-
-    .icon {
-      margin: 0 !important;
-      font-size: 11px !important;
-    }
-  }
-}
-
-.tree-node-row:hover .tree-node-actions {
-  opacity: 1;
-}
-
-.tree-node-children {
-  // Indentation is handled by parent
-}
-
-// ─── Right Panel: Node Editor ──────────────────────────────
-
-.course-builder-editor {
-  flex: 1;
-  overflow-y: auto;
   padding: 24px;
-}
-
-.node-editor-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: #aaa;
-
-  .ui.icon {
-    margin-bottom: 12px;
-  }
-
-  p {
-    margin: 0;
-    font-size: 14px;
-  }
-}
-
-.node-editor {
-  max-width: 700px;
-}
-
-.node-editor-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.node-editor-id {
-  font-family: monospace;
-}
-
-.node-editor-placeholder {
-  text-align: center;
-  padding: 30px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  color: #aaa;
-
-  .ui.icon {
-    margin-bottom: 8px;
-  }
-
-  p {
-    margin: 0;
-    font-size: 13px;
-  }
-}
-
-// ─── Media Upload Zone ─────────────────────────────────────
-
-.media-upload-zone {
-  text-align: center;
-  padding: 24px;
-  background: #fafbfc;
-  border: 2px dashed #ddd;
-  border-radius: 8px;
-  color: #aaa;
-  margin-top: 12px;
-
-  .ui.icon {
-    margin-bottom: 4px;
-  }
-
-  p {
-    margin: 0;
-    font-size: 13px;
-  }
 }
 
 // ─── Responsive ─────────────────────────────────────────────
-
-@media (max-width: 900px) {
-  .course-builder-layout {
+@media (max-width: 768px) {
+  .block-editor-info-bar {
     flex-direction: column;
-    height: auto;
+    gap: 8px;
+    align-items: flex-start;
   }
 
-  .course-builder-tree {
-    width: 100%;
-    min-width: unset;
-    max-height: 300px;
-    border-right: none;
-    border-bottom: 1px solid #e8e8e8;
-  }
-
-  .course-builder-editor {
-    padding: 16px;
+  .block-editor-wrapper {
+    padding: 12px;
   }
 }
