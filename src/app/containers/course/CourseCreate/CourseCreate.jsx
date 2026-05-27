@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Header, Icon, Breadcrumb, Divider, Button, Grid, Segment, Image, Form, Input, TextArea, Dropdown, Message, Label } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { createCourse } from '@/app/services/courseService';
+import UnsplashPicker from '@/app/containers/course/components/UnsplashPicker';
 import '../CourseForm/CourseForm.scss';
 
 const tagOptions = [
@@ -25,6 +26,7 @@ const CourseCreate = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
+  const [unsplashOpen, setUnsplashOpen] = useState(false);
 
   const validate = () => {
     const e = {};
@@ -110,14 +112,51 @@ const CourseCreate = () => {
                   </Form.Field>
 
                   <Form.Field>
-                    <label>Cover Image URL</label>
-                    <Input name='coverImage' placeholder='https://example.com/cover.jpg (16:9 ratio recommended)' value={form.coverImage} onChange={handleChange} />
+                    <label>Cover Image</label>
+                    <div className='cover-image-field'>
+                      <Input
+                        name='coverImage'
+                        placeholder='https://example.com/cover.jpg'
+                        value={form.coverImage}
+                        onChange={handleChange}
+                        className='cover-image-input'
+                        action={
+                          <Button
+                            type='button'
+                            color='blue'
+                            onClick={() => setUnsplashOpen(true)}
+                            disabled={loading}
+                            title='Browse Unsplash'
+                          >
+                            <Icon name='image' /> Unsplash
+                          </Button>
+                        }
+                      />
+                    </div>
                     {form.coverImage && (
-                      <div className='cover-preview'>
+                      <div className='cover-preview' style={{ position: 'relative' }}>
                         <Image src={form.coverImage} fluid rounded />
+                        <Button
+                          size='mini'
+                          color='red'
+                          icon='trash'
+                          className='cover-remove-btn'
+                          onClick={() => setForm(p => ({ ...p, coverImage: '' }))}
+                          title='Remove cover image'
+                        />
                       </div>
                     )}
                   </Form.Field>
+
+                  <UnsplashPicker
+                    open={unsplashOpen}
+                    onClose={() => setUnsplashOpen(false)}
+                    onSelect={(url) => {
+                      setForm(p => ({ ...p, coverImage: url }));
+                      setUnsplashOpen(false);
+                    }}
+                    initialQuery={form.title || 'education'}
+                  />
 
                   <div className='course-form-actions'>
                     <Button type='button' onClick={() => navigate('/courses')} disabled={loading}>Cancel</Button>

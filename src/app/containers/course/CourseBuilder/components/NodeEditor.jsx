@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Select, TextArea, Button, Label, Icon, Segment, Divider } from 'semantic-ui-react';
 import RichTextEditor from './RichTextEditor';
 import VideoEditor from './VideoEditor';
@@ -45,16 +45,31 @@ const NodeEditor = ({ node, nodeType, onSave, saving }) => {
 
   const typeInfo = nodeTypeLabels[nodeType] || nodeTypeLabels.lesson;
   const [form, setForm] = useState({
-    title: node.title || '',
-    description: node.description || '',
-    status: node.status || 'draft',
-    type: node.type || 'text',
-    duration: node.duration || '',
-    isLocked: node.isLocked || false,
-    unlockCondition: node.unlockCondition || null,
-    points: node.points || 0,
-    content: node.content || {},
+    title: node?.title || '',
+    description: node?.description || '',
+    status: node?.status || 'draft',
+    type: node?.type || 'text',
+    duration: node?.duration || '',
+    isLocked: node?.isLocked || false,
+    unlockCondition: node?.unlockCondition || null,
+    points: node?.points || 0,
+    content: node?.content || {},
   });
+
+  useEffect(() => {
+    setForm({
+      title: node?.title || '',
+      description: node?.description || '',
+      status: node?.status || 'draft',
+      type: node?.type || 'text',
+      duration: node?.duration || '',
+      isLocked: node?.isLocked || false,
+      unlockCondition: node?.unlockCondition || null,
+      points: node?.points || 0,
+      content: node?.content || {},
+    });
+    setErrors({});
+  }, [node, nodeType]);
 
   const [errors, setErrors] = useState({});
 
