@@ -72,7 +72,7 @@ const UserEdit = () => {
       setLoading(true);
       setError(null);
       const updated = await updateUser(id, formData);
-      navigate(`/users/${updated.id}`);
+      navigate(`/users/${id}`);
     } catch (err) {
       setError(err.message || 'Failed to update user. Please try again.');
     } finally {

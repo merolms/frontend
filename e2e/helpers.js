@@ -100,22 +100,82 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
   });
 
   await page.route('**/users**', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        message: 'success',
-        data: {
-          users: [
-            { id: 1, email: 'admin@meroedu.com', firstName: 'John', lastName: 'Doe', role: 'Administrator', status: 'active' },
-            { id: 2, email: 'instructor@meroedu.com', firstName: 'Jane', lastName: 'Smith', role: 'Instructor', status: 'active' },
-          ],
-          total: 2,
-          page: 1,
-          totalPages: 1,
-        },
-      }),
-    });
+    const url = route.request().url();
+    const method = route.request().method();
+
+    if (method === 'GET') {
+      const singleMatch = url.match(/\/users\/(\d+)(?:\?.*)?$/);
+      if (singleMatch) {
+        const userId = parseInt(singleMatch[1]);
+        const usersById = {
+          1: { id: 1, email: 'admin@meroedu.com', firstName: 'John', lastName: 'Doe', role: 'Administrator', status: 1, avatar: 'https://i.pravatar.cc/150?img=1', phone: '+1 555-0101', bio: 'Platform administrator', permissions: ['*'], created_at: 1700000000 },
+          2: { id: 2, email: 'instructor@meroedu.com', firstName: 'Jane', lastName: 'Smith', role: 'Instructor', status: 1, avatar: 'https://i.pravatar.cc/150?img=5', phone: '+1 555-0102', bio: 'Experienced instructor', permissions: ['dashboard.view', 'courses.view'], created_at: 1701000000 },
+        };
+        const user = usersById[userId];
+        if (user) {
+          await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: user }) });
+        } else {
+          await route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ message: 'User not found' }) });
+        }
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          message: 'success',
+          data: {
+            users: [
+              { id: 1, email: 'admin@meroedu.com', firstName: 'John', lastName: 'Doe', role: 'Administrator', status: 1 },
+              { id: 2, email: 'instructor@meroedu.com', firstName: 'Jane', lastName: 'Smith', role: 'Instructor', status: 1 },
+            ],
+            total: 2,
+            page: 1,
+            totalPages: 1,
+          },
+        }),
+      });
+      return;
+    }
+
+    if (method === 'PUT') {
+      let body = {};
+      try { body = await route.request().postDataJSON(); } catch {}
+      const idMatch = url.match(/\/users\/(\d+)/);
+      const userId = idMatch ? parseInt(idMatch[1]) : 0;
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          message: 'success',
+          data: {
+            id: userId,
+            firstName: body.firstName || 'John',
+            lastName: body.lastName || 'Doe',
+            email: body.email || 'admin@meroedu.com',
+            role: body.role || 'Student',
+            phone: body.phone || '',
+            bio: body.bio || '',
+            avatar: body.avatar || 'https://i.pravatar.cc/150?img=1',
+            status: body.status !== undefined ? body.status : 1,
+            permissions: ['*'],
+            created_at: 1700000000,
+          },
+        }),
+      });
+      return;
+    }
+
+    if (method === 'DELETE') {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'User deleted successfully' }),
+      });
+      return;
+    }
+
+    await route.continue();
   });
 
   await page.route('**/teams**', async (route) => {
