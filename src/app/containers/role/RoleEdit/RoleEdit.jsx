@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Segment, Icon, Breadcrumb, Divider, Header, Button, Message } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import RoleForm from '@/app/containers/role/RoleForm/RoleForm';
-import { fetchRoles, updateRole } from '@/app/services/authService';
+import { fetchRoleById, updateRole } from '@/app/services/authService';
 
 const RoleEdit = () => {
   const navigate = useNavigate();
@@ -14,17 +14,15 @@ const RoleEdit = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // No GET /roles/{id} endpoint exists. Load all roles and find the one we need.
     const loadRole = async () => {
       try {
         setFetching(true);
-        const roles = await fetchRoles();
-        const found = roles.find((r) => String(r.id) === String(id));
-        if (!found) {
+        const data = await fetchRoleById(id);
+        if (!data) {
           setError('Role not found.');
           return;
         }
-        setRole(found);
+        setRole(data);
       } catch (err) {
         setError('Failed to load role data.');
       } finally {

@@ -274,12 +274,25 @@ export const getStoredAuth = () => {
 
 // ==================== ROLES (real backend API) ====================
 
+const normalizeRolePermissions = (role) => {
+  if (!role) return role;
+  return {
+    ...role,
+    permissions: Array.isArray(role.permissions)
+      ? role.permissions
+      : (role.permissions || '').split(',').filter(Boolean),
+  };
+};
+
 export const fetchRoles = async () => {
-  return await apiGet('/roles');
+  const data = await apiGet('/roles');
+  if (!Array.isArray(data)) return [];
+  return data.map(normalizeRolePermissions);
 };
 
 export const fetchRoleById = async (id) => {
-  return await apiGet(`/roles/${id}`);
+  const data = await apiGet(`/roles/${id}`);
+  return normalizeRolePermissions(data);
 };
 
 export const createRole = async (roleData) => {
