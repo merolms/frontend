@@ -193,7 +193,7 @@ const TeamContainer = () => {
               {teams.map((team) => (
                 <div key={team.id} className='team-card' onClick={() => navigate(`/teams/${team.id}`)}>
                   <div className='team-card-header' style={{ background: team.color || '#2185d0' }}>
-                    <Icon name='users' size='large' color='white' />
+                    <Icon name='users' size='large' color='grey' />
                     <span className={`team-card-badge ${team.status === 1 ? 'active' : 'inactive'}`}>
                       {team.memberCount || 0}
                     </span>

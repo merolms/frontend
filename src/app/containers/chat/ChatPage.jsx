@@ -176,7 +176,7 @@ const ChatPage = () => {
                   {msg.role === 'user' ? (
                     <img src={user?.avatar || 'https://i.pravatar.cc/150?img=3'} alt='You' />
                   ) : (
-                    <div className='ai-avatar'><Icon name='robot' /></div>
+                    <div className='ai-avatar'><Icon name='child' /></div>
                   )}
                 </div>
                 <div className='chat-bubble'>
