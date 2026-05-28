@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Segment, Icon, Breadcrumb, Divider, Header } from 'semantic-ui-react';
+import { Paper, Breadcrumbs, Anchor, Button, Title, Text } from '@mantine/core';
+import { IconShield } from '@tabler/icons-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import RoleForm from '@/app/containers/role/RoleForm/RoleForm';
 import { createRole } from '@/app/services/authService';
@@ -13,56 +14,23 @@ const RoleCreate = () => {
   const [error, setError] = useState(null);
 
   const handleSubmit = async (formData) => {
-    try {
-      setLoading(true);
-      setError(null);
-      await createRole(formData);
-      addToast(`Role "${formData.name}" created successfully`, 'success');
-      navigate('/roles');
-    } catch (err) {
-      setError(err.message || 'Failed to create role.');
-    } finally {
-      setLoading(false);
-    }
+    try { setLoading(true); setError(null); await createRole(formData); addToast(`Role "${formData.name}" created successfully`, 'success'); navigate('/roles'); }
+    catch (err) { setError(err.message || 'Failed to create role.'); } finally { setLoading(false); }
   };
-
-  const handleCancel = () => {
-    navigate('/roles');
-  };
+  const handleCancel = () => navigate('/roles');
 
   return (
     <div className='dashboard-layout'>
       <SideBar />
       <div className='dashboard-main'>
-        <div className='dashboard-header'>
-          <div className='header-left'>
-            <h1 className='page-title'>Roles & Permissions</h1>
-            <p className='page-subtitle'>Create new role</p>
-          </div>
-        </div>
-
+        <div className='dashboard-header'><div className='header-left'><h1 className='page-title'>Roles & Permissions</h1><p className='page-subtitle'>Create new role</p></div></div>
         <div className='dashboard-content'>
-          <Breadcrumb>
-            <Breadcrumb.Section link onClick={() => navigate('/roles')}>Roles</Breadcrumb.Section>
-            <Breadcrumb.Divider />
-            <Breadcrumb.Section active>Create Role</Breadcrumb.Section>
-          </Breadcrumb>
-          <Divider hidden />
-
-          <Segment className='role-form-segment'>
-            <Header as='h2'>
-              <Icon name='shield' color='green' />
-              Create New Role
-            </Header>
-            <p className='role-form-subtitle'>Define a new role and assign permissions to it.</p>
-
-            <RoleForm
-              onSubmit={handleSubmit}
-              onCancel={handleCancel}
-              loading={loading}
-              submitLabel='Create Role'
-            />
-          </Segment>
+          <Breadcrumbs mb="md"><Anchor onClick={() => navigate('/roles')}>Roles</Anchor><span>Create Role</span></Breadcrumbs>
+          <Paper className='role-form-segment' p="lg" radius="md" withBorder>
+            <Title order={3} mb={4}><IconShield size={20} color="#33a163" /> Create New Role</Title>
+            <Text c="dimmed" size="sm" mb="md">Define a new role and assign permissions to it.</Text>
+            <RoleForm onSubmit={handleSubmit} onCancel={handleCancel} loading={loading} submitLabel='Create Role' />
+          </Paper>
         </div>
       </div>
     </div>

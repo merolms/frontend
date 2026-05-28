@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Segment, Icon, Breadcrumb, Divider, Header, Button, Message } from 'semantic-ui-react';
+import { Paper, Breadcrumbs, Anchor, Title, Text, Loader, Alert, Button } from '@mantine/core';
+import { IconPencil, IconAlertCircle } from '@tabler/icons-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import RoleForm from '@/app/containers/role/RoleForm/RoleForm';
 import { fetchRoleById, updateRole } from '@/app/services/authService';
@@ -16,113 +17,26 @@ const RoleEdit = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const loadRole = async () => {
-      try {
-        setFetching(true);
-        const data = await fetchRoleById(id);
-        if (!data) {
-          setError('Role not found.');
-          return;
-        }
-        setRole(data);
-      } catch (err) {
-        setError('Failed to load role data.');
-      } finally {
-        setFetching(false);
-      }
-    };
+    const loadRole = async () => { try { setFetching(true); const data = await fetchRoleById(id); if (!data) setError('Role not found.'); else setRole(data); } catch (err) { setError('Failed to load role data.'); } finally { setFetching(false); } };
     loadRole();
   }, [id]);
 
-  const handleSubmit = async (formData) => {
-    try {
-      setLoading(true);
-      setError(null);
-      await updateRole(id, formData);
-      addToast(`Role "${formData.name}" updated successfully`, 'success');
-      navigate('/roles');
-    } catch (err) {
-      setError(err.message || 'Failed to update role.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const handleSubmit = async (formData) => { try { setLoading(true); setError(null); await updateRole(id, formData); addToast(`Role "${formData.name}" updated successfully`, 'success'); navigate('/roles'); } catch (err) { setError(err.message || 'Failed to update role.'); } finally { setLoading(false); } };
+  const handleCancel = () => navigate('/roles');
 
-  const handleCancel = () => {
-    navigate('/roles');
-  };
-
-  if (fetching) {
-    return (
-      <div className='dashboard-layout'>
-        <SideBar />
-        <div className='dashboard-main'>
-          <div className='dashboard-content'>
-            <Segment loading className='role-form-segment'><Header as='h2'>Loading...</Header></Segment>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error && !role) {
-    return (
-      <div className='dashboard-layout'>
-        <SideBar />
-        <div className='dashboard-main'>
-          <div className='dashboard-content'>
-            <Message negative>
-              <Message.Header>Error</Message.Header>
-              <p>{error}</p>
-            </Message>
-            <Button primary onClick={() => navigate('/roles')}>Back to Roles</Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (fetching) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" radius="md" mt={40}><Loader /><Title order={4}>Loading...</Title></Paper></div></div>);
+  if (error && !role) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Alert icon={<IconAlertCircle size={16} />} color="red">{error}</Alert><Button mt="md" onClick={() => navigate('/roles')}>Back to Roles</Button></div></div>);
 
   return (
     <div className='dashboard-layout'>
       <SideBar />
       <div className='dashboard-main'>
-        <div className='dashboard-header'>
-          <div className='header-left'>
-            <h1 className='page-title'>Roles & Permissions</h1>
-            <p className='page-subtitle'>Edit role</p>
-          </div>
-        </div>
-
-        <div className='dashboard-content'>
-          <Breadcrumb>
-            <Breadcrumb.Section link onClick={() => navigate('/roles')}>Roles</Breadcrumb.Section>
-            <Breadcrumb.Divider />
-            <Breadcrumb.Section active>Edit: {role?.name}</Breadcrumb.Section>
-          </Breadcrumb>
-          <Divider hidden />
-
-          <Segment className='role-form-segment'>
-            <Header as='h2'>
-              <Icon name='pencil' color='blue' />
-              Edit Role
-            </Header>
-            <p className='role-form-subtitle'>Update the role details and permissions.</p>
-
-            {error && (
-              <Message negative onDismiss={() => setError(null)}>
-                <p>{error}</p>
-              </Message>
-            )}
-
-            <RoleForm
-              initialData={role}
-              onSubmit={handleSubmit}
-              onCancel={handleCancel}
-              loading={loading}
-              submitLabel='Save Changes'
-            />
-          </Segment>
-        </div>
+        <Breadcrumbs mb="md"><Anchor onClick={() => navigate('/roles')}>Roles</Anchor><span>Edit: {role?.name}</span></Breadcrumbs>
+        <Paper className='role-form-segment' p="lg" radius="md" withBorder>
+          <Title order={3} mb={4}><IconPencil size={20} color="#2185d0" /> Edit Role</Title>
+          <Text c="dimmed" size="sm" mb="md">Update the role details and permissions.</Text>
+          <RoleForm initialData={role} onSubmit={handleSubmit} onCancel={handleCancel} loading={loading} submitLabel='Save Changes' />
+        </Paper>
       </div>
     </div>
   );

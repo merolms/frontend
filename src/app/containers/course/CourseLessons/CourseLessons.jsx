@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import {
-  Header, Segment, Icon, Breadcrumb, Divider, Button,
-  List, Label, Grid,
-} from 'semantic-ui-react';
+import { Paper, Breadcrumbs, Anchor, Button, Badge, Grid, Title, Text, Stack, List, Loader, Group } from '@mantine/core';
+import { IconList, IconPlus, IconPencil, IconTrash, IconBook, IconClock, IconSitemap, IconInfoCircle, IconAlertCircle } from '@tabler/icons-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import LessonForm from '@/app/containers/course/LessonForm/LessonForm';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
-import {
-  fetchCourseById, fetchLessons,
-  createLesson, updateLesson, deleteLesson as apiDeleteLesson,
-} from '@/app/services/courseService';
+import { fetchCourseById, fetchLessons, createLesson, updateLesson, deleteLesson as apiDeleteLesson } from '@/app/services/courseService';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
 import './CourseLessons.scss';
 
@@ -28,185 +23,93 @@ const CourseLessons = () => {
   useEffect(() => { loadData(); }, [id]);
 
   const loadData = async () => {
-    try {
-      setLoading(true);
-      const [c, l] = await Promise.all([fetchCourseById(id), fetchLessons(id)]);
-      setCourse(c);
-      setLessons(l || []);
-    } catch (err) {
-      console.error('Error loading lessons:', err);
-    } finally {
-      setLoading(false);
-    }
+    try { setLoading(true); const [c, l] = await Promise.all([fetchCourseById(id), fetchLessons(id)]); setCourse(c); setLessons(l || []); }
+    catch (err) { console.error('Error loading lessons:', err); } finally { setLoading(false); }
   };
 
   const handleLessonSubmit = async (formData) => {
     setSaving(true);
     try {
-      if (editingLesson) {
-        await updateLesson(id, editingLesson.id, formData);
-      } else {
-        await createLesson(id, formData);
-      }
-      setLessonModalOpen(false);
-      setEditingLesson(null);
-      await loadData();
-    } catch (err) {
-      alert(err.message || 'Failed to save lesson.');
-    } finally {
-      setSaving(false);
-    }
+      if (editingLesson) { await updateLesson(id, editingLesson.id, formData); } else { await createLesson(id, formData); }
+      setLessonModalOpen(false); setEditingLesson(null); await loadData();
+    } catch (err) { alert(err.message || 'Failed to save lesson.'); } finally { setSaving(false); }
   };
 
   const handleDeleteLesson = async () => {
     if (!deleteModal.lesson) return;
     setSaving(true);
-    try {
-      await apiDeleteLesson(id, deleteModal.lesson.id);
-      setDeleteModal({ open: false, lesson: null });
-      await loadData();
-    } catch (err) {
-      alert(err.message || 'Failed to delete lesson.');
-    } finally {
-      setSaving(false);
-    }
+    try { await apiDeleteLesson(id, deleteModal.lesson.id); setDeleteModal({ open: false, lesson: null }); await loadData(); }
+    catch (err) { alert(err.message || 'Failed to delete lesson.'); } finally { setSaving(false); }
   };
 
   if (loading) {
-    return (
-      <div className='dashboard-layout'>
-        <SideBar />
-        <div className='dashboard-main'>
-          <div className='course-form-page'><Segment loading><Header as='h2'>Loading...</Header></Segment></div>
-        </div>
-      </div>
-    );
+    return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><div className='course-form-page'><Paper p="lg" radius="md"><Loader /><Title order={4}>Loading...</Title></Paper></div></div></div>);
   }
 
   return (
     <div className='dashboard-layout'>
       <SideBar />
       <div className='dashboard-main'>
-
         <div className='course-form-page'>
-          <Breadcrumb>
-            <Breadcrumb.Section link onClick={() => navigate('/courses')}>Courses</Breadcrumb.Section>
-            <Breadcrumb.Divider />
-            <Breadcrumb.Section link onClick={() => navigate(`/courses/${id}`)}>{course?.title}</Breadcrumb.Section>
-            <Breadcrumb.Divider />
-            <Breadcrumb.Section active>Lessons</Breadcrumb.Section>
-          </Breadcrumb>
-          <Divider hidden />
+          <Breadcrumbs mb="md">
+            <Anchor onClick={() => navigate('/courses')}>Courses</Anchor>
+            <Anchor onClick={() => navigate(`/courses/${id}`)}>{course?.title}</Anchor>
+            <span>Lessons</span>
+          </Breadcrumbs>
 
-          <Grid stackable>
-            <Grid.Column width={10}>
-              <Segment className='course-form-card'>
-                <div className='lessons-header'>
-                  <div>
-                    <Header as='h2'>
-                      <Icon name='list alternate' color='teal' />
-                      Lessons
-                    </Header>
-                    <p className='course-form-subtitle'>
-                      {lessons.length} lesson{lessons.length !== 1 ? 's' : ''} in "{course?.title}"
-                    </p>
-                  </div>
-                  <PermissionGuard permissions={['courses.lessons.manage']}>
-                    <Button primary onClick={() => { setEditingLesson(null); setLessonModalOpen(true); }}>
-                      <Icon name='plus' /> Add Lesson
-                    </Button>
-                  </PermissionGuard>
+          <Grid>
+            <Grid.Col span={10}>
+              <Paper className='course-form-card' p="lg" radius="md" withBorder>
+                <div className='lessons-header' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <div><Title order={3}><IconList size={20} color="#00838f" /> Lessons</Title><Text c="dimmed" size="sm">{lessons.length} lesson{lessons.length !== 1 ? 's' : ''} in "{course?.title}"</Text></div>
+                  <PermissionGuard permissions={['courses.lessons.manage']}><Button leftSection={<IconPlus size={14} />} onClick={() => { setEditingLesson(null); setLessonModalOpen(true); }}>Add Lesson</Button></PermissionGuard>
                 </div>
 
                 {lessons.length === 0 ? (
-                  <div className='lessons-empty'>
-                    <Icon name='book' size='huge' color='grey' />
-                    <Header as='h3' color='grey'>No lessons yet</Header>
-                    <p>Start building your course by adding the first lesson.</p>
-                    <PermissionGuard permissions={['courses.lessons.manage']}>
-                      <Button primary onClick={() => { setEditingLesson(null); setLessonModalOpen(true); }}>
-                        <Icon name='plus' /> Create First Lesson
-                      </Button>
-                    </PermissionGuard>
-                    <Divider hidden />
-                    <PermissionGuard permissions={['courses.lessons.manage']}>
-                      <Button basic as={Link} to={`/courses/${id}/builder`}>
-                        <Icon name='sitemap' /> Or use the Course Builder
-                      </Button>
-                    </PermissionGuard>
+                  <div className='lessons-empty' ta="center" p="xl">
+                    <IconBook size={48} color="#999" /><Title order={4} c="dimmed">No lessons yet</Title>
+                    <Text mb="md">Start building your course by adding the first lesson.</Text>
+                    <PermissionGuard permissions={['courses.lessons.manage']}><Button leftSection={<IconPlus size={14} />} onClick={() => { setEditingLesson(null); setLessonModalOpen(true); }}>Create First Lesson</Button></PermissionGuard>
+                    <PermissionGuard permissions={['courses.lessons.manage']}><Button variant="default" mt="sm" component={Link} to={`/courses/${id}/builder`} leftSection={<IconSitemap size={14} />}>Or use the Course Builder</Button></PermissionGuard>
                   </div>
                 ) : (
                   <div className='lessons-list'>
                     {lessons.map((lesson, index) => (
-                      <div key={lesson.id} className='lesson-card'>
-                        <div className='lesson-card-left'>
-                          <div className='lesson-card-number'>{index + 1}</div>
-                          <div className='lesson-card-info'>
-                            <Header as='h4' style={{ margin: 0 }}>{lesson.title}</Header>
-                            <p className='lesson-card-desc'>{lesson.description}</p>
-                            {lesson.duration && (
-                              <Label size='tiny' color='teal'>
-                                <Icon name='clock outline' /> {lesson.duration}
-                              </Label>
-                            )}
-                          </div>
+                      <div key={lesson.id} className='lesson-card' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 12, border: '1px solid #e8e8e8', borderRadius: 8, marginBottom: 8 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <div className='lesson-card-number' style={{ width: 32, height: 32, borderRadius: 16, background: '#f0f4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600 }}>{index + 1}</div>
+                          <div><Title order={5} style={{ margin: 0 }}>{lesson.title}</Title><Text c="dimmed" size="sm">{lesson.description}</Text>{lesson.duration && <Badge size="xs" color="teal" mt={4} leftSection={<IconClock size={10} />}>{lesson.duration}</Badge>}</div>
                         </div>
-                        <div className='lesson-card-actions'>
-                          <PermissionGuard permissions={['courses.lessons.manage']}>
-                            <Button size='small' icon onClick={() => { setEditingLesson(lesson); setLessonModalOpen(true); }} title='Edit'>
-                              <Icon name='pencil' />
-                            </Button>
-                            <Button size='small' icon color='red' onClick={() => setDeleteModal({ open: true, lesson })} title='Delete'>
-                              <Icon name='trash' />
-                            </Button>
-                          </PermissionGuard>
-                        </div>
+                        <PermissionGuard permissions={['courses.lessons.manage']}>
+                          <Group gap={4}>
+                            <Button size="xs" variant="default" leftSection={<IconPencil size={12} />} onClick={() => { setEditingLesson(lesson); setLessonModalOpen(true); }} title="Edit">Edit</Button>
+                            <Button size="xs" color="red" variant="default" leftSection={<IconTrash size={12} />} onClick={() => setDeleteModal({ open: true, lesson })} title="Delete">Delete</Button>
+                          </Group>
+                        </PermissionGuard>
                       </div>
                     ))}
                   </div>
                 )}
-              </Segment>
-            </Grid.Column>
+              </Paper>
+            </Grid.Col>
 
-            <Grid.Column width={6}>
-              <Segment className='lessons-sidebar-card'>
-                <Header as='h4'><Icon name='info circle' /> About Lessons</Header>
-                <p style={{ fontSize: 13, color: '#666', lineHeight: 1.5 }}>
-                  Lessons are the building blocks of your course. Each lesson can contain text, video, audio, or other content types.
-                </p>
-                <Divider />
-                <Header as='h5' style={{ margin: 0 }}>Quick Actions</Header>
+            <Grid.Col span={6}>
+              <Paper className='lessons-sidebar-card' p="lg" radius="md" withBorder>
+                <Title order={5} mb="sm"><IconInfoCircle size={16} /> About Lessons</Title>
+                <Text size="sm" c="dimmed">Lessons are the building blocks of your course. Each lesson can contain text, video, audio, or other content types.</Text>
+                <hr style={{ margin: '12px 0', border: 'none', borderTop: '1px solid #e8e8e8' }} />
+                <Title order={6} mb="sm">Quick Actions</Title>
                 <div className='quick-actions'>
-                  <PermissionGuard permissions={['courses.lessons.manage']}>
-                    <Button fluid size='small' primary onClick={() => { setEditingLesson(null); setLessonModalOpen(true); }}>
-                      <Icon name='plus' /> Add New Lesson
-                    </Button>
-                  </PermissionGuard>
-                  <Button fluid size='small' as={Link} to={`/courses/${id}/builder`}>
-                    <Icon name='sitemap' /> Open Builder
-                  </Button>
+                  <PermissionGuard permissions={['courses.lessons.manage']}><Button fullWidth size="sm" leftSection={<IconPlus size={14} />} onClick={() => { setEditingLesson(null); setLessonModalOpen(true); }}>Add New Lesson</Button></PermissionGuard>
+                  <Button fullWidth size="sm" variant="default" component={Link} to={`/courses/${id}/builder`} mt="xs" leftSection={<IconSitemap size={14} />}>Open Builder</Button>
                 </div>
-              </Segment>
-            </Grid.Column>
+              </Paper>
+            </Grid.Col>
           </Grid>
         </div>
 
-        <LessonForm
-          open={lessonModalOpen}
-          onClose={() => { setLessonModalOpen(false); setEditingLesson(null); }}
-          onSubmit={handleLessonSubmit}
-          initialData={editingLesson}
-          loading={saving}
-        />
-        <DeleteModal
-          open={deleteModal.open}
-          onConfirm={handleDeleteLesson}
-          onCancel={() => setDeleteModal({ open: false, lesson: null })}
-          itemName={deleteModal.lesson?.title}
-          itemType='lesson'
-          loading={saving}
-        />
-
+        <LessonForm open={lessonModalOpen} onClose={() => { setLessonModalOpen(false); setEditingLesson(null); }} onSubmit={handleLessonSubmit} initialData={editingLesson} loading={saving} />
+        <DeleteModal open={deleteModal.open} onConfirm={handleDeleteLesson} onCancel={() => setDeleteModal({ open: false, lesson: null })} itemName={deleteModal.lesson?.title} itemType='lesson' loading={saving} />
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, TextArea, Dropdown, Button, Image, Message, Label, Icon } from 'semantic-ui-react';
+import { TextInput, Textarea, Select, Button, FileButton, Group, Stack, Image, Text, Paper } from '@mantine/core';
+import { IconPhoto, IconTrash, IconDeviceFloppy } from '@tabler/icons-react';
 import { fetchCategories } from '@/app/services/categoryService';
 import UnsplashPicker from '@/app/containers/course/components/UnsplashPicker';
 
@@ -7,28 +8,18 @@ const tagOptions = [
   'javascript', 'react', 'python', 'css', 'html', 'nodejs', 'typescript',
   'machine-learning', 'data-science', 'design', 'ui', 'ux', 'devops',
   'cloud', 'aws', 'docker', 'api', 'database', 'security',
-].map((tag) => ({ key: tag, text: tag, value: tag }));
+].map((tag) => ({ value: tag, label: tag }));
 
 const CourseForm = ({ initialData = null, onSubmit, onCancel, loading = false, submitLabel = 'Save Course' }) => {
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    category: '',
-    tags: [],
-    coverImage: '',
-    ...initialData,
-  });
+  const [formData, setFormData] = useState({ title: '', description: '', category: '', tags: [], coverImage: '', ...initialData });
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [errors, setErrors] = useState({});
   const [unsplashOpen, setUnsplashOpen] = useState(false);
 
   useEffect(() => {
-    if (initialData) {
-      setFormData({ ...initialData });
-    }
-    // Load active categories
+    if (initialData) setFormData({ ...initialData });
     fetchCategories({ status: 'active' }).then((cats) => {
-      setCategoryOptions(cats.map((c) => ({ key: c.name, text: c.name, value: c.name })));
+      setCategoryOptions(cats.map((c) => ({ value: c.name, label: c.name })));
     }).catch(() => {});
   }, [initialData]);
 
@@ -41,94 +32,49 @@ const CourseForm = ({ initialData = null, onSubmit, onCancel, loading = false, s
     return Object.keys(e).length === 0;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validate()) onSubmit(formData);
-  };
-
-  const handleChange = (e, { name, value }) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: null }));
+  const handleSubmit = (e) => { e.preventDefault(); if (validate()) onSubmit(formData); };
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: null }));
   };
 
   return (
-    <Form onSubmit={handleSubmit} loading={loading} error={Object.keys(errors).length > 0}>
-      {Object.keys(errors).length > 0 && (
-        <Message error size='small'><p>Please fix the errors below.</p></Message>
-      )}
+    <form onSubmit={handleSubmit} className='course-form'>
+      <Stack gap="sm">
+        {Object.keys(errors).length > 0 && <Paper p="sm" withBorder><Text size="sm" c="red">Please fix the errors below.</Text></Paper>}
 
-      <Form.Field required error={!!errors.title}>
-        <label>Course Title</label>
-        <Input name='title' placeholder='e.g., Advanced React Patterns' value={formData.title} onChange={handleChange} />
-        {errors.title && <Label basic color='red' pointing='left'>{errors.title}</Label>}
-      </Form.Field>
+        <TextInput label="Course Title" placeholder="e.g., Advanced React Patterns" value={formData.title} onChange={(e) => handleChange('title', e.target.value)} error={errors.title} required />
+        <Textarea label="Description" placeholder="What will students learn?" minRows={4} value={formData.description} onChange={(e) => handleChange('description', e.target.value)} error={errors.description} required />
+        <Select label="Category" placeholder="Select a category" data={categoryOptions} value={formData.category} onChange={(v) => handleChange('category', v)} error={errors.category} required searchable />
+        <Select label="Tags" placeholder="Add tags to help discovery" data={tagOptions} value={formData.tags} onChange={(v) => handleChange('tags', v)} searchable multiple />
 
-      <Form.Field required error={!!errors.description}>
-        <label>Description</label>
-        <TextArea name='description' placeholder='What will students learn?' style={{ minHeight: 120 }} value={formData.description} onChange={handleChange} />
-        {errors.description && <Label basic color='red' pointing='left'>{errors.description}</Label>}
-      </Form.Field>
-
-      <Form.Field required error={!!errors.category}>
-        <label>Category</label>
-        <Dropdown name='category' placeholder='Select a category' fluid search selection options={categoryOptions} value={formData.category} onChange={handleChange} />
-        {errors.category && <Label basic color='red' pointing='left'>{errors.category}</Label>}
-      </Form.Field>
-
-      <Form.Field>
-        <label>Tags</label>
-        <Dropdown name='tags' placeholder='Add tags to help discovery' fluid multiple search selection options={tagOptions} value={formData.tags} onChange={handleChange} />
-      </Form.Field>
-
-      <Form.Field>
-        <label>Cover Image</label>
-        <div className='cover-image-field'>
-          <Input
-            name='coverImage'
-            placeholder='https://example.com/cover.jpg'
-            value={formData.coverImage}
-            onChange={handleChange}
-            className='cover-image-input'
-            action={
-              <Button
-                type='button'
-                color='blue'
-                onClick={() => setUnsplashOpen(true)}
-                disabled={loading}
-              >
-                <Icon name='image' /> Unsplash
-              </Button>
-            }
-          />
+        <div>
+          <Text size="sm" fw={500} mb={4}>Cover Image</Text>
+          <Group>
+            <TextInput placeholder="https://example.com/cover.jpg" value={formData.coverImage} onChange={(e) => handleChange('coverImage', e.target.value)} style={{ flex: 1 }} />
+            <Button variant="default" leftSection={<IconPhoto size={14} />} onClick={() => setUnsplashOpen(true)} disabled={loading}>Unsplash</Button>
+          </Group>
+          {formData.coverImage && (
+            <div style={{ marginTop: 8, position: 'relative', display: 'inline-block' }}>
+              <Image src={formData.coverImage} radius="sm" height={180} fit="cover" />
+              <Button size="xs" color="red" variant="filled" onClick={() => handleChange('coverImage', '')} style={{ position: 'absolute', top: 4, right: 4 }}><IconTrash size={12} /></Button>
+            </div>
+          )}
         </div>
-        {formData.coverImage && (
-          <div style={{ marginTop: 8, position: 'relative', display: 'inline-block' }}>
-            <Image src={formData.coverImage} fluid rounded style={{ maxHeight: 180, objectFit: 'cover' }} />
-            <Button
-              size='mini'
-              color='red'
-              icon='trash'
-              className='cover-remove-btn'
-              onClick={() => setFormData(prev => ({ ...prev, coverImage: '' }))}
-            />
-          </div>
-        )}
+
         <UnsplashPicker
           open={unsplashOpen}
           onClose={() => setUnsplashOpen(false)}
-          onSelect={(url) => {
-            setFormData(prev => ({ ...prev, coverImage: url }));
-            setUnsplashOpen(false);
-          }}
+          onSelect={(url) => { handleChange('coverImage', url); setUnsplashOpen(false); }}
           initialQuery={formData.title || 'education'}
         />
-      </Form.Field>
 
-      <div className='course-form-actions'>
-        {onCancel && <Button type='button' onClick={onCancel} disabled={loading}>Cancel</Button>}
-        <Button type='submit' primary loading={loading}>{submitLabel}</Button>
-      </div>
-    </Form>
+        <Group justify="flex-end" mt="md">
+          {onCancel && <Button variant="default" onClick={onCancel} disabled={loading}>Cancel</Button>}
+          <Button type="submit" loading={loading} leftSection={<IconDeviceFloppy size={14} />}>{submitLabel}</Button>
+        </Group>
+      </Stack>
+    </form>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Segment, Icon, Button, Input, Dropdown, Pagination, Label } from 'semantic-ui-react';
+import { Paper, TextInput, Button, Select, Group, Box, Stack, Text, Pagination, SimpleGrid, Loader, Badge, Anchor } from '@mantine/core';
+import { IconSearch, IconPlus, IconRefresh, IconAlertCircle, IconBook } from '@tabler/icons-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { fetchCourses, mockCategories } from '@/app/services/courseService';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
@@ -12,20 +13,20 @@ import CompactView from './views/CompactView';
 import './Course.scss';
 
 const statusOptions = [
-  { key: 'all', text: 'All', value: '' },
-  { key: 'Published', text: 'Published', value: 'Published' },
-  { key: 'DRAFT', text: 'Draft', value: 'DRAFT' },
-  { key: 'Archived', text: 'Archived', value: 'Archived' },
+  { value: '', label: 'All' },
+  { value: 'Published', label: 'Published' },
+  { value: 'DRAFT', label: 'Draft' },
+  { value: 'Archived', label: 'Archived' },
 ];
 
 const categoryOptions = [
-  { key: 'all', text: 'All Categories', value: '' },
-  ...mockCategories.map((cat) => ({ key: cat, text: cat, value: cat })),
+  { value: '', label: 'All Categories' },
+  ...mockCategories.map((cat) => ({ value: cat, label: cat })),
 ];
 
 const sortOptions = [
-  { key: 'date', text: 'Newest First', value: '' },
-  { key: 'title', text: 'Title A-Z', value: 'title' },
+  { value: '', label: 'Newest First' },
+  { value: 'title', label: 'Title A-Z' },
 ];
 
 const CourseContainer = () => {
@@ -66,10 +67,7 @@ const CourseContainer = () => {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  // Refetch after create/delete to update counts
-  const refreshList = useCallback(() => {
-    fetchData();
-  }, [fetchData]);
+  const refreshList = useCallback(() => { fetchData(); }, [fetchData]);
 
   const updateParams = (updates) => {
     const newParams = new URLSearchParams(searchParams);
@@ -81,13 +79,11 @@ const CourseContainer = () => {
     setSearchParams(newParams);
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    updateParams({ search: searchInput, page: 1 });
-  };
+  const handleSearch = (e) => { e.preventDefault(); updateParams({ search: searchInput, page: 1 }); };
 
-  const handlePageChange = (e, { activePage }) => {
-    updateParams({ page: activePage });
+  const handleClear = () => {
+    setSearchInput('');
+    setSearchParams(new URLSearchParams());
   };
 
   const renderView = () => {
@@ -103,9 +99,7 @@ const CourseContainer = () => {
   return (
     <div className='dashboard-layout'>
       <SideBar />
-
       <div className='dashboard-main'>
-        {/* Header */}
         <div className='dashboard-header'>
           <div className='header-left'>
             <h1 className='page-title'>Courses</h1>
@@ -113,116 +107,60 @@ const CourseContainer = () => {
           </div>
           <div className='header-right'>
             <PermissionGuard permissions={['courses.create']}>
-              <Button icon primary onClick={() => navigate('/courses/create')}>
-                <Icon name='plus' /> New Course
-              </Button>
+              <Button leftSection={<IconPlus size={16} />} onClick={() => navigate('/courses/create')}>New Course</Button>
             </PermissionGuard>
           </div>
         </div>
 
         <div className='dashboard-content'>
-          {/* Filters Bar */}
-          <Segment className='course-filters' secondary>
-            <div className='course-filters-row'>
-              <div className='course-filters-left'>
-                <form className='course-search-form' onSubmit={handleSearch}>
-                  <Input
-                    icon='search'
-                    placeholder='Search courses...'
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                  fluid
- />
-                </form>
-                <Dropdown
-                  placeholder='Status'
-                  selection
-                  options={statusOptions}
-                  value={status}
-                  onChange={(e, { value }) => updateParams({ status: value, page: 1 })}
-                  className='course-filter-dropdown'
+          <Paper className='course-filters' p="sm" radius="md" withBorder mb="md">
+            <div className='course-filters-row' style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <form className='course-search-form' onSubmit={handleSearch} style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
+                <TextInput
+                  placeholder='Search courses...'
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  leftSection={<IconSearch size={16} />}
+                  style={{ flex: 1 }}
                 />
-                <Dropdown
-                  placeholder='Category'
-                  selection
-                  options={categoryOptions}
-                  value={category}
-                  onChange={(e, { value }) => updateParams({ category: value, page: 1 })}
-                  className='course-filter-dropdown'
-                />
-                <Dropdown
-                  placeholder='Sort'
-                  selection
-                  options={sortOptions}
-                  value={sort}
-                  onChange={(e, { value }) => updateParams({ sort: value, page: 1 })}
-                  className='course-filter-dropdown'
-                />
-                <Button
-                  basic
-                  onClick={() => {
-                    setSearchInput('');
-                    setSearchParams(new URLSearchParams());
-                  }}
-                >
-                  Clear
-                </Button>
-              </div>
+              </form>
+              <Select placeholder='Status' data={statusOptions} value={status} onChange={(v) => updateParams({ status: v || '', page: 1 })} className='course-filter-dropdown' allowDeselect={false} />
+              <Select placeholder='Category' data={categoryOptions} value={category} onChange={(v) => updateParams({ category: v || '', page: 1 })} className='course-filter-dropdown' allowDeselect={false} />
+              <Select placeholder='Sort' data={sortOptions} value={sort} onChange={(v) => updateParams({ sort: v || '', page: 1 })} className='course-filter-dropdown' allowDeselect={false} />
+              <Button variant="default" onClick={handleClear}>Clear</Button>
               <ViewModeSwitcher value={viewMode} onChange={(mode) => updateParams({ view: mode, page: 1 })} />
             </div>
 
             {(status || category || search) && (
-              <div className='active-filters'>
-                <span style={{ fontSize: '12px', color: '#888', marginRight: '8px' }}>Filters:</span>
-                {search && (
-                  <Label size='small' color='blue' onRemove={() => { setSearchInput(''); updateParams({ search: '', page: 1 }); }}>
-                    Search: {search}
-                  </Label>
-                )}
-                {status && (
-                  <Label size='small' color='green' onRemove={() => updateParams({ status: '', page: 1 })}>
-                    {status}
-                  </Label>
-                )}
-                {category && (
-                  <Label size='small' color='teal' onRemove={() => updateParams({ category: '', page: 1 })}>
-                    {category}
-                  </Label>
-                )}
+              <div className='active-filters' style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
+                <Text size="xs" c="dimmed">Filters:</Text>
+                {search && <Badge size="sm" variant="light" color="blue" onClose={() => { setSearchInput(''); updateParams({ search: '', page: 1 }); }}>Search: {search}</Badge>}
+                {status && <Badge size="sm" variant="light" color="green" onClose={() => updateParams({ status: '', page: 1 })}>{status}</Badge>}
+                {category && <Badge size="sm" variant="light" color="teal" onClose={() => updateParams({ category: '', page: 1 })}>{category}</Badge>}
               </div>
             )}
-          </Segment>
+          </Paper>
 
-          {/* Error State */}
           {error && !loading && (
-            <Segment placeholder className='courses-empty'>
-              <Icon name='warning circle' color='red' size='huge' />
-              <p style={{ marginTop: 12, color: '#666' }}>{error}</p>
-              <Button onClick={fetchData}><Icon name='refresh' /> Retry</Button>
-            </Segment>
+            <Paper p="md" radius="md" withBorder className='courses-empty'>
+              <Group><IconAlertCircle color="red" /><Text>{error}</Text><Button size="xs" leftSection={<IconRefresh size={14} />} onClick={fetchData}>Retry</Button></Group>
+            </Paper>
           )}
 
-          {/* Course Views */}
           {!error && courses.length === 0 && !loading ? (
-            <Segment placeholder className='courses-empty'>
-              <Icon name='search' size='huge' color='grey' />
-              <p style={{ marginTop: 12 }}>No courses found. Try adjusting your filters or create a new course.</p>
+            <Paper p="xl" radius="md" withBorder className='courses-empty' ta="center" mt="md">
+              <Text size="xl"><IconBook size={48} color="#999" /></Text>
+              <Text mt="md">No courses found. Try adjusting your filters or create a new course.</Text>
               <PermissionGuard permissions={['courses.create']}>
-                <Button primary onClick={() => navigate('/courses/create')}>
-                  <Icon name='plus' /> Create Course
-                </Button>
+                <Button mt="md" leftSection={<IconPlus size={16} />} onClick={() => navigate('/courses/create')}>Create Course</Button>
               </PermissionGuard>
-            </Segment>
+            </Paper>
           ) : !error && (
             <>
               {renderView()}
               {totalPages > 1 && (
-                <div className='courses-pagination'>
-                  <Pagination
-                    activePage={page}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                  />
+                <div className='courses-pagination' style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
+                  <Pagination total={totalPages} value={page} onChange={(p) => updateParams({ page: p })} />
                 </div>
               )}
             </>

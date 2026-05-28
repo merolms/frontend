@@ -1,5 +1,4 @@
 import React from 'react';
-import { Icon } from 'semantic-ui-react';
 import './SideBarItem.scss';
 import { Link } from 'react-router-dom';
 
@@ -11,13 +10,14 @@ export class SideBarItem extends React.Component {
   };
 
   render() {
-    const { path, label, icon, active, onClick } = this.props;
+    const { path, label, IconComponent, active, onClick } = this.props;
+    const Icon = IconComponent;
 
     return (
       <Link to={path} onClick={this.handleClick}>
         <div className='sidebar-item'>
           <div className={`sidebar-item-icon${active ? ' selected' : ''}`}>
-            <Icon name={icon} />
+            {Icon && <Icon size={20} />}
           </div>
           <span className={`sidebar-item-label${active ? ' selected' : ''}`}>{label}</span>
         </div>

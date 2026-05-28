@@ -1,11 +1,32 @@
 import React from 'react';
-import { Menu, Icon } from 'semantic-ui-react';
+import { NavLink, Stack, Divider, Button, Group, Text } from '@mantine/core';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { IconHome, IconBook, IconTags, IconUsers, IconSitemap, IconSchool, IconMessageCircle, IconHash, IconUser, IconSettings, IconShield, IconLogout } from '@tabler/icons-react';
 import SideBarItem from '@/app/containers/SideBar/SideBarItem/SideBarItem';
 import UserProfileInfo from '@/app/components/UserProfileInfo';
 import { logoutUser } from '@/redux/slices/authSlice';
 import './SideBar.scss';
+
+const navItems = [
+  { path: '/', label: 'Dashboard', icon: 'home' },
+  { path: '/courses', label: 'Courses', icon: 'book' },
+  { path: '/categories', label: 'Categories', icon: 'tags' },
+  { path: '/users', label: 'Users', icon: 'users' },
+  { path: '/teams', label: 'Teams', icon: 'sitemap' },
+  { path: '/my-learning', label: 'Learning', icon: 'graduation-cap' },
+  { path: '/chat', label: 'AI Chat', icon: 'comments' },
+  { path: '/slack', label: 'Team Chat', icon: 'hashtag' },
+  { path: '/profile', label: 'Profile', icon: 'id-card' },
+  { path: '/settings', label: 'Settings', icon: 'cog' },
+  { path: '/roles', label: 'Roles', icon: 'shield' },
+];
+
+const iconMap = {
+  home: IconHome, book: IconBook, tags: IconTags, users: IconUsers, sitemap: IconSitemap,
+  'graduation-cap': IconBook, comments: IconMessageCircle, hashtag: IconHash,
+  'id-card': IconUser, cog: IconSettings, shield: IconShield,
+};
 
 export default function SideBar() {
   const location = useLocation();
@@ -23,24 +44,27 @@ export default function SideBar() {
     <div className='sidebar-wrapper'>
       <div className='sidebar-header'>
         <div className='sidebar-brand'>
-          <Icon name='graduation cap' className='brand-icon' />
+          <IconSchool className='brand-icon' />
         </div>
       </div>
 
       <div className='sidebar-nav'>
-        <Menu className='side-menu'>
-          <SideBarItem path='/' label='Dashboard' icon='home' active={currentPath === '/'} />
-          <SideBarItem path='/courses' label='Courses' icon='book' active={currentPath === '/courses' || currentPath.startsWith('/courses/')} />
-          <SideBarItem path='/categories' label='Categories' icon='tags' active={currentPath === '/categories'} />
-          <SideBarItem path='/users' label='Users' icon='users' active={currentPath === '/users' || currentPath.startsWith('/users/')} />
-          <SideBarItem path='/teams' label='Teams' icon='sitemap' active={currentPath === '/teams' || currentPath.startsWith('/teams/')} />
-          <SideBarItem path='/my-learning' label='Learning' icon='graduation cap' active={currentPath === '/my-learning'} />
-          <SideBarItem path='/chat' label='AI Chat' icon='comments' active={currentPath === '/chat'} />
-          <SideBarItem path='/slack' label='Team Chat' icon='hashtag' active={currentPath === '/slack'} />
-          <SideBarItem path='/profile' label='Profile' icon='id card' active={currentPath === '/profile'} />
-          <SideBarItem path='/settings' label='Settings' icon='cog' active={currentPath === '/settings'} />
-          <SideBarItem path='/roles' label='Roles' icon='shield' active={currentPath === '/roles' || currentPath.startsWith('/roles/')} />
-        </Menu>
+        <Stack gap={2} className='side-menu'>
+          {navItems.map((item) => {
+            const Icon = iconMap[item.icon] || IconHome;
+            const isActive = item.path === '/' ? currentPath === '/' : currentPath === item.path || currentPath.startsWith(item.path + '/');
+            return (
+              <SideBarItem
+                key={item.path}
+                path={item.path}
+                label={item.label}
+                icon={item.icon}
+                IconComponent={Icon}
+                active={isActive}
+              />
+            );
+          })}
+        </Stack>
       </div>
 
       <div className='sidebar-footer'>
@@ -54,7 +78,7 @@ export default function SideBar() {
               />
             </div>
             <button className='sidebar-logout-btn' onClick={handleLogout} title='Sign Out'>
-              <Icon name='sign out' />
+              <IconLogout />
               <span>Sign Out</span>
             </button>
           </>

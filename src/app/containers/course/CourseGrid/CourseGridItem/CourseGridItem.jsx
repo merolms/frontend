@@ -1,43 +1,22 @@
 import React from 'react';
-import { Card, Icon, Image } from 'semantic-ui-react';
-
+import { Card, Text, Group, Badge, Image } from '@mantine/core';
+import { IconBook, IconCalendar, IconUsers } from '@tabler/icons-react';
 import './CourseGridItem.scss';
 
 const GridItem = (props) => {
   const course = props.course;
-
   return (
-    <Card className="course-grid-item" href="courses/12">
-      <Image
-        src={course.CoverImage}
-        wrapped
-        ui={false}
-        className="course-grid-image"
-      />
-
-      <Card.Content>
-        <Card.Header className="course-grid-title">
-          {course.Title}
-        </Card.Header>
-
-        <Card.Description className="course-grid-description">
-          {course.Description}
-        </Card.Description>
-      </Card.Content>
-
-      <Card.Content extra className="course-grid-extra">
-        <span className="extra-item">
-          <Icon name="book" /> Course Type
-        </span>
-
-        <span className="extra-item">
-          <Icon name="calendar" /> 11 Dec 2020
-        </span>
-
-        <span className="extra-item">
-          <Icon name="users" /> 50
-        </span>
-      </Card.Content>
+    <Card className='course-grid-item' padding="md" radius="md" withBorder>
+      <Card.Section>
+        <Image src={course.CoverImage} height={160} className='course-grid-image" />
+      </Card.Section>
+      <Text fw={600} className='course-grid-title' mt="sm">{course.Title}</Text>
+      <Text size="sm" c="dimmed" className='course-grid-description' lineClamp={2}>{course.Description}</Text>
+      <Group gap={8} mt="sm">
+        <Text size="xs" c="dimmed"><IconBook size={12} /> Course Type</Text>
+        <Text size="xs" c="dimmed"><IconCalendar size={12} /> 11 Dec 2020</Text>
+        <Text size="xs" c="dimmed"><IconUsers size={12} /> 50</Text>
+      </Group>
     </Card>
   );
 };

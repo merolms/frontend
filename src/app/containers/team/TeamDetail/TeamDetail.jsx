@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import {
-  Segment, Icon, Breadcrumb, Divider, Button, Label,
-  Grid, Image, List, Header, Message,
-} from 'semantic-ui-react';
+import { Paper, Breadcrumbs, Anchor, Button, Avatar, Group, Text, Stack, List, Card, Badge, Grid, Loader, Alert } from '@mantine/core';
+import { IconUsers, IconPencil, IconTrash, IconPlus, IconArrowRight, IconAlertCircle, IconUser } from '@tabler/icons-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import TeamMemberAssignModal from '@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
@@ -18,232 +16,83 @@ const TeamDetail = () => {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showMemberModal, setShowMemberModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
-  const [showAssign, setShowAssign] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
 
-  useEffect(() => {
-    loadTeam();
-  }, [id]);
-
-  const loadTeam = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await fetchTeamById(id);
-      setTeam(data);
-      // Also load members separately
-      try {
-        const memberData = await fetchTeamMembers(id);
-        setMembers(memberData);
-      } catch (memberErr) {
-        console.error('Error loading members:', memberErr);
-        setMembers([]);
-      }
-    } catch (err) {
-      setError('Failed to load team data.');
-      console.error('Error loading team:', err);
-    } finally {
-      setLoading(false);
-    }
+  const loadData = async () => {
+    try { setLoading(true); const [t, m] = await Promise.all([fetchTeamById(id), fetchTeamMembers(id)]); setTeam(t); setMembers(m || []); }
+    catch (err) { setError(err.message || 'Failed to load team'); } finally { setLoading(false); }
   };
 
-  const handleDelete = async () => {
-    const teamName = team?.name;
-    try {
-      setActionLoading(true);
-      await deleteTeam(id);
-      addToast(`Team "${teamName}" deleted`, 'error');
-      navigate('/teams');
-    } catch (err) {
-      console.error('Error deleting team:', err);
-      setError('Failed to delete team.');
-    } finally {
-      setActionLoading(false);
-      setShowDelete(false);
-    }
-  };
+  useEffect(() => { loadData(); }, [id]);
 
-  if (loading) {
-    return (
-      <div className='dashboard-layout'>
-        <SideBar />
-        <div className='dashboard-main'>
-          <div className='dashboard-content'>
-            <Segment loading><h2>Loading team...</h2></Segment>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const handleDelete = async () => { try { setActionLoading(true); await deleteTeam(id); addToast(`Team "${team?.name}" deleted`, 'error'); navigate('/teams'); } catch (err) { console.error(err); } finally { setActionLoading(false); } };
 
-  if (error || !team) {
-    return (
-      <div className='dashboard-layout'>
-        <SideBar />
-        <div className='dashboard-main'>
-          <div className='dashboard-content'>
-            <Message negative>
-              <Message.Header>{error || 'Team not found'}</Message.Header>
-              <Button primary onClick={() => navigate('/teams')}>Back to Teams</Button>
-            </Message>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const getRoleColor = (role) => {
-    switch (role) {
-      case 'Administrator': return 'red';
-      case 'Instructor': return 'blue';
-      case 'Team Lead': return 'purple';
-      case 'Student': return 'teal';
-      default: return 'grey';
-    }
-  };
+  if (loading) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" mt={40}><Loader /><Text>Loading...</Text></Paper></div></div>);
+  if (error || !team) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" mt={40}><Alert icon={<IconAlertCircle size={16} />} color="red">{error || 'Team not found'}</Alert><Button mt="md" onClick={() => navigate('/teams')}>Back to Teams</Button></Paper></div></div>);
 
   return (
     <div className='dashboard-layout'>
       <SideBar />
       <div className='dashboard-main'>
+        <Breadcrumbs mb="md" className="breadcrumb"><Anchor onClick={() => navigate('/teams')}>Teams</Anchor><span>{team.name}</span></Breadcrumbs>
+
         <div className='dashboard-header'>
           <div className='header-left'>
             <h1 className='page-title'>Teams</h1>
             <p className='page-subtitle'>{team.name}</p>
           </div>
           <div className='header-right'>
-            <Button onClick={() => setShowAssign(true)} icon>
-              <Icon name='user plus' /> Add Member
-            </Button>
-            <Button as={Link} to={`/teams/${id}/edit`} icon>
-              <Icon name='pencil' /> Edit
-            </Button>
-            <Button color='red' icon onClick={() => setShowDelete(true)}>
-              <Icon name='trash' /> Delete
-            </Button>
+            <Button leftSection={<IconPlus size={14} />} onClick={() => setShowMemberModal(true)}>Add Member</Button>
+            <Button variant="default" component={Link} to={`/teams/${id}/edit`} leftSection={<IconPencil size={14} />}>Edit</Button>
+            <Button color="red" variant="default" onClick={() => setDeleteTarget(team)} leftSection={<IconTrash size={14} />}>Delete</Button>
           </div>
         </div>
 
         <div className='dashboard-content'>
-          <Breadcrumb>
-            <Breadcrumb.Section link onClick={() => navigate('/teams')}>Teams</Breadcrumb.Section>
-            <Breadcrumb.Divider />
-            <Breadcrumb.Section active>{team.name}</Breadcrumb.Section>
-          </Breadcrumb>
-          <Divider hidden />
+          <h2>{team.name}</h2>
+          <Text c="dimmed" mb="md">{team.description}</Text>
 
-          {/* Team Header */}
-          <Segment className='team-detail-header' style={{ borderLeft: `4px solid ${team.color || '#2185d0'}` }}>
-            <Grid stackable>
-              <Grid.Column width={10}>
-                <Header as='h2'>
-                  <span className='team-color-dot' style={{ background: team.color || '#2185d0' }} />
-                  {team.name}
-                  <Label color={team.status === 1 ? 'green' : 'grey'} style={{ marginLeft: 12 }}>
-                    {team.status === 1 ? 'Active' : 'Inactive'}
-                  </Label>
-                </Header>
-                <p style={{ color: '#666', marginTop: 8 }}>{team.description}</p>
-                <div style={{ marginTop: 12 }}>
-                  <Label><Icon name='calendar' /> Created {team.created_at ? new Date(team.created_at * 1000).toLocaleDateString() : '—'}</Label>
-                </div>
-              </Grid.Column>
-              <Grid.Column width={6}>
-                <div className='team-quick-stats'>
-                  <div className='team-quick-stat'>
-                    <div className='team-quick-stat-value'>{members.length}</div>
-                    <div className='team-quick-stat-label'>Members</div>
-                  </div>
-                </div>
-              </Grid.Column>
-            </Grid>
-          </Segment>
-
-          <Grid stackable>
-            <Grid.Column width={10}>
-              {/* Members */}
-              <Segment className='team-detail-segment'>
-                <Header as='h3'>
-                  <Icon name='users' color='teal' />
-                  Team Members ({members.length})
-                </Header>
-
-                {members.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: 30 }}>
-                    <Icon name='users' size='huge' color='grey' />
-                    <Header as='h4' color='grey'>No members yet</Header>
-                    <p>Start building your team by adding members.</p>
-                    <Button primary onClick={() => setShowAssign(true)}>
-                      <Icon name='user plus' /> Add First Member
-                    </Button>
-                  </div>
-                ) : (
-                  <List divided relaxed className='team-members-list'>
-                    {members.map((member) => {
-                      const userId = member.userId;
-                      const userName = member.userName || 'Unknown';
-                      return (
-                        <List.Item key={userId} className='team-member-item'>
-                          <Image src={member.avatar || 'https://i.pravatar.cc/150?img=1'} circular className='team-member-avatar' />
-                          <List.Content>
-                            <List.Header>{userName}</List.Header>
-                            <List.Description>
-                              <Label color={getRoleColor(member.role)} size='tiny'>{member.role || 'N/A'}</Label>
-                            </List.Description>
-                          </List.Content>
-                        </List.Item>
-                      );
-                    })}
-                  </List>
-                )}
-              </Segment>
-            </Grid.Column>
-
-            <Grid.Column width={6}>
-              {/* Quick Info */}
-              <Segment className='team-detail-segment'>
-                <Header as='h3'>
-                  <Icon name='info circle' color='grey' />
-                  Quick Info
-                </Header>
-                <List>
-                  <List.Item>
-                    <Icon name='calendar' />
-                    <List.Content>Created: <strong>{team.created_at ? new Date(team.created_at * 1000).toLocaleDateString() : '—'}</strong></List.Content>
-                  </List.Item>
-                  <List.Item>
-                    <Icon name='users' />
-                    <List.Content>Members: <strong>{members.length}</strong></List.Content>
-                  </List.Item>
-                  <List.Item>
-                    <Icon name='flag' />
-                    <List.Content>Status: <strong>{team.status === 1 ? 'Active' : 'Inactive'}</strong></List.Content>
-                  </List.Item>
-                </List>
-              </Segment>
-            </Grid.Column>
-          </Grid>
+          <div className='team-quick-stat'>
+            <Badge color={team.status === 1 ? 'green' : 'gray'}>{team.status === 1 ? 'Active' : 'Inactive'}</Badge>
+            <Text size="sm">{members.length} member{members.length !== 1 ? 's' : ''}</Text>
+          </div>
         </div>
+
+        <Grid mt="md">
+          <Grid.Col span={8}>
+            <Paper p="lg" radius="md" withBorder>
+              <Text fw={600} mb="md">Team Members ({members.length})</Text>
+              {members.length === 0 ? <Text c="dimmed">No members yet.</Text> : (
+                <Stack gap={8}>
+                  {members.map((m) => {
+                    const userId = m.userID || m.userId;
+                    return (
+                      <Group key={userId} justify="space-between" style={{ padding: '8px 12px', background: '#f8f9fa', borderRadius: 8 }}>
+                        <Group gap={10}><Avatar src={m.avatar} size={32} radius="xl" /><div><Text size="sm" fw={600}>{m.userName || 'Unknown'}</Text><Text size="xs" c="dimmed">{m.userEmail}</Text></div></Group>
+                        <Badge>{m.role || '—'}</Badge>
+                      </Group>
+                    );
+                  })}
+                </Stack>
+              )}
+            </Paper>
+          </Grid.Col>
+          <Grid.Col span={4}>
+            <Paper p="lg" radius="md" withBorder>
+              <Text fw={600} mb="md">Quick Info</Text>
+              <List spacing="xs">
+                <List.Item><Text size="sm" fw={600}>Status</Text><Badge color={team.status === 1 ? 'green' : 'gray'}>{team.status === 1 ? 'Active' : 'Inactive'}</Badge></List.Item>
+                <List.Item><Text size="sm" fw={600}>Members</Text><Text>{members.length}</Text></List.Item>
+              </List>
+            </Paper>
+          </Grid.Col>
+        </Grid>
       </div>
 
-      {showAssign && (
-        <TeamMemberAssignModal
-          open={showAssign}
-          onClose={() => setShowAssign(false)}
-          team={team}
-          onUpdated={() => { loadTeam(); setShowAssign(false); }}
-        />
-      )}
-
-      <DeleteModal
-        open={showDelete}
-        onConfirm={handleDelete}
-        onCancel={() => setShowDelete(false)}
-        itemName={team.name}
-        itemType='team'
-        loading={actionLoading}
-      />
+      {showMemberModal && <TeamMemberAssignModal open={showMemberModal} onClose={() => setShowMemberModal(false)} team={team} onUpdated={loadData} />}
+      <DeleteModal open={!!deleteTarget} onConfirm={handleDelete} onCancel={() => setDeleteTarget(null)} itemName={deleteTarget?.name} itemType='team' loading={actionLoading} />
     </div>
   );
 };

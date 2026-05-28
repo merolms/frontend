@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Modal, Input, Button, Icon, Image, Segment, Label, Dimmer, Loader } from 'semantic-ui-react';
+import { Modal, TextInput, Button, Image, Paper, Text, Group, Stack, Loader, Grid } from '@mantine/core';
+import { IconSearch, IconPhoto, IconCheck, IconX } from '@tabler/icons-react';
 import { searchUnsplash } from '@/app/services/unsplashService';
 
 const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
@@ -20,170 +21,92 @@ const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
     setError(null);
     try {
       const data = await searchUnsplash(q, p);
-      if (p === 1) {
-        setResults(data.results);
-      } else {
-        setResults(prev => [...prev, ...data.results]);
-      }
+      if (p === 1) { setResults(data.results); } else { setResults(prev => [...prev, ...data.results]); }
       setTotalPages(data.total_pages || 1);
       setPage(p);
-    } catch (err) {
-      setError(err.message || 'Failed to search images.');
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { setError(err.message || 'Failed to search images.'); }
+    finally { setLoading(false); }
   }, []);
 
-  // Initial search when modal opens
   useEffect(() => {
     if (open) {
-      setQuery(initialQuery || 'education');
-      setSelectedId(null);
-      setSelectedUrl(null);
-      setResults([]);
-      setError(null);
-      // Small delay so modal animation starts first
+      setQuery(initialQuery || 'education'); setSelectedId(null); setSelectedUrl(null);
+      setResults([]); setError(null);
       setTimeout(() => doSearch(initialQuery || 'education', 1), 100);
       setTimeout(() => inputRef.current?.focus(), 300);
     }
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setResults([]);
-    doSearch(query, 1);
-  };
+  const handleSearch = (e) => { e.preventDefault(); setResults([]); doSearch(query, 1); };
 
-  const handleInputChange = (e) => {
-    const val = e.target.value;
+  const handleInputChange = (val) => {
     setQuery(val);
-    // Debounce live search
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      setResults([]);
-      doSearch(val, 1);
-    }, 500);
+    debounceRef.current = setTimeout(() => { setResults([]); doSearch(val, 1); }, 500);
   };
 
-  const handleLoadMore = () => {
-    if (page < totalPages && !loading) {
-      doSearch(query, page + 1);
-    }
-  };
-
-  const handleSelect = (photo) => {
-    setSelectedId(photo.id);
-    setSelectedUrl(photo.url);
-  };
-
-  const handleConfirm = () => {
-    if (selectedUrl) {
-      onSelect(selectedUrl);
-      onClose();
-    }
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleSearch(e);
-    }
-  };
+  const handleLoadMore = () => { if (page < totalPages && !loading) doSearch(query, page + 1); };
+  const handleSelect = (photo) => { setSelectedId(photo.id); setSelectedUrl(photo.url); };
+  const handleConfirm = () => { if (selectedUrl) { onSelect(selectedUrl); onClose(); } };
 
   return (
-    <Modal open={open} onClose={onClose} size='large' className='unsplash-picker-modal'>
-      <Modal.Header>
-        <Icon name='image' color='blue' />
-        Select Cover Image from Unsplash
-      </Modal.Header>
+    <Modal opened={open} onClose={onClose} title="Select Cover Image from Unsplash" size="lg" className='unsplash-picker-modal'>
+      <form onSubmit={handleSearch} className='unsplash-search-bar'>
+        <TextInput
+          ref={inputRef}
+          placeholder='Search photos (e.g., technology, nature, business)...'
+          value={query}
+          onChange={(e) => handleInputChange(e.target.value)}
+          leftSection={<IconSearch size={16} />}
+          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSearch(e); } }}
+          className='unsplash-search-input'
+        />
+      </form>
 
-      <Modal.Content scrolling>
-        {/* Search Bar */}
-        <form onSubmit={handleSearch} className='unsplash-search-bar'>
-          <Input
-            ref={inputRef}
-            fluid
-            placeholder='Search photos (e.g., technology, nature, business)...'
-            value={query}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            icon={<Icon name='search' link onClick={handleSearch} />}
-            className='unsplash-search-input'
-          />
-        </form>
+      {error && (
+        <Paper p="sm" mb="sm" className='unsplash-error' withBorder>
+          <Text size="sm" c="red">{error}</Text>
+        </Paper>
+      )}
 
-        {error && (
-          <Segment basic className='unsplash-error'>
-            <Label color='red' icon='warning' content={error} />
-          </Segment>
-        )}
-
-        {/* Results Grid */}
-        {results.length > 0 && (
-          <div className='unsplash-grid'>
+      {results.length > 0 && (
+        <div className='unsplash-grid' style={{ maxHeight: 400, overflowY: 'auto' }}>
+          <Grid gutter="sm">
             {results.map((photo) => (
-              <div
-                key={photo.id}
-                className={`unsplash-grid-item ${selectedId === photo.id ? 'selected' : ''}`}
-                onClick={() => handleSelect(photo)}
-              >
-                <Image
-                  src={photo.thumb}
-                  alt={photo.alt}
-                  className='unsplash-thumb'
-                />
-                {selectedId === photo.id && (
-                  <div className='unsplash-selected-badge'>
-                    <Icon name='check circle' color='green' size='large' />
-                  </div>
-                )}
-                <div className='unsplash-overlay'>
-                  <span className='unsplash-author'>
-                    <Icon name='camera' size='mini' /> {photo.author}
-                  </span>
+              <Grid.Col key={photo.id} span={3}>
+                <div className={`unsplash-grid-item ${selectedId === photo.id ? 'selected' : ''}`} onClick={() => handleSelect(photo)} style={{ position: 'relative', cursor: 'pointer' }}>
+                  <Image src={photo.thumb} alt={photo.alt} className='unsplash-thumb' radius="sm" />
+                  {selectedId === photo.id && (
+                    <div className='unsplash-selected-badge' style={{ position: 'absolute', top: 4, right: 4 }}>
+                      <IconCheck size={20} color="green" />
+                    </div>
+                  )}
                 </div>
-              </div>
+              </Grid.Col>
             ))}
-          </div>
-        )}
+          </Grid>
+        </div>
+      )}
 
-        {/* Empty State */}
-        {!loading && results.length === 0 && !error && (
-          <div className='unsplash-empty'>
-            <Icon name='search' size='huge' color='grey' />
-            <p>Search for images above to get started.</p>
-          </div>
-        )}
+      {!loading && results.length === 0 && !error && (
+        <div className='unsplash-empty' ta="center" p="xl">
+          <IconPhoto size={48} color="#999" />
+          <Text mt="sm">Search for images above to get started.</Text>
+        </div>
+      )}
 
-        {/* Loading */}
-        {loading && (
-          <Dimmer active inverted>
-            <Loader>Searching Unsplash...</Loader>
-          </Dimmer>
-        )}
+      {loading && <Group justify="center" p="md"><Loader size="sm" /><Text size="sm">Searching Unsplash...</Text></Group>}
 
-        {/* Load More */}
-        {results.length > 0 && page < totalPages && !loading && (
-          <div className='unsplash-load-more'>
-            <Button onClick={handleLoadMore} basic>
-              <Icon name='chevron down' /> Load More
-            </Button>
-          </div>
-        )}
-      </Modal.Content>
+      {results.length > 0 && page < totalPages && !loading && (
+        <div className='unsplash-load-more' ta="center" mt="sm">
+          <Button variant="default" leftSection={<IconSearch size={14} />} onClick={handleLoadMore}>Load More</Button>
+        </div>
+      )}
 
-      <Modal.Actions>
-        <Button onClick={onClose}>
-          <Icon name='close' /> Cancel
-        </Button>
-        <Button
-          primary
-          disabled={!selectedUrl}
-          onClick={handleConfirm}
-        >
-          <Icon name='check' /> Use Selected Image
-        </Button>
-      </Modal.Actions>
+      <Group justify="flex-end" mt="md">
+        <Button variant="default" onClick={onClose} leftSection={<IconX size={14} />}>Cancel</Button>
+        <Button onClick={handleConfirm} disabled={!selectedUrl} leftSection={<IconCheck size={14} />}>Use Selected Image</Button>
+      </Group>
     </Modal>
   );
 };

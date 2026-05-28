@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Segment, Icon, Breadcrumb, Divider, Dropdown } from 'semantic-ui-react';
+import { Paper, Breadcrumbs, Anchor, Button, TextInput, Select, Group, Title, Text } from '@mantine/core';
+import { IconUserPlus, IconPlus } from '@tabler/icons-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { createUser } from '@/app/services/userService';
 import { fetchRoles } from '@/app/services/authService';
@@ -12,143 +13,46 @@ const UserCreate = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [roleOptions, setRoleOptions] = useState([]);
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    role: 'Student',
-    phone: '',
-    bio: '',
-  });
+  const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', password: '', role: 'Student', phone: '', bio: '' });
 
   useEffect(() => {
-    const loadRoles = async () => {
-      try {
-        const roles = await fetchRoles();
-        setRoleOptions(roles.map((r) => ({ key: r.name, text: r.name, value: r.name })));
-      } catch (err) {
-        console.error('Error loading roles:', err);
-        setRoleOptions([
-          { key: 'Student', text: 'Student', value: 'Student' },
-          { key: 'Instructor', text: 'Instructor', value: 'Instructor' },
-          { key: 'Team Lead', text: 'Team Lead', value: 'Team Lead' },
-          { key: 'Administrator', text: 'Administrator', value: 'Administrator' },
-        ]);
-      }
-    };
+    const loadRoles = async () => { try { const roles = await fetchRoles(); setRoleOptions(roles.map((r) => ({ value: r.name, label: r.name }))); } catch (err) { setRoleOptions([{ value: 'Student', label: 'Student' }, { value: 'Instructor', label: 'Instructor' }, { value: 'Team Lead', label: 'Team Lead' }, { value: 'Administrator', label: 'Administrator' }]); } };
     loadRoles();
   }, []);
 
-  const handleChange = (e, { name, value }) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
+  const handleChange = (field, value) => setFormData((prev) => ({ ...prev, [field]: value }));
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
-      setError('Please fill in all required fields.');
-      return;
-    }
-    try {
-      setLoading(true);
-      setError(null);
-      const user = await createUser(formData);
-      addToast(`${formData.firstName} ${formData.lastName} created successfully`, 'success');
-      navigate(`/users/${user.id}`);
-    } catch (err) {
-      setError(err.message || 'Failed to create user. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) { setError('Please fill in all required fields.'); return; }
+    try { setLoading(true); setError(null); const user = await createUser(formData); addToast(`${formData.firstName} ${formData.lastName} created successfully`, 'success'); navigate(`/users/${user.id}`); }
+    catch (err) { setError(err.message || 'Failed to create user.'); } finally { setLoading(false); }
   };
-
-  const handleCancel = () => {
-    navigate('/users');
-  };
+  const handleCancel = () => navigate('/users');
 
   return (
     <div className='dashboard-layout'>
       <SideBar />
       <div className='dashboard-main'>
-        <div className='dashboard-header'>
-          <div className='header-left'>
-            <h1 className='page-title'>Users</h1>
-            <p className='page-subtitle'>Create new user</p>
-          </div>
-        </div>
-
-        <div className='dashboard-content'>
-          <Breadcrumb>
-            <Breadcrumb.Section link onClick={() => navigate('/users')}>Users</Breadcrumb.Section>
-            <Breadcrumb.Divider />
-            <Breadcrumb.Section active>Create User</Breadcrumb.Section>
-          </Breadcrumb>
-          <Divider hidden />
-
-          <Segment className='user-form-segment'>
-            <h2 className='user-form-heading'>
-              <Icon name='user plus' color='green' />
-              Create New User
-            </h2>
-            <p className='user-form-subtitle'>Fill in the details below to create a new user account.</p>
-
-            {error && (
-              <div className='user-form-error'>
-                <Icon name='warning circle' /> {error}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit}>
-              <Divider hidden />
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <div style={{ flex: 1 }}>
-                  <label style={{ fontWeight: 600, fontSize: 13 }}>First Name *</label>
-                  <input name='firstName' value={formData.firstName} onChange={(e) => handleChange(e, { name: 'firstName', value: e.target.value })} placeholder='John' style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4 }} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label style={{ fontWeight: 600, fontSize: 13 }}>Last Name *</label>
-                  <input name='lastName' value={formData.lastName} onChange={(e) => handleChange(e, { name: 'lastName', value: e.target.value })} placeholder='Doe' style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4 }} />
-                </div>
-              </div>
-              <Divider hidden />
-              <div>
-                <label style={{ fontWeight: 600, fontSize: 13 }}>Email *</label>
-                <input name='email' type='email' value={formData.email} onChange={(e) => handleChange(e, { name: 'email', value: e.target.value })} placeholder='john@example.com' style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4 }} />
-              </div>
-              <Divider hidden />
-              <div>
-                <label style={{ fontWeight: 600, fontSize: 13 }}>Password *</label>
-                <input name='password' type='password' value={formData.password} onChange={(e) => handleChange(e, { name: 'password', value: e.target.value })} placeholder='Min 6 characters' style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4 }} />
-              </div>
-              <Divider hidden />
-              <div>
-                <label style={{ fontWeight: 600, fontSize: 13 }}>Role</label>
-                <Dropdown
-                  name='role'
-                  placeholder='Select a role'
-                  selection
-                  options={roleOptions}
-                  value={formData.role}
-                  onChange={handleChange}
-                  style={{ marginTop: 4 }}
-                />
-              </div>
-              <Divider hidden />
-              <div>
-                <label style={{ fontWeight: 600, fontSize: 13 }}>Phone</label>
-                <input name='phone' value={formData.phone} onChange={(e) => handleChange(e, { name: 'phone', value: e.target.value })} placeholder='+1 555-0100' style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4 }} />
-              </div>
-              <Divider hidden />
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: 8 }}>
-                <button type='button' onClick={handleCancel} style={{ padding: '8px 16px', borderRadius: 4, border: '1px solid #ddd', background: '#fff', cursor: 'pointer' }} disabled={loading}>Cancel</button>
-                <button type='submit' style={{ padding: '8px 16px', borderRadius: 4, border: 'none', background: '#2185d0', color: '#fff', cursor: 'pointer' }} disabled={loading}>
-                  {loading ? 'Creating...' : 'Create User'}
-                </button>
-              </div>
-            </form>
-          </Segment>
-        </div>
+        <Breadcrumbs mb="md"><Anchor onClick={() => navigate('/users')}>Users</Anchor><span>Create User</span></Breadcrumbs>
+        <Paper className='user-form-segment' p="lg" radius="md" withBorder>
+          <Title order={3} mb={4}><IconUserPlus size={20} color="#33a163" /> Create New User</Title>
+          <Text c="dimmed" size="sm" mb="md">Fill in the details below to create a new user account.</Text>
+          {error && <Text c="red" size="sm" mb="sm"><IconPlus size={14} /> {error}</Text>}
+          <form onSubmit={handleSubmit}>
+            <Group grow>
+              <TextInput label="First Name *" placeholder="John" value={formData.firstName} onChange={(e) => handleChange('firstName', e.target.value)} required />
+              <TextInput label="Last Name *" placeholder="Doe" value={formData.lastName} onChange={(e) => handleChange('lastName', e.target.value)} required />
+            </Group>
+            <TextInput label="Email *" placeholder="john@example.com" type="email" value={formData.email} onChange={(e) => handleChange('email', e.target.value)} required mt="sm" />
+            <TextInput label="Password *" placeholder="Min 6 characters" type="password" value={formData.password} onChange={(e) => handleChange('password', e.target.value)} required mt="sm" />
+            <Select label="Role" data={roleOptions} value={formData.role} onChange={(v) => handleChange('role', v)} mt="sm" />
+            <TextInput label="Phone" placeholder="+1 555-0100" value={formData.phone} onChange={(e) => handleChange('phone', e.target.value)} mt="sm" />
+            <Group justify="flex-end" mt="lg">
+              <Button variant="default" onClick={handleCancel} disabled={loading}>Cancel</Button>
+              <Button type="submit" loading={loading}>{loading ? 'Creating...' : 'Create User'}</Button>
+            </Group>
+          </form>
+        </Paper>
       </div>
     </div>
   );

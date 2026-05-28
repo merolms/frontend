@@ -1,96 +1,64 @@
 import React from 'react';
-import { List, Card, Icon, Image, Label, Button } from 'semantic-ui-react';
+import { Paper, Text, Group, Badge, Stack, Avatar, Skeleton } from '@mantine/core';
+import { IconBook, IconUser, IconClock, IconList, IconUsers, IconChevronRight, IconSitemap, IconPencil } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
 import { getStatusLabel, getCategoryColor } from './viewHelpers';
 
 const ListView = ({ courses, navigate, loading }) => {
   if (loading) {
     return (
-      <List divided relaxed>
+      <Stack>
         {[...Array(3)].map((_, i) => (
-          <List.Item key={i}>
-            <div className='skeleton-list-item'>
-              <div className='skeleton-list-image' />
-              <div className='skeleton-list-content'>
-                <div className='skeleton-line' />
-                <div className='skeleton-line short' />
-                <div className='skeleton-line shorter' />
+          <Paper key={i} p="md" radius="md">
+            <Group>
+              <Skeleton height={100} width={140} radius="md" />
+              <div style={{ flex: 1 }}>
+                <Skeleton height={16} radius="xl" mb={6} />
+                <Skeleton height={12} radius="xl" mb={4} width="80%" />
+                <Skeleton height={12} radius="xl" width="60%" />
               </div>
-            </div>
-          </List.Item>
+            </Group>
+          </Paper>
         ))}
-      </List>
+      </Stack>
     );
   }
 
   return (
-    <List divided relaxed className='course-list'>
+    <div className='course-list'>
       {courses.map((course) => {
         const status = getStatusLabel(course.status);
         return (
-          <List.Item
-            key={course.id}
-            className={`course-list-item course-status-${course.status}`}
-            onClick={() => navigate(`/courses/${course.id}`)}
-          >
-            <Image
-              avatar
-              src={course.coverImage}
-              style={{ width: 140, height: 100, objectFit: 'cover', borderRadius: 8 }}
-            />
-            <List.Content style={{ flex: 1 }}>
-              <List.Header className='course-list-title'>
-                {course.title}
-                {status && (
-                  <Label
-                    color={status.color}
-                    size='tiny'
-                    basic
-                    style={{ marginLeft: 8 }}
-                  >
-                    {status.text}
-                  </Label>
-                )}
-              </List.Header>
-              <List.Description className='course-list-description'>
-                {course.description}
-              </List.Description>
-              <div className='course-list-meta'>
-                <span>
-                  <Label color={getCategoryColor(course.category)} size='tiny' basic>
-                    <Icon name='folder' /> {course.category}
-                  </Label>
-                </span>
-                <span><Icon name='user' size='mini' /> {course.author}</span>
-                <span><Icon name='list' size='mini' /> {course.totalLessons} lessons</span>
-                <span><Icon name='users' size='mini' /> {course.enrolledUsers}</span>
-                <span><Icon name='clock outline' size='mini' /> {course.duration}</span>
-              </div>
-              {course.tags?.length > 0 && (
-                <div className='course-list-tags'>
-                  {course.tags.map((tag) => (
-                    <Label key={tag} size='mini' basic>{tag}</Label>
-                  ))}
-                </div>
-              )}
-            </List.Content>
-            <List.Content floated='right'>
-              <Button.Group size='small'>
-                <Button icon as={Link} to={`/courses/${course.id}/builder`} title='Open Builder'>
-                  <Icon name='sitemap' />
-                </Button>
-                <Button icon as={Link} to={`/courses/${course.id}/edit`} title='Edit'>
-                  <Icon name='pencil' />
-                </Button>
-                <Button icon as={Link} to={`/courses/${course.id}`} title='View'>
-                  <Icon name='arrow right' />
-                </Button>
-              </Button.Group>
-            </List.Content>
-          </List.Item>
+          <Paper key={course.id} className={`course-list-item course-status-${course.status}`} p="md" radius="md" mb="sm" withBorder style={{ cursor: 'pointer' }} onClick={() => navigate(`/courses/${course.id}`)}>
+            <Group justify="space-between" wrap="nowrap">
+              <Group gap="md" wrap="nowrap">
+                <img src={course.coverImage} alt={course.title} style={{ width: 140, height: 100, objectFit: 'cover', borderRadius: 8 }} />
+                <Stack gap={4}>
+                  <Text fw={600}>{course.title}</Text>
+                  {status && <Badge size="xs" variant="light" color={status.color}>{status.text}</Badge>}
+                  <Text size="sm" c="dimmed" lineClamp={2}>{course.description}</Text>
+                  <Group gap={8}>
+                    <Badge size="xs" variant="light" color={getCategoryColor(course.category)} leftSection={<IconBook size={10} />}>{course.category}</Badge>
+                    <Text size="xs" c="dimmed"><IconUser size={10} /> {course.author}</Text>
+                    <Text size="xs" c="dimmed"><IconList size={10} /> {course.totalLessons} lessons</Text>
+                    <Text size="xs" c="dimmed"><IconUsers size={10} /> {course.enrolledUsers}</Text>
+                  </Group>
+                  {course.tags?.length > 0 && (
+                    <Group gap={4}>
+                      {course.tags.map((tag) => (<Badge key={tag} size="xs" variant="outline">{tag}</Badge>))}
+                    </Group>
+                  )}
+                </Stack>
+              </Group>
+              <Group gap={4}>
+                <Badge component={Link} to={`/courses/${course.id}/builder`} size="sm" variant="outline" leftSection={<IconSitemap size={10} />} style={{ cursor: 'pointer' }} onClick={(e) => e.stopPropagation()}>Builder</Badge>
+                <Badge component={Link} to={`/courses/${course.id}/edit`} size="sm" variant="outline" leftSection={<IconPencil size={10} />} style={{ cursor: 'pointer' }} onClick={(e) => e.stopPropagation()}>Edit</Badge>
+              </Group>
+            </Group>
+          </Paper>
         );
       })}
-    </List>
+    </div>
   );
 };
 

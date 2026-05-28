@@ -1,17 +1,17 @@
 import React from 'react';
-import { Table } from 'semantic-ui-react';
+import { Table } from '@mantine/core';
 
-const CourseTableItem=(props)=> {
-    const course=props.course
-    return (
-        <Table.Row >
-            <Table.Cell href={"courses/1"}>{course.Title}</Table.Cell>
-            <Table.Cell>{course.Category}</Table.Cell>
-            <Table.Cell>{course.Lesson}</Table.Cell>
-            <Table.Cell>{course.Status}</Table.Cell>
-            <Table.Cell>{course.Author}</Table.Cell>
-          </Table.Row>
-    )
-}
+const CourseTableItem = (props) => {
+  const course = props.course;
+  return (
+    <Table.Tr>
+      <Table.Td component="a" href="courses/1">{course.Title}</Table.Td>
+      <Table.Td>{course.Category}</Table.Td>
+      <Table.Td>{course.Lesson}</Table.Td>
+      <Table.Td>{course.Status}</Table.Td>
+      <Table.Td>{course.Author}</Table.Td>
+    </Table.Tr>
+  );
+};
 
-export default CourseTableItem
+export default CourseTableItem;

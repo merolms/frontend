@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Form, Button, Message, Header, Icon, Input } from 'semantic-ui-react';
+import { Paper, TextInput, Button, Title, Text, Alert, Stack, Center, Anchor } from '@mantine/core';
+import { IconLock, IconAlertCircle, IconCheck, IconArrowLeft } from '@tabler/icons-react';
 import { resetPassword } from '@/app/services/authService';
 
 const ResetPassword = () => {
@@ -13,14 +14,8 @@ const ResetPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
-      return;
-    }
+    if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
+    if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
     try {
       setLoading(true);
       setError(null);
@@ -36,77 +31,35 @@ const ResetPassword = () => {
   return (
     <div className='auth-page'>
       <div className='auth-container'>
-        <div className='auth-card'>
-          <div className='auth-brand'>
-            <Icon name='graduation cap' size='huge' color='green' />
-            <Header as='h1' className='auth-brand-text'>MeroEdu</Header>
-          </div>
-
-          <Header as='h2' className='auth-title'>Reset Password</Header>
+        <Paper className='auth-card' p="xl" radius="md" withBorder>
+          {/* <Center mb="md"><IconGraduationCap size={48} color="#33a163" /></Center> */}
+          <Title order={3} ta="center" mb="lg">Reset Password</Title>
 
           {success ? (
-            <div>
-              <Message success>
-                <Icon name='check circle' />
-                <Message.Content>
-                  <Message.Header>Password Reset Successful</Message.Header>
-                  <p>Your password has been updated. You can now sign in with your new password.</p>
-                </Message.Content>
-              </Message>
-              <Button primary fluid onClick={() => navigate('/login')} style={{ marginTop: 16 }}>
-                Go to Sign In
-              </Button>
-            </div>
+            <Stack>
+              <Alert icon={<IconCheck size={16} />} color="green">
+                <Text fw={600} size="sm">Password Reset Successful</Text>
+                <Text size="sm">Your password has been updated. You can now sign in with your new password.</Text>
+              </Alert>
+              <Button fullWidth onClick={() => navigate('/login')} mt="md">Go to Sign In</Button>
+            </Stack>
           ) : (
             <>
-              <p className='auth-subtitle'>Enter your new password below.</p>
-
-              {error && (
-                <Message error size='small' className='auth-error'>
-                  <Icon name='warning circle' /> {error}
-                </Message>
-              )}
-
-              <Form onSubmit={handleSubmit} loading={loading}>
-                <Form.Field>
-                  <label>New Password</label>
-                  <Input
-                    type='password'
-                    placeholder='At least 6 characters'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    icon='lock'
-                    iconPosition='left'
-                    required
-                  />
-                </Form.Field>
-
-                <Form.Field>
-                  <label>Confirm Password</label>
-                  <Input
-                    type='password'
-                    placeholder='Re-enter your password'
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    icon='lock'
-                    iconPosition='left'
-                    required
-                  />
-                </Form.Field>
-
-                <Button primary fluid size='large' type='submit' loading={loading} className='auth-submit-btn'>
-                  Reset Password
-                </Button>
-              </Form>
-
-              <div className='auth-footer-link'>
-                <Link to='/login'>
-                  <Icon name='arrow left' /> Back to Sign In
-                </Link>
-              </div>
+              <Text c="dimmed" ta="center" size="sm" mb="md">Enter your new password below.</Text>
+              {error && <Alert icon={<IconAlertCircle size={16} />} color="red" mb="md" size="sm">{error}</Alert>}
+              <form onSubmit={handleSubmit}>
+                <Stack gap="sm">
+                  <TextInput label="New Password" placeholder="At least 6 characters" type="password" leftSection={<IconLock size={16} />} value={password} onChange={(e) => setPassword(e.target.value)} required />
+                  <TextInput label="Confirm Password" placeholder="Re-enter your password" type="password" leftSection={<IconLock size={16} />} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                  <Button fullWidth size="lg" type="submit" loading={loading} className="auth-submit-btn">Reset Password</Button>
+                </Stack>
+              </form>
+              <Anchor component={Link} to="/login" ta="center" mt="md" size="sm">
+                <IconArrowLeft size={14} style={{ marginRight: 4, verticalAlign: 'middle' }} /> Back to Sign In
+              </Anchor>
             </>
           )}
-        </div>
+        </Paper>
       </div>
     </div>
   );

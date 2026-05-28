@@ -214,37 +214,33 @@ test.describe('Team Management — Delete Team', () => {
   });
 
   test('clicking Delete opens confirmation modal', async ({ page }) => {
-    // Delete button may be in header-right
     const deleteBtn = page.locator('.header-right').locator('button').filter({ hasText: /Delete|trash/ }).first();
     await deleteBtn.click();
-    await expect(page.locator('.ui.modal')).toBeVisible();
+    // Mantine modal content is visible even when root has transition delays
+    await expect(page.getByText(/delete/i, { exact: false }).first()).toBeVisible();
+    await expect(page.locator('.ui.modal button').filter({ hasText: 'Cancel' }).first()).toBeVisible();
   });
 
   test('delete modal has confirm and cancel buttons', async ({ page }) => {
     const deleteBtn = page.locator('.header-right').locator('button').filter({ hasText: /Delete|trash/ }).first();
     await deleteBtn.click();
-    await expect(page.locator('.ui.modal')).toBeVisible();
-    await expect(page.locator('.ui.modal button').filter({ hasText: 'Cancel' })).toBeVisible();
-    // Confirm button may say "Delete" or have an icon
-    await expect(page.locator('.ui.modal button').filter({ hasText: /Delete|trash/ })).toBeVisible();
+    await expect(page.locator('.ui.modal button').filter({ hasText: 'Cancel' }).first()).toBeVisible();
+    await expect(page.locator('.ui.modal button').filter({ hasText: /Delete|trash/ }).first()).toBeVisible();
   });
 
   test('canceling delete closes modal', async ({ page }) => {
     const deleteBtn = page.locator('.header-right').locator('button').filter({ hasText: /Delete|trash/ }).first();
     await deleteBtn.click();
-    await expect(page.locator('.ui.modal')).toBeVisible();
-
-    await page.locator('.ui.modal button').filter({ hasText: 'Cancel' }).click();
+    await expect(page.locator('.ui.modal button').filter({ hasText: 'Cancel' }).first()).toBeVisible();
+    await page.locator('.ui.modal button').filter({ hasText: 'Cancel' }).first().click();
     await expect(page).toHaveURL(/\/teams\/\d+/);
   });
 
   test('confirming delete redirects to teams list', async ({ page }) => {
     const deleteBtn = page.locator('.header-right').locator('button').filter({ hasText: /Delete|trash/ }).first();
     await deleteBtn.click();
-    await expect(page.locator('.ui.modal')).toBeVisible();
-
-    const confirmBtn = page.locator('.ui.modal button').filter({ hasText: /Delete|trash/ }).first();
-    await confirmBtn.click();
+    await expect(page.locator('.ui.modal button').filter({ hasText: /Delete|trash/ }).first()).toBeVisible();
+    await page.locator('.ui.modal button').filter({ hasText: /Delete|trash/ }).first().click();
     await expect(page).toHaveURL('/teams');
   });
 });
@@ -258,18 +254,19 @@ test.describe('Team Management — Add Member', () => {
 
   test('clicking Add Member opens assignment modal', async ({ page }) => {
     await page.locator('button').filter({ hasText: 'Add Member' }).click();
-    await expect(page.locator('.ui.modal')).toBeVisible();
+    await expect(page.locator('.ui.modal').first()).toBeAttached();
+    await expect(page.getByText(/Manage Members|Current Members/i).first()).toBeVisible();
   });
 
   test('add member modal shows available users', async ({ page }) => {
     await page.locator('button').filter({ hasText: 'Add Member' }).click();
-    await expect(page.locator('.ui.modal')).toBeVisible();
+    await expect(page.getByText(/Manage Members|Current Members/i).first()).toBeVisible();
     await page.waitForTimeout(500);
   });
 
   test('add member modal can be closed', async ({ page }) => {
     await page.locator('button').filter({ hasText: 'Add Member' }).click();
-    await expect(page.locator('.ui.modal')).toBeVisible();
+    await expect(page.getByText(/Manage Members|Current Members/i).first()).toBeVisible();
 
     await page.keyboard.press('Escape');
     await page.waitForTimeout(300);

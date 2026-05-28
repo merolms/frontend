@@ -1,25 +1,22 @@
 import React from 'react';
-import { Button, Icon } from 'semantic-ui-react';
+import { SegmentedControl, Tooltip } from '@mantine/core';
+import { IconLayoutGrid, IconTable, IconList, IconLayoutList } from '@tabler/icons-react';
 
 const viewModes = [
-  { key: 'grid', icon: 'grid layout', label: 'Grid' },
-  { key: 'table', icon: 'table', label: 'Table' },
-  { key: 'list', icon: 'list layout', label: 'List' },
-  { key: 'compact', icon: 'content', label: 'Compact' },
+  { value: 'grid', label: 'Grid', icon: <IconLayoutGrid size={16} /> },
+  { value: 'table', label: 'Table', icon: <IconTable size={16} /> },
+  { value: 'list', label: 'List', icon: <IconList size={16} /> },
+  { value: 'compact', label: 'Compact', icon: <IconLayoutList size={16} /> },
 ];
 
 const ViewModeSwitcher = ({ value, onChange }) => (
-  <Button.Group basic size='small' className='view-mode-switcher'>
-    {viewModes.map((mode) => (
-      <Button
-        key={mode.key}
-        icon={<Icon name={mode.icon} />}
-        title={mode.label}
-        active={value === mode.key}
-        onClick={() => onChange(mode.key)}
-      />
-    ))}
-  </Button.Group>
+  <SegmentedControl
+    value={value}
+    onChange={onChange}
+    data={viewModes.map(m => ({ value: m.value, label: (<Tooltip label={m.label}>{m.icon}</Tooltip>) }))}
+    className='view-mode-switcher'
+    size="sm"
+  />
 );
 
 export default ViewModeSwitcher;

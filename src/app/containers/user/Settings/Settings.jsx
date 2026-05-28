@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '@/app/context/ThemeContext';
-import {
-  Header, Segment, Grid, Icon, Label, Image, Button,
-  Divider, Form, Input, TextArea, Tab, Message, Radio,
-} from 'semantic-ui-react';
+import { Paper, TextInput, Button, Group, Title, Text, Stack, Select, Tabs, Avatar, Breadcrumbs,Anchor } from '@mantine/core';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { updateProfile, changePassword } from '@/app/services/authService';
 
@@ -13,311 +10,49 @@ const Settings = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const { mode, resolvedTheme, changeMode } = useTheme();
-
-  const [profileForm, setProfileForm] = useState({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
-    email: user?.email || '',
-    phone: user?.phone || '',
-    bio: user?.bio || '',
-  });
-
-  const [passwordForm, setPasswordForm] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-  });
-
-  const [notifications, setNotifications] = useState({
-    emailCourseUpdates: true,
-    emailTeamActivity: true,
-    emailAnnouncements: true,
-    pushEnabled: false,
-  });
-
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-
-  const handleProfileChange = (key, value) => {
-    setProfileForm((p) => ({ ...p, [key]: value }));
-  };
-
-  const handlePasswordChange = (key, value) => {
-    setPasswordForm((p) => ({ ...p, [key]: value }));
-  };
-
-  const handleProfileSave = async () => {
-    setSaving(true);
-    setError(null);
-    setSuccess(null);
-    try {
-      await updateProfile(profileForm);
-      setSuccess('Profile updated successfully.');
-      setTimeout(() => setSuccess(null), 3000);
-    } catch (err) {
-      setError(err.message || 'Failed to update profile.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handlePasswordSave = async () => {
-    setSaving(true);
-    setError(null);
-    setSuccess(null);
-    if (passwordForm.newPassword.length < 6) {
-      setError('New password must be at least 6 characters.');
-      setSaving(false);
-      return;
-    }
-    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      setError('Passwords do not match.');
-      setSaving(false);
-      return;
-    }
-    try {
-      await changePassword({
-        currentPassword: passwordForm.currentPassword,
-        newPassword: passwordForm.newPassword,
-      });
-      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
-      setSuccess('Password changed successfully.');
-      setTimeout(() => setSuccess(null), 3000);
-    } catch (err) {
-      setError(err.message || 'Failed to change password.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleAvatarChange = () => {
-    const url = prompt('Enter new avatar URL:', user?.avatar || '');
-    if (url) {
-      updateProfile({ avatar: url }).then(() => {
-        window.location.reload();
-      }).catch(() => {});
-    }
-  };
-
-  const panes = [
-    {
-      menuItem: { key: 'profile', icon: 'user', content: 'Profile' },
-      render: () => (
-        <Tab.Pane attached={false}>
-          {error && <Message error onDismiss={() => setError(null)} style={{ marginBottom: 16 }}>{error}</Message>}
-          {success && <Message success onDismiss={() => setSuccess(null)} style={{ marginBottom: 16 }}>{success}</Message>}
-
-          <div className='settings-section'>
-            <Header as='h4'>Profile Picture</Header>
-            <div className='settings-avatar-row'>
-              <Image src={user?.avatar} circular className='settings-avatar' />
-              <div>
-                <Button size='small' onClick={handleAvatarChange}>
-                  <Icon name='camera' /> Change Photo
-                </Button>
-                <p style={{ fontSize: 11, color: '#888', marginTop: 4 }}>JPG, PNG or GIF. Max 2MB.</p>
-              </div>
-            </div>
-          </div>
-
-          <Divider />
-
-          <Form onSubmit={handleProfileSave} loading={saving}>
-            <div className='settings-section'>
-              <Header as='h4'>Personal Information</Header>
-              <Form.Group widths='equal'>
-                <Form.Field required>
-                  <label>First Name</label>
-                  <Input value={profileForm.firstName} onChange={(e) => handleProfileChange('firstName', e.target.value)} />
-                </Form.Field>
-                <Form.Field required>
-                  <label>Last Name</label>
-                  <Input value={profileForm.lastName} onChange={(e) => handleProfileChange('lastName', e.target.value)} />
-                </Form.Field>
-              </Form.Group>
-              <Form.Field required>
-                <label>Email</label>
-                <Input type='email' value={profileForm.email} onChange={(e) => handleProfileChange('email', e.target.value)} />
-              </Form.Field>
-              <Form.Field>
-                <label>Phone</label>
-                <Input value={profileForm.phone} onChange={(e) => handleProfileChange('phone', e.target.value)} placeholder='+1 555-0100' />
-              </Form.Field>
-              <Form.Field>
-                <label>Bio</label>
-                <TextArea value={profileForm.bio} onChange={(e) => handleProfileChange('bio', e.target.value)} placeholder='Tell others about yourself...' style={{ minHeight: 80 }} />
-              </Form.Field>
-            </div>
-
-            <div className='settings-actions'>
-              <Button type='button' onClick={() => navigate('/profile')}>Cancel</Button>
-              <Button type='submit' primary loading={saving}><Icon name='save' /> Save Profile</Button>
-            </div>
-          </Form>
-        </Tab.Pane>
-      ),
-    },
-    {
-      menuItem: { key: 'password', icon: 'lock', content: 'Password' },
-      render: () => (
-        <Tab.Pane attached={false}>
-          {error && <Message error onDismiss={() => setError(null)} style={{ marginBottom: 16 }}>{error}</Message>}
-          {success && <Message success onDismiss={() => setSuccess(null)} style={{ marginBottom: 16 }}>{success}</Message>}
-
-          <div className='settings-section'>
-            <Header as='h4'>Change Password</Header>
-            <p style={{ fontSize: 13, color: '#888', marginBottom: 16 }}>Choose a strong password that you don't use anywhere else.</p>
-
-            <Form onSubmit={handlePasswordSave} loading={saving}>
-              <Form.Field required>
-                <label>Current Password</label>
-                <Input type='password' value={passwordForm.currentPassword} onChange={(e) => handlePasswordChange('currentPassword', e.target.value)} />
-              </Form.Field>
-              <Form.Field required>
-                <label>New Password</label>
-                <Input type='password' value={passwordForm.newPassword} onChange={(e) => handlePasswordChange('newPassword', e.target.value)} />
-              </Form.Field>
-              <Form.Field required>
-                <label>Confirm New Password</label>
-                <Input type='password' value={passwordForm.confirmPassword} onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)} />
-                {passwordForm.confirmPassword && passwordForm.newPassword !== passwordForm.confirmPassword && (
-                  <Label basic color='red' pointing='left'>Passwords do not match</Label>
-                )}
-              </Form.Field>
-              <div className='settings-actions'>
-                <Button type='button' onClick={() => navigate('/profile')}>Cancel</Button>
-                <Button type='submit' primary loading={saving}><Icon name='lock' /> Change Password</Button>
-              </div>
-            </Form>
-          </div>
-        </Tab.Pane>
-      ),
-    },
-    {
-      menuItem: { key: 'notifications', icon: 'bell', content: 'Notifications' },
-      render: () => (
-        <Tab.Pane attached={false}>
-          <div className='settings-section'>
-            <Header as='h4'>Email Notifications</Header>
-            <div className='settings-toggle-list'>
-              <div className='settings-toggle-item'>
-                <div>
-                  <strong>Course Updates</strong>
-                  <p style={{ fontSize: 12, color: '#888' }}>Get notified when courses you're enrolled in are updated.</p>
-                </div>
-                <input type='checkbox' checked={notifications.emailCourseUpdates} onChange={(e) => setNotifications((p) => ({ ...p, emailCourseUpdates: e.target.checked }))} />
-              </div>
-              <Divider />
-              <div className='settings-toggle-item'>
-                <div>
-                  <strong>Team Activity</strong>
-                  <p style={{ fontSize: 12, color: '#888' }}>Get notified about activity in your teams.</p>
-                </div>
-                <input type='checkbox' checked={notifications.emailTeamActivity} onChange={(e) => setNotifications((p) => ({ ...p, emailTeamActivity: e.target.checked }))} />
-              </div>
-              <Divider />
-              <div className='settings-toggle-item'>
-                <div>
-                  <strong>Platform Announcements</strong>
-                  <p style={{ fontSize: 12, color: '#888' }}>Receive news and announcements from MeroEdu.</p>
-                </div>
-                <input type='checkbox' checked={notifications.emailAnnouncements} onChange={(e) => setNotifications((p) => ({ ...p, emailAnnouncements: e.target.checked }))} />
-              </div>
-            </div>
-            <div className='settings-actions'>
-              <Button primary onClick={() => { setSuccess('Notification preferences saved.'); setTimeout(() => setSuccess(null), 3000); }}>
-                <Icon name='save' /> Save Preferences
-              </Button>
-            </div>
-
-            <Divider />
-
-            <Header as='h4'>Push Notifications</Header>
-            <div className='settings-toggle-item'>
-              <div>
-                <strong>Browser Push Notifications</strong>
-                <p style={{ fontSize: 12, color: '#888' }}>Receive real-time notifications in your browser.</p>
-              </div>
-              <input type='checkbox' checked={notifications.pushEnabled} onChange={(e) => setNotifications((p) => ({ ...p, pushEnabled: e.target.checked }))} />
-            </div>
-          </div>
-        </Tab.Pane>
-      ),
-    },
-    {
-      menuItem: { key: 'appearance', icon: 'paint brush', content: 'Appearance' },
-      render: () => (
-        <Tab.Pane attached={false}>
-          <div className='settings-section'>
-            <Header as='h4'>Theme</Header>
-            <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16 }}>
-              Choose how MeroEdu looks on your device.
-            </p>
-            <div className='theme-options'>
-              <div
-                className={`theme-option ${mode === 'light' ? 'active' : ''}`}
-                onClick={() => changeMode('light')}
-              >
-                <Icon name='sun' size='large' color={mode === 'light' ? 'yellow' : 'grey'} />
-                <div className='theme-option-info'>
-                  <strong>Light</strong>
-                  <p>Clean and bright appearance</p>
-                </div>
-                {mode === 'light' && <Icon name='check circle' color='green' />}
-              </div>
-              <div
-                className={`theme-option ${mode === 'dark' ? 'active' : ''}`}
-                onClick={() => changeMode('dark')}
-              >
-                <Icon name='moon' size='large' color={mode === 'dark' ? 'blue' : 'grey'} />
-                <div className='theme-option-info'>
-                  <strong>Dark</strong>
-                  <p>Easier on the eyes at night</p>
-                </div>
-                {mode === 'dark' && <Icon name='check circle' color='green' />}
-              </div>
-              <div
-                className={`theme-option ${mode === 'system' ? 'active' : ''}`}
-                onClick={() => changeMode('system')}
-              >
-                <Icon name='desktop' size='large' color={mode === 'system' ? 'teal' : 'grey'} />
-                <div className='theme-option-info'>
-                  <strong>System</strong>
-                  <p>Follows your device settings ({resolvedTheme})</p>
-                </div>
-                {mode === 'system' && <Icon name='check circle' color='green' />}
-              </div>
-            </div>
-          </div>
-        </Tab.Pane>
-      ),
-    },
-  ];
+  const [profileForm, setProfileForm] = useState({ firstName: user?.firstName || '', lastName: user?.lastName || '', email: user?.email || '' });
+  const [passwordForm, setPasswordForm] = useState({ current: '', newPass: '', confirm: '' });
 
   return (
     <div className='dashboard-layout'>
       <SideBar />
       <div className='dashboard-main'>
+        <Breadcrumbs mb="md"><Anchor onClick={() => navigate('/profile')}>Profile</Anchor><span>Settings</span></Breadcrumbs>
+        <Paper p="lg" radius="md" withBorder>
+          <Tabs defaultValue="profile">
+            <Tabs.List>
+              <Tabs.Tab value="profile">Profile</Tabs.Tab>
+              <Tabs.Tab value="password">Password</Tabs.Tab>
+              <Tabs.Tab value="appearance">Appearance</Tabs.Tab>
+            </Tabs.List>
 
-        <div className='dashboard-header'>
-          <div className='header-left'>
-            <h1 className='page-title'>Settings</h1>
-            <p className='page-subtitle'>Manage your account preferences</p>
-          </div>
-          <div className='header-right'>
-            <Button as={Link} to='/profile' icon>
-              <Icon name='user' /> View Profile
-            </Button>
-          </div>
-        </div>
+            <Tabs.Panel value="profile" pt="md">
+              <Group align="flex-start">
+                <Avatar src={user?.avatar} size={80} radius="xl" />
+                <Stack style={{ flex: 1 }}>
+                  <TextInput label="First Name" value={profileForm.firstName} onChange={(e) => setProfileForm(p => ({ ...p, firstName: e.target.value }))} />
+                  <TextInput label="Last Name" value={profileForm.lastName} onChange={(e) => setProfileForm(p => ({ ...p, lastName: e.target.value }))} />
+                  <TextInput label="Email" value={profileForm.email} onChange={(e) => setProfileForm(p => ({ ...p, email: e.target.value }))} />
+                  <Button mt="sm" style={{ alignSelf: 'flex-start' }}>Save Changes</Button>
+                </Stack>
+              </Group>
+            </Tabs.Panel>
 
-        <div className='dashboard-content'>
-          <Segment className='settings-card'>
-            <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
-          </Segment>
-        </div>
+            <Tabs.Panel value="password" pt="md">
+              <Stack maw={400}>
+                <TextInput label="Current Password" type="password" value={passwordForm.current} onChange={(e) => setPasswordForm(p => ({ ...p, current: e.target.value }))} />
+                <TextInput label="New Password" type="password" value={passwordForm.newPass} onChange={(e) => setPasswordForm(p => ({ ...p, newPass: e.target.value }))} />
+                <TextInput label="Confirm New Password" type="password" value={passwordForm.confirm} onChange={(e) => setPasswordForm(p => ({ ...p, confirm: e.target.value }))} />
+                <Button mt="sm" style={{ alignSelf: 'flex-start' }}>Change Password</Button>
+              </Stack>
+            </Tabs.Panel>
 
+            <Tabs.Panel value="appearance" pt="md">
+              <Select label="Theme" value={mode} onChange={changeMode} data={[{ value: 'light', label: 'Light' }, { value: 'dark', label: 'Dark' }, { value: 'system', label: 'System' }]} />
+              <Text size="sm" c="dimmed" mt="xs">Current: {resolvedTheme}</Text>
+            </Tabs.Panel>
+          </Tabs>
+        </Paper>
       </div>
     </div>
   );

@@ -1,24 +1,23 @@
-import React from 'react'
-import { Table } from 'semantic-ui-react';
+import React from 'react';
+import { Table } from '@mantine/core';
 
 function CourseTable(props) {
-    return (
-        <Table striped>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Course Name</Table.HeaderCell>
-            <Table.HeaderCell>Category</Table.HeaderCell>
-            <Table.HeaderCell>Lessons</Table.HeaderCell>
-            <Table.HeaderCell>Status</Table.HeaderCell>
-            <Table.HeaderCell>Author</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-            {props.rows}
-        <Table.Body>
-          
-        </Table.Body>
-      </Table>
-    )
+  return (
+    <Table striped>
+      <Table.Thead>
+        <Table.Tr>
+          <Table.Th>Course Name</Table.Th>
+          <Table.Th>Category</Table.Th>
+          <Table.Th>Lessons</Table.Th>
+          <Table.Th>Status</Table.Th>
+          <Table.Th>Author</Table.Th>
+        </Table.Tr>
+      </Table.Thead>
+      <Table.Tbody>
+        {props.rows}
+      </Table.Tbody>
+    </Table>
+  );
 }
 
 export default CourseTable;

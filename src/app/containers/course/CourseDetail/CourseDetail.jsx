@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import {
-  Breadcrumb, Header, Divider, Tab, List, Grid, Icon, Button, Image, Label, Segment,
-} from 'semantic-ui-react';
+import { Paper, Breadcrumbs, Anchor, Button, Badge, Group, Grid, Stack, Title, Text, Tabs, List, Image, SimpleGrid } from '@mantine/core';
+import { IconBook, IconUser, IconFolder, IconClock, IconStar, IconList, IconSitemap, IconPencil, IconCheck, IconArchive, IconTrash, IconEye, IconPlus, IconExclamationCircle } from '@tabler/icons-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
-import {
-  fetchCourseById, fetchLessons, publishCourse, archiveCourse, deleteCourse,
-} from '@/app/services/courseService';
+import { fetchCourseById, fetchLessons, publishCourse, archiveCourse, deleteCourse } from '@/app/services/courseService';
 import { PublishModal, ArchiveModal, DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
 import { isEnrolled, enrollInCourse, dropCourse } from '@/app/services/enrollmentService';
@@ -27,238 +24,39 @@ const CourseDetail = () => {
 
   const loadData = useCallback(async () => {
     try {
-      setLoading(true);
-      setError(null);
-      const [courseData, lessonsData] = await Promise.all([
-        fetchCourseById(id),
-        fetchLessons(id),
-      ]);
-      setCourse(courseData);
-      setLessons(lessonsData || []);
-      if (user) {
-        setEnrollment(isEnrolled(user.id, parseInt(id)));
-      }
-    } catch (err) {
-      setError(err.message || 'Failed to load course');
-    } finally {
-      setLoading(false);
-    }
+      setLoading(true); setError(null);
+      const [courseData, lessonsData] = await Promise.all([fetchCourseById(id), fetchLessons(id)]);
+      setCourse(courseData); setLessons(lessonsData || []);
+      if (user) setEnrollment(isEnrolled(user.id, parseInt(id)));
+    } catch (err) { setError(err.message || 'Failed to load course'); }
+    finally { setLoading(false); }
   }, [id, user]);
 
   useEffect(() => { loadData(); }, [loadData]);
 
   const handleEnroll = async () => {
     if (!user) { navigate('/login'); return; }
-    try {
-      setActionLoading(true);
-      const result = await enrollInCourse(user.id, parseInt(id));
-      setEnrollment(result);
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setActionLoading(false);
-    }
+    try { setActionLoading(true); const result = await enrollInCourse(user.id, parseInt(id)); setEnrollment(result); }
+    catch (err) { alert(err.message); } finally { setActionLoading(false); }
   };
 
   const handleDrop = async () => {
     if (!confirm('Are you sure you want to drop this course?')) return;
-    try {
-      setActionLoading(true);
-      await dropCourse(user.id, parseInt(id));
-      setEnrollment(isEnrolled(user.id, parseInt(id)));
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setActionLoading(false);
-    }
+    try { setActionLoading(true); await dropCourse(user.id, parseInt(id)); setEnrollment(isEnrolled(user.id, parseInt(id))); }
+    catch (err) { alert(err.message); } finally { setActionLoading(false); }
   };
 
-  const handlePublish = async () => {
-    try {
-      setActionLoading(true);
-      const updated = await publishCourse(id);
-      setCourse(updated);
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setActionLoading(false);
-      setActiveModal(null);
-    }
-  };
+  const handlePublish = async () => { try { setActionLoading(true); const updated = await publishCourse(id); setCourse(updated); } catch (err) { alert(err.message); } finally { setActionLoading(false); setActiveModal(null); } };
+  const handleArchive = async () => { try { setActionLoading(true); const updated = await archiveCourse(id); setCourse(updated); } catch (err) { alert(err.message); } finally { setActionLoading(false); setActiveModal(null); } };
+  const handleDelete = async () => { try { setActionLoading(true); await deleteCourse(id); navigate('/courses'); } catch (err) { alert(err.message); setActionLoading(false); setActiveModal(null); } };
 
-  const handleArchive = async () => {
-    try {
-      setActionLoading(true);
-      const updated = await archiveCourse(id);
-      setCourse(updated);
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setActionLoading(false);
-      setActiveModal(null);
-    }
-  };
+  const statusConfig = { Published: { color: 'green', icon: 'check circle', text: 'Published' }, DRAFT: { color: 'gray', icon: 'edit', text: 'Draft' }, Archived: { color: 'orange', icon: 'archive', text: 'Archived' } };
 
-  const handleDelete = async () => {
-    try {
-      setActionLoading(true);
-      await deleteCourse(id);
-      navigate('/courses');
-    } catch (err) {
-      alert(err.message);
-      setActionLoading(false);
-      setActiveModal(null);
-    }
-  };
-
-  const statusConfig = {
-    Published: { color: 'green', icon: 'check circle', text: 'Published' },
-    DRAFT: { color: 'grey', icon: 'edit', text: 'Draft' },
-    Archived: { color: 'orange', icon: 'archive', text: 'Archived' },
-  };
-
-  const panes = [
-    {
-      menuItem: 'Overview',
-      render: () => (
-        <Tab.Pane attached={false}>
-          {course?.description && (
-            <div className='course-overview-section'>
-              <h3>About This Course</h3>
-              <p>{course.description}</p>
-            </div>
-          )}
-          {course?.tags?.length > 0 && (
-            <div className='course-overview-section'>
-              <h3>Topics Covered</h3>
-              <div className='course-tags-row'>
-                {course.tags.map((tag) => (
-                  <Label key={tag} color='teal' size='small'>{tag}</Label>
-                ))}
-              </div>
-            </div>
-          )}
-          <div className='course-overview-section'>
-            <h3>Course Details</h3>
-            <Grid columns={2} stackable>
-              <Grid.Column>
-                <List relaxed>
-                  <List.Item>
-                    <Icon name='user' color='blue' />
-                    <List.Content>
-                      <List.Header>Instructor</List.Header>
-                      <List.Description>{course?.author || 'N/A'}</List.Description>
-                    </List.Content>
-                  </List.Item>
-                  <List.Item>
-                    <Icon name='folder' color='violet' />
-                    <List.Content>
-                      <List.Header>Category</List.Header>
-                      <List.Description>{course?.category || 'N/A'}</List.Description>
-                    </List.Content>
-                  </List.Item>
-                  <List.Item>
-                    <Icon name='clock outline' color='orange' />
-                    <List.Content>
-                      <List.Header>Duration</List.Header>
-                      <List.Description>{course?.duration || 'N/A'}</List.Description>
-                    </List.Content>
-                  </List.Item>
-                </List>
-              </Grid.Column>
-              <Grid.Column>
-                <List relaxed>
-                  <List.Item>
-                    <Icon name='list' color='green' />
-                    <List.Content>
-                      <List.Header>Lessons</List.Header>
-                      <List.Description>{course?.totalLessons || 0}</List.Description>
-                    </List.Content>
-                  </List.Item>
-                  <List.Item>
-                    <Icon name='calendar' color='blue' />
-                    <List.Content>
-                      <List.Header>Created</List.Header>
-                      <List.Description>{course?.createdAt || 'N/A'}</List.Description>
-                    </List.Content>
-                  </List.Item>
-                  <List.Item>
-                    <Icon name='refresh' color='grey' />
-                    <List.Content>
-                      <List.Header>Last Updated</List.Header>
-                      <List.Description>{course?.updatedAt || 'N/A'}</List.Description>
-                    </List.Content>
-                  </List.Item>
-                </List>
-              </Grid.Column>
-            </Grid>
-          </div>
-        </Tab.Pane>
-      ),
-    },
-    {
-      menuItem: `Lessons (${lessons.length})`,
-      render: () => (
-        <Tab.Pane attached={false}>
-          {lessons.length === 0 ? (
-            <div className='course-empty-state'>
-              <Icon name='book' size='huge' color='grey' />
-              <Header as='h3' color='grey'>No lessons yet</Header>
-              <p>Start building your course by adding the first lesson.</p>
-              <PermissionGuard permissions={['courses.lessons.manage']}>
-                <Button primary as={Link} to={`/courses/${id}/builder`}>
-                  <Icon name='sitemap' /> Open Course Builder
-                </Button>
-              </PermissionGuard>
-            </div>
-          ) : (
-            <List divided relaxed className='course-lessons-list'>
-              {lessons.map((lesson, index) => (
-                <List.Item key={lesson.id} className='course-lesson-item'>
-                  <div className='course-lesson-number'>{index + 1}</div>
-                  <List.Content>
-                    <List.Header>{lesson.title}</List.Header>
-                    <List.Description>{lesson.description}</List.Description>
-                    {lesson.duration && (
-                      <Label size='tiny' color='teal'>
-                        <Icon name='clock outline' /> {lesson.duration}
-                      </Label>
-                    )}
-                  </List.Content>
-                </List.Item>
-              ))}
-            </List>
-          )}
-        </Tab.Pane>
-      ),
-    },
-  ];
-
-  // Loading
   if (loading) {
-    return (
-      <div className='dashboard-layout'>
-        <SideBar />
-        <div className='dashboard-main'>
-          <Segment loading style={{ marginTop: 40 }}><Header as='h2'>Loading...</Header></Segment>
-        </div>
-      </div>
-    );
+    return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" radius="md" mt={40}><Title order={4}>Loading...</Title></Paper></div></div>);
   }
-
-  // Error / Not Found
   if (error || !course) {
-    return (
-      <div className='dashboard-layout'>
-        <SideBar />
-        <div className='dashboard-main'>
-          <Segment placeholder style={{ marginTop: 40 }}>
-            <Header icon><Icon name='warning circle' /> {error || 'Course not found'}</Header>
-            <Button primary onClick={() => navigate('/courses')}>Back to Courses</Button>
-          </Segment>
-        </div>
-      </div>
-    );
+    return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" radius="md" mt={40}><IconExclamationCircle color="red" /> {error || 'Course not found'}<br /><Button mt="sm" onClick={() => navigate('/courses')}>Back to Courses</Button></Paper></div></div>);
   }
 
   const status = statusConfig[course.status] || statusConfig.DRAFT;
@@ -267,229 +65,139 @@ const CourseDetail = () => {
     <div className='dashboard-layout'>
       <SideBar />
       <div className='dashboard-main'>
-
-        {/* Breadcrumb */}
         <div className='course-detail-breadcrumb'>
-          <Breadcrumb>
-            <Breadcrumb.Section link onClick={() => navigate('/courses')}>Courses</Breadcrumb.Section>
-            <Breadcrumb.Divider />
-            <Breadcrumb.Section active>{course.title}</Breadcrumb.Section>
-          </Breadcrumb>
+          <Breadcrumbs><Anchor onClick={() => navigate('/courses')}>Courses</Anchor><span>{course.title}</span></Breadcrumbs>
         </div>
 
-        {/* Hero */}
         <div className='course-detail-hero'>
-          <div className='course-hero-bg' style={{
-            background: course.coverImage
-              ? `linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%), url(${course.coverImage}) center/cover`
-              : 'linear-gradient(135deg, #1a2332 0%, #232f3e 100%)',
-          }}>
+          <div className='course-hero-bg' style={{ background: course.coverImage ? `linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%), url(${course.coverImage}) center/cover` : 'linear-gradient(135deg, #1a2332 0%, #232f3e 100%)' }}>
             <div className='course-hero-content'>
               <div className='course-hero-left'>
-                <div className='course-hero-status'>
-                  <Label color={status.color} size='medium'>
-                    <Icon name={status.icon} /> {status.text}
-                  </Label>
-                </div>
-                <Header as='h1' className='course-hero-title'>{course.title}</Header>
-                <p className='course-hero-description'>{course.description}</p>
-                <div className='course-hero-meta'>
-                  <span><Icon name='user' /> {course.author}</span>
-                  <span className='meta-sep'>·</span>
-                  <span><Icon name='folder' /> {course.category}</span>
-                  <span className='meta-sep'>·</span>
-                  <span><Icon name='clock outline' /> {course.duration}</span>
-                </div>
+                <Badge color={status.color} size="lg" mb="sm"><IconCheck size={12} /> {status.text}</Badge>
+                <Title order={1} className='course-hero-title'>{course.title}</Title>
+                <Text className='course-hero-description'>{course.description}</Text>
+                <Group gap={8} className='course-hero-meta'>
+                  <span><IconUser size={14} /> {course.author}</span><span className='meta-sep'>·</span>
+                  <span><IconFolder size={14} /> {course.category}</span><span className='meta-sep'>·</span>
+                  <span><IconClock size={14} /> {course.duration}</span>
+                </Group>
                 {course.tags?.length > 0 && (
-                  <div className='course-hero-tags'>
-                    {course.tags.map((tag) => (
-                      <Label key={tag} size='tiny' inverted>{tag}</Label>
-                    ))}
-                  </div>
+                  <Group gap={4} className='course-hero-tags'>{course.tags.map((tag) => (<Badge key={tag} size="sm" variant="filled" color="gray">{tag}</Badge>))}</Group>
                 )}
               </div>
               <div className='course-hero-right'>
-                <Grid columns={3} className='course-hero-stats'>
-                  <Grid.Column>
-                    <div className='course-stat'>
-                      <Icon name='list' color='blue' size='large' />
-                      <div className='course-stat-value'>{course.totalLessons}</div>
-                      <div className='course-stat-label'>Lessons</div>
-                    </div>
-                  </Grid.Column>
-                  <Grid.Column>
-                    <div className='course-stat'>
-                      <Icon name='users' color='green' size='large' />
-                      <div className='course-stat-value'>0</div>
-                      <div className='course-stat-label'>Enrolled</div>
-                    </div>
-                  </Grid.Column>
-                  <Grid.Column>
-                    <div className='course-stat'>
-                      <Icon name='star' color='yellow' size='large' />
-                      <div className='course-stat-value'>—</div>
-                      <div className='course-stat-label'>Rating</div>
-                    </div>
-                  </Grid.Column>
-                </Grid>
+                <SimpleGrid cols={3} className='course-hero-stats'>
+                  <div className='course-stat'><IconList size={24} color="#2185d0" /><div className='course-stat-value'>{course.totalLessons}</div><div className='course-stat-label'>Lessons</div></div>
+                  <div className='course-stat'><IconUser size={24} color="#33a163" /><div className='course-stat-value'>0</div><div className='course-stat-label'>Enrolled</div></div>
+                  <div className='course-stat'><IconStar size={24} color="#f0a500" /><div className='course-stat-value'>—</div><div className='course-stat-label'>Rating</div></div>
+                </SimpleGrid>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Action Bar */}
-        <div className='course-detail-actions'>
-          <div className='action-left'>
-            <PermissionGuard permissions={['courses.lessons.manage']}>
-              <Button as={Link} to={`/courses/${id}/builder`} primary>
-                <Icon name='sitemap' /> Open Builder
-              </Button>
-            </PermissionGuard>
-            <PermissionGuard permissions={['courses.edit']}>
-              <Button as={Link} to={`/courses/${id}/edit`}>
-                <Icon name='pencil' /> Edit Details
-              </Button>
-            </PermissionGuard>
-            <PermissionGuard permissions={['courses.lessons.manage']}>
-              <Button as={Link} to={`/courses/${id}/lessons`}>
-                <Icon name='list' /> Manage Lessons
-              </Button>
-            </PermissionGuard>
-          </div>
-          <div className='action-right'>
-            {enrollment?.status === 'active' && (
-              <Button primary as={Link} to={`/courses/${id}/learn`}>
-                <Icon name='play' /> Continue Learning
-              </Button>
-            )}
-            {enrollment?.status === 'completed' && (
-              <Button as={Link} to={`/courses/${id}/learn`}>
-                <Icon name='eye' /> Review Course
-              </Button>
-            )}
-            {enrollment?.status === 'dropped' && (
-              <Button color='green' onClick={handleEnroll} loading={actionLoading}>
-                <Icon name='plus' /> Re-enroll
-              </Button>
-            )}
-            {enrollment?.status === 'active' && (
-              <Button basic color='red' onClick={handleDrop} loading={actionLoading}>
-                <Icon name='minus circle' /> Drop
-              </Button>
-            )}
-            {!enrollment && user && course.status === 'Published' && (
-              <Button color='green' onClick={handleEnroll} loading={actionLoading}>
-                <Icon name='plus' /> Enroll Now
-              </Button>
-            )}
-            {course.status !== 'Published' && (
-              <PermissionGuard permissions={['courses.publish']}>
-                <Button color='green' icon onClick={() => setActiveModal('publish')}>
-                  <Icon name='check circle' /> Publish
-                </Button>
-              </PermissionGuard>
-            )}
-            {course.status !== 'Archived' && (
-              <Button color='orange' icon onClick={() => setActiveModal('archive')}>
-                <Icon name='archive' /> Archive
-              </Button>
-            )}
-            <PermissionGuard permissions={['courses.delete']}>
-              <Button color='red' icon onClick={() => setActiveModal('delete')}>
-                <Icon name='trash' /> Delete
-              </Button>
-            </PermissionGuard>
-          </div>
-        </div>
+        <Group justify="space-between" className='course-detail-actions' my="md">
+          <Group>
+            <PermissionGuard permissions={['courses.lessons.manage']}><Button component={Link} to={`/courses/${id}/builder`} leftSection={<IconSitemap size={14} />}>Open Builder</Button></PermissionGuard>
+            <PermissionGuard permissions={['courses.edit']}><Button component={Link} to={`/courses/${id}/edit`} variant="default" leftSection={<IconPencil size={14} />}>Edit Details</Button></PermissionGuard>
+            <PermissionGuard permissions={['courses.lessons.manage']}><Button component={Link} to={`/courses/${id}/lessons`} variant="default" leftSection={<IconList size={14} />}>Manage Lessons</Button></PermissionGuard>
+          </Group>
+          <Group>
+            {enrollment?.status === 'active' && <Button component={Link} to={`/courses/${id}/learn`} leftSection={<IconPlus size={14} />}>Continue Learning</Button>}
+            {enrollment?.status === 'completed' && <Button component={Link} to={`/courses/${id}/learn`} variant="default" leftSection={<IconEye size={14} />}>Review Course</Button>}
+            {enrollment?.status === 'dropped' && <Button color="green" onClick={handleEnroll} loading={actionLoading} leftSection={<IconPlus size={14} />}>Re-enroll</Button>}
+            {enrollment?.status === 'active' && <Button variant="default" color="red" onClick={handleDrop} loading={actionLoading} leftSection={<IconPlus size={14} />}>Drop</Button>}
+            {!enrollment && user && course.status === 'Published' && <Button color="green" onClick={handleEnroll} loading={actionLoading} leftSection={<IconPlus size={14} />}>Enroll Now</Button>}
+            {course.status !== 'Published' && (<PermissionGuard permissions={['courses.publish']}><Button color="green" variant="light" leftSection={<IconCheck size={14} />} onClick={() => setActiveModal('publish')}>Publish</Button></PermissionGuard>)}
+            {course.status !== 'Archived' && <Button color="orange" variant="light" leftSection={<IconArchive size={14} />} onClick={() => setActiveModal('archive')}>Archive</Button>}
+            <PermissionGuard permissions={['courses.delete']}><Button color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={() => setActiveModal('delete')}>Delete</Button></PermissionGuard>
+          </Group>
+        </Group>
 
-        {/* Content Grid */}
-        <Grid stackable className='course-detail-grid'>
-          <Grid.Column width={10}>
-            <Segment className='course-detail-main'>
-              <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
-            </Segment>
-          </Grid.Column>
+        <Grid className='course-detail-grid'>
+          <Grid.Col span={10}>
+            <Paper className='course-detail-main' p="md" radius="md" withBorder>
+              <Tabs defaultValue="overview">
+                <Tabs.List>
+                  <Tabs.Tab value="overview">Overview</Tabs.Tab>
+                  <Tabs.Tab value="lessons">Lessons ({lessons.length})</Tabs.Tab>
+                </Tabs.List>
 
-          <Grid.Column width={6}>
-            {/* Content Card */}
-            <Segment className='course-sidebar-card'>
-              <Header as='h4'><Icon name='list' color='green' /> Course Content</Header>
+                <Tabs.Panel value="overview" pt="md">
+                  {course?.description && (
+                    <div className='course-overview-section'><Title order={5}>About This Course</Title><Text>{course.description}</Text></div>
+                  )}
+                  {course?.tags?.length > 0 && (
+                    <div className='course-overview-section'><Title order={5}>Topics Covered</Title><Group gap={4}>{course.tags.map((tag) => (<Badge key={tag} color="teal" size="sm">{tag}</Badge>))}</Group></div>
+                  )}
+                  <div className='course-overview-section'><Title order={5}>Course Details</Title>
+                    <Grid>
+                      <Grid.Col span={6}>
+                        <List spacing="xs">
+                          <List.Item icon={<IconUser size={16} color="#2185d0" />}><Text fw={600}>Instructor</Text><Text c="dimmed">{course?.author || 'N/A'}</Text></List.Item>
+                          <List.Item icon={<IconFolder size={16} color="#9c27b0" />}><Text fw={600}>Category</Text><Text c="dimmed">{course?.category || 'N/A'}</Text></List.Item>
+                          <List.Item icon={<IconClock size={16} color="#f0a500" />}><Text fw={600}>Duration</Text><Text c="dimmed">{course?.duration || 'N/A'}</Text></List.Item>
+                        </List>
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                        <List spacing="xs">
+                          <List.Item icon={<IconList size={16} color="#33a163" />}><Text fw={600}>Lessons</Text><Text c="dimmed">{course?.totalLessons || 0}</Text></List.Item>
+                          <List.Item icon={<IconBook size={16} color="#2185d0" />}><Text fw={600}>Created</Text><Text c="dimmed">{course?.createdAt || 'N/A'}</Text></List.Item>
+                        </List>
+                      </Grid.Col>
+                    </Grid>
+                  </div>
+                </Tabs.Panel>
+
+                <Tabs.Panel value="lessons" pt="md">
+                  {lessons.length === 0 ? (
+                    <div className='course-empty-state'><IconBook size={48} color="#999" /><Title order={4} c="dimmed">No lessons yet</Title><p>Start building your course by adding the first lesson.</p></div>
+                  ) : (
+                    <List spacing="sm" className='course-lessons-list'>
+                      {lessons.map((lesson, index) => (
+                        <List.Item key={lesson.id} className='course-lesson-item'>
+                          <div className='course-lesson-number'>{index + 1}</div>
+                          <div><Text fw={600}>{lesson.title}</Text><Text c="dimmed" size="sm">{lesson.description}</Text></div>
+                          {lesson.duration && <Badge size="xs" color="teal" leftSection={<IconClock size={10} />}>{lesson.duration}</Badge>}
+                        </List.Item>
+                      ))}
+                    </List>
+                  )}
+                </Tabs.Panel>
+              </Tabs>
+            </Paper>
+          </Grid.Col>
+
+          <Grid.Col span={6}>
+            <Paper className='course-sidebar-card' p="md" radius="md" withBorder mb="md">
+              <Title order={5} mb="sm"><IconList size={16} color="#33a163" /> Course Content</Title>
               {lessons.length === 0 ? (
-                <div className='course-sidebar-empty'>
-                  <Icon name='book outline' size='large' color='grey' />
-                  <p>No lessons added yet.</p>
-                </div>
+                <div className='course-sidebar-empty'><IconBook size={32} color="#999" /><Text c="dimmed" size="sm">No lessons added yet.</Text></div>
               ) : (
-                <List divided relaxed className='course-sidebar-lessons'>
+                <List spacing="xs" className='course-sidebar-lessons'>
                   {lessons.map((lesson, index) => (
                     <List.Item key={lesson.id} className='course-sidebar-lesson'>
                       <div className='course-lesson-num'>{index + 1}</div>
-                      <List.Content>
-                        <List.Header as='h5'>{lesson.title}</List.Header>
-                        {lesson.duration && (
-                          <List.Description>
-                            <Icon name='clock outline' size='mini' /> {lesson.duration}
-                          </List.Description>
-                        )}
-                      </List.Content>
+                      <div><Text fw={500} size="sm">{lesson.title}</Text>{lesson.duration && <Text c="dimmed" size="xs"><IconClock size={10} /> {lesson.duration}</Text>}</div>
                     </List.Item>
                   ))}
                 </List>
               )}
-            </Segment>
+            </Paper>
 
-            {/* Quick Info Card */}
-            <Segment className='course-sidebar-card'>
-              <Header as='h4'><Icon name='info circle' color='grey' /> Quick Info</Header>
-              <List relaxed>
-                <List.Item>
-                  <Icon name='calendar' color='blue' />
-                  <List.Content>
-                    <List.Header>Created</List.Header>
-                    <List.Description>{course.createdAt}</List.Description>
-                  </List.Content>
-                </List.Item>
-                <List.Item>
-                  <Icon name='refresh' color='grey' />
-                  <List.Content>
-                    <List.Header>Last Updated</List.Header>
-                    <List.Description>{course.updatedAt}</List.Description>
-                  </List.Content>
-                </List.Item>
-                <List.Item>
-                  <Icon name='folder' color='violet' />
-                  <List.Content>
-                    <List.Header>Category</List.Header>
-                    <List.Description>{course.category}</List.Description>
-                  </List.Content>
-                </List.Item>
+            <Paper className='course-sidebar-card' p="md" radius="md" withBorder>
+              <Title order={5} mb="sm">Quick Info</Title>
+              <List spacing="xs">
+                <List.Item icon={<IconStar size={14} />}><Text fw={600}>Created</Text><Text c="dimmed">{course.createdAt}</Text></List.Item>
+                <List.Item icon={<IconStar size={14} />}><Text fw={600}>Last Updated</Text><Text c="dimmed">{course.updatedAt}</Text></List.Item>
               </List>
-            </Segment>
-          </Grid.Column>
+            </Paper>
+          </Grid.Col>
         </Grid>
 
-        {/* Modals */}
-        <PublishModal
-          open={activeModal === 'publish'}
-          onConfirm={handlePublish}
-          onCancel={() => setActiveModal(null)}
-          courseTitle={course.title}
-          loading={actionLoading}
-        />
-        <ArchiveModal
-          open={activeModal === 'archive'}
-          onConfirm={handleArchive}
-          onCancel={() => setActiveModal(null)}
-          courseTitle={course.title}
-          loading={actionLoading}
-        />
-        <DeleteModal
-          open={activeModal === 'delete'}
-          onConfirm={handleDelete}
-          onCancel={() => setActiveModal(null)}
-          itemName={course.title}
-          loading={actionLoading}
-        />
+        <PublishModal open={activeModal === 'publish'} onConfirm={handlePublish} onCancel={() => setActiveModal(null)} courseTitle={course.title} loading={actionLoading} />
+        <ArchiveModal open={activeModal === 'archive'} onConfirm={handleArchive} onCancel={() => setActiveModal(null)} courseTitle={course.title} loading={actionLoading} />
+        <DeleteModal open={activeModal === 'delete'} onConfirm={handleDelete} onCancel={() => setActiveModal(null)} itemName={course.title} loading={actionLoading} />
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Icon, Label } from 'semantic-ui-react';
+import { Paper, Text, Group, Badge, SimpleGrid, Skeleton } from '@mantine/core';
+import { IconBook, IconUser, IconList, IconClock, IconStar } from '@tabler/icons-react';
 import { getStatusLabel, getCategoryColor } from './viewHelpers';
 
 const GridView = ({ courses, navigate, loading }) => {
@@ -7,14 +8,12 @@ const GridView = ({ courses, navigate, loading }) => {
     return (
       <div className='courses-view-grid'>
         {[...Array(8)].map((_, i) => (
-          <div key={i} className='course-card-skeleton'>
-            <div className='skeleton-image' />
-            <div className='skeleton-content'>
-              <div className='skeleton-line' />
-              <div className='skeleton-line short' />
-              <div className='skeleton-line shorter' />
-            </div>
-          </div>
+          <Paper key={i} className='course-card-skeleton' p="md" radius="md">
+            <Skeleton height={140} radius="md" mb="sm" />
+            <Skeleton height={16} radius="xl" mb={6} />
+            <Skeleton height={12} radius="xl" mb={4} width="60%" />
+            <Skeleton height={12} radius="xl" width="40%" />
+          </Paper>
         ))}
       </div>
     );
@@ -25,66 +24,35 @@ const GridView = ({ courses, navigate, loading }) => {
       {courses.map((course) => {
         const status = getStatusLabel(course.status);
         return (
-          <div
-            key={course.id}
-            className='course-card'
-            onClick={() => navigate(`/courses/${course.id}`)}
-          >
-            {/* Cover Image */}
+          <Paper key={course.id} className='course-card' p="md" radius="md" withBorder style={{ cursor: 'pointer' }} onClick={() => navigate(`/courses/${course.id}`)}>
             {course.coverImage ? (
               <img src={course.coverImage} alt={course.title} className='course-card-image' />
             ) : (
-              <div className='course-card-image course-card-no-image'>
-                <Icon name='book' size='huge' color='grey' />
-              </div>
+              <div className='course-card-image course-card-no-image'><IconBook size={48} color="#999" /></div>
             )}
-
             <div className='course-card-body'>
-              {/* Meta Row */}
               <div className='course-card-meta-row'>
-                <span className='course-card-category'>
-                  <Label color={getCategoryColor(course.category)} size='tiny' basic>{course.category}</Label>
-                </span>
-                <span className='course-card-author'>
-                  <Icon name='user' size='mini' /> {course.author}
-                </span>
+                <Badge size="sm" variant="light" color={getCategoryColor(course.category)}>{course.category}</Badge>
+                <Text size="xs" c="dimmed"><IconUser size={12} /> {course.author}</Text>
               </div>
-
-              {/* Title */}
-              <h3 className='course-card-title'>{course.title}</h3>
-
-              {/* Description */}
-              <p className='course-card-description'>{course.description}</p>
-
-              {/* Stats & Rating */}
-              <div className='course-card-info-row'>
-                <div className='course-card-stats'>
-                  <span><Icon name='list' size='mini' /> {course.totalLessons} Lessons</span>
-                  <span><Icon name='users' size='mini' /> {course.enrolledUsers}</span>
-                  <span><Icon name='clock outline' size='mini' /> {course.duration}</span>
-                </div>
-              </div>
-
-              {/* Tags */}
+              <Text className='course-card-title' fw={600} size="sm" lineClamp={2}>{course.title}</Text>
+              <Text size="xs" c="dimmed" lineClamp={2} mt={4}>{course.description}</Text>
+              <Group gap={8} mt={8}>
+                <Text size="xs" c="dimmed"><IconList size={12} /> {course.totalLessons} Lessons</Text>
+                <Text size="xs" c="dimmed"><IconUser size={12} /> {course.enrolledUsers}</Text>
+                <Text size="xs" c="dimmed"><IconClock size={12} /> {course.duration}</Text>
+              </Group>
               {course.tags?.length > 0 && (
-                <div className='course-card-tags'>
-                  {course.tags.slice(0, 3).map((tag) => (
-                    <Label key={tag} size='mini' basic>{tag}</Label>
-                  ))}
-                  {course.tags.length > 3 && (
-                    <Label size='mini' basic>+{course.tags.length - 3}</Label>
-                  )}
-                </div>
+                <Group gap={4} mt={6}>
+                  {course.tags.slice(0, 3).map((tag) => (<Badge key={tag} size="xs" variant="outline">{tag}</Badge>))}
+                  {course.tags.length > 3 && <Badge size="xs" variant="outline">+{course.tags.length - 3}</Badge>}
+                </Group>
               )}
-
-              {/* Status */}
               {status && (
-                <div className='course-card-status'>
-                  <Label color={status.color} size='tiny' basic>{status.text}</Label>
-                </div>
+                <Badge size="xs" variant="light" color={status.color} mt={6}>{status.text}</Badge>
               )}
             </div>
-          </div>
+          </Paper>
         );
       })}
     </div>

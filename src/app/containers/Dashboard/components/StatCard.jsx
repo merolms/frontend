@@ -1,25 +1,19 @@
 import React from 'react';
-import { Card, Icon } from 'semantic-ui-react';
-import './StatCard.scss';
+import { Paper, Group, Text } from '@mantine/core';
 
-const StatCard = ({ title, value, icon, color, trend, trendUp }) => {
-  return (
-    <Card className="stat-card">
-      <Card.Content>
-        <Card.Header className="stat-title">{title}</Card.Header>
-        <Card.Description>
-          <div className="stat-value">
-            <Icon name={icon} color={color} size='large' />
-            <span>{value}</span>
-          </div>
-          <div className={`stat-trend ${trendUp ? 'trend-up' : 'trend-down'}`}>
-            <Icon name={trendUp ? 'arrow up' : 'arrow down'} size='small' />
-            <span>{trend}</span>
-          </div>
-        </Card.Description>
-      </Card.Content>
-    </Card>
-  );
-};
+const StatCard = ({ title, value, icon, color, trend, trendUp }) => (
+  <Paper className='stat-card' p="md" radius="md" withBorder>
+    <Group justify="space-between">
+      <Stack gap={2}>
+        <Text size="sm" c="dimmed">{title}</Text>
+        <Group gap={8}>
+          <span className={`stat-value-icon ${color}`}>{icon}</span>
+          <Text size="xl" fw={700}>{value}</Text>
+        </Group>
+        <Text size="xs" c={trendUp ? 'green' : 'red'}>{trendUp ? '↑' : '↓'} {trend}</Text>
+      </Stack>
+    </Group>
+  </Paper>
+);
 
 export default StatCard;

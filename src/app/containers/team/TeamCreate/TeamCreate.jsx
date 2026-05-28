@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Segment, Icon, Breadcrumb, Divider } from 'semantic-ui-react';
+import { Paper, Breadcrumbs, Anchor, Button, TextInput, Textarea, Group, Title, Text, Stack, ColorInput, Center } from '@mantine/core';
+import { IconUsers, IconPlus } from '@tabler/icons-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { createTeam } from '@/app/services/teamService';
 import { useToast } from '@/app/context/ToastContext';
@@ -12,122 +13,55 @@ const TeamCreate = () => {
   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    color: '#2185d0',
-    status: 1,
-  });
+  const [formData, setFormData] = useState({ name: '', description: '', color: '#2185d0', status: 1 });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
+  const handleChange = (field, value) => setFormData((prev) => ({ ...prev, [field]: value }));
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name.trim()) {
-      setError('Team name is required.');
-      return;
-    }
-    try {
-      setLoading(true);
-      setError(null);
-      const team = await createTeam(formData);
-      addToast(`Team "${team.name}" created successfully`, 'success');
-      navigate(`/teams/${team.id}`);
-    } catch (err) {
-      setError(err.message || 'Failed to create team. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    if (!formData.name.trim()) { setError('Team name is required.'); return; }
+    try { setLoading(true); setError(null); const team = await createTeam(formData); addToast(`Team "${team.name}" created successfully`, 'success'); navigate(`/teams/${team.id}`); }
+    catch (err) { setError(err.message || 'Failed to create team.'); } finally { setLoading(false); }
   };
-
-  const handleCancel = () => {
-    navigate('/teams');
-  };
+  const handleCancel = () => navigate('/teams');
 
   return (
     <div className='dashboard-layout'>
       <SideBar />
       <div className='dashboard-main'>
-        <div className='dashboard-header'>
-          <div className='header-left'>
-            <h1 className='page-title'>Teams</h1>
-            <p className='page-subtitle'>Create new team</p>
-          </div>
-        </div>
+        <Breadcrumbs mb="md" className="breadcrumb"><Anchor onClick={() => navigate('/teams')}>Teams</Anchor><span>Create Team</span></Breadcrumbs>
 
-        <div className='dashboard-content'>
-          <Breadcrumb>
-            <Breadcrumb.Section link onClick={() => navigate('/teams')}>Teams</Breadcrumb.Section>
-            <Breadcrumb.Divider />
-            <Breadcrumb.Section active>Create Team</Breadcrumb.Section>
-          </Breadcrumb>
-          <Divider hidden />
+        <Paper className='team-form-segment' p="lg" radius="md" withBorder>
+          <Title order={3} mb={4}><IconUsers size={20} color="#33a163" /> Create New Team</Title>
+          <Text c="dimmed" size="sm" mb="md">Set up a new team and start assigning members.</Text>
 
-          <Segment className='team-form-segment'>
-            <h2 className='team-form-heading'>
-              <Icon name='users' color='green' />
-              Create New Team
-            </h2>
-            <p className='team-form-subtitle'>Set up a new team and start assigning members.</p>
+          {error && <Text c="red" size="sm" mb="sm" className="team-form-error">Team name is required.</Text>}
 
-            {error && (
-              <div className='team-form-error'>
-                <Icon name='warning circle' /> {error}
-              </div>
-            )}
+          <form onSubmit={handleSubmit}>
+            <Stack>
+              <TextInput label="Team Name *" name="name" placeholder="e.g. Engineering Team" value={formData.name} onChange={(e) => handleChange('name', e.target.value)} />
+              <Textarea label="Description" name="description" placeholder="What is this team about?" minRows={3} value={formData.description} onChange={(e) => handleChange('description', e.target.value)} />
 
-            <form onSubmit={handleSubmit}>
-              <Divider hidden />
               <div>
-                <label style={{ fontWeight: 600, fontSize: 13 }}>Team Name *</label>
-                <input name='name' value={formData.name} onChange={handleChange} placeholder='e.g. Engineering Team' style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4 }} />
-              </div>
-              <Divider hidden />
-              <div>
-                <label style={{ fontWeight: 600, fontSize: 13 }}>Description</label>
-                <textarea name='description' value={formData.description} onChange={handleChange} placeholder='What is this team about?' style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4, minHeight: 80 }} />
-              </div>
-              <Divider hidden />
-              <div>
-                <label style={{ fontWeight: 600, fontSize: 13 }}>Color</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
-                  <input name='color' type='color' value={formData.color} onChange={handleChange} style={{ width: 48, height: 36, border: '1px solid #ddd', borderRadius: 4, cursor: 'pointer', padding: 2 }} />
+                <Text size="sm" fw={500} mb={4}>Color</Text>
+                <Group gap={8}>
+                  <ColorInput name="color" value={formData.color} onChange={(v) => handleChange('color', v)} format="hex" size="md" swatches={PRESET_COLORS} />
                   <div style={{ width: 32, height: 32, borderRadius: 6, background: formData.color, border: '1px solid #e8e8e8', flexShrink: 0 }} />
-                  <span style={{ fontSize: 13, color: '#888', fontFamily: 'monospace' }}>{formData.color}</span>
-                </div>
+                  <Text size="sm" c="dimmed" ff="monospace">{formData.color}</Text>
+                </Group>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
                   {PRESET_COLORS.map((c) => (
-                    <button
-                      key={c}
-                      type='button'
-                      onClick={() => setFormData((prev) => ({ ...prev, color: c }))}
-                      style={{
-                        width: 28,
-                        height: 28,
-                        borderRadius: 4,
-                        background: c,
-                        border: formData.color === c ? '2px solid #333' : '1px solid #e8e8e8',
-                        cursor: 'pointer',
-                        padding: 0,
-                      }}
-                      title={c}
-                    />
+                    <button key={c} type='button' onClick={() => handleChange('color', c)} style={{ width: 28, height: 28, borderRadius: 4, background: c, border: formData.color === c ? '2px solid #333' : '1px solid #e8e8e8', cursor: 'pointer', padding: 0 }} title={c} />
                   ))}
                 </div>
               </div>
-              <Divider hidden />
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: 8 }}>
-                <button type='button' onClick={handleCancel} style={{ padding: '8px 16px', borderRadius: 4, border: '1px solid #ddd', background: '#fff', cursor: 'pointer' }} disabled={loading}>Cancel</button>
-                <button type='submit' style={{ padding: '8px 16px', borderRadius: 4, border: 'none', background: '#2185d0', color: '#fff', cursor: 'pointer' }} disabled={loading}>
-                  {loading ? 'Creating...' : 'Create Team'}
-                </button>
-              </div>
-            </form>
-          </Segment>
-        </div>
+
+              <Group justify="flex-end" mt="md">
+                <Button variant="default" onClick={handleCancel} disabled={loading}>Cancel</Button>
+                <Button type="submit" loading={loading}>{loading ? 'Creating...' : 'Create Team'}</Button>
+              </Group>
+            </Stack>
+          </form>
+        </Paper>
       </div>
     </div>
   );
