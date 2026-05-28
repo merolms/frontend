@@ -15,24 +15,25 @@ const store = (data) => {
   try {
     localStorage.setItem(ENROLLMENT_KEY, JSON.stringify(data));
   } catch {
-    // ignore
+    // ignore quota errors etc
   }
 };
 
-// Seed some initial enrollments for demo users
+const SEED_DATA = [
+  { id: 'en1', userId: 1, courseId: 1, status: 'active', progress: 45, enrolledAt: '2025-02-01', lastAccessed: '2025-03-25', completedLessons: ['l1', 'l2'] },
+  { id: 'en2', userId: 1, courseId: 2, status: 'active', progress: 72, enrolledAt: '2025-01-15', lastAccessed: '2025-03-24', completedLessons: ['l1', 'l2', 'l3'] },
+  { id: 'en3', userId: 1, courseId: 4, status: 'completed', progress: 100, enrolledAt: '2025-01-20', lastAccessed: '2025-03-10', completedLessons: ['l1', 'l2', 'l3'] },
+  { id: 'en4', userId: 2, courseId: 1, status: 'active', progress: 30, enrolledAt: '2025-03-01', lastAccessed: '2025-03-20', completedLessons: ['l1'] },
+  { id: 'en5', userId: 3, courseId: 3, status: 'active', progress: 15, enrolledAt: '2025-03-10', lastAccessed: '2025-03-22', completedLessons: [] },
+  { id: 'en6', userId: 4, courseId: 1, status: 'dropped', progress: 10, enrolledAt: '2025-02-05', lastAccessed: '2025-02-20', completedLessons: ['l1'] },
+  { id: 'en7', userId: 6, courseId: 1, status: 'active', progress: 85, enrolledAt: '2025-01-20', lastAccessed: '2025-03-25', completedLessons: ['l1', 'l2', 'l3', 'l4'] },
+  { id: 'en8', userId: 6, courseId: 4, status: 'completed', progress: 100, enrolledAt: '2025-01-20', lastAccessed: '2025-03-05', completedLessons: ['l1', 'l2', 'l3'] },
+  { id: 'en9', userId: 6, courseId: 6, status: 'active', progress: 50, enrolledAt: '2025-02-15', lastAccessed: '2025-03-24', completedLessons: ['l1', 'l2'] },
+];
+
 let enrollments = getStored();
 if (enrollments.length === 0) {
-  enrollments = [
-    { id: 'en1', userId: 1, courseId: 1, status: 'active', progress: 45, enrolledAt: '2025-02-01', lastAccessed: '2025-03-25', completedLessons: ['l1', 'l2'] },
-    { id: 'en2', userId: 1, courseId: 2, status: 'active', progress: 72, enrolledAt: '2025-01-15', lastAccessed: '2025-03-24', completedLessons: ['l1', 'l2', 'l3'] },
-    { id: 'en3', userId: 1, courseId: 4, status: 'completed', progress: 100, enrolledAt: '2025-01-20', lastAccessed: '2025-03-10', completedLessons: ['l1', 'l2', 'l3'] },
-    { id: 'en4', userId: 2, courseId: 1, status: 'active', progress: 30, enrolledAt: '2025-03-01', lastAccessed: '2025-03-20', completedLessons: ['l1'] },
-    { id: 'en5', userId: 3, courseId: 3, status: 'active', progress: 15, enrolledAt: '2025-03-10', lastAccessed: '2025-03-22', completedLessons: [] },
-    { id: 'en6', userId: 4, courseId: 1, status: 'dropped', progress: 10, enrolledAt: '2025-02-05', lastAccessed: '2025-02-20', completedLessons: ['l1'] },
-    { id: 'en7', userId: 6, courseId: 1, status: 'active', progress: 85, enrolledAt: '2025-01-20', lastAccessed: '2025-03-25', completedLessons: ['l1', 'l2', 'l3', 'l4'] },
-    { id: 'en8', userId: 6, courseId: 4, status: 'completed', progress: 100, enrolledAt: '2025-01-20', lastAccessed: '2025-03-05', completedLessons: ['l1', 'l2', 'l3'] },
-    { id: 'en9', userId: 6, courseId: 6, status: 'active', progress: 50, enrolledAt: '2025-02-15', lastAccessed: '2025-03-24', completedLessons: ['l1', 'l2'] },
-  ];
+  enrollments = [...SEED_DATA];
   store(enrollments);
 }
 

@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Segment, Icon, Breadcrumb, Divider, Button, Header, Message, Label } from 'semantic-ui-react';
+import { Icon } from 'semantic-ui-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
-import BlockEditor from './components/BlockEditor';
-import {
-  fetchBlocks, createBlock, updateBlock, deleteBlock as apiDeleteBlock,
-  reorderBlocks, saveAutosave, fetchAutosave, generateAIContent,
-  BLOCK_TYPE_LABELS, BLOCK_TYPE_ICONS,
-} from '@/app/services/blockService';
-import { fetchCourseById, fetchLessons, createLesson } from '@/app/services/courseService';
+import LessonPanel from './components/LessonPanel';
+import TipTapEditor from './components/TipTapEditor/TipTapEditor';
+import Toolbar from './components/TipTapEditor/Toolbar';
+import { saveAutosave, fetchAutosave } from '@/app/services/blockService';
+import { fetchCourseById, fetchLessons, createLesson, updateLesson } from '@/app/services/courseService';
 import './CourseBuilder.scss';
 
 const CourseBuilder = () => {
@@ -16,208 +14,204 @@ const CourseBuilder = () => {
   const { id } = useParams();
 
   const [course, setCourse] = useState(null);
+  const [lessons, setLessons] = useState([]);
+  const [selectedLesson, setSelectedLesson] = useState(null);
+  const [content, setContent] = useState('');
+  const [editorInstance, setEditorInstance] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [autosaving, setAutosaving] = useState(false);
+  const [autosaveStatus, setAutosaveStatus] = useState('');
+  const [addingLesson, setAddingLesson] = useState(false);
   const [error, setError] = useState(null);
-  const [successMsg, setSuccessMsg] = useState(null);
-  const [blocks, setBlocks] = useState([]);
-  const [lessonId, setLessonId] = useState(null);
 
   useEffect(() => { loadData(); }, [id]);
 
+  // ─── Load ────────────────────────────────────────────────
   const loadData = async () => {
     try {
       setLoading(true);
       setError(null);
       const courseData = await fetchCourseById(id);
       setCourse(courseData);
-
-      // Load lessons for thiscourse
-      const lessons = await fetchLessons(id);
-      if (lessons && lessons.length > 0) {
-        setLessonId(lessons[0].id);
-        // Load blocks for the first lesson
-        const blocksData = await fetchBlocks(lessons[0].id);
-        setBlocks(blocksData);
-
-        // Check for autosave
-        const autosave = await fetchAutosave(lessons[0].id);
-        if (autosave && autosave.snapshot) {
-          try {
-            const snapshot = JSON.parse(autosave.snapshot);
-            if (snapshot && snapshot.length > 0) {
-              // Merge snapshot with server blocks (prefer server blocks)
-              setBlocks(snapshot);
-            }
-          } catch {
-            // ignore parse error
-          }
-        }
+      const lessonList = await fetchLessons(id);
+      if (lessonList && lessonList.length > 0) {
+        setLessons(lessonList);
+        await loadLesson(lessonList[0]);
       } else {
-        // No lessons yet — create one
-        const newLesson = await createLesson(id, { title: 'Lesson 1', description: 'Auto-created lesson' });
-        setLessonId(newLesson.id);
-        setBlocks([]);
+        const newLesson = await createLesson(id, { title: 'Lesson 1', description: '' });
+        setLessons([newLesson]);
+        setSelectedLesson(newLesson);
+        setContent('');
       }
     } catch (err) {
-      setError(err.message || 'Failed to load course.')    } finally {
+      setError(err.message || 'Failed to load course.');
+    } finally {
       setLoading(false);
     }
   };
 
-  const showSuccess = (msg) => {
-    setSuccessMsg(msg);
-    setTimeout(() => setSuccessMsg(null), 3000);
+  const loadLesson = async (lesson) => {
+    setSelectedLesson(lesson);
+    setContent('');
+    try {
+      const autosave = await fetchAutosave(lesson.id);
+      if (autosave?.snapshot) {
+        const snap = JSON.parse(autosave.snapshot);
+        if (snap?.content && typeof snap.content === 'string') {
+          setContent(snap.content);
+          return;
+        }
+      }
+    } catch { /* ignore */ }
   };
 
-  // ─── Block Operations ─────────────────────────────────────
-
-  const handleBlocksChange = useCallback((newBlocks) => {
-    setBlocks(newBlocks);
-  }, []);
-
-  const handleSave = async (blocksToSave) => {
-    if (!lessonId) return;
+  // ─── Save ────────────────────────────────────────────────
+  const handleSave = async () => {
+    if (!selectedLesson) return;
     try {
       setSaving(true);
       setError(null);
-
-      // For each block, create or update on server
-      const savedBlocks = [];
-      for (let i = 0; i < blocksToSave.length; i++) {
-        const block = { ...blocksToSave[i], order: i, lessonId };
-        if (block.id && String(block.id).startsWith('temp_')) {
-          // New block — create on server
-          const created = await createBlock(lessonId, block);
-          savedBlocks.push(created);
-        } else {
-          // Existing block — update
-          const updated = await updateBlock(block.id, block);
-          savedBlocks.push(updated);
-        }
-      }
-      setBlocks(savedBlocks);
-      showSuccess(`${savedBlocks.length} blocks saved.`);
+      await saveAutosave(selectedLesson.id, JSON.stringify({ content }));
+      setAutosaveStatus('saved');
+      setTimeout(() => setAutosaveStatus(''), 2500);
     } catch (err) {
-      setError(err.message || 'Failed to save blocks.');
+      setError(err.message || 'Failed to save.');
     } finally {
       setSaving(false);
     }
   };
 
-  const handleAutosave = async (autosaveBlocks) => {
-    if (!lessonId) return;
+  const handleAutosave = useCallback(async (html) => {
+    if (!selectedLesson) return;
     try {
-      setAutosaving(true);
-      const snapshot = JSON.stringify(autosaveBlocks);
-      await saveAutosave(lessonId, snapshot);
+      setAutosaveStatus('saving');
+      await saveAutosave(selectedLesson.id, JSON.stringify({ content: html }));
+      setAutosaveStatus('saved');
+      setTimeout(() => setAutosaveStatus(''), 2000);
+    } catch { setAutosaveStatus(''); }
+  }, [selectedLesson]);
+
+  const handleContentChange = useCallback((html) => {
+    setContent(html);
+    handleAutosave(html);
+  }, [handleAutosave]);
+
+  // Ctrl/Cmd+S
+  useEffect(() => {
+    const handler = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); handleSave(); }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [content, selectedLesson]);
+
+  // ─── Lesson ops ──────────────────────────────────────────
+  const handleSelectLesson = useCallback(async (lessonId) => {
+    if (lessonId === selectedLesson?.id) return;
+    setEditorInstance(null);
+    const lesson = lessons.find((l) => l.id === lessonId);
+    if (lesson) await loadLesson(lesson);
+  }, [selectedLesson, lessons]);
+
+  const handleRenameLesson = async (lessonId, newTitle) => {
+    try {
+      await updateLesson(id, lessonId, { title: newTitle });
+      setLessons(lessons.map((l) => l.id === lessonId ? { ...l, title: newTitle } : l));
+      if (selectedLesson?.id === lessonId) setSelectedLesson((l) => ({ ...l, title: newTitle }));
     } catch (err) {
-      // Non-fatal: autosave failures shouldn't disrupt UX
-      console.error('Autosave failed:', err);
+      setError(err.message || 'Failed to rename lesson.');
+    }
+  };
+
+  const handleAddLesson = async () => {
+    try {
+      setAddingLesson(true);
+      const newLesson = await createLesson(id, { title: `Lesson ${lessons.length + 1}`, description: '' });
+      setLessons([...lessons, newLesson]);
+      setEditorInstance(null);
+      await loadLesson(newLesson);
+    } catch (err) {
+      setError(err.message || 'Failed to add lesson.');
     } finally {
-      setAutosaving(false);
+      setAddingLesson(false);
     }
   };
 
-  const handleAIGenerate = async (block, action, prompt) => {
-    if (!lessonId) return null;
-    try {
-      setError(null);
-      const context = block.content || '';
-      const result = await generateAIContent(
-        lessonId,
-        block.type,
-        prompt || `Generate ${action} for this ${block.type} block`,
-        context
-      );
-      showSuccess('AI content generated.');
-      return result;
-    } catch (err) {
-      setError(err.message || 'AI generation failed.');
-      return null;
-    }
-  };
+  const handleEditorReady = useCallback((editor) => {
+    setEditorInstance(editor);
+  }, []);
 
+  // ─── Render ───────────────────────────────────────────────
   if (loading) {
     return (
-      <div className='dashboard-layout'>
+      <div className="dashboard-layout">
         <SideBar />
-        <div className='dashboard-main'>
-          <Segment loading style={{ marginTop: 40 }}>
-            <Header as='h2'>Loading block editor...</Header>
-          </Segment>
+        <div className="cb-page">
+          <div className="cb-loading"><Icon name="circle notch" loading size="big" /> Loading editor…</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className='dashboard-layout'>
+    <div className="dashboard-layout">
       <SideBar />
-
-      <div className='dashboard-main'>
-        {/* Header */}
-        <div className='dashboard-header'>
-          <div className='header-left'>
-            <h1 className='page-title'>Block Editor</h1>
-            <p className='page-subtitle'>{course?.title}</p>
+      <div className="cb-page">
+        <div className="cb-topbar">
+          <div className="cb-topbar-left">
+            <span className="cb-breadcrumb">
+              <button className="cb-breadcrumb-link" onClick={() => navigate('/courses')}>Courses</button>
+              <span className="cb-breadcrumb-sep">/</span>
+              <button className="cb-breadcrumb-link" onClick={() => navigate(`/courses/${id}`)}>{course?.title}</button>
+              <span className="cb-breadcrumb-sep">/</span>
+              <span className="cb-breadcrumb-current">{selectedLesson?.title || 'Untitled'}</span>
+            </span>
           </div>
-          <div className='header-right'>
-            <Button onClick={() => navigate(`/courses/${id}`)}>
-              <Icon name='eye' /> Preview
-            </Button>
-            <Button primary onClick={() => handleSave(blocks)} loading={saving}>
-              <Icon name='save' /> Save All
-            </Button>
+
+          <div className="cb-topbar-center">
+            <Toolbar editor={editorInstance} />
+          </div>
+
+          <div className="cb-topbar-right">
+            {autosaveStatus === 'saving' && <span className="cb-autosave">Saving…</span>}
+            {autosaveStatus === 'saved'  && <span className="cb-autosave cb-autosave--saved">✓ Saved</span>}
+            <button className="cb-btn-preview" onClick={() => navigate(`/courses/${id}`)}>
+              <Icon name="eye" />Preview
+            </button>
+            <button className="cb-btn-save" onClick={handleSave} disabled={saving}>
+              {saving ? <Icon name="circle notch" loading /> : <Icon name="save" />}Save
+            </button>
           </div>
         </div>
 
-        <div className='dashboard-content'>
-          <Breadcrumb>
-            <Breadcrumb.Section link onClick={() => navigate('/courses')}>Courses</Breadcrumb.Section>
-            <Breadcrumb.Divider />
-            <Breadcrumb.Section link onClick={() => navigate(`/courses/${id}`)}>{course?.title}</Breadcrumb.Section>
-            <Breadcrumb.Divider />
-            <Breadcrumb.Section active>Block Editor</Breadcrumb.Section>
-          </Breadcrumb>
-          <Divider hidden />
-
-          {/* Block Info Bar */}
-          <div className='block-editor-info-bar'>
-            <div className='block-editor-stats'>
-              <Label size='small'>
-                <Icon name='cubes' /> {blocks.length} block{blocks.length !== 1 ? 's' : ''}
-              </Label>
-              {blocks.length > 0 && (
-                <Label size='small' color='grey'>
-                  Types: {[...new Set(blocks.map(b => b.type))].map(t => BLOCK_TYPE_LABELS[t] || t).join(', ')}
-                </Label>
-              )}
-            </div>
-            <div className='block-editor-hint'>
-              <Icon name='info circle' style={{ color: '#aaa' }} />
-              <span style={{ fontSize: 12, color: '#aaa' }}>
-                Type <kbd>/</kbd> at the start of a text block to use slash commands. Drag blocks to reorder.
-              </span>
-            </div>
+        {error && (
+          <div className="cb-error-bar">
+            <Icon name="warning circle" />{error}
+            <button onClick={() => setError(null)}>×</button>
           </div>
+        )}
 
-          <Divider hidden />
+        <div className="cb-editor-layout">
+          <LessonPanel
+            lessons={lessons}
+            selectedLessonId={selectedLesson?.id}
+            onSelectLesson={handleSelectLesson}
+            onAddLesson={handleAddLesson}
+            onRenameLesson={handleRenameLesson}
+            adding={addingLesson}
+          />
 
-          {/* Block Editor */}
-          <div className='block-editor-wrapper'>
-            <BlockEditor
-              blocks={blocks}
-              onBlocksChange={handleBlocksChange}
-              onSave={handleSave}
-              onAutosave={handleAutosave}
-              onAIGenerate={handleAIGenerate}
-              saving={saving}
-              autosaving={autosaving}
-              error={error}
-              successMsg={successMsg}
-            />
+          <div className="cb-editor-area">
+            <div className="cb-document">
+              <TipTapEditor
+                key={selectedLesson?.id}
+                content={content}
+                onChange={handleContentChange}
+                onEditorReady={handleEditorReady}
+                lessonId={selectedLesson?.id}
+                fullPage
+              />
+            </div>
           </div>
         </div>
       </div>

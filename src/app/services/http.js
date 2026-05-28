@@ -87,6 +87,30 @@ export const apiDelete = (path) => request(path, { method: 'DELETE' });
 export const apiPatch = (path, data) =>
   request(path, { method: 'PATCH', body: JSON.stringify(data) });
 
+// Multipart file upload — does NOT set Content-Type so the browser adds the boundary
+export const apiUpload = async (path, formData) => {
+  const token = localStorage.getItem('auth_token');
+  const headers = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const response = await fetch(`${API_BASE}${path}`, {
+    method: 'POST',
+    body: formData,
+    headers,
+  });
+  const body = await response.json().catch(() => ({ message: 'Server error' }));
+  if (response.status === 401 || response.status === 403) {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user');
+    if (onAuthError) onAuthError(body.message, response.status);
+  }
+  if (!response.ok) {
+    throw new ApiError(body.message || 'Request failed', response.status, body.data);
+  }
+  return body.data;
+};
+
 // Expose request for custom calls
 export { request, API_BASE, ApiError };
 

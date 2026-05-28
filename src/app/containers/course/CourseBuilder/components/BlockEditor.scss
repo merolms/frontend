@@ -1,417 +1,502 @@
 @use "@/styles/index.scss" as *;
 
-// ─── Block Editor Container ─────────────────────────────────
-.block-editor {
+// ─── Editor shell ─────────────────────────────────────────────
+.nb-editor {
+  padding: 8px 0 48px;
+}
+
+// ─── Block row ────────────────────────────────────────────────
+.nb-row {
+  display: flex;
+  align-items: flex-start;
   position: relative;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-// ─── Status Indicators ───────────────────────────────────────
-.autosave-indicator {
-  text-align: right;
-  font-size: 12px;
-  color: #aaa;
-  padding: 4px 0;
-}
-
-// ─── Empty State ─────────────────────────────────────────────
-.block-editor-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  color: #aaa;
-  text-align: center;
-  border: 2px dashed #ddd;
-  border-radius: 12px;
-  margin-bottom: 16px;
-
-  .ui.icon {
-    margin-bottom: 12px;
-  }
-
-  p {
-    margin: 0 0 16px;
-    font-size: 14px;
-  }
-}
-
-// ─── Block List ──────────────────────────────────────────────
-.block-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-// ─── Individual Block ───────────────────────────────────────
-.block-item {
-  background: #fff;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-  position: relative;
-
-  &:hover {
-    border-color: #c8d6e5;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  }
-
-  &.selected {
-    border-color: $primary-color;
-    box-shadow: 0 2px 12px rgba($primary-color, 0.15);
-  }
-
-  // Drag states
-  &[draggable='true'] {
-    cursor: grab;
-
-    &:active {
-      cursor: grabbing;
-    }
-  }
-}
-
-.drag-over {
-  border-top: 3px solid $primary-color;
-}
-
-// ─── Block Toolbar ──────────────────────────────────────────
-.block-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 10px;
-  background: #fafbfc;
-  border-bottom: 1px solid #eee;
+  padding: 2px 8px 2px 0;
+  border-radius: 4px;
+  transition: background 0.1s ease;
   min-height: 36px;
+
+  &--hover {
+    background: #f9fafb;
+  }
 }
 
-.block-toolbar-left {
+// ─── Left gutter ─────────────────────────────────────────────
+.nb-gutter {
   display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.block-toolbar-right {
-  display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 2px;
+  width: 52px;
+  flex-shrink: 0;
+  padding-top: 6px;
   opacity: 0;
   transition: opacity 0.15s ease;
 
-  .button {
-    padding: 4px !important;
-    margin: 0 !important;
-
-    .icon {
-      margin: 0 !important;
-      font-size: 12px !important;
-    }
+  .nb-row--hover & {
+    opacity: 1;
   }
 }
 
-.block-item.selected .block-toolbar-right,
-.block-item:hover .block-toolbar-right {
-  opacity: 1;
-}
-
-.block-drag-handle {
-  cursor: grab;
-  color: #ccc;
-  padding: 2px 4px;
-  border-radius: 4px;
+.nb-gutter-btn {
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+  transition: background 0.1s, color 0.1s;
 
   &:hover {
-    color: #999;
-    background: #eee;
+    background: #e8e8e8;
+    color: #555;
   }
 }
 
-// ─── Block Content ──────────────────────────────────────────
-.block-content {
-  padding: 16px;
+.nb-drag-handle {
+  cursor: grab;
+  font-size: 16px;
+  letter-spacing: -1px;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
 }
 
-.block-heading-input {
+// ─── Block content ───────────────────────────────────────────
+.nb-content {
+  flex: 1;
+  min-width: 0;
+  padding: 2px 0;
+}
+
+// ─── Delete button ───────────────────────────────────────────
+.nb-delete-btn {
+  opacity: 0;
+  flex-shrink: 0;
+  margin-top: 6px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0;
+  font-size: 12px;
+  transition: opacity 0.15s, color 0.1s;
+
+  .nb-row--hover & {
+    opacity: 1;
+  }
+
+  &:hover {
+    color: #e03131;
+    background: #fff0f0;
+  }
+
+  .icon { margin: 0 !important; font-size: 11px !important; }
+}
+
+// ─── Text textarea (plain, auto-grow) ────────────────────────
+.nb-textarea {
   width: 100%;
   border: none;
-  font-size: 1.5em;
-  font-weight: 600;
-  padding: 8px 0;
   outline: none;
   background: transparent;
-
-  &:focus {
-    border-bottom: 2px solid $primary-color;
-  }
+  resize: none;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #1a1a1a;
+  font-family: inherit;
+  padding: 4px 0;
+  overflow: hidden;
 
   &::placeholder {
-    color: #ccc;
+    color: #c0c0c0;
   }
 }
 
-// ─── Slash Command Menu ─────────────────────────────────────
-.block-text-wrapper {
+.nb-h1 { font-size: 2em; font-weight: 700; }
+.nb-h2 { font-size: 1.5em; font-weight: 600; }
+.nb-h3 { font-size: 1.2em; font-weight: 600; }
+
+// ─── TipTap text block ───────────────────────────────────────
+.nb-text-wrap {
   position: relative;
+
+  .lh-editor {
+    border: none;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .lh-toolbar {
+    display: none; // toolbar is in top bar; don't show inside each block
+  }
+
+  .lh-editor-content .tiptap {
+    min-height: 28px;
+    padding: 4px 0;
+    font-size: 15px;
+  }
 }
 
-.slash-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: 100;
-  background: #fff;
-  border: 1px solid #e8e8e8;
+// ─── Code block ──────────────────────────────────────────────
+.nb-code-block {
+  background: #1e1e1e;
   border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-  width: 320px;
-  max-height: 300px;
-  overflow-y: auto;
-  margin-top: 4px;
-}
-
-.slash-menu-header {
-  padding: 8px;
-  border-bottom: 1px solid #eee;
-}
-
-.slash-menu-items {
-  padding: 4px;
-}
-
-.slash-menu-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.1s ease;
-
-  &:hover {
-    background: #f0f4f8;
-  }
-
-  .icon {
-    font-size: 18px;
-    color: #666;
-    width: 24px;
-    text-align: center;
-  }
-}
-
-.slash-menu-item-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.slash-menu-item-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: #333;
-}
-
-.slash-menu-item-desc {
-  font-size: 11px;
-  color: #999;
-}
-
-// ─── AI Action Menu ─────────────────────────────────────────
-.ai-action-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 8px;
-  min-width: 180px;
-}
-
-// ─── Code Block ─────────────────────────────────────────────
-.block-code-editor {
-  background: #f8f9fa;
-  border-radius: 6px;
   overflow: hidden;
+  margin: 4px 0;
 }
 
-.block-code-header {
-  padding: 8px;
-  border-bottom: 1px solid #eee;
+.nb-code-lang {
+  padding: 6px 12px;
+  border-bottom: 1px solid #333;
+
+  .ui.input input {
+    background: transparent !important;
+    border: none !important;
+    color: #aaa !important;
+    font-size: 12px !important;
+    padding: 0 !important;
+  }
 }
 
-.block-code-lang {
-  max-width: 160px;
-}
-
-.block-code-textarea {
+.nb-code-textarea {
   width: 100%;
-  border: none !important;
-  background: #1e1e1e !important;
+  background: transparent;
+  border: none;
   color: #d4d4d4;
-  font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', monospace !important;
+  font-family: 'Fira Code', 'Cascadia Code', monospace;
   font-size: 13px;
   line-height: 1.6;
-  padding: 16px !important;
+  padding: 14px 16px;
   resize: vertical;
-  border-radius: 0 0 6px 6px !important;
-
-  &:focus {
-    outline: none;
-    box-shadow: inset 0 0 0 2px rgba($primary-color, 0.3);
-  }
+  outline: none;
 }
 
-// ─── Media Blocks ───────────────────────────────────────────
-.block-media-editor {
-  text-align: center;
+// ─── Media blocks ────────────────────────────────────────────
+.nb-media-block {
+  margin: 4px 0;
 }
 
-.block-media-upload {
-  padding: 24px;
-  background: #fafbfc;
+.nb-media-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 24px 16px;
   border: 2px dashed #ddd;
   border-radius: 8px;
+  cursor: pointer;
   color: #aaa;
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s;
 
-  .ui.icon {
-    margin-bottom: 8px;
+  &:hover {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.03);
+    color: #666;
   }
 
-  p {
-    margin: 0 0 12px;
-    font-size: 13px;
-  }
+  .icon { font-size: 24px !important; margin: 0 !important; }
+  span  { font-size: 13px; }
 }
 
-.block-image-preview,
-.block-video-preview,
-.block-audio-preview {
+.nb-media-hint {
+  font-size: 11px;
+  color: #bbb;
+}
+
+.nb-media-preview {
   position: relative;
   display: inline-block;
   max-width: 100%;
 
+  &--video { display: block; }
+
   img {
     max-width: 100%;
     border-radius: 6px;
-  }
-
-  .button {
-    position: absolute;
-    top: 8px;
-    right: 8px;
+    display: block;
   }
 }
 
-// ─── Quiz Block ─────────────────────────────────────────────
-.block-quiz-editor {
-  padding: 24px;
-  background: #fafbfc;
-  border: 2px dashed #ddd;
+.nb-media-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0,0,0,0.5);
+  border: none;
+  color: #fff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+
+  .icon { margin: 0 !important; font-size: 11px !important; }
+}
+
+.nb-attachment-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  color: #333;
+  text-decoration: none;
+  font-size: 13px;
+
+  &:hover { background: #eee; }
+}
+
+// ─── Embed block ─────────────────────────────────────────────
+.nb-embed-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nb-embed-preview {
   border-radius: 8px;
-  color: #aaa;
+  overflow: hidden;
+  background: #f8f9fa;
 
-  .ui.icon {
-    margin-bottom: 8px;
-  }
-
-  p {
-    margin: 0 0 4px;
-    font-size: 13px;
+  iframe {
+    width: 100%;
+    height: 240px;
+    display: block;
+    border: none;
   }
 }
 
-// ─── Attachment Block ───────────────────────────────────────
-.block-attachment-editor {
-  padding: 24px;
-  background: #fafbfc;
-  border: 2px dashed #ddd;
+// ─── Quiz ────────────────────────────────────────────────────
+.nb-quiz {
+  background: #f8f9fa;
+  border: 1px solid #eee;
   border-radius: 8px;
-  color: #aaa;
-  text-align: center;
-
-  .ui.icon {
-    margin-bottom: 8px;
-  }
-
-  p {
-    margin: 0 0 12px;
-  }
+  padding: 12px;
+  margin: 4px 0;
 }
 
-// ─── AI Summary Block ───────────────────────────────────────
-.block-ai-summary {
-  position: relative;
+.nb-quiz-empty {
+  font-size: 13px;
+  color: #bbb;
+  margin: 0 0 8px;
 }
 
-.block-ai-summary-header {
+.nb-quiz-q {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.nb-quiz-q-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  background: linear-gradient(135deg, #f3e8ff 0%, #ede9fe 100%);
-  border-radius: 6px 6px 0 0;
+  margin-bottom: 8px;
+}
+
+.nb-quiz-q-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: #999;
+  flex-shrink: 0;
+}
+
+.nb-quiz-q-input {
+  flex: 1;
+  border: none;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+  padding: 4px 0;
+  outline: none;
+  background: transparent;
+
+  &:focus { border-bottom-color: $primary-color; }
+}
+
+.nb-quiz-del {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+
+  &:hover { color: #e03131; }
+}
+
+.nb-quiz-opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0 3px 16px;
+}
+
+.nb-quiz-opt-input {
+  flex: 1;
+  border: none;
+  border-bottom: 1px solid #eee;
+  font-size: 12px;
+  padding: 2px 0;
+  outline: none;
+  background: transparent;
+
+  &:focus { border-bottom-color: $primary-color; }
+}
+
+.nb-quiz-add-btn {
+  background: none;
+  border: 1px dashed #ddd;
+  border-radius: 6px;
+  color: #888;
+  font-size: 12px;
+  padding: 6px 12px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 4px;
+  transition: all 0.15s;
+
+  &:hover {
+    border-color: $primary-color;
+    color: $primary-color;
+    background: rgba($primary-color, 0.03);
+  }
+}
+
+// ─── Slash command menu ──────────────────────────────────────
+.nb-slash-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 200;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 4px;
+  min-width: 240px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.nb-slash-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+
+  &:hover,
+  &.is-selected {
+    background: #f0f4f8;
+  }
+}
+
+.nb-slash-icon {
+  font-size: 14px;
+  font-weight: 700;
+  color: #666;
+  min-width: 28px;
+  text-align: center;
+  font-family: monospace;
+  flex-shrink: 0;
+}
+
+.nb-slash-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.nb-slash-label {
   font-size: 13px;
   font-weight: 500;
-  color: #7c3aed;
+  color: #222;
 }
 
-// ─── Embed Block ────────────────────────────────────────────
-.block-embed-editor {
-  .block-embed-preview {
-    margin-top: 12px;
-    border-radius: 8px;
-    overflow: hidden;
-    background: #f8f9fa;
-  }
+.nb-slash-desc {
+  font-size: 11px;
+  color: #999;
 }
 
-// ─── Add Block Buttons ──────────────────────────────────────
-.block-add-after {
+// ─── Drag overlay ─────────────────────────────────────────────
+.nb-drag-overlay {
+  background: #fff;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  padding: 10px 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   display: flex;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-  padding: 4px 0;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  opacity: 0.95;
+  max-width: 480px;
 }
 
-.block-item:hover + div .block-add-after,
-.block-add-after:hover {
-  opacity: 1;
+.nb-drag-overlay-type {
+  background: #f0f0f0;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  flex-shrink: 0;
 }
 
-.block-add-bottom {
+.nb-drag-overlay-content {
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ─── Add block at end ─────────────────────────────────────────
+.nb-add-end {
   display: flex;
-  justify-content: center;
-  padding: 16px 0;
-}
+  align-items: center;
+  gap: 6px;
+  margin-left: 52px;
+  margin-top: 8px;
+  background: none;
+  border: none;
+  color: #bbb;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: color 0.15s;
 
-.block-editor-actions {
-  display: flex;
-  justify-content: flex-end;
-  padding: 16px 0;
-  border-top: 1px solid #eee;
-  margin-top: 16px;
-}
-
-// ─── Responsive ─────────────────────────────────────────────
-@media (max-width: 768px) {
-  .block-editor {
-    max-width  : 100%;
-    padding: 0 8px;
+  &:hover {
+    color: #888;
   }
 
-  .slash-menu {
-    width: 100%;
-    left: 0;
-    right: 0;
-  }
-
-  .block-toolbar {
-    flex-wrap: wrap;
-    gap: 4px;
-  }
+  .icon { margin: 0 !important; font-size: 14px !important; }
 }

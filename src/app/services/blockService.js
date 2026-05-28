@@ -2,7 +2,7 @@
 // Handles all API calls for the block-based lesson content system.
 // Replaces the old lesson.contents[] pattern with lesson.blocks[].
 
-import { apiGet, apiPost, apiPut, apiDelete } from '@/app/services/http';
+import { apiGet, apiPost, apiPut, apiDelete, apiUpload, API_BASE } from '@/app/services/http';
 
 // ==================== BLOCK TYPE CONSTANTS ====================
 
@@ -252,6 +252,22 @@ export const generateAIContent = async (lessonId, blockType, prompt, context = '
     console.error('Error generating AI content:', error);
     throw error;
   }
+};
+
+// ==================== MEDIA UPLOAD ====================
+
+/**
+ * Upload a media file for a block.
+ * Returns the full URL to the uploaded file.
+ * blockId may be 0 for blocks not yet saved to the server.
+ */
+export const uploadBlockMedia = async (lessonId, blockId, file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const safeBlockId = String(blockId).startsWith('temp_') ? 0 : blockId;
+  const data = await apiUpload(`/lessons/${lessonId}/blocks/${safeBlockId}/media`, formData);
+  const serverBase = API_BASE.replace(/\/api$/, '');
+  return data?.url ? `${serverBase}${data.url}` : '';
 };
 
 // ==================== MOCK DATA (fallback for dev) ====================
