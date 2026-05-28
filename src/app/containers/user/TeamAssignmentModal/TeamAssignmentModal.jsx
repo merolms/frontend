@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Avatar, Group, Text, Stack, Badge, Loader } from '@mantine/core';
-import { IconUsers, IconCheck, IconPlus } from '@tabler/icons-react';
+import { Check, Plus, Users } from 'lucide-react';
 import { fetchTeams } from '@/app/services/teamService';
 
 const TeamAssignmentModal = ({ open, onClose, user, onUpdated }) => {
@@ -27,10 +27,10 @@ const TeamAssignmentModal = ({ open, onClose, user, onUpdated }) => {
           {teams.map((team) => (
             <div key={team.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', border: '1px solid #e8e8e8', borderRadius: 8, cursor: 'pointer' }} onClick={() => setError('Team assignment is not yet supported by the backend.')}>
               <Group gap={8}>
-                <IconUsers size={16} color={isAssigned(team.name) ? 'green' : 'gray'} />
+                <Users size={16} color={isAssigned(team.name) ? 'green' : 'gray'} />
                 <Text size="sm" fw={500}>{team.name}</Text>
               </Group>
-              {isAssigned(team.name) ? <Badge color="green" size="xs" leftSection={<IconCheck size={10} />}>Assigned</Badge> : <Badge color="gray" size="xs" leftSection={<IconPlus size={10} />}>Assign</Badge>}
+              {isAssigned(team.name) ? <Badge color="green" size="xs" leftSection={<Check size={10} />}>Assigned</Badge> : <Badge color="gray" size="xs" leftSection={<Plus size={10} />}>Assign</Badge>}
             </div>
           ))}
         </Stack>

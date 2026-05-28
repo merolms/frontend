@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput, Textarea, Select, Button, Stack, ColorInput, Group, Text, SimpleGrid, ActionIcon } from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
+import { AlertCircle } from 'lucide-react';
 
 const TEAM_COLORS = ['#1976d2', '#7b1fa2', '#e65100', '#33a163', '#c62828', '#00838f', '#f57f17', '#4a148c', '#2185d0', '#d32f2f', '#388e3c', '#f57c00'];
 
@@ -21,7 +21,7 @@ const TeamForm = ({ initialData = null, onSubmit, onCancel, loading = false, sub
   return (
     <form onSubmit={handleSubmit}>
       <Stack>
-        {Object.keys(errors).length > 0 && <Text c="red" size="sm"><IconAlertCircle size={14} /> Please fix the errors below.</Text>}
+        {Object.keys(errors).length > 0 && <Text c="red" size="sm"><AlertCircle size={14} /> Please fix the errors below.</Text>}
         <TextInput label="Team Name" name="name" placeholder="Engineering Team" value={formData.name} onChange={(e) => handleChange('name', e.target.value)} error={errors.name} />
         <Textarea label="Description" name="description" placeholder="What is this team about?" minRows={3} value={formData.description} onChange={(e) => handleChange('description', e.target.value)} />
 

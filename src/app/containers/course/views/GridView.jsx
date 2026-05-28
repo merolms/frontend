@@ -1,6 +1,6 @@
 import React from 'react';
 import { Paper, Text, Group, Badge, SimpleGrid, Skeleton } from '@mantine/core';
-import { IconBook, IconUser, IconList, IconClock, IconStar } from '@tabler/icons-react';
+import { BookOpen, Clock, List, Star, User } from 'lucide-react';
 import { getStatusLabel, getCategoryColor } from './viewHelpers';
 
 const GridView = ({ courses, navigate, loading }) => {
@@ -28,19 +28,19 @@ const GridView = ({ courses, navigate, loading }) => {
             {course.coverImage ? (
               <img src={course.coverImage} alt={course.title} className='course-card-image' />
             ) : (
-              <div className='course-card-image course-card-no-image'><IconBook size={48} color="#999" /></div>
+              <div className='course-card-image course-card-no-image'><BookOpen size={48} color="#999" /></div>
             )}
             <div className='course-card-body'>
               <div className='course-card-meta-row'>
                 <Badge size="sm" variant="light" color={getCategoryColor(course.category)}>{course.category}</Badge>
-                <Text size="xs" c="dimmed"><IconUser size={12} /> {course.author}</Text>
+                <Text size="xs" c="dimmed"><User size={12} /> {course.author}</Text>
               </div>
               <Text className='course-card-title' fw={600} size="sm" lineClamp={2}>{course.title}</Text>
               <Text size="xs" c="dimmed" lineClamp={2} mt={4}>{course.description}</Text>
               <Group gap={8} mt={8}>
-                <Text size="xs" c="dimmed"><IconList size={12} /> {course.totalLessons} Lessons</Text>
-                <Text size="xs" c="dimmed"><IconUser size={12} /> {course.enrolledUsers}</Text>
-                <Text size="xs" c="dimmed"><IconClock size={12} /> {course.duration}</Text>
+                <Text size="xs" c="dimmed"><List size={12} /> {course.totalLessons} Lessons</Text>
+                <Text size="xs" c="dimmed"><User size={12} /> {course.enrolledUsers}</Text>
+                <Text size="xs" c="dimmed"><Clock size={12} /> {course.duration}</Text>
               </Group>
               {course.tags?.length > 0 && (
                 <Group gap={4} mt={6}>

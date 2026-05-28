@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, TextInput, Textarea, Button, Stack, Group, Paper } from '@mantine/core';
-import { IconDeviceFloppy, IconX } from '@tabler/icons-react';
+import { Save, X } from 'lucide-react';
 
 const LessonForm = ({ open, onClose, onSubmit, initialData = null, loading = false }) => {
   const [formData, setFormData] = useState({ title: '', description: '', duration: '', content: '' });
@@ -41,8 +41,8 @@ const LessonForm = ({ open, onClose, onSubmit, initialData = null, loading = fal
         <Textarea label="Content" placeholder="Lesson content or notes" minRows={5} value={formData.content} onChange={(e) => handleChange('content', e.target.value)} />
       </Stack>
       <Group justify="flex-end" mt="md">
-        <Button variant="default" onClick={onClose} disabled={loading} leftSection={<IconX size={14} />}>Cancel</Button>
-        <Button onClick={handleSubmit} loading={loading} leftSection={<IconDeviceFloppy size={14} />}>{isEditing ? 'Save Changes' : 'Create Lesson'}</Button>
+        <Button variant="default" onClick={onClose} disabled={loading} leftSection={<X size={14} />}>Cancel</Button>
+        <Button onClick={handleSubmit} loading={loading} leftSection={<Save size={14} />}>{isEditing ? 'Save Changes' : 'Create Lesson'}</Button>
       </Group>
     </Modal>
   );

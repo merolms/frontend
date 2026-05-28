@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Paper, Breadcrumbs, Anchor, Button, TextInput, Textarea, Group, Title, Text, Stack, ColorInput, Center } from '@mantine/core';
-import { IconUsers, IconPlus } from '@tabler/icons-react';
+import { Plus, Users } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { createTeam } from '@/app/services/teamService';
 import { useToast } from '@/app/context/ToastContext';
@@ -31,7 +31,7 @@ const TeamCreate = () => {
         <Breadcrumbs mb="md" className="breadcrumb"><Anchor onClick={() => navigate('/teams')}>Teams</Anchor><span>Create Team</span></Breadcrumbs>
 
         <Paper className='team-form-segment' p="lg" radius="md" withBorder>
-          <Title order={3} mb={4}><IconUsers size={20} color="#33a163" /> Create New Team</Title>
+          <Title order={3} mb={4}><Users size={20} color="#33a163" /> Create New Team</Title>
           <Text c="dimmed" size="sm" mb="md">Set up a new team and start assigning members.</Text>
 
           {error && <Text c="red" size="sm" mb="sm" className="team-form-error">Team name is required.</Text>}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Avatar, Group, Text, Stack, Badge, ActionIcon, Loader, Alert } from '@mantine/core';
-import { IconUsers, IconPlus, IconMinus, IconAlertCircle, IconCheck } from '@tabler/icons-react';
+import { AlertCircle, Check, Minus, Plus, Users } from 'lucide-react';
 import { fetchTeamMembers, fetchUsers, addMemberToTeam, removeMemberFromTeam } from '@/app/services/teamService';
 import { useToast } from '@/app/context/ToastContext';
 
@@ -53,9 +53,9 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
 
   return (
     <Modal opened={open} onClose={busyIds.size === 0 ? onClose : undefined} title={`Manage Members — ${team.name}`} size="lg" className="ui modal">
-      {error && <Alert icon={<IconAlertCircle size={16} />} color="red" mb="md" size="sm">{error}</Alert>}
+      {error && <Alert icon={<AlertCircle size={16} />} color="red" mb="md" size="sm">{error}</Alert>}
 
-      <Text fw={600} mb={8}><IconCheck size={14} color="green" /> Current Members ({members.length})</Text>
+      <Text fw={600} mb={8}><Check size={14} color="green" /> Current Members ({members.length})</Text>
       {loading ? <Loader size="sm" /> : members.length === 0 ? <Text c="dimmed" size="sm">No members assigned yet.</Text> : (
         <Stack gap={4} mb="md">
           {members.map((member) => {
@@ -68,7 +68,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
                   <Avatar src={member.avatar || 'https://i.pravatar.cc/150?img=1'} size={32} radius="xl" />
                   <div><Text size="sm" fw={600}>{userName}</Text><Badge color={getRoleColor(member.role)} size="xs">{member.role || 'N/A'}</Badge></div>
                 </Group>
-                <ActionIcon size="sm" color="red" onClick={() => handleRemoveMember(member)} disabled={isBusy} loading={isBusy}><IconMinus size={14} /></ActionIcon>
+                <ActionIcon size="sm" color="red" onClick={() => handleRemoveMember(member)} disabled={isBusy} loading={isBusy}><Minus size={14} /></ActionIcon>
               </div>
             );
           })}
@@ -77,7 +77,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
 
       <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #e8e8e8' }} />
 
-      <Text fw={600} mb={8}><IconPlus size={14} color="#2185d0" /> Available Users ({availableUsers.length})</Text>
+      <Text fw={600} mb={8}><Plus size={14} color="#2185d0" /> Available Users ({availableUsers.length})</Text>
       {availableUsers.length === 0 ? <Text c="dimmed" size="sm">All users are already assigned or no users found.</Text> : (
         <Stack gap={4}>
           {availableUsers.map((user) => {
@@ -90,7 +90,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
                 </Group>
                 <Group gap={8}>
                   <Badge color={getRoleColor(user.role)} size="xs">{user.role}</Badge>
-                  <ActionIcon size="sm" color="green" onClick={() => handleAddMember(user)} disabled={isBusy} loading={isBusy}><IconPlus size={14} /></ActionIcon>
+                  <ActionIcon size="sm" color="green" onClick={() => handleAddMember(user)} disabled={isBusy} loading={isBusy}><Plus size={14} /></ActionIcon>
                 </Group>
               </div>
             );

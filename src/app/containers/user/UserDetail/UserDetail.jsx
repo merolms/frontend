@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Paper, Breadcrumbs, Anchor, Button, Avatar, Group, Text, Stack, Badge, Alert, Loader } from '@mantine/core';
-import { IconPencil, IconTrash, IconAlertCircle, IconMail, IconPhone, IconCalendar } from '@tabler/icons-react';
+import { AlertCircle, Calendar, Mail, Pencil, Phone, Trash2 } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { fetchUserById, deleteUser } from '@/app/services/userService';
@@ -26,7 +26,7 @@ const UserDetail = () => {
   const handleDelete = async () => { if (!deleteTarget) return; try { setActionLoading(true); await deleteUser(deleteTarget.id); addToast(`${deleteTarget.firstName} ${deleteTarget.lastName} deleted`, 'error'); navigate('/users'); } catch (err) { console.error(err); } finally { setActionLoading(false); } };
 
   if (loading) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" mt={40}><Loader /><Text>Loading...</Text></Paper></div></div>);
-  if (error || !user) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" mt={40}><Alert icon={<IconAlertCircle size={16} />} color="red">{error || 'User not found'}</Alert><Button mt="md" onClick={() => navigate('/users')}>Back to Users</Button></Paper></div></div>);
+  if (error || !user) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" mt={40}><Alert icon={<AlertCircle size={16} />} color="red">{error || 'User not found'}</Alert><Button mt="md" onClick={() => navigate('/users')}>Back to Users</Button></Paper></div></div>);
 
   return (
     <div className='dashboard-layout'>
@@ -42,15 +42,15 @@ const UserDetail = () => {
                 <Text size="xl" fw={700}>{user.firstName} {user.lastName}</Text>
                 <Badge color={getRoleColor(user.role)} mt={4}>{user.role}</Badge>
                 <Group gap={16} mt={8}>
-                  <Text size="sm" c="dimmed"><IconMail size={14} /> {user.email}</Text>
-                  {user.phone && <Text size="sm" c="dimmed"><IconPhone size={14} /> {user.phone}</Text>}
-                  <Text size="sm" c="dimmed"><IconCalendar size={14} /> {user.created_at ? new Date(user.created_at * 1000).toLocaleDateString() : '—'}</Text>
+                  <Text size="sm" c="dimmed"><Mail size={14} /> {user.email}</Text>
+                  {user.phone && <Text size="sm" c="dimmed"><Phone size={14} /> {user.phone}</Text>}
+                  <Text size="sm" c="dimmed"><Calendar size={14} /> {user.created_at ? new Date(user.created_at * 1000).toLocaleDateString() : '—'}</Text>
                 </Group>
               </div>
             </Group>
             <Group>
-              <Button variant="default" component={Link} to={`/users/${id}/edit`} leftSection={<IconPencil size={14} />}>Edit</Button>
-              <Button color="red" variant="default" onClick={() => setDeleteTarget(user)} leftSection={<IconTrash size={14} />}>Delete</Button>
+              <Button variant="default" component={Link} to={`/users/${id}/edit`} leftSection={<Pencil size={14} />}>Edit</Button>
+              <Button color="red" variant="default" onClick={() => setDeleteTarget(user)} leftSection={<Trash2 size={14} />}>Delete</Button>
             </Group>
           </Group>
         </Paper>

@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useRef, useState, useEffect, useCallback } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { Button, Header, Icon, Grid, Divider } from '@tabler/icons-react';
+import { Move, Pencil, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 import { useDrag, useDrop } from 'react-dnd';
 import { produce } from 'immer';
 import { faker } from '@faker-js/faker';
@@ -19,11 +19,11 @@ const ChildItem = memo(({ id, text, moveCard }) => {
   return (
     <div className="child-container" ref={ref} style={{ opacity }}>
       <div style={{ display: 'flex', alignItems: 'center', padding: '4px 8px', border: '1px solid #e8e8e8', borderRadius: 4, marginBottom: 4, background: '#fff' }}>
-        <Icon name="move" size={14} style={{ cursor: 'move', marginRight: 8 }} />
+        <Move size={14} style={{ cursor: 'move', marginRight: 8 }} />
         <span style={{ flex: 1 }}>{text}</span>
         <div style={{ display: 'flex', gap: 8 }}>
-          <Icon name="pencil" size={14} style={{ cursor: 'pointer' }} />
-          <Icon name="trash" size={14} style={{ cursor: 'pointer' }} />
+          <Pencil size={14} style={{ cursor: 'pointer' }} />
+          <Trash2 size={14} style={{ cursor: 'pointer' }} />
         </div>
       </div>
     </div>
@@ -44,7 +44,7 @@ class ChildContainer extends React.Component {
   scheduleUpdate(updater) { this.pendingUpdateFn = produce(this.state, updater); if (!this.requestedFrame) this.requestedFrame = requestAnimationFrame(this.drawFrame); }
 }
 
-const ParentItem = memo(({ id, text, moveCard, Icon }) => {
+const ParentItem = memo(({ id, text, moveCard }) => {
   const [open, setOpen] = useState(true);
   const ref = useRef(null);
   const [{ isDragging }, connectDrag] = useDrag({ item: { id, type: ItemTypes.PARENT }, collect: (monitor) => ({ isDragging: monitor.isDragging() }) });
@@ -56,14 +56,14 @@ const ParentItem = memo(({ id, text, moveCard, Icon }) => {
     <div className="parent-container" ref={ref} style={{ opacity, marginBottom: 8, border: '1px solid #e8e8e8', borderRadius: 4 }}>
       <div style={{ display: 'flex', alignItems: 'center', padding: '8px 12px' }}>
         <span style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Icon name="move" size={14} style={{ cursor: 'move' }} />
+          <Move size={14} style={{ cursor: 'move' }} />
           <span style={{ fontWeight: 600 }}>Unit {id + 1}: {text}</span>
         </span>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <Icon name="pencil" size={14} style={{ cursor: 'pointer' }} />
-          <Icon name="trash" size={14} style={{ cursor: 'pointer' }} />
+          <Pencil size={14} style={{ cursor: 'pointer' }} />
+          <Trash2 size={14} style={{ cursor: 'pointer' }} />
           <button onClick={onAccordion} style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }}>
-            <Icon name={open ? 'angle up' : 'angle down'} size={14} />
+            {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
           </button>
         </div>
       </div>
@@ -95,7 +95,7 @@ class ParentContainer extends React.Component {
   componentWillUnmount() { if (this.requestedFrame !== undefined) cancelAnimationFrame(this.requestedFrame); }
   render() {
     const { cardsByIndex } = this.state;
-    return (<>{cardsByIndex.map((card) => (<ParentItem key={card.id} id={card.id} text={card.text} moveCard={this.moveCard} Icon={Icon} />))}</>);
+    return (<>{cardsByIndex.map((card) => (<ParentItem key={card.id} id={card.id} text={card.text} moveCard={this.moveCard} />))}</>);
   }
   scheduleUpdate(updater) { this.pendingUpdateFn = produce(this.state, updater); if (!this.requestedFrame) this.requestedFrame = requestAnimationFrame(this.drawFrame); }
 }

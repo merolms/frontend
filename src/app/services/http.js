@@ -5,7 +5,7 @@
 // - Throws ApiError on non-2xx responses
 // - Calls onAuthError callback on 401/403 responses
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:9090/api';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:9090';
 
 // Optional callback for auth errors (set by the Redux store)
 let onAuthError = null;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Paper, Breadcrumbs, Anchor, Stack, Title, Text, Loader } from '@mantine/core';
-import { IconPencil, IconPlus, IconSitemap, IconList, IconAlertCircle } from '@tabler/icons-react';
+import { AlertCircle, List, Pencil, Plus, Network } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { fetchCourseById, updateCourse } from '@/app/services/courseService';
 import UnsplashPicker from '@/app/containers/course/components/UnsplashPicker';
@@ -88,7 +88,7 @@ const CourseEdit = () => {
     return (
       <div className='dashboard-layout'>
         <SideBar /><div className='dashboard-main' style={{ paddingTop: 40 }}>
-          <Paper p="lg" radius="md" withBorder><IconAlertCircle color="red" /> {apiError}<br /><button onClick={() => navigate('/courses')}>Back to Courses</button></Paper>
+          <Paper p="lg" radius="md" withBorder><AlertCircle color="red" /> {apiError}<br /><button onClick={() => navigate('/courses')}>Back to Courses</button></Paper>
         </div>
       </div>
     );
@@ -107,7 +107,7 @@ const CourseEdit = () => {
         <div className='course-form-page'>
           <div style={{ display: 'grid', gridTemplateColumns: '10fr 6fr', gap: 16 }}>
             <Paper className='course-form-card' p="lg" radius="md" withBorder>
-              <Title order={3} mb={4}><IconPencil size={20} color="#2185d0" /> Edit Course</Title>
+              <Title order={3} mb={4}><Pencil size={20} color="#2185d0" /> Edit Course</Title>
               <Text c="dimmed" size="sm" mb="md">Update the course metadata and settings.</Text>
 
               <form onSubmit={handleSubmit}>
@@ -144,7 +144,7 @@ const CourseEdit = () => {
                   </div>
 
                   <div>
-                    <label style={{ fontWeight: 600, fontSize: 13 }}>Cover Image</label>
+                    <label style={{ fontWeight: 600, fontSize: 13 }}>Cover ImageIcon</label>
                     <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
                       <input name='coverImage' placeholder='https://example.com/cover.jpg' value={form.coverImage} onChange={(e) => setForm(p => ({ ...p, coverImage: e.target.value }))} style={{ flex: 1, padding: '8px 12px', border: '1px solid #ddd', borderRadius: 4 }} />
                       <button type='button' className='mantine-Button-root mantine-Button-variant-default' onClick={() => setUnsplashOpen(true)} disabled={loading} style={{ padding: '8px 12px', border: '1px solid #ddd', borderRadius: 4 }}>Unsplash</button>
@@ -169,10 +169,10 @@ const CourseEdit = () => {
 
             <Stack>
               <Paper className='course-form-tips' p="lg" radius="md" withBorder>
-                <Title order={5}><IconPlus size={16} color="#f0a500" /> Quick Actions</Title>
+                <Title order={5}><Plus size={16} color="#f0a500" /> Quick Actions</Title>
                 <div className='quick-actions'>
-                  <a href={`/courses/${id}/builder`}><IconSitemap size={14} /> Open Course Builder</a>
-                  <a href={`/courses/${id}/lessons`}><IconList size={14} /> Manage Lessons</a>
+                  <a href={`/courses/${id}/builder`}><Network size={14} /> Open Course Builder</a>
+                  <a href={`/courses/${id}/lessons`}><List size={14} /> Manage Lessons</a>
                 </div>
               </Paper>
               {form.coverImage && (

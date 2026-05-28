@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Paper, Breadcrumbs, Anchor, Stack, Title, Text } from '@mantine/core';
-import { IconHome, IconPlus } from '@tabler/icons-react';
+import { Home, Plus } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { createCourse } from '@/app/services/courseService';
 import UnsplashPicker from '@/app/containers/course/components/UnsplashPicker';
@@ -66,7 +66,7 @@ const CourseCreate = () => {
         <div className='course-form-page'>
           <div style={{ display: 'grid', gridTemplateColumns: '10fr 6fr', gap: 16 }}>
             <Paper className='course-form-card' p="lg" radius="md" withBorder>
-              <Title order={3} mb={4}><IconPlus size={20} color="#33a163" /> Create New Course</Title>
+              <Title order={3} mb={4}><Plus size={20} color="#33a163" /> Create New Course</Title>
               <Text c="dimmed" size="sm" mb="md">Fill in the course details below. You can add lessons later from the Course Builder.</Text>
 
               <form onSubmit={handleSubmit}>

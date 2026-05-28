@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput, Textarea, Button, Stack, Group, ColorSwatch, SimpleGrid, Accordion, Checkbox, Text, Alert } from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
+import { AlertCircle } from 'lucide-react';
 import { permissionCatalog } from '@/app/services/authService';
 
 const ROLE_COLORS = ['red', 'blue', 'purple', 'teal', 'green', 'orange', 'pink', 'yellow', 'brown', 'gray', 'black', 'violet', 'olive', 'cyan'];
@@ -41,7 +41,7 @@ const RoleForm = ({ initialData = null, onSubmit, onCancel, loading = false, sub
   return (
     <form onSubmit={handleSubmit}>
       <Stack>
-        {Object.keys(errors).length > 0 && <Alert icon={<IconAlertCircle size={16} />} color="red" size="sm">Please fix the errors below.</Alert>}
+        {Object.keys(errors).length > 0 && <Alert icon={<AlertCircle size={16} />} color="red" size="sm">Please fix the errors below.</Alert>}
 
         <TextInput label="Role Name" placeholder="e.g., Content Manager" value={formData.name} onChange={(e) => handleChange('name', e.target.value)} error={errors.name} required />
         <Textarea label="Description" placeholder="What can this role do?" minRows={3} value={formData.description} onChange={(e) => handleChange('description', e.target.value)} error={errors.description} required />

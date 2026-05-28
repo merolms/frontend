@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, Text, Group, Badge, Skeleton } from '@mantine/core';
-import { IconBook, IconSitemap, IconPencil, IconList, IconUsers } from '@tabler/icons-react';
+import { BookOpen, List, Pencil, Network, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getStatusLabel, getCategoryColor } from './viewHelpers';
 
@@ -18,14 +18,14 @@ const CompactView = ({ courses, navigate, loading }) => {
     const status = getStatusLabel(course.status);
     return (
       <div key={course.id} className='course-compact-row' onClick={() => navigate(`/courses/${course.id}`)} style={{ cursor: 'pointer' }}>
-        <span className='compact-col-title'><IconBook size={12} className='compact-icon' /> {course.title}</span>
+        <span className='compact-col-title'><BookOpen size={12} className='compact-icon' /> {course.title}</span>
         <Badge size="xs" variant="light" color={getCategoryColor(course.category)}>{course.category}</Badge>
         {status && <Badge size="xs" variant="light" color={status.color}>{status.text}</Badge>}
-        <span className='compact-col-num'><IconList size={12} /> {course.totalLessons}</span>
-        <span className='compact-col-num'><IconUsers size={12} /> {course.enrolledUsers}</span>
+        <span className='compact-col-num'><List size={12} /> {course.totalLessons}</span>
+        <span className='compact-col-num'><Users size={12} /> {course.enrolledUsers}</span>
         <Group gap={4} className='compact-col-actions'>
-          <Badge component={Link} to={`/courses/${course.id}/builder`} size="xs" variant="outline" leftSection={<IconSitemap size={10} />} onClick={(e) => e.stopPropagation()}>Builder</Badge>
-          <Badge component={Link} to={`/courses/${course.id}/edit`} size="xs" variant="outline" leftSection={<IconPencil size={10} />} onClick={(e) => e.stopPropagation()}>Edit</Badge>
+          <Badge component={Link} to={`/courses/${course.id}/builder`} size="xs" variant="outline" leftSection={<Network size={10} />} onClick={(e) => e.stopPropagation()}>Builder</Badge>
+          <Badge component={Link} to={`/courses/${course.id}/edit`} size="xs" variant="outline" leftSection={<Pencil size={10} />} onClick={(e) => e.stopPropagation()}>Edit</Badge>
         </Group>
       </div>
     );

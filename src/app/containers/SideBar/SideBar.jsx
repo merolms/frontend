@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, Stack, Divider, Button, Group, Text } from '@mantine/core';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { IconHome, IconBook, IconTags, IconUsers, IconSitemap, IconSchool, IconMessageCircle, IconHash, IconUser, IconSettings, IconShield, IconLogout } from '@tabler/icons-react';
+import { BookOpen, GraduationCap, Hash, Home, LogOut, MessageCircle, Settings, Shield, Network, Tags, User, Users } from 'lucide-react';
 import SideBarItem from '@/app/containers/SideBar/SideBarItem/SideBarItem';
 import UserProfileInfo from '@/app/components/UserProfileInfo';
 import { logoutUser } from '@/redux/slices/authSlice';
@@ -23,9 +23,9 @@ const navItems = [
 ];
 
 const iconMap = {
-  home: IconHome, book: IconBook, tags: IconTags, users: IconUsers, sitemap: IconSitemap,
-  'graduation-cap': IconBook, comments: IconMessageCircle, hashtag: IconHash,
-  'id-card': IconUser, cog: IconSettings, shield: IconShield,
+  home: Home, book: BookOpen, tags: Tags, users: Users, sitemap: Network,
+  'graduation-cap': BookOpen, comments: MessageCircle, hashtag: Hash,
+  'id-card': User, cog: Settings, shield: Shield,
 };
 
 export default function SideBar() {
@@ -44,14 +44,14 @@ export default function SideBar() {
     <div className='sidebar-wrapper'>
       <div className='sidebar-header'>
         <div className='sidebar-brand'>
-          <IconSchool className='brand-icon' />
+          <GraduationCap className='brand-icon' />
         </div>
       </div>
 
       <div className='sidebar-nav'>
         <Stack gap={2} className='side-menu'>
           {navItems.map((item) => {
-            const Icon = iconMap[item.icon] || IconHome;
+            const Icon = iconMap[item.icon] || Home;
             const isActive = item.path === '/' ? currentPath === '/' : currentPath === item.path || currentPath.startsWith(item.path + '/');
             return (
               <SideBarItem
@@ -78,7 +78,7 @@ export default function SideBar() {
               />
             </div>
             <button className='sidebar-logout-btn' onClick={handleLogout} title='Sign Out'>
-              <IconLogout />
+              <LogOut />
               <span>Sign Out</span>
             </button>
           </>

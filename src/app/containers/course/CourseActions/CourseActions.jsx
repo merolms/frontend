@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Modal, Title, Text, Group, Stack } from '@mantine/core';
-import { IconCheck, IconArchive, IconTrash, IconX, IconAlertCircle } from '@tabler/icons-react';
+import { AlertCircle, Archive, Check, Trash2, X } from 'lucide-react';
 
 export const PublishModal = ({ open, onConfirm, onCancel, courseTitle, loading = false }) => (
   <Modal opened={open} onClose={loading ? undefined : onCancel} title="Publish Course" centered closeOnClickOutside={!loading} closeOnEscape={!loading} className="ui modal">
@@ -11,7 +11,7 @@ export const PublishModal = ({ open, onConfirm, onCancel, courseTitle, loading =
       </Text>
       <Group justify="flex-end">
         <Button variant="default" onClick={onCancel} disabled={loading}>Cancel</Button>
-        <Button color="green" onClick={onConfirm} loading={loading} leftSection={<IconCheck size={16} />}>Publish</Button>
+        <Button color="green" onClick={onConfirm} loading={loading} leftSection={<Check size={16} />}>Publish</Button>
       </Group>
     </Stack>
   </Modal>
@@ -26,7 +26,7 @@ export const ArchiveModal = ({ open, onConfirm, onCancel, courseTitle, loading =
       </Text>
       <Group justify="flex-end">
         <Button variant="default" onClick={onCancel} disabled={loading}>Cancel</Button>
-        <Button color="orange" onClick={onConfirm} loading={loading} leftSection={<IconArchive size={16} />}>Archive</Button>
+        <Button color="orange" onClick={onConfirm} loading={loading} leftSection={<Archive size={16} />}>Archive</Button>
       </Group>
     </Stack>
   </Modal>
@@ -41,7 +41,7 @@ export const DeleteModal = ({ open, onConfirm, onCancel, itemName, itemType = 'c
       </Text>
       <Group justify="flex-end">
         <Button variant="default" onClick={onCancel} disabled={loading}>Cancel</Button>
-        <Button color="red" onClick={onConfirm} loading={loading} leftSection={<IconTrash size={16} />}>Delete</Button>
+        <Button color="red" onClick={onConfirm} loading={loading} leftSection={<Trash2 size={16} />}>Delete</Button>
       </Group>
     </Stack>
   </Modal>

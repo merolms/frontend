@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Paper, Breadcrumbs, Anchor, Button, TextInput, Select, Group, Title, Text } from '@mantine/core';
-import { IconUserPlus, IconPlus } from '@tabler/icons-react';
+import { Plus, UserPlus } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { createUser } from '@/app/services/userService';
 import { fetchRoles } from '@/app/services/authService';
@@ -35,9 +35,9 @@ const UserCreate = () => {
       <div className='dashboard-main'>
         <Breadcrumbs mb="md"><Anchor onClick={() => navigate('/users')}>Users</Anchor><span>Create User</span></Breadcrumbs>
         <Paper className='user-form-segment' p="lg" radius="md" withBorder>
-          <Title order={3} mb={4}><IconUserPlus size={20} color="#33a163" /> Create New User</Title>
+          <Title order={3} mb={4}><UserPlus size={20} color="#33a163" /> Create New User</Title>
           <Text c="dimmed" size="sm" mb="md">Fill in the details below to create a new user account.</Text>
-          {error && <Text c="red" size="sm" mb="sm"><IconPlus size={14} /> {error}</Text>}
+          {error && <Text c="red" size="sm" mb="sm"><Plus size={14} /> {error}</Text>}
           <form onSubmit={handleSubmit}>
             <Group grow>
               <TextInput label="First Name *" placeholder="John" value={formData.firstName} onChange={(e) => handleChange('firstName', e.target.value)} required />

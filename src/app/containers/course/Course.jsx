@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Paper, TextInput, Button, Select, Group, Box, Stack, Text, Pagination, SimpleGrid, Loader, Badge, Anchor } from '@mantine/core';
-import { IconSearch, IconPlus, IconRefresh, IconAlertCircle, IconBook } from '@tabler/icons-react';
+import { AlertCircle, BookOpen, Plus, RefreshCw, Search } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { fetchCourses, mockCategories } from '@/app/services/courseService';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
@@ -107,7 +107,7 @@ const CourseContainer = () => {
           </div>
           <div className='header-right'>
             <PermissionGuard permissions={['courses.create']}>
-              <Button leftSection={<IconPlus size={16} />} onClick={() => navigate('/courses/create')}>New Course</Button>
+              <Button leftSection={<Plus size={16} />} onClick={() => navigate('/courses/create')}>New Course</Button>
             </PermissionGuard>
           </div>
         </div>
@@ -120,7 +120,7 @@ const CourseContainer = () => {
                   placeholder='Search courses...'
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  leftSection={<IconSearch size={16} />}
+                  leftSection={<Search size={16} />}
                   style={{ flex: 1 }}
                 />
               </form>
@@ -143,16 +143,16 @@ const CourseContainer = () => {
 
           {error && !loading && (
             <Paper p="md" radius="md" withBorder className='courses-empty'>
-              <Group><IconAlertCircle color="red" /><Text>{error}</Text><Button size="xs" leftSection={<IconRefresh size={14} />} onClick={fetchData}>Retry</Button></Group>
+              <Group><AlertCircle color="red" /><Text>{error}</Text><Button size="xs" leftSection={<RefreshCw size={14} />} onClick={fetchData}>Retry</Button></Group>
             </Paper>
           )}
 
           {!error && courses.length === 0 && !loading ? (
             <Paper p="xl" radius="md" withBorder className='courses-empty' ta="center" mt="md">
-              <Text size="xl"><IconBook size={48} color="#999" /></Text>
+              <Text size="xl"><BookOpen size={48} color="#999" /></Text>
               <Text mt="md">No courses found. Try adjusting your filters or create a new course.</Text>
               <PermissionGuard permissions={['courses.create']}>
-                <Button mt="md" leftSection={<IconPlus size={16} />} onClick={() => navigate('/courses/create')}>Create Course</Button>
+                <Button mt="md" leftSection={<Plus size={16} />} onClick={() => navigate('/courses/create')}>Create Course</Button>
               </PermissionGuard>
             </Paper>
           ) : !error && (

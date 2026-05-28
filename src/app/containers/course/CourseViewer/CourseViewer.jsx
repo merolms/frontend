@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Paper, Breadcrumbs, Anchor, Button, Progress, List, Grid, Title, Text, Skeleton } from '@mantine/core';
-import { IconBook, IconCheck, IconArrowRight } from '@tabler/icons-react';
+import { ArrowRight, BookOpen, Check } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { fetchCourseById, fetchLessons } from '@/app/services/courseService';
 import { isEnrolled, markLessonComplete } from '@/app/services/enrollmentService';
@@ -54,7 +54,7 @@ const CourseViewer = () => {
                     <List.Item key={lesson.id}>
                       <Group justify="space-between">
                         <Text size="sm">{idx + 1}. {lesson.title}</Text>
-                        {lesson.completed && <IconCheck size={14} color="green" />}
+                        {lesson.completed && <Check size={14} color="green" />}
                       </Group>
                     </List.Item>
                   ))}

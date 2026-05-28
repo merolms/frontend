@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, TextInput, Textarea, Button, Stack, Group } from '@mantine/core';
-import { IconX, IconCheck } from '@tabler/icons-react';
+import { Check, X } from 'lucide-react';
 
 function CreateContent() {
   const [open, setOpen] = useState(false);
@@ -15,8 +15,8 @@ function CreateContent() {
           <Textarea label="Description" placeholder="Tell something about this content" minRows={4} />
         </Stack>
         <Group justify="flex-end" mt="md">
-          <Button variant="default" onClick={() => setOpen(false)} leftSection={<IconX size={14} />}>Cancel</Button>
-          <Button onClick={onSubmit} loading={loading} leftSection={<IconCheck size={14} />}>Submit</Button>
+          <Button variant="default" onClick={() => setOpen(false)} leftSection={<X size={14} />}>Cancel</Button>
+          <Button onClick={onSubmit} loading={loading} leftSection={<Check size={14} />}>Submit</Button>
         </Group>
       </Modal>
     </>

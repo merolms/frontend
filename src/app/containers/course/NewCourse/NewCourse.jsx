@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Stepper, Title, Text, Stack } from '@mantine/core';
-import { IconChevronLeft, IconChevronRight, IconX, IconCheck } from '@tabler/icons-react';
+import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Step1 from '@/app/containers/course/NewCourse/step1/step1';
 import Step2 from '@/app/containers/course/NewCourse/step2/step2';
 
@@ -32,12 +32,12 @@ function NewCourse() {
         </div>
         <Stack gap="sm" mt="md" style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <div>
-            {step > 1 && <Button variant="default" onClick={onPrevious} leftSection={<IconChevronLeft size={14} />}>Previous</Button>}
+            {step > 1 && <Button variant="default" onClick={onPrevious} leftSection={<ChevronLeft size={14} />}>Previous</Button>}
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
-            <Button variant="default" onClick={onCancel} leftSection={<IconX size={14} />}>Cancel</Button>
-            {step < 2 && <Button onClick={onNext} loading={loading} rightSection={<IconChevronRight size={14} />}>Next</Button>}
-            {step === 2 && <Button color="green" onClick={onCancel} leftSection={<IconCheck size={14} />}>Done</Button>}
+            <Button variant="default" onClick={onCancel} leftSection={<X size={14} />}>Cancel</Button>
+            {step < 2 && <Button onClick={onNext} loading={loading} rightSection={<ChevronRight size={14} />}>Next</Button>}
+            {step === 2 && <Button color="green" onClick={onCancel} leftSection={<Check size={14} />}>Done</Button>}
           </div>
         </Stack>
       </Modal>

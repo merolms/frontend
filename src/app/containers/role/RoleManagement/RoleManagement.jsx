@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Paper, TextInput, Button, Table, Badge, Group, Text, Stack, ActionIcon, Modal, Title, Divider, Pagination } from '@mantine/core';
-import { IconSearch, IconShield, IconPlus, IconPencil, IconTrash, IconEye, IconStar, IconAlertCircle, IconCheck } from '@tabler/icons-react';
+import { AlertCircle, Check, Eye, Pencil, Plus, Search, Shield, Star, Trash2 } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
 import { fetchRoles, deleteRole } from '@/app/services/authService';
@@ -39,14 +39,14 @@ const RoleManagement = () => {
 
   const rows = paginatedRoles.map((role) => (
     <Table.Tr key={role.id}>
-      <Table.Td><Group gap={8}><Text size="sm" fw={600}>{role.name}</Text>{role.permissions && role.permissions.includes('*') && <Badge color="red" size="xs" variant="filled"><IconStar size={10} /></Badge>}</Group></Table.Td>
+      <Table.Td><Group gap={8}><Text size="sm" fw={600}>{role.name}</Text>{role.permissions && role.permissions.includes('*') && <Badge color="red" size="xs" variant="filled"><Star size={10} /></Badge>}</Group></Table.Td>
       <Table.Td><Text size="sm" c="dimmed">{role.description}</Text></Table.Td>
-      <Table.Td><Button size="xs" variant="subtle" onClick={() => setShowPermissionModal(role)} leftSection={<IconEye size={12} />}>{role.permissions && role.permissions.includes('*') ? 'All' : `${(role.permissions || []).length} permissions`}</Button></Table.Td>
+      <Table.Td><Button size="xs" variant="subtle" onClick={() => setShowPermissionModal(role)} leftSection={<Eye size={12} />}>{role.permissions && role.permissions.includes('*') ? 'All' : `${(role.permissions || []).length} permissions`}</Button></Table.Td>
       <Table.Td><Group gap={6}><span style={{ display: 'inline-block', width: 16, height: 16, borderRadius: 3, background: role.color || '#767676' }} /><Text size="xs" c="dimmed">{role.color || 'default'}</Text></Group></Table.Td>
       <Table.Td ta="center">
         <Group gap={4} justify="center">
-          <PermissionGuard permissions={['roles.edit']}><ActionIcon size="sm" variant="default" onClick={() => navigate(`/roles/${role.id}/edit`)}><IconPencil size={14} /></ActionIcon></PermissionGuard>
-          <PermissionGuard permissions={['roles.delete']}><ActionIcon size="sm" color="red" variant="default" onClick={() => setDeleteTarget(role)}><IconTrash size={14} /></ActionIcon></PermissionGuard>
+          <PermissionGuard permissions={['roles.edit']}><ActionIcon size="sm" variant="default" onClick={() => navigate(`/roles/${role.id}/edit`)}><Pencil size={14} /></ActionIcon></PermissionGuard>
+          <PermissionGuard permissions={['roles.delete']}><ActionIcon size="sm" color="red" variant="default" onClick={() => setDeleteTarget(role)}><Trash2 size={14} /></ActionIcon></PermissionGuard>
         </Group>
       </Table.Td>
     </Table.Tr>
@@ -58,20 +58,20 @@ const RoleManagement = () => {
       <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'><h1 className='page-title'>Roles & Permissions</h1><p className='page-subtitle'>{filteredRoles.length} of {roles.length} roles</p></div>
-          <div className='header-right'><PermissionGuard permissions={['roles.create']}><Button leftSection={<IconPlus size={14} />} onClick={() => navigate('/roles/create')}>New Role</Button></PermissionGuard></div>
+          <div className='header-right'><PermissionGuard permissions={['roles.create']}><Button leftSection={<Plus size={14} />} onClick={() => navigate('/roles/create')}>New Role</Button></PermissionGuard></div>
         </div>
 
         <div className='dashboard-content'>
-          {error && <Paper p="sm" radius="md" withBorder mb="md"><Text c="red"><IconAlertCircle size={14} /> {error}</Text></Paper>}
+          {error && <Paper p="sm" radius="md" withBorder mb="md"><Text c="red"><AlertCircle size={14} /> {error}</Text></Paper>}
 
           <Paper className='role-filters' p="sm" radius="md" withBorder mb="md">
-            <form onSubmit={(e) => e.preventDefault()}><TextInput placeholder="Search roles..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} leftSection={<IconSearch size={16} />} /></form>
+            <form onSubmit={(e) => e.preventDefault()}><TextInput placeholder="Search roles..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} leftSection={<Search size={16} />} /></form>
           </Paper>
 
           {loading ? (
             <Paper p="lg"><Text>Loading roles...</Text></Paper>
           ) : filteredRoles.length === 0 ? (
-            <Paper p="xl" radius="md" ta="center"><IconShield size={48} color="#999" /><Title order={4}>No roles found</Title><p>Try adjusting your search.</p></Paper>
+            <Paper p="xl" radius="md" ta="center"><Shield size={48} color="#999" /><Title order={4}>No roles found</Title><p>Try adjusting your search.</p></Paper>
           ) : (
             <>
               <Paper p={0} radius="md" withBorder style={{ overflow: 'hidden' }}>
@@ -95,11 +95,11 @@ const RoleManagement = () => {
         {showPermissionModal && (
           <>
             {showPermissionModal.permissions && showPermissionModal.permissions.includes('*') ? (
-              <Stack ta="center" p="md"><IconStar size={48} color="red" /><Text c="dimmed">This role has <strong>full administrative access</strong> to all features.</Text></Stack>
+              <Stack ta="center" p="md"><Star size={48} color="red" /><Text c="dimmed">This role has <strong>full administrative access</strong> to all features.</Text></Stack>
             ) : (
               <Stack gap={4}>
                 {(showPermissionModal.permissions || []).map((perm) => (
-                  <Group key={perm} gap={8}><IconCheck size={14} color="green" /><Text size="sm">{perm}</Text></Group>
+                  <Group key={perm} gap={8}><Check size={14} color="green" /><Text size="sm">{perm}</Text></Group>
                 ))}
               </Stack>
             )}

@@ -1,12 +1,12 @@
 import React from 'react';
 import { SegmentedControl, Tooltip } from '@mantine/core';
-import { IconLayoutGrid, IconTable, IconList, IconLayoutList } from '@tabler/icons-react';
+import { LayoutGrid, List, Table as TableIcon } from 'lucide-react';
 
 const viewModes = [
-  { value: 'grid', label: 'Grid', icon: <IconLayoutGrid size={16} /> },
-  { value: 'table', label: 'Table', icon: <IconTable size={16} /> },
-  { value: 'list', label: 'List', icon: <IconList size={16} /> },
-  { value: 'compact', label: 'Compact', icon: <IconLayoutList size={16} /> },
+  { value: 'grid', label: 'Grid', icon: <LayoutGrid size={16} /> },
+  { value: 'table', label: 'Table', icon: <TableIcon size={16} /> },
+  { value: 'list', label: 'List', icon: <List size={16} /> },
+  { value: 'compact', label: 'Compact', icon: <List size={16} /> },
 ];
 
 const ViewModeSwitcher = ({ value, onChange }) => (

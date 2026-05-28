@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { Paper, Avatar, Group, Text, Stack, Badge, SimpleGrid, Progress, Button } from '@mantine/core';
-import { IconSettings, IconSchool } from '@tabler/icons-react';
+import { GraduationCap, Settings } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { getProfile } from '@/app/services/authService';
 import './Profile.scss';
@@ -24,7 +24,7 @@ const Profile = () => {
       <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'><h1 className='page-title'>Profile</h1><p className='page-subtitle'>{profile?.firstName || reduxUser?.firstName} {profile?.lastName || reduxUser?.lastName}</p></div>
-          <div className='header-right'><Button variant="default" leftSection={<IconSettings size={14} />} onClick={() => navigate('/settings')}>Settings</Button></div>
+          <div className='header-right'><Button variant="default" leftSection={<Settings size={14} />} onClick={() => navigate('/settings')}>Settings</Button></div>
         </div>
 
         <div className='dashboard-content'>
@@ -40,10 +40,10 @@ const Profile = () => {
                     <Text c="dimmed">{profile?.email || reduxUser?.email}</Text>
                   </div>
                 </Group>
-                <Button variant="default" component={Link} to="/settings" leftSection={<IconSettings size={14} />}>Edit Profile</Button>
+                <Button variant="default" component={Link} to="/settings" leftSection={<Settings size={14} />}>Edit Profile</Button>
               </Group>
               {profile?.bio && <Text mb="md">{profile.bio}</Text>}
-              <Button mt="sm" component={Link} to="/my-learning" variant="default" leftSection={<IconSchool size={14} />}>My Learning</Button>
+              <Button mt="sm" component={Link} to="/my-learning" variant="default" leftSection={<GraduationCap size={14} />}>My Learning</Button>
             </Paper>
           )}
         </div>

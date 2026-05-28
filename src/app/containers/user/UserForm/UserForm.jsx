@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput, Select, Group, Button, Stack, Text, Alert } from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
+import { AlertCircle } from 'lucide-react';
 import { fetchRoles } from '@/app/services/authService';
 
 const UserForm = ({ initialData = null, onSubmit, onCancel, loading = false, submitLabel = 'Save User' }) => {
@@ -24,7 +24,7 @@ const UserForm = ({ initialData = null, onSubmit, onCancel, loading = false, sub
   return (
     <form onSubmit={handleSubmit}>
       <Stack>
-        {Object.keys(errors).length > 0 && <Alert icon={<IconAlertCircle size={16} />} color="red" size="sm">Please fix the errors below.</Alert>}
+        {Object.keys(errors).length > 0 && <Alert icon={<AlertCircle size={16} />} color="red" size="sm">Please fix the errors below.</Alert>}
         <Group grow>
           <TextInput label="First Name" placeholder="John" value={formData.firstName} onChange={(e) => handleChange('firstName', e.target.value)} error={errors.firstName} required />
           <TextInput label="Last Name" placeholder="Doe" value={formData.lastName} onChange={(e) => handleChange('lastName', e.target.value)} error={errors.lastName} required />

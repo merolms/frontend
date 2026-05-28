@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Paper, Breadcrumbs, Anchor, Button, Title, Text, Loader } from '@mantine/core';
-import { IconPencil, IconPlus, IconAlertCircle } from '@tabler/icons-react';
+import { AlertCircle, Pencil, Plus } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import TeamForm from '@/app/containers/team/TeamForm/TeamForm';
 import { fetchTeamById, updateTeam } from '@/app/services/teamService';
@@ -28,7 +28,7 @@ const TeamEdit = () => {
   const handleCancel = () => navigate(`/teams/${id}`);
 
   if (fetching) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" radius="md" mt={40}><Loader /><Title order={4}>Loading...</Title></Paper></div></div>);
-  if (error && !team) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" radius="md" mt={40}><IconAlertCircle color="red" /> {error}<br /><Button onClick={() => navigate('/teams')}>Back to Teams</Button></Paper></div></div>);
+  if (error && !team) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" radius="md" mt={40}><AlertCircle color="red" /> {error}<br /><Button onClick={() => navigate('/teams')}>Back to Teams</Button></Paper></div></div>);
 
   return (
     <div className='dashboard-layout'>
@@ -48,9 +48,9 @@ const TeamEdit = () => {
         </div>
 
         <Paper className='team-form-segment' p="lg" radius="md" withBorder>
-          <Title order={3} mb={4}><IconPencil size={20} color="#2185d0" /> Edit Team</Title>
+          <Title order={3} mb={4}><Pencil size={20} color="#2185d0" /> Edit Team</Title>
           <Text c="dimmed" size="sm" mb="md">Update the team details below.</Text>
-          {error && <Text c="red" size="sm" mb="sm"><IconPlus size={14} /> {error}</Text>}
+          {error && <Text c="red" size="sm" mb="sm"><Plus size={14} /> {error}</Text>}
           <TeamForm initialData={team} onSubmit={handleSubmit} onCancel={handleCancel} loading={loading} submitLabel='Save Changes' />
         </Paper>
       </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Paper, TextInput, Button, Select, SimpleGrid, Avatar, Group, Text, Stack, Card, Badge, ActionIcon, Pagination, Skeleton } from '@mantine/core';
-import { IconSearch, IconPlus, IconUsers, IconAlertCircle } from '@tabler/icons-react';
+import { AlertCircle, Plus, Search, Users } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import TeamMemberAssignModal from '@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
@@ -72,15 +72,15 @@ const TeamContainer = () => {
       <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'><h1 className='page-title'>Teams</h1><p className='page-subtitle'>{total} team{total !== 1 ? 's' : ''} total</p></div>
-          <div className='header-right'><Button leftSection={<IconPlus size={14} />} onClick={() => navigate('/teams/create')}>New Team</Button></div>
+          <div className='header-right'><Button leftSection={<Plus size={14} />} onClick={() => navigate('/teams/create')}>New Team</Button></div>
         </div>
 
         <div className='dashboard-content'>
-          {error && <Paper p="sm" radius="md" withBorder mb="md"><Text c="red"><IconAlertCircle size={14} /> {error}</Text></Paper>}
+          {error && <Paper p="sm" radius="md" withBorder mb="md"><Text c="red"><AlertCircle size={14} /> {error}</Text></Paper>}
 
           <Paper className='team-filters' p="sm" radius="md" withBorder mb="md">
             <Group gap={8} style={{ flexWrap: 'wrap' }}>
-              <form className='team-search-form' onSubmit={handleSearch}><TextInput placeholder="Search teams..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} leftSection={<IconSearch size={16} />} /></form>
+              <form className='team-search-form' onSubmit={handleSearch}><TextInput placeholder="Search teams..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} leftSection={<Search size={16} />} /></form>
               <Select placeholder="Status" data={statusOptions} value={statusFilter} onChange={(v) => updateParams({ status: v || '', page: 1 })} className='team-filter-dropdown' allowDeselect={false} />
               <Select placeholder="Sort" data={sortOptions} value={sort} onChange={(v) => updateParams({ sort: v, page: 1 })} className='team-filter-dropdown' allowDeselect={false} />
               <Button variant="default" onClick={handleClear}>Clear</Button>
@@ -93,15 +93,15 @@ const TeamContainer = () => {
             </Paper>
           ) : teams.length === 0 ? (
             <Paper p="xl" radius="md" className='team-empty' ta="center">
-              <IconUsers size={48} color="#999" /><Title order={4}>No teams found</Title><Text c="dimmed">Try adjusting your filters or create a new team.</Text>
-              <Button mt="md" leftSection={<IconPlus size={14} />} onClick={() => navigate('/teams/create')}>Create Team</Button>
+              <Users size={48} color="#999" /><Title order={4}>No teams found</Title><Text c="dimmed">Try adjusting your filters or create a new team.</Text>
+              <Button mt="md" leftSection={<Plus size={14} />} onClick={() => navigate('/teams/create')}>Create Team</Button>
             </Paper>
           ) : (
             <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="md" className='teams-grid'>
               {teams.map((team) => (
                 <Card key={team.id} className='team-card' padding="md" radius="md" withBorder style={{ cursor: 'pointer' }} onClick={() => navigate(`/teams/${team.id}`)}>
                   <div className='team-card-header' style={{ background: team.color || '#2185d0', padding: 12, margin: '-16px -16px 12px', borderRadius: '8px 8px 0 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <IconUsers size={20} color="rgba(255,255,255,0.8)" />
+                    <Users size={20} color="rgba(255,255,255,0.8)" />
                     <Badge size="xs" color={team.status === 1 ? 'green' : 'gray'} variant="filled">{team.status === 1 ? 'Active' : 'Inactive'}</Badge>
                   </div>
                   <Text fw={600} size="sm" className="team-card-title">{team.name}</Text>

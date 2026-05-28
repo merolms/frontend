@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, TextInput, Textarea, Select, Button, Stack, ColorInput, Group } from '@mantine/core';
-import { IconPencil, IconPlus, IconDeviceFloppy, IconX } from '@tabler/icons-react';
+import { Pencil, Plus, Save, X } from 'lucide-react';
 import { getCategoryColorOptions, getCategoryIconOptions } from '@/app/services/categoryService';
 
 const CategoryForm = ({ category = null, onSubmit, onClose, loading = false }) => {
@@ -31,8 +31,8 @@ const CategoryForm = ({ category = null, onSubmit, onClose, loading = false }) =
         {errors.submit && <TextInput value={styles.submit} disabled />}
       </Stack>
       <Group justify="flex-end" mt="md">
-        <Button variant="default" onClick={onClose} disabled={loading} leftSection={<IconX size={14} />}>Cancel</Button>
-        <Button onClick={handleSubmit} loading={loading} leftSection={isEditing ? <IconDeviceFloppy size={14} /> : <IconPlus size={14} />}>{isEditing ? 'Save Changes' : 'Create Category'}</Button>
+        <Button variant="default" onClick={onClose} disabled={loading} leftSection={<X size={14} />}>Cancel</Button>
+        <Button onClick={handleSubmit} loading={loading} leftSection={isEditing ? <Save size={14} /> : <Plus size={14} />}>{isEditing ? 'Save Changes' : 'Create Category'}</Button>
       </Group>
     </Modal>
   );

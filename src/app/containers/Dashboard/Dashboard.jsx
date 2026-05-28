@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { SimpleGrid, Paper, Text, Stack, Group, Box, Progress, Button } from '@mantine/core';
-import { IconBook, IconUsers, IconSitemap, IconChartLine, IconArrowUp, IconClock, IconBolt, IconUserPlus, IconUpload, IconChartBar, IconCheck, IconRobot } from '@tabler/icons-react';
+import { ArrowUp, Bolt, BookOpen, Bot, ChartBar, ChartLine, Check, Clock, Plus, Network, Upload, UserPlus, Users } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { mockDashboardStats, mockDashboardActivity } from '@/app/services/dashboardService';
 import './Dashboard.scss';
 
 const statIcons = {
-  green: IconBook, teal: IconUsers, orange: IconSitemap, purple: IconChartLine,
+  green: BookOpen, teal: Users, orange: Network, purple: ChartLine,
 };
 const statColors = { green: 'green', teal: 'teal', orange: 'orange', purple: 'violet' };
 
@@ -43,7 +43,7 @@ const Dashboard = () => {
                   <div className='stat-info'>
                     <Text className='stat-value' size="xl" fw={700}>{s.value}</Text>
                     <Text className='stat-label' size="sm" c="dimmed">{s.label}</Text>
-                    <Text className='stat-trend up' size="xs" c="green"><IconArrowUp size={12} /> {s.growth}</Text>
+                    <Text className='stat-trend up' size="xs" c="green"><ArrowUp size={12} /> {s.growth}</Text>
                   </div>
                 </div>
               </Paper>
@@ -53,11 +53,11 @@ const Dashboard = () => {
           <div className='dashboard-columns'>
             <div className='dashboard-left'>
               <Paper className='dashboard-card' p="md" radius="md" withBorder mb="md">
-                <div className='card-header'><h3><IconBook size={16} color='#33a163' /> Recent Courses</h3></div>
+                <div className='card-header'><h3><BookOpen size={16} color='#33a163' /> Recent Courses</h3></div>
                 <div className='card-body'>
                   {stats.recentCourses?.map((course) => (
                     <div key={course.id} className='course-item'>
-                      <div className='course-item-info'><h4>{course.title}</h4><span className='course-item-meta'><IconUsers size={12} /> {course.users} users</span></div>
+                      <div className='course-item-info'><h4>{course.title}</h4><span className='course-item-meta'><Users size={12} /> {course.users} users</span></div>
                       <div className='course-item-progress'>
                         <Progress value={course.progress} size="sm" radius="xl" style={{ width: 80 }} />
                         <span>{course.progress}%</span>
@@ -68,7 +68,7 @@ const Dashboard = () => {
               </Paper>
 
               <Paper className='dashboard-card' p="md" radius="md" withBorder>
-                <div className='card-header'><h3><IconClock size={16} color='#2185d0' /> Activity Feed</h3></div>
+                <div className='card-header'><h3><Clock size={16} color='#2185d0' /> Activity Feed</h3></div>
                 <div className='card-body'>
                   {activity?.map((item) => (
                     <div key={item.id} className='activity-item'>
@@ -89,19 +89,19 @@ const Dashboard = () => {
 
             <div className='dashboard-right'>
               <Paper className='dashboard-card quick-actions-card' p="md" radius="md" withBorder mb="md">
-                <div className='card-header'><h3><IconBolt size={16} color="#f0a500" /> Quick Actions</h3></div>
+                <div className='card-header'><h3><Bolt size={16} color="#f0a500" /> Quick Actions</h3></div>
                 <div className='card-body'>
                   <div className='quick-actions-grid'>
-                    {/* <button className='quick-action-btn'><IconPlus size={16} color="#33a163" /><span>Create Course</span></button> */}
-                    <button className='quick-action-btn'><IconUserPlus size={16} color="#2185d0" /><span>Add User</span></button>
-                    <button className='quick-action-btn'><IconUpload size={16} color="#f0a500" /><span>Upload Content</span></button>
-                    <button className='quick-action-btn'><IconChartBar size={16} color="#00838f" /><span>View Reports</span></button>
+                    {/* <button className='quick-action-btn'><Plus size={16} color="#33a163" /><span>Create Course</span></button> */}
+                    <button className='quick-action-btn'><UserPlus size={16} color="#2185d0" /><span>Add User</span></button>
+                    <button className='quick-action-btn'><Upload size={16} color="#f0a500" /><span>Upload Content</span></button>
+                    <button className='quick-action-btn'><ChartBar size={16} color="#00838f" /><span>View Reports</span></button>
                   </div>
                 </div>
               </Paper>
 
               <Paper className='dashboard-card' p="md" radius="md" withBorder mb="md">
-                <div className='card-header'><h3><IconUsers size={16} color="#00838f" /> Team Performance</h3></div>
+                <div className='card-header'><h3><Users size={16} color="#00838f" /> Team Performance</h3></div>
                 <div className='card-body'>
                   {stats.teamPerformance?.map((team) => (
                     <div key={team.name} className='team-item'>
@@ -113,7 +113,7 @@ const Dashboard = () => {
               </Paper>
 
               <Paper className='dashboard-card' p="md" radius="md" withBorder>
-                <div className='card-header'><h3><IconChartLine size={16} color="#9c27b0" /> Enrollment Summary</h3></div>
+                <div className='card-header'><h3><ChartLine size={16} color="#9c27b0" /> Enrollment Summary</h3></div>
                 <div className='card-body'>
                   <div className='enrollment-summary'>
                     <div className='enrollment-stat'><div className='enrollment-value'>{stats.totalEnrollments || 0}</div><div className='enrollment-label'>Total Enrollments</div></div>

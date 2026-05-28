@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Paper, Breadcrumbs, Anchor, Button, Avatar, Group, Text, Stack, List, Card, Badge, Grid, Loader, Alert } from '@mantine/core';
-import { IconUsers, IconPencil, IconTrash, IconPlus, IconArrowRight, IconAlertCircle, IconUser } from '@tabler/icons-react';
+import { AlertCircle, ArrowRight, Pencil, Plus, Trash2, User, Users } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import TeamMemberAssignModal from '@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
@@ -30,7 +30,7 @@ const TeamDetail = () => {
   const handleDelete = async () => { try { setActionLoading(true); await deleteTeam(id); addToast(`Team "${team?.name}" deleted`, 'error'); navigate('/teams'); } catch (err) { console.error(err); } finally { setActionLoading(false); } };
 
   if (loading) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" mt={40}><Loader /><Text>Loading...</Text></Paper></div></div>);
-  if (error || !team) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" mt={40}><Alert icon={<IconAlertCircle size={16} />} color="red">{error || 'Team not found'}</Alert><Button mt="md" onClick={() => navigate('/teams')}>Back to Teams</Button></Paper></div></div>);
+  if (error || !team) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" mt={40}><Alert icon={<AlertCircle size={16} />} color="red">{error || 'Team not found'}</Alert><Button mt="md" onClick={() => navigate('/teams')}>Back to Teams</Button></Paper></div></div>);
 
   return (
     <div className='dashboard-layout'>
@@ -44,9 +44,9 @@ const TeamDetail = () => {
             <p className='page-subtitle'>{team.name}</p>
           </div>
           <div className='header-right'>
-            <Button leftSection={<IconPlus size={14} />} onClick={() => setShowMemberModal(true)}>Add Member</Button>
-            <Button variant="default" component={Link} to={`/teams/${id}/edit`} leftSection={<IconPencil size={14} />}>Edit</Button>
-            <Button color="red" variant="default" onClick={() => setDeleteTarget(team)} leftSection={<IconTrash size={14} />}>Delete</Button>
+            <Button leftSection={<Plus size={14} />} onClick={() => setShowMemberModal(true)}>Add Member</Button>
+            <Button variant="default" component={Link} to={`/teams/${id}/edit`} leftSection={<Pencil size={14} />}>Edit</Button>
+            <Button color="red" variant="default" onClick={() => setDeleteTarget(team)} leftSection={<Trash2 size={14} />}>Delete</Button>
           </div>
         </div>
 

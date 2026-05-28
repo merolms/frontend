@@ -12,21 +12,23 @@ import { apiGet, apiPost, apiPut, apiDelete, apiUpload, API_BASE } from '@/app/s
  */
 export const normalizeContent = (content) => {
   if (!content) return JSON.stringify([]);
+  const paraProps = { textAlignment: 'left', backgroundColor: 'default', textColor: 'default' };
+
   if (typeof content === 'string') {
     try {
       const parsed = JSON.parse(content);
-      if (Array.isArray(parsed)) return content; // already block array
+      if (Array.isArray(parsed)) return content; // already valid block array
       if (parsed && parsed.content) {
         // Legacy format: { content: "...", format: "..." }
-        return JSON.stringify([{ type: 'paragraph', content: parsed.content, children: [] }]);
+        return JSON.stringify([{ type: 'paragraph', props: paraProps, content: [{ type: 'text', text: typeof parsed.content === 'string' ? parsed.content : JSON.stringify(parsed.content), styles: {} }], children: [] }]);
       }
       if (typeof parsed === 'string') {
-        return JSON.stringify([{ type: 'paragraph', content: parsed, children: [] }]);
+        return JSON.stringify([{ type: 'paragraph', props: paraProps, content: [{ type: 'text', text: parsed, styles: {} }], children: [] }]);
       }
       return JSON.stringify([parsed]);
     } catch {
-      // HTML string
-      return JSON.stringify([{ type: 'paragraph', content, children: [] }]);
+      // Not valid JSON — treat as plain text
+      return JSON.stringify([{ type: 'paragraph', props: paraProps, content: [{ type: 'text', text: content, styles: {} }], children: [] }]);
     }
   }
   if (Array.isArray(content)) return JSON.stringify(content);

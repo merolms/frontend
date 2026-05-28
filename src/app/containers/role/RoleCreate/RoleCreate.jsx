@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Paper, Breadcrumbs, Anchor, Button, Title, Text } from '@mantine/core';
-import { IconShield } from '@tabler/icons-react';
+import { Shield } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import RoleForm from '@/app/containers/role/RoleForm/RoleForm';
 import { createRole } from '@/app/services/authService';
@@ -27,7 +27,7 @@ const RoleCreate = () => {
         <div className='dashboard-content'>
           <Breadcrumbs mb="md"><Anchor onClick={() => navigate('/roles')}>Roles</Anchor><span>Create Role</span></Breadcrumbs>
           <Paper className='role-form-segment' p="lg" radius="md" withBorder>
-            <Title order={3} mb={4}><IconShield size={20} color="#33a163" /> Create New Role</Title>
+            <Title order={3} mb={4}><Shield size={20} color="#33a163" /> Create New Role</Title>
             <Text c="dimmed" size="sm" mb="md">Define a new role and assign permissions to it.</Text>
             <RoleForm onSubmit={handleSubmit} onCancel={handleCancel} loading={loading} submitLabel='Create Role' />
           </Paper>

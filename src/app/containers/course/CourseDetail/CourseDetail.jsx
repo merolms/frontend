@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Paper, Breadcrumbs, Anchor, Button, Badge, Group, Grid, Stack, Title, Text, Tabs, List, Image, SimpleGrid } from '@mantine/core';
-import { IconBook, IconUser, IconFolder, IconClock, IconStar, IconList, IconSitemap, IconPencil, IconCheck, IconArchive, IconTrash, IconEye, IconPlus, IconExclamationCircle } from '@tabler/icons-react';
+import {  AlertCircle, Archive, BookOpen, Check, Clock, Eye, Folder, ListIcon, Pencil, Plus, Network, Star, Trash2, User  } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { fetchCourseById, fetchLessons, publishCourse, archiveCourse, deleteCourse } from '@/app/services/courseService';
 import { PublishModal, ArchiveModal, DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
@@ -56,7 +56,7 @@ const CourseDetail = () => {
     return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" radius="md" mt={40}><Title order={4}>Loading...</Title></Paper></div></div>);
   }
   if (error || !course) {
-    return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" radius="md" mt={40}><IconExclamationCircle color="red" /> {error || 'Course not found'}<br /><Button mt="sm" onClick={() => navigate('/courses')}>Back to Courses</Button></Paper></div></div>);
+    return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" radius="md" mt={40}><AlertCircle color="red" /> {error || 'Course not found'}<br /><Button mt="sm" onClick={() => navigate('/courses')}>Back to Courses</Button></Paper></div></div>);
   }
 
   const status = statusConfig[course.status] || statusConfig.DRAFT;
@@ -73,13 +73,13 @@ const CourseDetail = () => {
           <div className='course-hero-bg' style={{ background: course.coverImage ? `linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%), url(${course.coverImage}) center/cover` : 'linear-gradient(135deg, #1a2332 0%, #232f3e 100%)' }}>
             <div className='course-hero-content'>
               <div className='course-hero-left'>
-                <Badge color={status.color} size="lg" mb="sm"><IconCheck size={12} /> {status.text}</Badge>
+                <Badge color={status.color} size="lg" mb="sm"><Check size={12} /> {status.text}</Badge>
                 <Title order={1} className='course-hero-title'>{course.title}</Title>
                 <Text className='course-hero-description'>{course.description}</Text>
                 <Group gap={8} className='course-hero-meta'>
-                  <span><IconUser size={14} /> {course.author}</span><span className='meta-sep'>·</span>
-                  <span><IconFolder size={14} /> {course.category}</span><span className='meta-sep'>·</span>
-                  <span><IconClock size={14} /> {course.duration}</span>
+                  <span><User size={14} /> {course.author}</span><span className='meta-sep'>·</span>
+                  <span><Folder size={14} /> {course.category}</span><span className='meta-sep'>·</span>
+                  <span><Clock size={14} /> {course.duration}</span>
                 </Group>
                 {course.tags?.length > 0 && (
                   <Group gap={4} className='course-hero-tags'>{course.tags.map((tag) => (<Badge key={tag} size="sm" variant="filled" color="gray">{tag}</Badge>))}</Group>
@@ -87,9 +87,9 @@ const CourseDetail = () => {
               </div>
               <div className='course-hero-right'>
                 <SimpleGrid cols={3} className='course-hero-stats'>
-                  <div className='course-stat'><IconList size={24} color="#2185d0" /><div className='course-stat-value'>{course.totalLessons}</div><div className='course-stat-label'>Lessons</div></div>
-                  <div className='course-stat'><IconUser size={24} color="#33a163" /><div className='course-stat-value'>0</div><div className='course-stat-label'>Enrolled</div></div>
-                  <div className='course-stat'><IconStar size={24} color="#f0a500" /><div className='course-stat-value'>—</div><div className='course-stat-label'>Rating</div></div>
+                  <div className='course-stat'><ListIcon size={24} color="#2185d0" /><div className='course-stat-value'>{course.totalLessons}</div><div className='course-stat-label'>Lessons</div></div>
+                  <div className='course-stat'><User size={24} color="#33a163" /><div className='course-stat-value'>0</div><div className='course-stat-label'>Enrolled</div></div>
+                  <div className='course-stat'><Star size={24} color="#f0a500" /><div className='course-stat-value'>—</div><div className='course-stat-label'>Rating</div></div>
                 </SimpleGrid>
               </div>
             </div>
@@ -98,19 +98,19 @@ const CourseDetail = () => {
 
         <Group justify="space-between" className='course-detail-actions' my="md">
           <Group>
-            <PermissionGuard permissions={['courses.lessons.manage']}><Button component={Link} to={`/courses/${id}/builder`} leftSection={<IconSitemap size={14} />}>Open Builder</Button></PermissionGuard>
-            <PermissionGuard permissions={['courses.edit']}><Button component={Link} to={`/courses/${id}/edit`} variant="default" leftSection={<IconPencil size={14} />}>Edit Details</Button></PermissionGuard>
-            <PermissionGuard permissions={['courses.lessons.manage']}><Button component={Link} to={`/courses/${id}/lessons`} variant="default" leftSection={<IconList size={14} />}>Manage Lessons</Button></PermissionGuard>
+            <PermissionGuard permissions={['courses.lessons.manage']}><Button component={Link} to={`/courses/${id}/builder`} leftSection={<Network size={14} />}>Open Builder</Button></PermissionGuard>
+            <PermissionGuard permissions={['courses.edit']}><Button component={Link} to={`/courses/${id}/edit`} variant="default" leftSection={<Pencil size={14} />}>Edit Details</Button></PermissionGuard>
+            <PermissionGuard permissions={['courses.lessons.manage']}><Button component={Link} to={`/courses/${id}/lessons`} variant="default" leftSection={<ListIcon size={14} />}>Manage Lessons</Button></PermissionGuard>
           </Group>
           <Group>
-            {enrollment?.status === 'active' && <Button component={Link} to={`/courses/${id}/learn`} leftSection={<IconPlus size={14} />}>Continue Learning</Button>}
-            {enrollment?.status === 'completed' && <Button component={Link} to={`/courses/${id}/learn`} variant="default" leftSection={<IconEye size={14} />}>Review Course</Button>}
-            {enrollment?.status === 'dropped' && <Button color="green" onClick={handleEnroll} loading={actionLoading} leftSection={<IconPlus size={14} />}>Re-enroll</Button>}
-            {enrollment?.status === 'active' && <Button variant="default" color="red" onClick={handleDrop} loading={actionLoading} leftSection={<IconPlus size={14} />}>Drop</Button>}
-            {!enrollment && user && course.status === 'Published' && <Button color="green" onClick={handleEnroll} loading={actionLoading} leftSection={<IconPlus size={14} />}>Enroll Now</Button>}
-            {course.status !== 'Published' && (<PermissionGuard permissions={['courses.publish']}><Button color="green" variant="light" leftSection={<IconCheck size={14} />} onClick={() => setActiveModal('publish')}>Publish</Button></PermissionGuard>)}
-            {course.status !== 'Archived' && <Button color="orange" variant="light" leftSection={<IconArchive size={14} />} onClick={() => setActiveModal('archive')}>Archive</Button>}
-            <PermissionGuard permissions={['courses.delete']}><Button color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={() => setActiveModal('delete')}>Delete</Button></PermissionGuard>
+            {enrollment?.status === 'active' && <Button component={Link} to={`/courses/${id}/learn`} leftSection={<Plus size={14} />}>Continue Learning</Button>}
+            {enrollment?.status === 'completed' && <Button component={Link} to={`/courses/${id}/learn`} variant="default" leftSection={<Eye size={14} />}>Review Course</Button>}
+            {enrollment?.status === 'dropped' && <Button color="green" onClick={handleEnroll} loading={actionLoading} leftSection={<Plus size={14} />}>Re-enroll</Button>}
+            {enrollment?.status === 'active' && <Button variant="default" color="red" onClick={handleDrop} loading={actionLoading} leftSection={<Plus size={14} />}>Drop</Button>}
+            {!enrollment && user && course.status === 'Published' && <Button color="green" onClick={handleEnroll} loading={actionLoading} leftSection={<Plus size={14} />}>Enroll Now</Button>}
+            {course.status !== 'Published' && (<PermissionGuard permissions={['courses.publish']}><Button color="green" variant="light" leftSection={<Check size={14} />} onClick={() => setActiveModal('publish')}>Publish</Button></PermissionGuard>)}
+            {course.status !== 'Archived' && <Button color="orange" variant="light" leftSection={<Archive size={14} />} onClick={() => setActiveModal('archive')}>Archive</Button>}
+            <PermissionGuard permissions={['courses.delete']}><Button color="red" variant="light" leftSection={<Trash2 size={14} />} onClick={() => setActiveModal('delete')}>Delete</Button></PermissionGuard>
           </Group>
         </Group>
 
@@ -134,15 +134,15 @@ const CourseDetail = () => {
                     <Grid>
                       <Grid.Col span={6}>
                         <List spacing="xs">
-                          <List.Item icon={<IconUser size={16} color="#2185d0" />}><Text fw={600}>Instructor</Text><Text c="dimmed">{course?.author || 'N/A'}</Text></List.Item>
-                          <List.Item icon={<IconFolder size={16} color="#9c27b0" />}><Text fw={600}>Category</Text><Text c="dimmed">{course?.category || 'N/A'}</Text></List.Item>
-                          <List.Item icon={<IconClock size={16} color="#f0a500" />}><Text fw={600}>Duration</Text><Text c="dimmed">{course?.duration || 'N/A'}</Text></List.Item>
+                          <List.Item icon={<User size={16} color="#2185d0" />}><Text fw={600}>Instructor</Text><Text c="dimmed">{course?.author || 'N/A'}</Text></List.Item>
+                          <List.Item icon={<Folder size={16} color="#9c27b0" />}><Text fw={600}>Category</Text><Text c="dimmed">{course?.category || 'N/A'}</Text></List.Item>
+                          <List.Item icon={<Clock size={16} color="#f0a500" />}><Text fw={600}>Duration</Text><Text c="dimmed">{course?.duration || 'N/A'}</Text></List.Item>
                         </List>
                       </Grid.Col>
                       <Grid.Col span={6}>
                         <List spacing="xs">
-                          <List.Item icon={<IconList size={16} color="#33a163" />}><Text fw={600}>Lessons</Text><Text c="dimmed">{course?.totalLessons || 0}</Text></List.Item>
-                          <List.Item icon={<IconBook size={16} color="#2185d0" />}><Text fw={600}>Created</Text><Text c="dimmed">{course?.createdAt || 'N/A'}</Text></List.Item>
+                          <List.Item icon={<ListIcon size={16} color="#33a163" />}><Text fw={600}>Lessons</Text><Text c="dimmed">{course?.totalLessons || 0}</Text></List.Item>
+                          <List.Item icon={<BookOpen size={16} color="#2185d0" />}><Text fw={600}>Created</Text><Text c="dimmed">{course?.createdAt || 'N/A'}</Text></List.Item>
                         </List>
                       </Grid.Col>
                     </Grid>
@@ -151,14 +151,14 @@ const CourseDetail = () => {
 
                 <Tabs.Panel value="lessons" pt="md">
                   {lessons.length === 0 ? (
-                    <div className='course-empty-state'><IconBook size={48} color="#999" /><Title order={4} c="dimmed">No lessons yet</Title><p>Start building your course by adding the first lesson.</p></div>
+                    <div className='course-empty-state'><BookOpen size={48} color="#999" /><Title order={4} c="dimmed">No lessons yet</Title><p>Start building your course by adding the first lesson.</p></div>
                   ) : (
                     <List spacing="sm" className='course-lessons-list'>
                       {lessons.map((lesson, index) => (
                         <List.Item key={lesson.id} className='course-lesson-item'>
                           <div className='course-lesson-number'>{index + 1}</div>
                           <div><Text fw={600}>{lesson.title}</Text><Text c="dimmed" size="sm">{lesson.description}</Text></div>
-                          {lesson.duration && <Badge size="xs" color="teal" leftSection={<IconClock size={10} />}>{lesson.duration}</Badge>}
+                          {lesson.duration && <Badge size="xs" color="teal" leftSection={<Clock size={10} />}>{lesson.duration}</Badge>}
                         </List.Item>
                       ))}
                     </List>
@@ -170,15 +170,15 @@ const CourseDetail = () => {
 
           <Grid.Col span={6}>
             <Paper className='course-sidebar-card' p="md" radius="md" withBorder mb="md">
-              <Title order={5} mb="sm"><IconList size={16} color="#33a163" /> Course Content</Title>
+              <Title order={5} mb="sm"><ListIcon size={16} color="#33a163" /> Course Content</Title>
               {lessons.length === 0 ? (
-                <div className='course-sidebar-empty'><IconBook size={32} color="#999" /><Text c="dimmed" size="sm">No lessons added yet.</Text></div>
+                <div className='course-sidebar-empty'><BookOpen size={32} color="#999" /><Text c="dimmed" size="sm">No lessons added yet.</Text></div>
               ) : (
                 <List spacing="xs" className='course-sidebar-lessons'>
                   {lessons.map((lesson, index) => (
                     <List.Item key={lesson.id} className='course-sidebar-lesson'>
                       <div className='course-lesson-num'>{index + 1}</div>
-                      <div><Text fw={500} size="sm">{lesson.title}</Text>{lesson.duration && <Text c="dimmed" size="xs"><IconClock size={10} /> {lesson.duration}</Text>}</div>
+                      <div><Text fw={500} size="sm">{lesson.title}</Text>{lesson.duration && <Text c="dimmed" size="xs"><Clock size={10} /> {lesson.duration}</Text>}</div>
                     </List.Item>
                   ))}
                 </List>
@@ -188,8 +188,8 @@ const CourseDetail = () => {
             <Paper className='course-sidebar-card' p="md" radius="md" withBorder>
               <Title order={5} mb="sm">Quick Info</Title>
               <List spacing="xs">
-                <List.Item icon={<IconStar size={14} />}><Text fw={600}>Created</Text><Text c="dimmed">{course.createdAt}</Text></List.Item>
-                <List.Item icon={<IconStar size={14} />}><Text fw={600}>Last Updated</Text><Text c="dimmed">{course.updatedAt}</Text></List.Item>
+                <List.Item icon={<Star size={14} />}><Text fw={600}>Created</Text><Text c="dimmed">{course.createdAt}</Text></List.Item>
+                <List.Item icon={<Star size={14} />}><Text fw={600}>Last Updated</Text><Text c="dimmed">{course.updatedAt}</Text></List.Item>
               </List>
             </Paper>
           </Grid.Col>

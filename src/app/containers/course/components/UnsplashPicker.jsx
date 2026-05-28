@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Modal, TextInput, Button, Image, Paper, Text, Group, Stack, Loader, Grid } from '@mantine/core';
-import { IconSearch, IconPhoto, IconCheck, IconX } from '@tabler/icons-react';
+import { Check, ImageIcon, Search, X } from 'lucide-react';
 import { searchUnsplash } from '@/app/services/unsplashService';
 
 const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
@@ -50,14 +50,14 @@ const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
   const handleConfirm = () => { if (selectedUrl) { onSelect(selectedUrl); onClose(); } };
 
   return (
-    <Modal opened={open} onClose={onClose} title="Select Cover Image from Unsplash" size="lg" className='unsplash-picker-modal'>
+    <Modal opened={open} onClose={onClose} title="Select Cover ImageIcon from Unsplash" size="lg" className='unsplash-picker-modal'>
       <form onSubmit={handleSearch} className='unsplash-search-bar'>
         <TextInput
           ref={inputRef}
           placeholder='Search photos (e.g., technology, nature, business)...'
           value={query}
           onChange={(e) => handleInputChange(e.target.value)}
-          leftSection={<IconSearch size={16} />}
+          leftSection={<Search size={16} />}
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSearch(e); } }}
           className='unsplash-search-input'
         />
@@ -75,10 +75,10 @@ const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
             {results.map((photo) => (
               <Grid.Col key={photo.id} span={3}>
                 <div className={`unsplash-grid-item ${selectedId === photo.id ? 'selected' : ''}`} onClick={() => handleSelect(photo)} style={{ position: 'relative', cursor: 'pointer' }}>
-                  <Image src={photo.thumb} alt={photo.alt} className='unsplash-thumb' radius="sm" />
+                  <ImageIcon src={photo.thumb} alt={photo.alt} className='unsplash-thumb' radius="sm" />
                   {selectedId === photo.id && (
                     <div className='unsplash-selected-badge' style={{ position: 'absolute', top: 4, right: 4 }}>
-                      <IconCheck size={20} color="green" />
+                      <Check size={20} color="green" />
                     </div>
                   )}
                 </div>
@@ -90,7 +90,7 @@ const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
 
       {!loading && results.length === 0 && !error && (
         <div className='unsplash-empty' ta="center" p="xl">
-          <IconPhoto size={48} color="#999" />
+          <ImageIcon size={48} color="#999" />
           <Text mt="sm">Search for images above to get started.</Text>
         </div>
       )}
@@ -99,13 +99,13 @@ const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
 
       {results.length > 0 && page < totalPages && !loading && (
         <div className='unsplash-load-more' ta="center" mt="sm">
-          <Button variant="default" leftSection={<IconSearch size={14} />} onClick={handleLoadMore}>Load More</Button>
+          <Button variant="default" leftSection={<Search size={14} />} onClick={handleLoadMore}>Load More</Button>
         </div>
       )}
 
       <Group justify="flex-end" mt="md">
-        <Button variant="default" onClick={onClose} leftSection={<IconX size={14} />}>Cancel</Button>
-        <Button onClick={handleConfirm} disabled={!selectedUrl} leftSection={<IconCheck size={14} />}>Use Selected Image</Button>
+        <Button variant="default" onClick={onClose} leftSection={<X size={14} />}>Cancel</Button>
+        <Button onClick={handleConfirm} disabled={!selectedUrl} leftSection={<Check size={14} />}>Use Selected ImageIcon</Button>
       </Group>
     </Modal>
   );

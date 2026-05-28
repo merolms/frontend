@@ -1,6 +1,6 @@
 import React from 'react';
 import { Paper, Text, Group, Badge, Stack, Avatar, Skeleton } from '@mantine/core';
-import { IconBook, IconUser, IconClock, IconList, IconUsers, IconChevronRight, IconSitemap, IconPencil } from '@tabler/icons-react';
+import { BookOpen, ChevronRight, Clock, List, Pencil, Network, User, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getStatusLabel, getCategoryColor } from './viewHelpers';
 
@@ -38,10 +38,10 @@ const ListView = ({ courses, navigate, loading }) => {
                   {status && <Badge size="xs" variant="light" color={status.color}>{status.text}</Badge>}
                   <Text size="sm" c="dimmed" lineClamp={2}>{course.description}</Text>
                   <Group gap={8}>
-                    <Badge size="xs" variant="light" color={getCategoryColor(course.category)} leftSection={<IconBook size={10} />}>{course.category}</Badge>
-                    <Text size="xs" c="dimmed"><IconUser size={10} /> {course.author}</Text>
-                    <Text size="xs" c="dimmed"><IconList size={10} /> {course.totalLessons} lessons</Text>
-                    <Text size="xs" c="dimmed"><IconUsers size={10} /> {course.enrolledUsers}</Text>
+                    <Badge size="xs" variant="light" color={getCategoryColor(course.category)} leftSection={<BookOpen size={10} />}>{course.category}</Badge>
+                    <Text size="xs" c="dimmed"><User size={10} /> {course.author}</Text>
+                    <Text size="xs" c="dimmed"><List size={10} /> {course.totalLessons} lessons</Text>
+                    <Text size="xs" c="dimmed"><Users size={10} /> {course.enrolledUsers}</Text>
                   </Group>
                   {course.tags?.length > 0 && (
                     <Group gap={4}>
@@ -51,8 +51,8 @@ const ListView = ({ courses, navigate, loading }) => {
                 </Stack>
               </Group>
               <Group gap={4}>
-                <Badge component={Link} to={`/courses/${course.id}/builder`} size="sm" variant="outline" leftSection={<IconSitemap size={10} />} style={{ cursor: 'pointer' }} onClick={(e) => e.stopPropagation()}>Builder</Badge>
-                <Badge component={Link} to={`/courses/${course.id}/edit`} size="sm" variant="outline" leftSection={<IconPencil size={10} />} style={{ cursor: 'pointer' }} onClick={(e) => e.stopPropagation()}>Edit</Badge>
+                <Badge component={Link} to={`/courses/${course.id}/builder`} size="sm" variant="outline" leftSection={<Network size={10} />} style={{ cursor: 'pointer' }} onClick={(e) => e.stopPropagation()}>Builder</Badge>
+                <Badge component={Link} to={`/courses/${course.id}/edit`} size="sm" variant="outline" leftSection={<Pencil size={10} />} style={{ cursor: 'pointer' }} onClick={(e) => e.stopPropagation()}>Edit</Badge>
               </Group>
             </Group>
           </Paper>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { TextInput, Button, Group, ScrollArea, Stack, Text, Avatar, Badge, Tooltip } from '@mantine/core';
-import { IconCheck, IconChevronDown, IconHash, IconUsers, IconX, IconPaperclip, IconMoodSmile, IconSend } from '@tabler/icons-react';
+import { Check, ChevronDown, Hash, Paperclip, Send, Smile, Users, X } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { chatStore, getUserById, getUsers } from '@/app/store/chatStore';
 import './Slack.scss';
@@ -43,7 +43,7 @@ const SlackChat = () => {
       <div className='dashboard-main'>
         <div className='slack-layout'>
           <div className='slack-channels'>
-            <div className='slack-workspace-header'><h3>MeroEdu <IconChevronDown size={14} /></h3></div>
+            <div className='slack-workspace-header'><h3>MeroEdu <ChevronDown size={14} /></h3></div>
             <div className='slack-section'><div className='slack-section-header'>Channels</div>
               {channels.map((ch) => (<div key={ch.id} className={`slack-channel-item ${activeChannel === ch.id ? 'active' : ''}`} onClick={() => chatStore.setActiveChannel(ch.id)}><span className='channel-icon'>#</span><span className='channel-name'>{ch.name}</span>{ch.unread > 0 && <span className='unread-badge'>{ch.unread}</span>}</div>))}
             </div>
@@ -57,7 +57,7 @@ const SlackChat = () => {
               <div className='chat-header-left'>
                 {activeDMUser ? (<><span className={`user-status-dot ${activeDMUser.status}`} /><h3>{activeDMUser.name}</h3><span className='user-role'>{activeDMUser.role}</span></>) : (<><span className='channel-icon'>#</span><h3>{activeChannelData?.name}</h3><span className='channel-description'>{activeChannelData?.description}</span></>)}
               </div>
-              <div className='chat-header-right'><Button size="xs" variant="default" onClick={() => setShowUserPanel(!showUserPanel)}><IconUsers size={14} /></Button></div>
+              <div className='chat-header-right'><Button size="xs" variant="default" onClick={() => setShowUserPanel(!showUserPanel)}><Users size={14} /></Button></div>
             </div>
 
             <ScrollArea className='slack-messages' h="calc(100vh - 200px)">
@@ -87,9 +87,9 @@ const SlackChat = () => {
               <div className='slack-input-wrapper'>
                 <TextInput ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKeyDown} placeholder={`Message ${activeDMUser ? activeDMUser.name : `#${activeChannelData?.name || ''}`}`} className='slack-textarea' style={{ flex: 1 }} />
                 <div className='slack-input-actions'>
-                  <Button size="xs" variant="subtle"><IconMoodSmile size={14} /></Button>
-                  <Button size="xs" variant="subtle"><IconPaperclip size={14} /></Button>
-                  <Button size="xs" onClick={handleSend} disabled={!input.trim()}><IconSend size={14} /></Button>
+                  <Button size="xs" variant="subtle"><Smile size={14} /></Button>
+                  <Button size="xs" variant="subtle"><Paperclip size={14} /></Button>
+                  <Button size="xs" onClick={handleSend} disabled={!input.trim()}><Send size={14} /></Button>
                 </div>
               </div>
             </div>
@@ -97,7 +97,7 @@ const SlackChat = () => {
 
           {showUserPanel && (
             <div className='slack-users-panel'>
-              <div className='users-panel-header'><h4>Members</h4><Button size="xs" variant="subtle" onClick={() => setShowUserPanel(false)}><IconX size={14} /></Button></div>
+              <div className='users-panel-header'><h4>Members</h4><Button size="xs" variant="subtle" onClick={() => setShowUserPanel(false)}><X size={14} /></Button></div>
               <div className='users-panel-list'>
                 {users.map((u) => (
                   <div key={u.id} className='user-panel-item' onClick={() => { chatStore.setActiveDM(u.id); setShowUserPanel(false); }}>

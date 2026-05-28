@@ -117,7 +117,7 @@ const CourseBuilder = () => {
       setSaving(true);
       setError(null);
       await saveAutosave(selectedLesson.id, JSON.stringify({ content, format: 'blocknote' }));
-      await updateLesson(id, selectedLesson.id, { content, type: 'blocknote' });
+      await updateLesson(id, selectedLesson.id, { title: selectedLesson.title, content, type: 'blocknote' });
       setAutosaveStatus('saved');
       setTimeout(() => setAutosaveStatus(''), 2500);
     } catch (err) {

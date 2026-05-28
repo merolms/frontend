@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Paper, Title, Text, Badge, Button, Progress, Grid, Image, Stack, Group, Skeleton } from '@mantine/core';
-import { IconBook, IconClock, IconArrowRight } from '@tabler/icons-react';
+import { ArrowRight, BookOpen, Clock } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { fetchEnrollments } from '@/app/services/enrollmentService';
 import { useSelector } from 'react-redux';
@@ -38,11 +38,11 @@ const MyLearning = () => {
                       <Image src={enrollment.coverImage} width={100} height={70} radius="sm" />
                       <div style={{ flex: 1 }}>
                         <Text fw={600} lineClamp={1}>{enrollment.title}</Text>
-                        <Text size="sm" c="dimmed"><IconClock size={12} /> {enrollment.duration}</Text>
+                        <Text size="sm" c="dimmed"><Clock size={12} /> {enrollment.duration}</Text>
                         <Progress value={enrollment.progress || 0} size="sm" radius="xl" mt={4} />
                         <Text size="xs" c="dimmed">{enrollment.progress || 0}% complete</Text>
                       </div>
-                      <Button size="sm" component={Link} to={`/courses/${enrollment.courseId}/learn`} leftSection={<IconArrowRight size={14} />}>Continue</Button>
+                      <Button size="sm" component={Link} to={`/courses/${enrollment.courseId}/learn`} leftSection={<ArrowRight size={14} />}>Continue</Button>
                     </Group>
                   </Paper>
                 </Grid.Col>

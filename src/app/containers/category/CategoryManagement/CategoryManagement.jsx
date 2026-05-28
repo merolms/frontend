@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Paper, TextInput, Button, Select, Table, Badge, Group, Text, Stack, Pagination, Skeleton, ActionIcon } from '@mantine/core';
-import { IconSearch, IconPlus, IconPencil, IconTrash, IconCheck, IconFolder, IconAlertCircle } from '@tabler/icons-react';
+import { AlertCircle, Check, Folder, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { fetchCategoriesWithPagination, deleteCategory, toggleCategoryStatus, createCategory, updateCategory } from '@/app/services/categoryService';
 import CategoryForm from '../components/CategoryForm';
@@ -81,9 +81,9 @@ const CategoryManagement = () => {
       <Table.Td><Text size="xs" c="dimmed">{cat.updatedAt ? new Date(cat.updatedAt * 1000).toLocaleDateString() : '—'}</Text></Table.Td>
       <Table.Td ta="center">
         <Group gap={4} justify="center">
-          <PermissionGuard permissions={['courses.edit']}><ActionIcon size="sm" variant="default" onClick={() => handleEdit(cat)} title="Edit"><IconPencil size={14} /></ActionIcon></PermissionGuard>
-          <ActionIcon size="sm" variant="default" onClick={() => handleToggleStatus(cat)} title={cat.status === 1 ? 'Deactivate' : 'Activate'}>{cat.status === 1 ? <IconPlus size={14} /> : <IconCheck size={14} />}</ActionIcon>
-          <PermissionGuard permissions={['courses.delete']}><ActionIcon size="sm" color="red" variant="default" onClick={() => setDeleteTarget(cat)} title="Delete"><IconTrash size={14} /></ActionIcon></PermissionGuard>
+          <PermissionGuard permissions={['courses.edit']}><ActionIcon size="sm" variant="default" onClick={() => handleEdit(cat)} title="Edit"><Pencil size={14} /></ActionIcon></PermissionGuard>
+          <ActionIcon size="sm" variant="default" onClick={() => handleToggleStatus(cat)} title={cat.status === 1 ? 'Deactivate' : 'Activate'}>{cat.status === 1 ? <Plus size={14} /> : <Check size={14} />}</ActionIcon>
+          <PermissionGuard permissions={['courses.delete']}><ActionIcon size="sm" color="red" variant="default" onClick={() => setDeleteTarget(cat)} title="Delete"><Trash2 size={14} /></ActionIcon></PermissionGuard>
         </Group>
       </Table.Td>
     </Table.Tr>
@@ -95,15 +95,15 @@ const CategoryManagement = () => {
       <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'><h1 className='page-title'>Categories</h1><p className='page-subtitle'>{total} categor{total === 1 ? 'y' : 'ies'} total</p></div>
-          <div className='header-right'><PermissionGuard permissions={['courses.create']}><Button leftSection={<IconPlus size={14} />} onClick={handleCreate}>New Category</Button></PermissionGuard></div>
+          <div className='header-right'><PermissionGuard permissions={['courses.create']}><Button leftSection={<Plus size={14} />} onClick={handleCreate}>New Category</Button></PermissionGuard></div>
         </div>
 
         <div className='dashboard-content'>
-          {error && <Paper p="sm" radius="md" withBorder mb="md"><Text c="red"><IconAlertCircle size={14} /> {error}</Text></Paper>}
+          {error && <Paper p="sm" radius="md" withBorder mb="md"><Text c="red"><AlertCircle size={14} /> {error}</Text></Paper>}
 
           <Paper className='category-filters' p="sm" radius="md" withBorder mb="md">
             <Group gap={8} style={{ flexWrap: 'wrap' }}>
-              <form className='category-search-form' onSubmit={handleSearch}><TextInput placeholder="Search categories..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} leftSection={<IconSearch size={16} />} /></form>
+              <form className='category-search-form' onSubmit={handleSearch}><TextInput placeholder="Search categories..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} leftSection={<Search size={16} />} /></form>
               <Select placeholder="Status" data={statusOptions} value={statusFilter} onChange={(v) => { setStatusFilter(v || ''); setPage(1); }} className='category-filter-dropdown' allowDeselect={false} />
               <Select placeholder="Sort" data={sortOptions} value={sort} onChange={(v) => { setSort(v || ''); setPage(1); }} className='category-filter-dropdown' allowDeselect={false} />
               <Button variant="default" onClick={handleClear}>Clear</Button>
@@ -114,7 +114,7 @@ const CategoryManagement = () => {
             {loading ? (
               <Table><Table.Thead><Table.Tr><Table.Th>Category</Table.Th><Table.Th>Description</Table.Th><Table.Th>Courses</Table.Th><Table.Th>Status</Table.Th><Table.Th>Updated</Table.Th><Table.Th>Actions</Table.Th></Table.Tr></Table.Thead><Table.Tbody>{[...Array(5)].map((_, i) => (<Table.Tr key={i}><Table.Td colSpan={6}><Skeleton height={20} /></Table.Td></Table.Tr>))}</Table.Tbody></Table>
             ) : categories.length === 0 ? (
-              <div className='category-empty' ta="center" p="xl"><IconFolder size={48} color="#999" /><Title order={4} c="dimmed">No categories found</Title><Text>Try adjusting your filters or create a new category.</Text><PermissionGuard permissions={['courses.create']}><Button mt="md" onClick={handleCreate} leftSection={<IconPlus size={14} />}>Create First Category</Button></PermissionGuard></div>
+              <div className='category-empty' ta="center" p="xl"><Folder size={48} color="#999" /><Title order={4} c="dimmed">No categories found</Title><Text>Try adjusting your filters or create a new category.</Text><PermissionGuard permissions={['courses.create']}><Button mt="md" onClick={handleCreate} leftSection={<Plus size={14} />}>Create First Category</Button></PermissionGuard></div>
             ) : (
               <Table striped className='category-table'>
                 <Table.Thead><Table.Tr><Table.Th>Category</Table.Th><Table.Th>Description</Table.Th><Table.Th ta="center">Courses</Table.Th><Table.Th>Status</Table.Th><Table.Th>Updated</Table.Th><Table.Th ta="center">Actions</Table.Th></Table.Tr></Table.Thead>

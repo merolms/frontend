@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Paper, TextInput, Button, Select, Table, Badge, Avatar, Group, Text, ActionIcon, Pagination, Alert, Loader } from '@mantine/core';
-import { IconSearch, IconPlus, IconPencil, IconTrash, IconAlertCircle } from '@tabler/icons-react';
+import { AlertCircle, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { fetchUsers, deleteUser } from '@/app/services/userService';
@@ -75,15 +75,15 @@ const UserContainer = () => {
       <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'><h1 className='page-title'>Users</h1><p className='page-subtitle'>{total} user{total !== 1 ? 's' : ''} total</p></div>
-          <div className='header-right'><Button leftSection={<IconPlus size={14} />} onClick={() => navigate('/users/create')}>Add User</Button></div>
+          <div className='header-right'><Button leftSection={<Plus size={14} />} onClick={() => navigate('/users/create')}>Add User</Button></div>
         </div>
 
         <div className='dashboard-content'>
-          {error && <Alert icon={<IconAlertCircle size={16} />} color="red" mb="md"><IconAlertCircle size={14} /> {error}</Alert>}
+          {error && <Alert icon={<AlertCircle size={16} />} color="red" mb="md"><AlertCircle size={14} /> {error}</Alert>}
 
           <Paper className='user-filters' p="sm" radius="md" withBorder mb="md">
             <Group gap={8} style={{ flexWrap: 'wrap' }}>
-              <form className='user-search-form' onSubmit={handleSearch}><TextInput placeholder="Search by name, email..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} leftSection={<IconSearch size={16} />} /></form>
+              <form className='user-search-form' onSubmit={handleSearch}><TextInput placeholder="Search by name, email..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} leftSection={<Search size={16} />} /></form>
               <Select placeholder="Role" data={roleOptions} value={roleFilter} onChange={(v) => updateParams({ role: v || '', page: 1 })} className='user-filter-dropdown' allowDeselect={false} />
               <Select placeholder="Status" data={statusOptions} value={statusFilter} onChange={(v) => updateParams({ status: v || '', page: 1 })} className='user-filter-dropdown' allowDeselect={false} />
               <Select placeholder="Sort" data={sortOptions} value={sort} onChange={(v) => updateParams({ sort: v, page: 1 })} className='user-filter-dropdown' allowDeselect={false} />
@@ -94,7 +94,7 @@ const UserContainer = () => {
           {loading ? (
             <Paper p="lg" radius="md"><Loader /><Text>Loading users...</Text></Paper>
           ) : users.length === 0 ? (
-            <Paper p="xl" radius="md" ta="center"><Title order={4}>No users found</Title><Text c="dimmed">Try adjusting your filters or add a new user.</Text><Button mt="md" leftSection={<IconPlus size={14} />} onClick={() => navigate('/users/create')}>Add User</Button></Paper>
+            <Paper p="xl" radius="md" ta="center"><Title order={4}>No users found</Title><Text c="dimmed">Try adjusting your filters or add a new user.</Text><Button mt="md" leftSection={<Plus size={14} />} onClick={() => navigate('/users/create')}>Add User</Button></Paper>
           ) : (
             <Paper p={0} radius="md" withBorder style={{ overflow: 'hidden' }}>
               <Table striped className='user-table'>
@@ -108,7 +108,7 @@ const UserContainer = () => {
                       <Table.Td><Badge color={getRoleColor(user.role)}>{user.role}</Badge></Table.Td>
                       <Table.Td><Badge color={user.status === 1 ? 'green' : 'gray'}>{user.status === 1 ? 'Active' : 'Inactive'}</Badge></Table.Td>
                       <Table.Td><Text size="xs" c="dimmed">{user.created_at ? new Date(user.created_at * 1000).toLocaleDateString() : '—'}</Text></Table.Td>
-                      <Table.Td ta="center"><Group gap={4} justify="center"><ActionIcon size="sm" variant="default" component={Link} to={`/users/${user.id}/edit`}><IconPencil size={14} /></ActionIcon><ActionIcon size="sm" color="red" variant="default" onClick={() => setDeleteTarget(user)}><IconTrash size={14} /></ActionIcon></Group></Table.Td>
+                      <Table.Td ta="center"><Group gap={4} justify="center"><ActionIcon size="sm" variant="default" component={Link} to={`/users/${user.id}/edit`}><Pencil size={14} /></ActionIcon><ActionIcon size="sm" color="red" variant="default" onClick={() => setDeleteTarget(user)}><Trash2 size={14} /></ActionIcon></Group></Table.Td>
                     </Table.Tr>
                   ))}
                 </Table.Tbody>

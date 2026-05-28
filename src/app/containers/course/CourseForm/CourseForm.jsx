@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput, Textarea, Select, Button, FileButton, Group, Stack, Image, Text, Paper } from '@mantine/core';
-import { IconPhoto, IconTrash, IconDeviceFloppy } from '@tabler/icons-react';
+import { ImageIcon, Save, Trash2 } from 'lucide-react';
 import { fetchCategories } from '@/app/services/categoryService';
 import UnsplashPicker from '@/app/containers/course/components/UnsplashPicker';
 
@@ -49,15 +49,15 @@ const CourseForm = ({ initialData = null, onSubmit, onCancel, loading = false, s
         <Select label="Tags" placeholder="Add tags to help discovery" data={tagOptions} value={formData.tags} onChange={(v) => handleChange('tags', v)} searchable multiple />
 
         <div>
-          <Text size="sm" fw={500} mb={4}>Cover Image</Text>
+          <Text size="sm" fw={500} mb={4}>Cover ImageIcon</Text>
           <Group>
             <TextInput placeholder="https://example.com/cover.jpg" value={formData.coverImage} onChange={(e) => handleChange('coverImage', e.target.value)} style={{ flex: 1 }} />
-            <Button variant="default" leftSection={<IconPhoto size={14} />} onClick={() => setUnsplashOpen(true)} disabled={loading}>Unsplash</Button>
+            <Button variant="default" leftSection={<ImageIcon size={14} />} onClick={() => setUnsplashOpen(true)} disabled={loading}>Unsplash</Button>
           </Group>
           {formData.coverImage && (
             <div style={{ marginTop: 8, position: 'relative', display: 'inline-block' }}>
-              <Image src={formData.coverImage} radius="sm" height={180} fit="cover" />
-              <Button size="xs" color="red" variant="filled" onClick={() => handleChange('coverImage', '')} style={{ position: 'absolute', top: 4, right: 4 }}><IconTrash size={12} /></Button>
+              <ImageIcon src={formData.coverImage} radius="sm" height={180} fit="cover" />
+              <Button size="xs" color="red" variant="filled" onClick={() => handleChange('coverImage', '')} style={{ position: 'absolute', top: 4, right: 4 }}><Trash2 size={12} /></Button>
             </div>
           )}
         </div>
@@ -71,7 +71,7 @@ const CourseForm = ({ initialData = null, onSubmit, onCancel, loading = false, s
 
         <Group justify="flex-end" mt="md">
           {onCancel && <Button variant="default" onClick={onCancel} disabled={loading}>Cancel</Button>}
-          <Button type="submit" loading={loading} leftSection={<IconDeviceFloppy size={14} />}>{submitLabel}</Button>
+          <Button type="submit" loading={loading} leftSection={<Save size={14} />}>{submitLabel}</Button>
         </Group>
       </Stack>
     </form>

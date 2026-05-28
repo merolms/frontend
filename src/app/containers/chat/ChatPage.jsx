@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Paper, TextInput, Button, Select, Modal, Text, Stack, Group, ScrollArea, Alert } from '@mantine/core';
-import { IconSend, IconSettings, IconRobot, IconUser, IconPlus } from '@tabler/icons-react';
+import { Bot, Plus, Send, Settings, User } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { sendMessage, getChatSettings, saveChatSettings, AVAILABLE_MODELS, API_PRESETS, testConnection } from '@/app/services/chatService';
 import './Chat.scss';
@@ -51,29 +51,29 @@ const ChatPage = () => {
       <div className='dashboard-main'>
         <div className='dashboard-header'>
           <div className='header-left'><h1 className='page-title'>AI Chat</h1><p className='page-subtitle'>{isLoading ? 'Thinking...' : streamText ? 'Typing...' : settings.enabled ? `Connected • ${settings.model}` : 'Built-in responses'}</p></div>
-          <div className='header-right'><IconPlus onClick={() => setShowSettings(true)} variant="default"><IconSettings size={16} /></IconPlus></div>
+          <div className='header-right'><Plus onClick={() => setShowSettings(true)} variant="default"><Settings size={16} /></Plus></div>
         </div>
 
         <div className='chat-page'>
           <ScrollArea className='chat-messages' h="calc(100vh - 200px)">
             {messages.map((msg) => (
               <div key={msg.id} className={`chat-message ${msg.role} ${msg.error ? 'error' : ''} ${msg.mock ? 'mock' : ''}`}>
-                <div className='chat-avatar'>{msg.role === 'user' ? <IconUser size={20} /> : <IconRobot size={20} />}</div>
+                <div className='chat-avatar'>{msg.role === 'user' ? <User size={20} /> : <Bot size={20} />}</div>
                 <div className='chat-bubble'>
                   <div className='chat-content'>{formatContent(msg.content)}</div>
                   <div className='chat-time'>{msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}{msg.mock && <span className='mock-badge'>demo</span>}</div>
                 </div>
               </div>
             ))}
-            {streamText && (<div className='chat-message assistant'><div className='chat-avatar'><IconRobot size={20} /></div><div className='chat-bubble'><div className='chat-content'>{formatContent(streamText)}</div></div></div>)}
-            {isLoading && !streamText && (<div className='chat-message assistant'><div className='chat-avatar'><IconRobot size={20} /></div><div className='chat-bubble typing'><div className='typing-dots'><span /><span /><span /></div></div></div>)}
+            {streamText && (<div className='chat-message assistant'><div className='chat-avatar'><Bot size={20} /></div><div className='chat-bubble'><div className='chat-content'>{formatContent(streamText)}</div></div></div>)}
+            {isLoading && !streamText && (<div className='chat-message assistant'><div className='chat-avatar'><Bot size={20} /></div><div className='chat-bubble typing'><div className='typing-dots'><span /><span /><span /></div></div></div>)}
             <div ref={messagesEndRef} />
           </ScrollArea>
 
           <Paper className='chat-input-segment' p="sm" radius="md" withBorder>
             <Group>
               <TextInput ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKeyDown} placeholder="Type your message..." style={{ flex: 1 }} disabled={isLoading} className='chat-textarea' />
-              <Button leftSection={<IconSend size={14} />} onClick={handleSend} disabled={!input.trim() || isLoading} className='chat-send-btn'>Send</Button>
+              <Button leftSection={<Send size={14} />} onClick={handleSend} disabled={!input.trim() || isLoading} className='chat-send-btn'>Send</Button>
             </Group>
           </Paper>
         </div>
