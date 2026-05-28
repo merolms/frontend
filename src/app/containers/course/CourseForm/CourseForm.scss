@@ -12,13 +12,13 @@
 
 .course-form-card {
   border-radius: 10px !important;
-  border: 1px solid #e8e8e8 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid var(--border-primary) !important;
+  box-shadow: var(--shadow-sm) !important;
   padding: 28px !important;
 }
 
 .course-form-subtitle {
-  color: #888;
+  color: var(--text-tertiary);
   font-size: 13px;
   margin-bottom: 20px !important;
 }
@@ -29,11 +29,16 @@
   border-radius: 6px;
   padding: 10px 14px;
   margin-bottom: 16px;
-  color: #c53030;
+  color: var(--danger-color);
   font-size: 13px;
   display: flex;
   align-items: center;
   gap: 6px;
+
+  [data-theme='dark'] & {
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.25);
+  }
 }
 
 .course-form-actions {
@@ -47,8 +52,8 @@
 
 .course-form-tips {
   border-radius: 10px !important;
-  border: 1px solid #e8e8e8 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid var(--border-primary) !important;
+  box-shadow: var(--shadow-sm) !important;
   padding: 20px !important;
 
   h4 {
@@ -66,7 +71,7 @@
     margin: 0;
     padding-left: 18px;
     font-size: 13px;
-    color: #666;
+    color: var(--text-tertiary);
     line-height: 1.6;
 
     li {
@@ -87,7 +92,7 @@
   margin-top: 10px;
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--border-primary);
 
   img {
     width: 100%;
@@ -167,6 +172,11 @@
     &.selected {
       border-color: #21ba45;
       box-shadow: 0 0 0 2px rgba(33, 186, 69, 0.25);
+
+      [data-theme='dark'] & {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.25);
+      }
     }
 
     .unsplash-thumb {
@@ -220,7 +230,7 @@
   .unsplash-empty {
     text-align: center;
     padding: 40px 0;
-    color: #999;
+    color: var(--text-tertiary);
 
     p {
       margin-top: 10px;
@@ -240,10 +250,20 @@
 
 [data-theme='light'] {
   .unsplash-picker-modal .unsplash-grid-item {
-    border-color: #e0e0e0;
+    border-color: var(--border-input);
 
     &:hover {
-      border-color: #2185d0;
+      border-color: var(--info-color);
+    }
+  }
+}
+
+[data-theme='dark'] {
+  .unsplash-picker-modal .unsplash-grid-item {
+    border-color: var(--border-input);
+
+    &:hover {
+      border-color: var(--info-color);
     }
   }
 }

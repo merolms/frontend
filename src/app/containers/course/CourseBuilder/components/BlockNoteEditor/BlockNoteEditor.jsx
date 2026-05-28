@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import '@blocknote/core/fonts/inter.css';
 import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
@@ -6,93 +6,74 @@ import { useCreateBlockNote } from '@blocknote/react';
 import { uploadBlockMedia } from '@/app/services/blockService';
 import './BlockNoteEditor.scss';
 
-const emptyDoc = () => [];
-
-// BlockNote requires specific props per block type
-const DEFAULT_PARAGRAPH_PROPS = { textAlignment: 'left', backgroundColor: 'default', textColor: 'default' };
-const DEFAULT_HEADING_PROPS = { level: 1, textAlignment: 'left', backgroundColor: 'default', textColor: 'default' };
-
-const normalizeProps = (type, props) => {
-  if (props && typeof props === 'object' && Object.keys(props).length > 0) return props;
-  if (type === 'heading') return { ...DEFAULT_HEADING_PROPS };
-  if (type === 'bulletListItem' || type === 'numberedListItem') return { ...DEFAULT_PARAGRAPH_PROPS };
-  if (type === 'checkListItem') return { checked: false, ...DEFAULT_PARAGRAPH_PROPS };
-  return { ...DEFAULT_PARAGRAPH_PROPS };
+const PARA_PROPS = {
+  textAlignment: 'left',
+  backgroundColor: 'default',
+  textColor: 'default',
 };
 
-const normalizeInlineContent = (content) => {
+const toInlineContent = (content) => {
   if (!content) return [];
-  // Already an array of proper inline content objects
+
   if (Array.isArray(content)) {
-    return content.filter(c => c && typeof c === 'object' && c.type).map(c => {
-      if (c.type === 'text') {
-        return { type: 'text', text: c.text || '', styles: c.styles || {} };
-      }
-      return c;
-    });
+    return content
+      .filter((c) => c && c.type)
+      .map((c) =>
+        c.type === 'text'
+          ? { type: 'text', text: c.text || '', styles: c.styles || {} }
+          : c
+      );
   }
-  // Legacy: content is a plain string
+
   if (typeof content === 'string' && content.trim()) {
     return [{ type: 'text', text: content, styles: {} }];
   }
-  // Legacy: content is an object with .text
+
   if (typeof content === 'object' && content.text) {
     return [{ type: 'text', text: content.text, styles: content.styles || {} }];
   }
+
   return [];
 };
 
-const sanitizeBlock = (block) => {
-  if (!block || typeof block !== 'object') return null;
-  if (!block.type || typeof block.type !== 'string') return null;
+const sanitizeBlocks = (content) => {
+  if (!content) return [];
 
-  const type = block.type;
-  const props = normalizeProps(type, block.props);
-  const content = normalizeInlineContent(block.content);
-  const children = Array.isArray(block.children)
-    ? block.children.map(sanitizeBlock).filter(Boolean)
-    : [];
-
-  return { type, props, content, children };
-};
-
-const parseContent = (content) => {
-  if (!content) return emptyDoc();
+  let parsed;
 
   try {
-    const parsed = typeof content === 'string' ? JSON.parse(content) : content;
-
-    // BlockNote format: array of blocks
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      const sanitized = parsed.map(sanitizeBlock).filter(Boolean);
-      return sanitized.length > 0 ? sanitized : emptyDoc();
-    }
-
-    // Plain string
-    if (typeof parsed === 'string' && parsed.trim()) {
-      return [{ type: 'paragraph', props: { ...DEFAULT_PARAGRAPH_PROPS }, content: [{ type: 'text', text: parsed, styles: {} }], children: [] }];
-    }
-
-    // Object with .content field
-    if (parsed && typeof parsed === 'object' && parsed.content) {
-      const text = typeof parsed.content === 'string' ? parsed.content : JSON.stringify(parsed.content);
-      if (text.trim()) {
-        return [{ type: 'paragraph', props: { ...DEFAULT_PARAGRAPH_PROPS }, content: [{ type: 'text', text, styles: {} }], children: [] }];
-      }
-    }
-
-    return emptyDoc();
+    parsed = typeof content === 'string' ? JSON.parse(content) : content;
   } catch {
-    // JSON parse failed — treat raw string as text
     if (typeof content === 'string' && content.trim()) {
-      return [{ type: 'paragraph', props: { ...DEFAULT_PARAGRAPH_PROPS }, content: [{ type: 'text', text: content, styles: {} }], children: [] }];
+      return [
+        {
+          type: 'paragraph',
+          props: { ...PARA_PROPS },
+          content: [{ type: 'text', text: content, styles: {} }],
+          children: [],
+        },
+      ];
     }
-    return emptyDoc();
+    return [];
   }
+
+  if (!Array.isArray(parsed)) return [];
+
+  return parsed
+    .filter((b) => b && b.type)
+    .map((b) => ({
+      type: b.type,
+      props: b.props || { ...PARA_PROPS },
+      content: toInlineContent(b.content),
+      children: Array.isArray(b.children)
+        ? sanitizeBlocks(b.children)
+        : [],
+    }));
 };
 
 const countWords = (blocks) => {
   let n = 0;
+
   const walk = (bs) => {
     for (const b of bs) {
       if (Array.isArray(b.content)) {
@@ -105,69 +86,111 @@ const countWords = (blocks) => {
       if (Array.isArray(b.children)) walk(b.children);
     }
   };
+
   walk(blocks);
   return n;
 };
 
 const BlockNoteEditorComponent = ({
   lessonId,
-  content,
+  contentRef,
   onChange,
   onSave,
   onStatsChange,
 }) => {
   const changeTimer = useRef(null);
-  const [words, setWords] = useState(0);
 
-  const initialContent = useMemo(() => {
-    try {
-      const parsed = parseContent(content);
-      if (!Array.isArray(parsed)) return [];
-      return parsed;
-    } catch (e) {
-      console.error('Failed to parse initial content:', e);
-      return [];
-    }
-  }, [content]);
+  // 🚨 prevents cursor reset during sync
+  const isTyping = useRef(false);
+  const isSyncing = useRef(false);
+
+  const [words, setWords] = useState(0);
+  const [ready, setReady] = useState(false);
+
+  const notifyChange = useCallback(
+    (doc) => {
+      if (isSyncing.current) return;
+      const wc = countWords(doc);
+      const json = JSON.stringify(doc);
+      setWords(wc);
+      contentRef.current = json;
+      onStatsChange?.({ words: wc });
+      onChange?.(json);
+    },
+    [onChange, onStatsChange, contentRef]
+  );
+
+  // Track what content we already loaded to avoid re-processing
+  const loadedContent = useRef(null);
 
   const uploadFile = useCallback(
-    async (file) => uploadBlockMedia(lessonId, `temp_${Date.now()}`, file),
+    async (file) =>
+      uploadBlockMedia(lessonId, `temp_${Date.now()}`, file),
     [lessonId]
   );
 
-  const editor = useCreateBlockNote({ initialContent, uploadFile });
+  const editor = useCreateBlockNote({ uploadFile });
 
-  // Sync content when switching lessons
+  // Listen to editor changes directly (fires on every block doc mutation)
   useEffect(() => {
     if (!editor) return;
+
+    const unsubscribe = editor.onChange(() => {
+      isTyping.current = true;
+      clearTimeout(changeTimer.current);
+
+      changeTimer.current = setTimeout(() => {
+        try {
+          notifyChange(editor.document);
+        } finally {
+          isTyping.current = false;
+        }
+      }, 500);
+    });
+
+    return unsubscribe;
+  }, [editor, notifyChange]);
+
+  // Set up ready after editor is created
+  useEffect(() => {
+    if (editor) setReady(true);
+  }, [editor]);
+
+  // Lesson switch: sync editor from external content (NOT from editor's own onChange output)
+  useEffect(() => {
+    if (!editor || !ready) return;
+    if (isTyping.current) return;
+
+    // Read from ref (parent sets this on lesson load)
+    const raw = contentRef.current;
+
+    // Skip if we've already loaded this exact content string
+    if (loadedContent.current === raw) return;
+    loadedContent.current = raw;
+
+    const blocks = sanitizeBlocks(raw);
+    const current = JSON.stringify(editor.document);
+    const next = JSON.stringify(blocks);
+    if (current === next) return;
+
+    isSyncing.current = true;
     try {
-      const next = parseContent(content);
-      if (!Array.isArray(next)) return;
-      if (JSON.stringify(editor.document) !== JSON.stringify(next)) {
-        editor.replaceBlocks(editor.document, next);
-        const wc = countWords(next);
-        setWords(wc);
-        onStatsChange?.({ words: wc });
+      if (blocks.length > 0) {
+        editor.replaceBlocks(editor.document, blocks);
+        setWords(countWords(blocks));
+      } else {
+        editor.replaceBlocks(editor.document, []);
+        setWords(0);
       }
     } catch (e) {
-      console.error('Failed to sync editor content:', e);
+      console.error('Sync failed:', e);
     }
-  }, [content, editor, onStatsChange]);
+    isSyncing.current = false;
+  }, [lessonId, editor, ready]);
 
-  useEffect(() => () => clearTimeout(changeTimer.current), []);
-
-  const handleChange = useCallback(() => {
-    if (!editor) return;
-    clearTimeout(changeTimer.current);
-    changeTimer.current = setTimeout(() => {
-      try {
-        onChange?.(JSON.stringify(editor.document));
-        const wc = countWords(editor.document);
-        setWords(wc);
-        onStatsChange?.({ words: wc });
-      } catch { /* ignore */ }
-    }, 300);
-  }, [editor, onChange, onStatsChange]);
+  useEffect(() => {
+    return () => clearTimeout(changeTimer.current);
+  }, []);
 
   useEffect(() => {
     const handler = (e) => {
@@ -176,6 +199,7 @@ const BlockNoteEditorComponent = ({
         onSave?.();
       }
     };
+
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [onSave]);
@@ -183,17 +207,23 @@ const BlockNoteEditorComponent = ({
   if (!editor) return null;
 
   return (
-    <div className="bn-wrapper">
+    <div >
       <BlockNoteView
         editor={editor}
-        onChange={handleChange}
         theme="light"
-        className="bn-view"
       />
+
       <div className="bn-statusbar">
-        <span className="bn-statusbar-stat">{words} {words === 1 ? 'word' : 'words'}</span>
+        <span className="bn-statusbar-stat">
+          {words} {words === 1 ? 'word' : 'words'}
+        </span>
+
         <span className="bn-statusbar-dot">·</span>
-        <span className="bn-statusbar-stat">~{Math.max(1, Math.ceil(words / 200))} min read</span>
+
+        <span className="bn-statusbar-stat">
+          ~{Math.max(1, Math.ceil(words / 200))} min read
+        </span>
+
         <span className="bn-statusbar-hint">
           Type <kbd>/</kbd> for blocks &nbsp;·&nbsp; <kbd>⌘S</kbd> to save
         </span>

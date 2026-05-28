@@ -1,18 +1,18 @@
 .stat-card {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-md);
   }
 
   .stat-title {
     font-size: 0.9rem;
     font-weight: 600;
-    color: #666;
+    color: var(--text-tertiary);
     margin-bottom: 0.5rem;
   }
 
@@ -25,7 +25,7 @@
     span {
       font-size: 1.8rem;
       font-weight: 700;
-      color: #333;
+      color: var(--text-primary);
     }
   }
 
@@ -36,11 +36,11 @@
     font-size: 0.85rem;
 
     .trend-up {
-      color: #28a745; /* green */
+      color: var(--primary-color);
     }
 
     .trend-down {
-      color: #dc3545; /* red */
+      color: var(--danger-color);
     }
   }
 }

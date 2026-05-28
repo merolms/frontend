@@ -252,6 +252,16 @@ export const deleteLesson = async (courseId, lessonId) => {
   }
 };
 
+export const reorderLessons = async (courseId, orderedIds) => {
+  try {
+    const data = await apiPut(`/courses/${courseId}/lessons/reorder`, { lesson_ids: orderedIds });
+    return data;
+  } catch (error) {
+    console.error('Error reordering lessons:', error);
+    throw error;
+  }
+};
+
 // ==================== MOCK DATA (fallback for dev) ====================
 
 let mockCourses = [

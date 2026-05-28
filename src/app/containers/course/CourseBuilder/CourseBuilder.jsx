@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import './CourseBuilder.scss';
@@ -9,6 +9,7 @@ import {
   fetchLessons,
   createLesson,
   updateLesson,
+  reorderLessons,
 } from '@/app/services/courseService';
 import { saveAutosave, fetchAutosave } from '@/app/services/blockService';
 
@@ -53,7 +54,14 @@ const CourseBuilder = () => {
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
   const [selectedLesson, setSelectedLesson] = useState(null);
+  // ─── Content bridge ─────────────────────────────────────────────
+  // Editor writes to contentRef (never to state during active editing).
+  // State is only updated on explicit save to avoid echo back to editor.
+  const contentRef = useRef('');
   const [content, setContent] = useState('');
+  const [panelWidth, setPanelWidth] = useState(300);
+  const [isResizing, setIsResizing] = useState(false);
+  const resizeStart = useRef({ x: 0, width: 0 });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [autosaveStatus, setAutosaveStatus] = useState('');
@@ -89,23 +97,24 @@ const CourseBuilder = () => {
   const loadLesson = async (lesson) => {
     setSelectedLesson(lesson);
     setContent('');
+    contentRef.current = '';
     try {
       // First try autosave (more recent)
       const autosave = await fetchAutosave(lesson.id);
       if (autosave?.snapshot) {
         const snap = JSON.parse(autosave.snapshot);
-        if (Array.isArray(snap)) { setContent(JSON.stringify(snap)); return; }
-        if (snap.content) {
-          setContent(typeof snap.content === 'string' ? snap.content : JSON.stringify(snap.content));
-          return;
-        }
-        setContent(JSON.stringify(snap));
+        const c = Array.isArray(snap) ? JSON.stringify(snap)
+          : snap.content ? (typeof snap.content === 'string' ? snap.content : JSON.stringify(snap.content))
+          : JSON.stringify(snap);
+        setContent(c);
+        contentRef.current = c;
         return;
       }
       // Fall back to lesson content
       if (lesson.content) {
         const c = typeof lesson.content === 'string' ? lesson.content : JSON.stringify(lesson.content);
         setContent(c);
+        contentRef.current = c;
         return;
       }
     } catch { /* ignore */ }
@@ -116,8 +125,9 @@ const CourseBuilder = () => {
     try {
       setSaving(true);
       setError(null);
-      await saveAutosave(selectedLesson.id, JSON.stringify({ content, format: 'blocknote' }));
-      await updateLesson(id, selectedLesson.id, { title: selectedLesson.title, content, type: 'blocknote' });
+      const currentContent = contentRef.current;
+      await saveAutosave(selectedLesson.id, JSON.stringify({ content: currentContent, format: 'blocknote' }));
+      await updateLesson(id, selectedLesson.id, { title: selectedLesson.title, content: currentContent, type: 'blocknote' });
       setAutosaveStatus('saved');
       setTimeout(() => setAutosaveStatus(''), 2500);
     } catch (err) {
@@ -127,8 +137,49 @@ const CourseBuilder = () => {
     }
   };
 
-  const handleContentChange = useCallback((json) => setContent(json), []);
+  const handleContentChange = useCallback((json) => {
+    contentRef.current = json;
+  }, []);
   const handleStatsChange = useCallback(({ words: w }) => setWords(w), []);
+
+  // ─── Reorder lessons ───────────────────────────────────────────
+  const handleReorderLessons = useCallback(async (newLessons) => {
+    // Optimistically update local state
+    const previousLessons = lessons;
+    setLessons(newLessons);
+
+    // Persist new order to backend
+    try {
+      const orderedIds = newLessons.map((l) => l.id);
+      await reorderLessons(id, orderedIds);
+    } catch (err) {
+      // Rollback on failure
+      setLessons(previousLessons);
+      setError(err.message || 'Failed to reorder lessons.');
+    }
+  }, [lessons, id]);
+
+  // ─── Panel resize ─────────────────────────────────────────────
+  const handleResizeStart = useCallback((e) => {
+    e.preventDefault();
+    setIsResizing(true);
+    resizeStart.current = { x: e.clientX, width: panelWidth };
+
+    const handleMove = (ev) => {
+      const dx = ev.clientX - resizeStart.current.x;
+      const next = Math.max(160, Math.min(480, resizeStart.current.width + dx));
+      setPanelWidth(next);
+    };
+
+    const handleUp = () => {
+      setIsResizing(false);
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('mouseup', handleUp);
+    };
+
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleUp);
+  }, [panelWidth]);
 
   const handleSelectLesson = useCallback(
     async (lessonId) => {
@@ -222,7 +273,7 @@ const CourseBuilder = () => {
             )}
 
             {autosaveStatus === 'saved' && (
-              <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#33a163' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#111' }}>
                 <CheckIcon /> Saved
               </span>
             )}
@@ -269,7 +320,7 @@ const CourseBuilder = () => {
         )}
 
         {/* ── Editor layout ──────────────────────────────────── */}
-        <div style={{ display: 'flex', flex: 1, overflow: 'hidden', minHeight: 0 }}>
+        <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
           <LessonPanel
             lessons={lessons}
             selectedLessonId={selectedLesson?.id}
@@ -277,6 +328,23 @@ const CourseBuilder = () => {
             onAddLesson={handleAddLesson}
             onRenameLesson={handleRenameLesson}
             adding={addingLesson}
+            width={panelWidth}
+            onReorder={handleReorderLessons}
+          />
+
+          {/* Resize handle */}
+          <div
+            onMouseDown={handleResizeStart}
+            style={{
+              width: 6,
+              flexShrink: 0,
+              cursor: 'col-resize',
+              background: isResizing ? 'rgba(0,0,0,0.08)' : 'transparent',
+              transition: 'background 0.15s',
+              userSelect: 'none',
+            }}
+            onMouseEnter={(e) => { if (!isResizing) e.currentTarget.style.background = 'rgba(0,0,0,0.06)'; }}
+            onMouseLeave={(e) => { if (!isResizing) e.currentTarget.style.background = 'transparent'; }}
           />
 
           {/* Scrollable canvas */}
@@ -293,12 +361,11 @@ const CourseBuilder = () => {
             {/* Document card */}
             <div style={{
               width: '100%',
-              maxWidth: 760,
+              minWidth: 760,
               background: '#fff',
               borderRadius: 12,
               boxShadow: '0 2px 20px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.03)',
               padding: '48px 56px 0',
-              minHeight: 'calc(100vh - 160px)',
               display: 'flex',
               flexDirection: 'column',
             }}>
@@ -320,11 +387,11 @@ const CourseBuilder = () => {
               </div>
 
               {/* BlockNote editor */}
-              <div style={{ flex: 1, minHeight: 0 }}>
+              <div style={{ flex: 1 }}>
                 <BlockNoteEditor
                   key={selectedLesson?.id}
                   lessonId={selectedLesson?.id}
-                  content={content}
+                  contentRef={contentRef}
                   onChange={handleContentChange}
                   onSave={handleSave}
                   onStatsChange={handleStatsChange}
@@ -351,7 +418,7 @@ const BreadcrumbButton = ({ onClick, children, maxWidth = 120 }) => {
         background: 'none',
         border: 'none',
         cursor: 'pointer',
-        color: hovered ? '#33a163' : '#999',
+        color: hovered ? '#111' : '#999',
         padding: 0,
         fontSize: 13,
         maxWidth,
@@ -384,7 +451,7 @@ const TopBarButton = ({ onClick, disabled, variant, children }) => {
 
   const styles = variant === 'primary' ? {
     ...base,
-    background: hovered && !disabled ? '#2e9158' : '#33a163',
+    background: hovered && !disabled ? '#000' : '#111',
     color: '#fff',
     opacity: disabled ? 0.7 : 1,
   } : {

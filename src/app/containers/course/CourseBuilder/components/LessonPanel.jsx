@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 
 const LessonPanel = ({
   lessons = [],
@@ -6,11 +6,18 @@ const LessonPanel = ({
   onSelectLesson,
   onAddLesson,
   onRenameLesson,
+  onReorder,
   adding = false,
+  width = 224,
 }) => {
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState('');
   const inputRef = useRef(null);
+
+  // ─── Drag & Drop state ────────────────────────────────────────
+  const [dragIndex, setDragIndex] = useState(null);
+  const [dropIndex, setDropIndex] = useState(null);
+  const dragCounter = useRef(0);
 
   const startEdit = (e, lesson) => {
     e.stopPropagation();
@@ -32,10 +39,61 @@ const LessonPanel = ({
     if (e.key === 'Escape') setEditingId(null);
   };
 
+  // ─── Drag handlers ────────────────────────────────────────────
+  const handleDragStart = useCallback((e, index) => {
+    setDragIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', String(index));
+  }, []);
+
+  const handleDragEnter = useCallback((index) => {
+    dragCounter.current++;
+    if (dragIndex !== null && index !== dragIndex) {
+      setDropIndex(index);
+    }
+  }, [dragIndex]);
+
+  const handleDragLeave = useCallback(() => {
+    dragCounter.current--;
+    if (dragCounter.current === 0) {
+      setDropIndex(null);
+    }
+  }, []);
+
+  const handleDragOver = useCallback((e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  const handleDrop = useCallback((e, targetIndex) => {
+    e.preventDefault();
+    dragCounter.current = 0;
+
+    if (dragIndex === null || dragIndex === targetIndex) {
+      setDragIndex(null);
+      setDropIndex(null);
+      return;
+    }
+
+    const newLessons = [...lessons];
+    const [moved] = newLessons.splice(dragIndex, 1);
+    newLessons.splice(targetIndex, 0, moved);
+
+    onReorder?.(newLessons);
+    setDragIndex(null);
+    setDropIndex(null);
+  }, [dragIndex, lessons, onReorder]);
+
+  const handleDragEnd = useCallback(() => {
+    dragCounter.current = 0;
+    setDragIndex(null);
+    setDropIndex(null);
+  }, []);
+
   return (
     <aside
       className="flex flex-col bg-white overflow-hidden"
-      style={{ width: 224, flexShrink: 0, borderRight: '1px solid #f0f0f0' }}
+      style={{ width, flexShrink: 0, borderRight: '1px solid #f0f0f0' }}
     >
       {/* Header */}
       <div
@@ -56,7 +114,7 @@ const LessonPanel = ({
           disabled={adding}
           title="Add lesson"
           style={{ width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', color: '#aaa', transition: 'color 0.15s, background 0.15s' }}
-          onMouseEnter={e => { e.currentTarget.style.color = '#33a163'; e.currentTarget.style.background = 'rgba(51,161,99,0.08)'; }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#111'; e.currentTarget.style.background = 'rgba(0,0,0,0.06)'; }}
           onMouseLeave={e => { e.currentTarget.style.color = '#aaa'; e.currentTarget.style.background = 'transparent'; }}
         >
           {adding ? (
@@ -86,6 +144,8 @@ const LessonPanel = ({
         {lessons.map((lesson, i) => {
           const isActive = selectedLessonId === lesson.id;
           const isEditing = editingId === lesson.id;
+          const isDragging = dragIndex === i;
+          const isDropTarget = dropIndex === i;
 
           return (
             <LessonItem
@@ -94,6 +154,8 @@ const LessonPanel = ({
               index={i}
               isActive={isActive}
               isEditing={isEditing}
+              isDragging={isDragging}
+              isDropTarget={isDropTarget}
               editValue={editValue}
               inputRef={editingId === lesson.id ? inputRef : null}
               onSelect={() => !isEditing && onSelectLesson(lesson.id)}
@@ -101,6 +163,12 @@ const LessonPanel = ({
               onEditChange={(v) => setEditValue(v)}
               onCommit={commitEdit}
               onKeyDown={handleKeyDown}
+              onDragStart={(e) => handleDragStart(e, i)}
+              onDragEnter={() => handleDragEnter(i)}
+              onDragLeave={handleDragLeave}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, i)}
+              onDragEnd={handleDragEnd}
             />
           );
         })}
@@ -126,6 +194,8 @@ const LessonItem = ({
   index,
   isActive,
   isEditing,
+  isDragging,
+  isDropTarget,
   editValue,
   inputRef,
   onSelect,
@@ -133,20 +203,28 @@ const LessonItem = ({
   onEditChange,
   onCommit,
   onKeyDown,
+  onDragStart,
+  onDragEnter,
+  onDragLeave,
+  onDragOver,
+  onDrop,
+  onDragEnd,
 }) => {
   const [hovered, setHovered] = React.useState(false);
 
   const itemStyle = {
     display: 'flex',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
     padding: '7px 10px',
     borderRadius: 8,
-    cursor: 'pointer',
+    cursor: isEditing ? 'text' : 'pointer',
     marginBottom: 2,
-    transition: 'background 0.12s',
-    background: isActive ? 'rgba(51,161,99,0.08)' : hovered ? '#f5f5f5' : 'transparent',
-    borderLeft: isActive ? '2px solid #33a163' : '2px solid transparent',
+    transition: 'background 0.12s, opacity 0.15s',
+    background: isActive ? 'rgba(0,0,0,0.06)' : hovered ? '#f5f5f5' : 'transparent',
+    borderLeft: isActive ? '2px solid #111' : '2px solid transparent',
+    opacity: isDragging ? 0.4 : 1,
+    position: 'relative',
   };
 
   const badgeStyle = {
@@ -160,7 +238,7 @@ const LessonItem = ({
     fontWeight: 700,
     flexShrink: 0,
     transition: 'background 0.12s',
-    background: isActive ? '#33a163' : '#eee',
+    background: isActive ? '#111' : '#eee',
     color: isActive ? '#fff' : '#888',
   };
 
@@ -170,8 +248,53 @@ const LessonItem = ({
       onClick={onSelect}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      title={isEditing ? undefined : 'Double-click to rename'}
+      title={isEditing ? undefined : 'Drag to reorder · Double-click to rename'}
+      draggable={!isEditing}
+      onDragStart={onDragStart}
+      onDragEnter={onDragEnter}
+      onDragLeave={onDragLeave}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      onDragEnd={onDragEnd}
     >
+      {/* Drop indicator line */}
+      {isDropTarget && (
+        <div style={{
+          position: 'absolute',
+          top: -1,
+          left: 4,
+          right: 4,
+          height: 2,
+          background: '#111',
+          borderRadius: 1,
+        }} />
+      )}
+
+      {/* Drag handle */}
+      <div
+        style={{
+          width: 14,
+          height: 18,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+          cursor: 'grab',
+          color: hovered ? '#999' : '#ccc',
+          userSelect: 'none',
+        }}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <svg style={{ width: 10, height: 10 }} fill="currentColor" viewBox="0 0 24 24">
+          <circle cx="9" cy="6" r="1.5" />
+          <circle cx="15" cy="6" r="1.5" />
+          <circle cx="9" cy="12" r="1.5" />
+          <circle cx="15" cy="12" r="1.5" />
+          <circle cx="9" cy="18" r="1.5" />
+          <circle cx="15" cy="18" r="1.5" />
+        </svg>
+      </div>
+
       <span style={badgeStyle}>{index + 1}</span>
 
       {isEditing ? (
@@ -187,12 +310,12 @@ const LessonItem = ({
             minWidth: 0,
             fontSize: 13,
             background: '#fff',
-            border: '1px solid #33a163',
+            border: '1px solid #111',
             borderRadius: 4,
             padding: '1px 6px',
             outline: 'none',
             color: '#222',
-            boxShadow: '0 0 0 2px rgba(51,161,99,0.15)',
+            boxShadow: '0 0 0 2px rgba(0,0,0,0.1)',
           }}
           autoFocus
         />
@@ -203,7 +326,7 @@ const LessonItem = ({
               flex: 1,
               minWidth: 0,
               fontSize: 13,
-              color: isActive ? '#1e6e45' : '#555',
+              color: isActive ? '#111' : '#555',
               fontWeight: isActive ? 550 : 450,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -232,7 +355,7 @@ const LessonItem = ({
                 flexShrink: 0,
                 padding: 0,
               }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#33a163'; }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#111'; }}
               onMouseLeave={e => { e.currentTarget.style.color = '#bbb'; }}
             >
               <svg style={{ width: 11, height: 11 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
