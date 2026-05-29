@@ -8,6 +8,8 @@ import CategoryForm from '../components/CategoryForm';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
 import { useToast } from '@/app/context/ToastContext';
+
+import { t } from '@/styles/theme';
 import './Category.scss';
 
 export { fetchCategoriesWithPagination, deleteCategory, toggleCategoryStatus };
@@ -74,7 +76,7 @@ const CategoryManagement = () => {
 
   const rows = categories.map((cat) => (
     <Table.Tr key={cat.id} className={cat.status === 0 ? 'status-inactive' : ''}>
-      <Table.Td><Group gap={8}><span className='category-dot' style={{ width: 8, height: 8, borderRadius: 4, background: cat.color || '#1976d2' }} /><div><Text size="sm" fw={600}>{cat.name}</Text>{cat.slug && <Text size="xs" c="dimmed">{cat.slug}</Text>}</div></Group></Table.Td>
+      <Table.Td><Group gap={8}><span className='category-dot' style={{ width: 8, height: 8, borderRadius: 4, background: cat.color || t('accent') }} /><div><Text size="sm" fw={600}>{cat.name}</Text>{cat.slug && <Text size="xs" c="dimmed">{cat.slug}</Text>}</div></Group></Table.Td>
       <Table.Td><Text size="sm" c="dimmed">{cat.description || '—'}</Text></Table.Td>
       <Table.Td ta="center"><Badge size="sm" variant="light" color={(cat.courseCount || 0) > 0 ? 'blue' : 'gray'}>{cat.courseCount || 0}</Badge></Table.Td>
       <Table.Td><Badge size="sm" variant="light" color={cat.status === 1 ? 'green' : 'gray'}>{cat.status === 1 ? 'Active' : 'Inactive'}</Badge></Table.Td>
@@ -114,7 +116,7 @@ const CategoryManagement = () => {
             {loading ? (
               <Table><Table.Thead><Table.Tr><Table.Th>Category</Table.Th><Table.Th>Description</Table.Th><Table.Th>Courses</Table.Th><Table.Th>Status</Table.Th><Table.Th>Updated</Table.Th><Table.Th>Actions</Table.Th></Table.Tr></Table.Thead><Table.Tbody>{[...Array(5)].map((_, i) => (<Table.Tr key={i}><Table.Td colSpan={6}><Skeleton height={20} /></Table.Td></Table.Tr>))}</Table.Tbody></Table>
             ) : categories.length === 0 ? (
-              <div className='category-empty' ta="center" p="xl"><Folder size={48} color="#999" /><Title order={4} c="dimmed">No categories found</Title><Text>Try adjusting your filters or create a new category.</Text><PermissionGuard permissions={['courses.create']}><Button mt="md" onClick={handleCreate} leftSection={<Plus size={14} />}>Create First Category</Button></PermissionGuard></div>
+              <div className='category-empty' ta="center" p="xl"><Folder size={48} color={t('text-muted')} /><Title order={4} c="dimmed">No categories found</Title><Text>Try adjusting your filters or create a new category.</Text><PermissionGuard permissions={['courses.create']}><Button mt="md" onClick={handleCreate} leftSection={<Plus size={14} />}>Create First Category</Button></PermissionGuard></div>
             ) : (
               <Table striped className='category-table'>
                 <Table.Thead><Table.Tr><Table.Th>Category</Table.Th><Table.Th>Description</Table.Th><Table.Th ta="center">Courses</Table.Th><Table.Th>Status</Table.Th><Table.Th>Updated</Table.Th><Table.Th ta="center">Actions</Table.Th></Table.Tr></Table.Thead>

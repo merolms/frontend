@@ -8,6 +8,8 @@ import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions
 import { fetchTeamById, fetchTeamMembers, deleteTeam } from '@/app/services/teamService';
 import { useToast } from '@/app/context/ToastContext';
 
+import { t } from '@/styles/theme';
+
 const TeamDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -69,7 +71,7 @@ const TeamDetail = () => {
                   {members.map((m) => {
                     const userId = m.userID || m.userId;
                     return (
-                      <Group key={userId} justify="space-between" style={{ padding: '8px 12px', background: '#f8f9fa', borderRadius: 8 }}>
+                      <Group key={userId} justify="space-between" style={{ padding: '8px 12px', background: t('bg-secondary'), borderRadius: 8 }}>
                         <Group gap={10}><Avatar src={m.avatar} size={32} radius="xl" /><div><Text size="sm" fw={600}>{m.userName || 'Unknown'}</Text><Text size="xs" c="dimmed">{m.userEmail}</Text></div></Group>
                         <Badge>{m.role || '—'}</Badge>
                       </Group>

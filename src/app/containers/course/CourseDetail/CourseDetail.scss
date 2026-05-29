@@ -76,7 +76,7 @@
 }
 
 .course-hero-title {
-  color: #fff !important;
+  color: var(--bg-surface) !important;
   font-size: 28px !important;
   font-weight: 700 !important;
   margin: 0 0 10px !important;
@@ -124,7 +124,7 @@
     margin: 0 !important;
 
     .value {
-      color: #fff !important;
+      color: var(--bg-surface) !important;
       font-size: 18px !important;
       display: flex;
       align-items: center;
@@ -188,7 +188,7 @@
       margin-bottom: -2px !important;
 
       &.active {
-        border-bottom: 2px solid $primary-color !important;
+        border-bottom: 2px solid var(--primary) !important;
       }
     }
   }
@@ -212,7 +212,7 @@
   h3 {
     font-size: 16px !important;
     font-weight: 700 !important;
-    color: $text-color-dark !important;
+    color: var(--text-primary) !important;
     margin: 0 0 10px !important;
     padding-bottom: 6px;
     border-bottom: 1px solid var(--border-secondary);
@@ -242,12 +242,12 @@
   }
 
   .ui.header {
-    color: var(--text-tertiary) !important;
+    color: var(--text-muted) !important;
     margin-bottom: 8px !important;
   }
 
   p {
-    color: var(--text-tertiary);
+    color: var(--text-muted);
     margin-bottom: 16px;
   }
 }
@@ -271,7 +271,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #e8f5e9;
+  background: var(--primary-light);
   color: var(--primary-color);
   display: flex;
   align-items: center;
@@ -301,7 +301,7 @@
   .header {
     font-size: 14px !important;
     font-weight: 700 !important;
-    color: $text-color-dark !important;
+    color: var(--text-primary) !important;
     margin-bottom: 12px !important;
     display: flex;
     align-items: center;
@@ -311,14 +311,14 @@
 
 .course-sidebar-note {
   font-size: 12px;
-  color: var(--text-tertiary);
+  color: var(--text-muted);
   margin-top: 8px !important;
 }
 
 .course-sidebar-empty {
   text-align: center;
   padding: 20px;
-  color: var(--text-tertiary);
+  color: var(--text-muted);
 
   .ui.icon {
     margin-bottom: 6px;
@@ -342,7 +342,7 @@
       width: 22px;
       height: 22px;
       border-radius: 50%;
-      background: #e8f5e9;
+      background: var(--primary-light);
       color: var(--primary-color);
       display: flex;
       align-items: center;

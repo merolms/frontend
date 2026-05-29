@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { TextInput, Textarea, Select, Button, Stack, ColorInput, Group, Text, SimpleGrid, ActionIcon } from '@mantine/core';
+
+import { t } from '@/styles/theme';
+import { TextInput, Textarea, Select, Button, Stack, Group, Text} from '@mantine/core';
 import { AlertCircle } from 'lucide-react';
 
-const TEAM_COLORS = ['#1976d2', '#7b1fa2', '#e65100', '#33a163', '#c62828', '#00838f', '#f57f17', '#4a148c', '#2185d0', '#d32f2f', '#388e3c', '#f57c00'];
+const TEAM_COLORS = [...new Set([t('accent'), t('secondary'), t('warning'), t('primary'), t('error'), t('success')])];
 
 const colorOptions = TEAM_COLORS.map((color) => ({ value: color, label: color }));
 
@@ -29,7 +31,7 @@ const TeamForm = ({ initialData = null, onSubmit, onCancel, loading = false, sub
           <Text size="sm" fw={500} mb={4}>Color</Text>
           <Select data={colorOptions} value={formData.color} onChange={(v) => handleChange('color', v)} name="color" />
           <Group gap={8} mt={8}>
-            <div style={{ width: 24, height: 24, borderRadius: 4, background: formData.color, border: '1px solid #e8e8e8' }} />
+            <div style={{ width: 24, height: 24, borderRadius: 4, background: formData.color, border: `1px solid ${t('border-primary')}` }} />
             <Text size="sm" c="dimmed" ff="monospace">{formData.color}</Text>
           </Group>
         </div>

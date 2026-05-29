@@ -23,21 +23,21 @@
   font-size: 14px;
 
   &.toast-success {
-    background: #f0fff4;
-    border: 1px solid #c6f6d5;
-    color: #276749;
+    background: var(--primary-light);
+    border: 1px solid var(--primary-light);
+    color: var(--success);
   }
 
   &.toast-error {
-    background: #fff5f5;
-    border: 1px solid #feb2b2;
-    color: #c53030;
+    background: var(--error-light);
+    border: 1px solid var(--error-light);
+    color: var(--error);
   }
 
   &.toast-warning {
-    background: #fffff0;
-    border: 1px solid #fefcbf;
-    color: #975a16;
+    background: var(--warning);
+    border: 1px solid var(--warning);
+    color: var(--warning);
   }
 }
 

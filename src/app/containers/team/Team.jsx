@@ -6,6 +6,8 @@ import SideBar from '@/app/containers/SideBar/SideBar';
 import TeamMemberAssignModal from '@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { fetchTeams, fetchTeamMembers, deleteTeam } from '@/app/services/teamService';
+
+import { t } from '@/styles/theme';
 import './Team.scss';
 
 const statusOptions = [{ value: '', label: 'All' }, { value: '1', label: 'Active' }, { value: '0', label: 'Inactive' }];
@@ -93,14 +95,14 @@ const TeamContainer = () => {
             </Paper>
           ) : teams.length === 0 ? (
             <Paper p="xl" radius="md" className='team-empty' ta="center">
-              <Users size={48} color="#999" /><Title order={4}>No teams found</Title><Text c="dimmed">Try adjusting your filters or create a new team.</Text>
+              <Users size={48} color={t('text-muted')} /><Title order={4}>No teams found</Title><Text c="dimmed">Try adjusting your filters or create a new team.</Text>
               <Button mt="md" leftSection={<Plus size={14} />} onClick={() => navigate('/teams/create')}>Create Team</Button>
             </Paper>
           ) : (
             <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="md" className='teams-grid'>
               {teams.map((team) => (
                 <Card key={team.id} className='team-card' padding="md" radius="md" withBorder style={{ cursor: 'pointer' }} onClick={() => navigate(`/teams/${team.id}`)}>
-                  <div className='team-card-header' style={{ background: team.color || '#2185d0', padding: 12, margin: '-16px -16px 12px', borderRadius: '8px 8px 0 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div className='team-card-header' style={{ background: team.color || t('accent'), padding: 12, margin: '-16px -16px 12px', borderRadius: '8px 8px 0 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Users size={20} color="rgba(255,255,255,0.8)" />
                     <Badge size="xs" color={team.status === 1 ? 'green' : 'gray'} variant="filled">{team.status === 1 ? 'Active' : 'Inactive'}</Badge>
                   </div>

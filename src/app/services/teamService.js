@@ -4,6 +4,8 @@
 
 import { apiGet, apiPost, apiPut, apiDelete } from '@/app/services/http';
 
+import { t } from '@/styles/theme';
+
 // ==================== TEAMS ====================
 // GET /teams?start=0&limit=10  → returns Team[] (array in data)
 // GET /teams/{id}             → returns Team (single object in data)
@@ -38,7 +40,7 @@ export const createTeam = async (teamData) => {
     const body = {
       name: teamData.name || '',
       description: teamData.description || '',
-      color: teamData.color || '#2185d0',
+      color: teamData.color || t('accent'),
       status: teamData.status !== undefined ? teamData.status : 1,
     };
     return await apiPost('/teams', body);
@@ -54,7 +56,7 @@ export const updateTeam = async (id, teamData) => {
       id: parseInt(id),
       name: teamData.name || '',
       description: teamData.description || '',
-      color: teamData.color || '#2185d0',
+      color: teamData.color || t('accent'),
       status: teamData.status !== undefined ? teamData.status : 1,
     };
     return await apiPut(`/teams/${id}`, body);

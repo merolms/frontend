@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+
+import { t } from '@/styles/theme';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Paper, Breadcrumbs, Anchor, Button, TextInput, Select, Group, Title, Text, Loader } from '@mantine/core';
 import { AlertCircle, Pencil, Plus } from 'lucide-react';
@@ -40,7 +42,7 @@ const UserEdit = () => {
       <div className='dashboard-main'>
         <Breadcrumbs mb="md"><Anchor onClick={() => navigate('/users')}>Users</Anchor><Anchor onClick={() => navigate(`/users/${id}`)}>{user?.firstName} {user?.lastName}</Anchor><span>Edit</span></Breadcrumbs>
         <Paper className='user-form-segment' p="lg" radius="md" withBorder>
-          <Title order={3} mb={4}><Pencil size={20} color="#2185d0" /> Edit User</Title>
+          <Title order={3} mb={4}><Pencil size={20} color={t('accent')} /> Edit User</Title>
           <Text c="dimmed" size="sm" mb="md">Update the user details below.</Text>
           {error && <Text c="red" size="sm" mb="sm"><Plus size={14} /> {error}</Text>}
           <form onSubmit={handleSubmit}>

@@ -3,6 +3,10 @@ import { Modal, Button, Avatar, Group, Text, Stack, Badge, Loader } from '@manti
 import { Check, Plus, Users } from 'lucide-react';
 import { fetchTeams } from '@/app/services/teamService';
 
+import { t } from '@/styles/theme';
+
+import { t } from '@/styles/theme';
+
 const TeamAssignmentModal = ({ open, onClose, user, onUpdated }) => {
   const [teams, setTeams] = useState([]);
   const [assignedTeams, setAssignedTeams] = useState([]);
@@ -25,7 +29,7 @@ const TeamAssignmentModal = ({ open, onClose, user, onUpdated }) => {
       {loading ? <Loader size="sm" /> : teams.length === 0 ? <Text c="dimmed">No teams available.</Text> : (
         <Stack gap={8}>
           {teams.map((team) => (
-            <div key={team.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', border: '1px solid #e8e8e8', borderRadius: 8, cursor: 'pointer' }} onClick={() => setError('Team assignment is not yet supported by the backend.')}>
+            <div key={team.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', border: `1px solid ${t('border-primary')}`, borderRadius: 8, cursor: 'pointer' }} onClick={() => setError('Team assignment is not yet supported by the backend.')}>
               <Group gap={8}>
                 <Users size={16} color={isAssigned(team.name) ? 'green' : 'gray'} />
                 <Text size="sm" fw={500}>{team.name}</Text>

@@ -3,6 +3,8 @@
 
 import { apiGet } from '@/app/services/http';
 
+import { t } from '@/styles/theme';
+
 /**
  * Fetch dashboard statistics (KPIs)
  * @returns {Promise<Object>} Dashboard statistics data
@@ -81,10 +83,10 @@ export const mockDashboardStats = {
     { id: 6, title: 'UI/UX Design Principles', users: 56, progress: 41, status: 'published' },
   ],
   teamPerformance: [
-    { name: 'Team Alpha', progress: 85, color: '#33a163' },
-    { name: 'Team Beta', progress: 72, color: '#2185d0' },
-    { name: 'Team Gamma', progress: 63, color: '#f2711c' },
-    { name: 'Team Delta', progress: 91, color: '#6435c9' },
+    { name: 'Team Alpha', progress: 85, color: t('primary') },
+    { name: 'Team Beta', progress: 72, color: t('accent') },
+    { name: 'Team Gamma', progress: 63, color: t('warning') },
+    { name: 'Team Delta', progress: 91, color: t('secondary') },
   ],
 };
 

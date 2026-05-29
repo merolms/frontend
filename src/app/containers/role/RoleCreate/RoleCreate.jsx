@@ -7,6 +7,8 @@ import RoleForm from '@/app/containers/role/RoleForm/RoleForm';
 import { createRole } from '@/app/services/authService';
 import { useToast } from '@/app/context/ToastContext';
 
+import { t } from '@/styles/theme';
+
 const RoleCreate = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
@@ -27,7 +29,7 @@ const RoleCreate = () => {
         <div className='dashboard-content'>
           <Breadcrumbs mb="md"><Anchor onClick={() => navigate('/roles')}>Roles</Anchor><span>Create Role</span></Breadcrumbs>
           <Paper className='role-form-segment' p="lg" radius="md" withBorder>
-            <Title order={3} mb={4}><Shield size={20} color="#33a163" /> Create New Role</Title>
+            <Title order={3} mb={4}><Shield size={20} color={t('primary')} /> Create New Role</Title>
             <Text c="dimmed" size="sm" mb="md">Define a new role and assign permissions to it.</Text>
             <RoleForm onSubmit={handleSubmit} onCancel={handleCancel} loading={loading} submitLabel='Create Role' />
           </Paper>

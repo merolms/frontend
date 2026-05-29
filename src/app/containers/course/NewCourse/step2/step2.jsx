@@ -8,6 +8,10 @@ import { faker } from '@faker-js/faker';
 import CreateLesson from '@/app/containers/course/NewCourse/step2/CreateLesson/CreateLesson';
 import CreateContent from '@/app/containers/course/NewCourse/step2/CreateContent/CreateContent';
 
+import { t } from '@/styles/theme';
+
+import { t } from '@/styles/theme';
+
 const ItemTypes = { PARENT: 'parent', CHILD: 'child' };
 
 const ChildItem = memo(({ id, text, moveCard }) => {
@@ -18,7 +22,7 @@ const ChildItem = memo(({ id, text, moveCard }) => {
   const opacity = isDragging ? 0 : 1;
   return (
     <div className="child-container" ref={ref} style={{ opacity }}>
-      <div style={{ display: 'flex', alignItems: 'center', padding: '4px 8px', border: '1px solid #e8e8e8', borderRadius: 4, marginBottom: 4, background: '#fff' }}>
+      <div style={{ display: 'flex', alignItems: 'center', padding: '4px 8px', border: `1px solid ${t('border-primary')}`, borderRadius: 4, marginBottom: 4, background: t('bg-surface') }}>
         <Move size={14} style={{ cursor: 'move', marginRight: 8 }} />
         <span style={{ flex: 1 }}>{text}</span>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -53,7 +57,7 @@ const ParentItem = memo(({ id, text, moveCard }) => {
   const opacity = isDragging ? 0 : 1;
   const onAccordion = () => setOpen(!open);
   return (
-    <div className="parent-container" ref={ref} style={{ opacity, marginBottom: 8, border: '1px solid #e8e8e8', borderRadius: 4 }}>
+    <div className="parent-container" ref={ref} style={{ opacity, marginBottom: 8, border: `1px solid ${t('border-primary')}`, borderRadius: 4 }}>
       <div style={{ display: 'flex', alignItems: 'center', padding: '8px 12px' }}>
         <span style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
           <Move size={14} style={{ cursor: 'move' }} />

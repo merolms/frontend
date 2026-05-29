@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+
+import { t } from '@/styles/theme';
 import { useNavigate } from 'react-router-dom';
 import { Paper, Breadcrumbs, Anchor, Button, TextInput, Textarea, Group, Title, Text, Stack, ColorInput, Center } from '@mantine/core';
 import { Plus, Users } from 'lucide-react';
@@ -6,14 +8,14 @@ import SideBar from '@/app/containers/SideBar/SideBar';
 import { createTeam } from '@/app/services/teamService';
 import { useToast } from '@/app/context/ToastContext';
 
-const PRESET_COLORS = ['#1976d2', '#7b1fa2', '#e65100', '#33a163', '#c62828', '#00838f', '#f57f17', '#4a148c', '#2185d0', '#d32f2f', '#388e3c', '#f57c00'];
+const PRESET_COLORS = [t('accent'), t('secondary'), t('warning'), t('primary'), t('error'), t('accent'), t('warning'), t('secondary'), t('accent'), t('error'), t('success'), t('warning')];
 
 const TeamCreate = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [formData, setFormData] = useState({ name: '', description: '', color: '#2185d0', status: 1 });
+  const [formData, setFormData] = useState({ name: '', description: '', color: t('accent'), status: 1 });
 
   const handleChange = (field, value) => setFormData((prev) => ({ ...prev, [field]: value }));
   const handleSubmit = async (e) => {
@@ -31,7 +33,7 @@ const TeamCreate = () => {
         <Breadcrumbs mb="md" className="breadcrumb"><Anchor onClick={() => navigate('/teams')}>Teams</Anchor><span>Create Team</span></Breadcrumbs>
 
         <Paper className='team-form-segment' p="lg" radius="md" withBorder>
-          <Title order={3} mb={4}><Users size={20} color="#33a163" /> Create New Team</Title>
+          <Title order={3} mb={4}><Users size={20} color={t('primary')} /> Create New Team</Title>
           <Text c="dimmed" size="sm" mb="md">Set up a new team and start assigning members.</Text>
 
           {error && <Text c="red" size="sm" mb="sm" className="team-form-error">Team name is required.</Text>}
@@ -45,12 +47,12 @@ const TeamCreate = () => {
                 <Text size="sm" fw={500} mb={4}>Color</Text>
                 <Group gap={8}>
                   <ColorInput name="color" value={formData.color} onChange={(v) => handleChange('color', v)} format="hex" size="md" swatches={PRESET_COLORS} />
-                  <div style={{ width: 32, height: 32, borderRadius: 6, background: formData.color, border: '1px solid #e8e8e8', flexShrink: 0 }} />
+                  <div style={{ width: 32, height: 32, borderRadius: 6, background: formData.color, border: `1px solid ${t('border-primary')}`, flexShrink: 0 }} />
                   <Text size="sm" c="dimmed" ff="monospace">{formData.color}</Text>
                 </Group>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
                   {PRESET_COLORS.map((c) => (
-                    <button key={c} type='button' onClick={() => handleChange('color', c)} style={{ width: 28, height: 28, borderRadius: 4, background: c, border: formData.color === c ? '2px solid #333' : '1px solid #e8e8e8', cursor: 'pointer', padding: 0 }} title={c} />
+                    <button key={c} type='button' onClick={() => handleChange('color', c)} style={{ width: 28, height: 28, borderRadius: 4, background: c, border: formData.color === c ? `2px solid ${t('border-primary')}` : `1px solid ${t('border-primary')}`, cursor: 'pointer', padding: 0 }} title={c} />
                   ))}
                 </div>
               </div>

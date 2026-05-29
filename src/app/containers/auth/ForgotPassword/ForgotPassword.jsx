@@ -4,6 +4,8 @@ import { Paper, TextInput, Button, Title, Text, Alert, Stack, Center, Anchor } f
 import { AlertCircle, ArrowLeft, Check, GraduationCap, Mail } from 'lucide-react';
 import { forgotPassword } from '@/app/services/authService';
 
+import { t } from '@/styles/theme';
+
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,7 +30,7 @@ const ForgotPassword = () => {
     <div className='auth-page'>
       <div className='auth-container'>
         <Paper className='auth-card' p="xl" radius="md" withBorder>
-          {/* <Center mb="md"><GraduationCap size={48} color="#33a163" /></Center> */}
+          {/* <Center mb="md"><GraduationCap size={48} color={t('primary')} /></Center> */}
           <Title order={3} ta="center" mb="lg">Forgot Password</Title>
 
           {success ? (

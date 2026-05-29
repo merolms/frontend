@@ -12,7 +12,7 @@
 
 .slack-channels {
   width: 220px;
-  background: #1a1d2e;
+  background: var(--bg-surface);
   color: rgba(255, 255, 255, 0.7);
   display: flex;
   flex-direction: column;
@@ -20,8 +20,8 @@
   overflow-y: auto;
 
   [data-theme='light'] & {
-    background: #f0f2f5;
-    color: #555;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
   }
 }
 
@@ -33,16 +33,16 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
   [data-theme='light'] & {
-    border-bottom-color: #e0e0e0;
+    border-bottom-color: var(--border-primary);
   }
 
   h3 {
-    color: #fff;
+    color: var(--bg-surface);
     font-size: 16px;
     font-weight: 700;
     margin: 0;
 
-    [data-theme='light'] & { color: #111; }
+    [data-theme='light'] & { color: var(--text-primary); }
   }
 }
 
@@ -58,7 +58,7 @@
   letter-spacing: 0.5px;
   color: rgba(255, 255, 255, 0.4);
 
-  [data-theme='light'] & { color: #888; }
+  [data-theme='light'] & { color: var(--text-muted); }
 }
 
 .slack-channel-item {
@@ -74,16 +74,16 @@
   &:hover {
     background: rgba(255, 255, 255, 0.05);
 
-    [data-theme='light'] & { background: #e8eaed; }
+    [data-theme='light'] & { background: var(--bg-secondary); }
   }
 
   &.active {
-    background: #1264a3;
-    color: #fff;
+    background: var(--accent);
+    color: var(--bg-surface);
 
     [data-theme='light'] & {
-      background: #e3f2fd;
-      color: #1264a3;
+      background: var(--accent);
+      color: var(--accent);
     }
   }
 }
@@ -102,8 +102,8 @@
 }
 
 .unread-badge {
-  background: #e01e5a;
-  color: #fff;
+  background: var(--error);
+  color: var(--bg-surface);
   font-size: 10px;
   font-weight: 700;
   padding: 1px 6px;
@@ -118,9 +118,9 @@
   border-radius: 50%;
   flex-shrink: 0;
 
-  &.online { background: #2eb67d; }
-  &.away { background: #ecb22e; }
-  &.offline { background: #ccc; }
+  &.online { background: var(--success); }
+  &.away { background: var(--warning); }
+  &.offline { background: var(--border-secondary); }
 }
 
 // ─── Main Chat Area ──────────────────────────────────────────
@@ -136,7 +136,7 @@
 // ─── Chat Header ─────────────────────────────────────────────
 
 .slack-chat-header {
-  background: var(--bg-card);
+  background: var(--bg-surface);
   border-bottom: 1px solid var(--border-primary);
   padding: 12px 20px;
   display: flex;
@@ -159,18 +159,18 @@
 
   .channel-icon {
     font-size: 16px;
-    color: var(--text-tertiary);
+    color: var(--text-muted);
   }
 
   .channel-description {
     font-size: 12px;
-    color: var(--text-tertiary);
+    color: var(--text-muted);
     margin-left: 4px;
   }
 
   .user-role {
     font-size: 11px;
-    color: var(--text-tertiary);
+    color: var(--text-muted);
     background: var(--bg-secondary);
     padding: 1px 6px;
     border-radius: 4px;
@@ -204,7 +204,7 @@
   span {
     font-size: 12px;
     font-weight: 600;
-    color: var(--text-tertiary);
+    color: var(--text-muted);
     white-space: nowrap;
   }
 }
@@ -255,7 +255,7 @@
 
 .message-time {
   font-size: 11px;
-  color: var(--text-tertiary);
+  color: var(--text-muted);
 }
 
 .message-text {
@@ -292,8 +292,8 @@
   }
 
   &.active {
-    border-color: #1264a3;
-    background: #e3f2fd;
+    border-color: var(--accent);
+    background: var(--accent);
   }
 
   .reaction-count {
@@ -307,13 +307,13 @@
   right: 0;
   top: 0;
   opacity: 0;
-  background: var(--bg-card);
+  background: var(--bg-surface);
   border: 1px solid var(--border-primary);
   border-radius: 4px;
   padding: 2px 4px;
   cursor: pointer;
   font-size: 12px;
-  color: var(--text-tertiary);
+  color: var(--text-muted);
   transition: opacity 0.1s ease;
 
   .slack-message:hover & {
@@ -322,7 +322,7 @@
 
   &:hover {
     color: var(--text-primary);
-    border-color: var(--text-tertiary);
+    border-color: var(--text-muted);
   }
 }
 
@@ -359,7 +359,7 @@
   gap: 8px;
   padding: 8px 0;
   font-size: 12px;
-  color: var(--text-tertiary);
+  color: var(--text-muted);
 }
 
 .typing-dots {
@@ -370,7 +370,7 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--text-tertiary);
+    background: var(--text-muted);
     animation: typingBounce 1.4s infinite ease-in-out;
 
     &:nth-child(1) { animation-delay: 0s; }
@@ -394,12 +394,12 @@
 .slack-input-wrapper {
   border: 1px solid var(--border-primary);
   border-radius: 8px;
-  background: var(--bg-card);
+  background: var(--bg-surface);
   overflow: hidden;
   transition: border-color 0.15s ease;
 
   &:focus-within {
-    border-color: var(--text-tertiary);
+    border-color: var(--text-muted);
   }
 }
 
@@ -418,7 +418,7 @@
   font-family: inherit;
 
   &::placeholder {
-    color: var(--text-tertiary);
+    color: var(--text-muted);
   }
 }
 
@@ -433,7 +433,7 @@
 .input-action-btn {
   background: none !important;
   border: none !important;
-  color: var(--text-tertiary) !important;
+  color: var(--text-muted) !important;
   padding: 4px !important;
   margin: 0 !important;
 
@@ -459,7 +459,7 @@
 
 .slack-users-panel {
   width: 240px;
-  background: var(--bg-card);
+  background: var(--bg-surface);
   border-left: 1px solid var(--border-primary);
   display: flex;
   flex-direction: column;
@@ -516,7 +516,7 @@
     right: -2px;
     width: 10px;
     height: 10px;
-    border: 2px solid var(--bg-card);
+    border: 2px solid var(--bg-surface);
   }
 }
 
@@ -533,7 +533,7 @@
 
 .user-panel-role {
   font-size: 11px;
-  color: var(--text-tertiary);
+  color: var(--text-muted);
 }
 
 // ─── Responsive ──────────────────────────────────────────────

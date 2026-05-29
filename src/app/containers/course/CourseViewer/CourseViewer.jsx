@@ -6,6 +6,8 @@ import { ArrowRight, BookOpen, Check } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { fetchCourseById, fetchLessons } from '@/app/services/courseService';
 import { isEnrolled, markLessonComplete } from '@/app/services/enrollmentService';
+
+import { t } from '@/styles/theme';
 import './CourseViewer.scss';
 
 const CourseViewer = () => {
@@ -41,7 +43,7 @@ const CourseViewer = () => {
               <Paper p="lg" radius="md" withBorder>
                 <Title order={3}>{course?.title}</Title>
                 <Text c="dimmed" mt="sm">{course?.description}</Text>
-                <Paper p="md" radius="md" mt="md" withBorder style={{ minHeight: 300, background: '#f8f9fa', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Paper p="md" radius="md" mt="md" withBorder style={{ minHeight: 300, background: t('bg-secondary'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Text c="dimmed">Video / content player placeholder</Text>
                 </Paper>
               </Paper>

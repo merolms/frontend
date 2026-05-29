@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+
+import { t } from '@/styles/theme';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Paper, Breadcrumbs, Anchor, Button, Badge, Group, Grid, Stack, Title, Text, Tabs, List, Image, SimpleGrid } from '@mantine/core';
@@ -87,9 +89,9 @@ const CourseDetail = () => {
               </div>
               <div className='course-hero-right'>
                 <SimpleGrid cols={3} className='course-hero-stats'>
-                  <div className='course-stat'><ListIcon size={24} color="#2185d0" /><div className='course-stat-value'>{course.totalLessons}</div><div className='course-stat-label'>Lessons</div></div>
-                  <div className='course-stat'><User size={24} color="#33a163" /><div className='course-stat-value'>0</div><div className='course-stat-label'>Enrolled</div></div>
-                  <div className='course-stat'><Star size={24} color="#f0a500" /><div className='course-stat-value'>—</div><div className='course-stat-label'>Rating</div></div>
+                  <div className='course-stat'><ListIcon size={24} color={t('accent')} /><div className='course-stat-value'>{course.totalLessons}</div><div className='course-stat-label'>Lessons</div></div>
+                  <div className='course-stat'><User size={24} color={t('primary')} /><div className='course-stat-value'>0</div><div className='course-stat-label'>Enrolled</div></div>
+                  <div className='course-stat'><Star size={24} color={t('warning')} /><div className='course-stat-value'>—</div><div className='course-stat-label'>Rating</div></div>
                 </SimpleGrid>
               </div>
             </div>
@@ -134,15 +136,15 @@ const CourseDetail = () => {
                     <Grid>
                       <Grid.Col span={6}>
                         <List spacing="xs">
-                          <List.Item icon={<User size={16} color="#2185d0" />}><Text fw={600}>Instructor</Text><Text c="dimmed">{course?.author || 'N/A'}</Text></List.Item>
-                          <List.Item icon={<Folder size={16} color="#9c27b0" />}><Text fw={600}>Category</Text><Text c="dimmed">{course?.category || 'N/A'}</Text></List.Item>
-                          <List.Item icon={<Clock size={16} color="#f0a500" />}><Text fw={600}>Duration</Text><Text c="dimmed">{course?.duration || 'N/A'}</Text></List.Item>
+                          <List.Item icon={<User size={16} color={t('accent')} />}><Text fw={600}>Instructor</Text><Text c="dimmed">{course?.author || 'N/A'}</Text></List.Item>
+                          <List.Item icon={<Folder size={16} color={t('secondary')} />}><Text fw={600}>Category</Text><Text c="dimmed">{course?.category || 'N/A'}</Text></List.Item>
+                          <List.Item icon={<Clock size={16} color={t('warning')} />}><Text fw={600}>Duration</Text><Text c="dimmed">{course?.duration || 'N/A'}</Text></List.Item>
                         </List>
                       </Grid.Col>
                       <Grid.Col span={6}>
                         <List spacing="xs">
-                          <List.Item icon={<ListIcon size={16} color="#33a163" />}><Text fw={600}>Lessons</Text><Text c="dimmed">{course?.totalLessons || 0}</Text></List.Item>
-                          <List.Item icon={<BookOpen size={16} color="#2185d0" />}><Text fw={600}>Created</Text><Text c="dimmed">{course?.createdAt || 'N/A'}</Text></List.Item>
+                          <List.Item icon={<ListIcon size={16} color={t('primary')} />}><Text fw={600}>Lessons</Text><Text c="dimmed">{course?.totalLessons || 0}</Text></List.Item>
+                          <List.Item icon={<BookOpen size={16} color={t('accent')} />}><Text fw={600}>Created</Text><Text c="dimmed">{course?.createdAt || 'N/A'}</Text></List.Item>
                         </List>
                       </Grid.Col>
                     </Grid>
@@ -151,7 +153,7 @@ const CourseDetail = () => {
 
                 <Tabs.Panel value="lessons" pt="md">
                   {lessons.length === 0 ? (
-                    <div className='course-empty-state'><BookOpen size={48} color="#999" /><Title order={4} c="dimmed">No lessons yet</Title><p>Start building your course by adding the first lesson.</p></div>
+                    <div className='course-empty-state'><BookOpen size={48} color={t('text-muted')} /><Title order={4} c="dimmed">No lessons yet</Title><p>Start building your course by adding the first lesson.</p></div>
                   ) : (
                     <List spacing="sm" className='course-lessons-list'>
                       {lessons.map((lesson, index) => (
@@ -170,9 +172,9 @@ const CourseDetail = () => {
 
           <Grid.Col span={6}>
             <Paper className='course-sidebar-card' p="md" radius="md" withBorder mb="md">
-              <Title order={5} mb="sm"><ListIcon size={16} color="#33a163" /> Course Content</Title>
+              <Title order={5} mb="sm"><ListIcon size={16} color={t('primary')} /> Course Content</Title>
               {lessons.length === 0 ? (
-                <div className='course-sidebar-empty'><BookOpen size={32} color="#999" /><Text c="dimmed" size="sm">No lessons added yet.</Text></div>
+                <div className='course-sidebar-empty'><BookOpen size={32} color={t('text-muted')} /><Text c="dimmed" size="sm">No lessons added yet.</Text></div>
               ) : (
                 <List spacing="xs" className='course-sidebar-lessons'>
                   {lessons.map((lesson, index) => (

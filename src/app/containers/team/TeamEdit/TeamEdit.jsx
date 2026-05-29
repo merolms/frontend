@@ -7,6 +7,8 @@ import TeamForm from '@/app/containers/team/TeamForm/TeamForm';
 import { fetchTeamById, updateTeam } from '@/app/services/teamService';
 import { useToast } from '@/app/context/ToastContext';
 
+import { t } from '@/styles/theme';
+
 const TeamEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -48,7 +50,7 @@ const TeamEdit = () => {
         </div>
 
         <Paper className='team-form-segment' p="lg" radius="md" withBorder>
-          <Title order={3} mb={4}><Pencil size={20} color="#2185d0" /> Edit Team</Title>
+          <Title order={3} mb={4}><Pencil size={20} color={t('accent')} /> Edit Team</Title>
           <Text c="dimmed" size="sm" mb="md">Update the team details below.</Text>
           {error && <Text c="red" size="sm" mb="sm"><Plus size={14} /> {error}</Text>}
           <TeamForm initialData={team} onSubmit={handleSubmit} onCancel={handleCancel} loading={loading} submitLabel='Save Changes' />

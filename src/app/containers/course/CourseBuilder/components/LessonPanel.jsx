@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
+import { t } from '@/styles/theme';
 
 const LessonPanel = ({
   lessons = [],
@@ -8,13 +9,12 @@ const LessonPanel = ({
   onRenameLesson,
   onReorder,
   adding = false,
-  width = 224,
+  width = 300,
 }) => {
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState('');
   const inputRef = useRef(null);
 
-  // ─── Drag & Drop state ────────────────────────────────────────
   const [dragIndex, setDragIndex] = useState(null);
   const [dropIndex, setDropIndex] = useState(null);
   const dragCounter = useRef(0);
@@ -39,7 +39,6 @@ const LessonPanel = ({
     if (e.key === 'Escape') setEditingId(null);
   };
 
-  // ─── Drag handlers ────────────────────────────────────────────
   const handleDragStart = useCallback((e, index) => {
     setDragIndex(index);
     e.dataTransfer.effectAllowed = 'move';
@@ -68,17 +67,14 @@ const LessonPanel = ({
   const handleDrop = useCallback((e, targetIndex) => {
     e.preventDefault();
     dragCounter.current = 0;
-
     if (dragIndex === null || dragIndex === targetIndex) {
       setDragIndex(null);
       setDropIndex(null);
       return;
     }
-
     const newLessons = [...lessons];
     const [moved] = newLessons.splice(dragIndex, 1);
     newLessons.splice(targetIndex, 0, moved);
-
     onReorder?.(newLessons);
     setDragIndex(null);
     setDropIndex(null);
@@ -92,19 +88,19 @@ const LessonPanel = ({
 
   return (
     <aside
-      className="flex flex-col bg-white overflow-hidden"
-      style={{ width, flexShrink: 0, borderRight: '1px solid #f0f0f0' }}
+      className="flex flex-col overflow-hidden"
+      style={{ width, flexShrink: 0, background: t('bg-sidebar'), borderRight: `1px solid ${t('border-primary')}` }}
     >
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 py-3 flex-shrink-0"
-        style={{ background: '#fafbfc', borderBottom: '1px solid #f0f0f0' }}
+        style={{ background: t('bg-secondary'), borderBottom: `1px solid ${t('border-primary')}` }}
       >
         <div className="flex items-center gap-2">
-          <svg className="w-3.5 h-3.5" style={{ color: '#aaa' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="w-3.5 h-3.5" style={{ color: t('text-muted') }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.966 8.966 0 00-6 2.292m0-14.25v14.25" />
           </svg>
-          <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#aaa' }}>
+          <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: t('text-muted') }}>
             Lessons
           </span>
         </div>
@@ -113,9 +109,9 @@ const LessonPanel = ({
           onClick={onAddLesson}
           disabled={adding}
           title="Add lesson"
-          style={{ width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', color: '#aaa', transition: 'color 0.15s, background 0.15s' }}
-          onMouseEnter={e => { e.currentTarget.style.color = '#111'; e.currentTarget.style.background = 'rgba(0,0,0,0.06)'; }}
-          onMouseLeave={e => { e.currentTarget.style.color = '#aaa'; e.currentTarget.style.background = 'transparent'; }}
+          style={{ width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', color: t('text-muted'), transition: 'color 0.15s, background 0.15s' }}
+          onMouseEnter={e => { e.currentTarget.style.color = t('text-primary'); e.currentTarget.style.background = t('bg-hover'); }}
+          onMouseLeave={e => { e.currentTarget.style.color = t('text-muted'); e.currentTarget.style.background = 'transparent'; }}
         >
           {adding ? (
             <svg style={{ width: 14, height: 14, animation: 'spin 1s linear infinite' }} fill="none" viewBox="0 0 24 24">
@@ -133,8 +129,8 @@ const LessonPanel = ({
       {/* List */}
       <div className="flex-1 overflow-y-auto" style={{ padding: '8px 8px 8px' }}>
         {lessons.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '32px 12px', color: '#ccc', fontSize: 12 }}>
-            <svg style={{ width: 32, height: 32, margin: '0 auto 8px', color: '#e0e0e0' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div style={{ textAlign: 'center', padding: '32px 12px', color: t('text-disabled'), fontSize: 12 }}>
+            <svg style={{ width: 32, height: 32, margin: '0 auto 8px', color: t('border-secondary') }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             No lessons yet
@@ -178,9 +174,9 @@ const LessonPanel = ({
       {lessons.length > 0 && (
         <div
           className="flex-shrink-0 px-4 py-2"
-          style={{ borderTop: '1px solid #f0f0f0', background: '#fafbfc' }}
+          style={{ borderTop: `1px solid ${t('border-primary')}`, background: t('bg-secondary') }}
         >
-          <span style={{ fontSize: 10, color: '#ccc' }}>
+          <span style={{ fontSize: 10, color: t('text-disabled') }}>
             {lessons.length} {lessons.length === 1 ? 'lesson' : 'lessons'}
           </span>
         </div>
@@ -217,12 +213,12 @@ const LessonItem = ({
     alignItems: 'center',
     gap: 6,
     padding: '7px 10px',
-    borderRadius: 8,
+    borderRadius: t('radius-md'),
     cursor: isEditing ? 'text' : 'pointer',
     marginBottom: 2,
     transition: 'background 0.12s, opacity 0.15s',
-    background: isActive ? 'rgba(0,0,0,0.06)' : hovered ? '#f5f5f5' : 'transparent',
-    borderLeft: isActive ? '2px solid #111' : '2px solid transparent',
+    background: isActive ? t('bg-active') : hovered ? t('bg-hover') : 'transparent',
+    borderLeft: isActive ? `2px solid ${t('text-primary')}` : '2px solid transparent',
     opacity: isDragging ? 0.4 : 1,
     position: 'relative',
   };
@@ -238,8 +234,8 @@ const LessonItem = ({
     fontWeight: 700,
     flexShrink: 0,
     transition: 'background 0.12s',
-    background: isActive ? '#111' : '#eee',
-    color: isActive ? '#fff' : '#888',
+    background: isActive ? t('text-primary') : t('bg-hover'),
+    color: isActive ? t('bg-surface') : t('text-muted'),
   };
 
   return (
@@ -265,7 +261,7 @@ const LessonItem = ({
           left: 4,
           right: 4,
           height: 2,
-          background: '#111',
+          background: t('text-primary'),
           borderRadius: 1,
         }} />
       )}
@@ -280,7 +276,7 @@ const LessonItem = ({
           justifyContent: 'center',
           flexShrink: 0,
           cursor: 'grab',
-          color: hovered ? '#999' : '#ccc',
+          color: hovered ? t('text-secondary') : t('text-disabled'),
           userSelect: 'none',
         }}
         onMouseDown={(e) => e.stopPropagation()}
@@ -309,13 +305,13 @@ const LessonItem = ({
             flex: 1,
             minWidth: 0,
             fontSize: 13,
-            background: '#fff',
-            border: '1px solid #111',
-            borderRadius: 4,
+            background: t('bg-surface'),
+            border: `1px solid ${t('text-primary')}`,
+            borderRadius: t('radius-sm'),
             padding: '1px 6px',
             outline: 'none',
-            color: '#222',
-            boxShadow: '0 0 0 2px rgba(0,0,0,0.1)',
+            color: t('text-primary'),
+            boxShadow: `0 0 0 2px ${t('text-primary')}1A`,
           }}
           autoFocus
         />
@@ -326,7 +322,7 @@ const LessonItem = ({
               flex: 1,
               minWidth: 0,
               fontSize: 13,
-              color: isActive ? '#111' : '#555',
+              color: isActive ? t('text-primary') : t('text-secondary'),
               fontWeight: isActive ? 550 : 450,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -347,16 +343,16 @@ const LessonItem = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                borderRadius: 4,
+                borderRadius: t('radius-sm'),
                 border: 'none',
                 background: 'transparent',
                 cursor: 'pointer',
-                color: '#bbb',
+                color: t('text-muted'),
                 flexShrink: 0,
                 padding: 0,
               }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#111'; }}
-              onMouseLeave={e => { e.currentTarget.style.color = '#bbb'; }}
+              onMouseEnter={e => { e.currentTarget.style.color = t('text-primary'); }}
+              onMouseLeave={e => { e.currentTarget.style.color = t('text-muted'); }}
             >
               <svg style={{ width: 11, height: 11 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />

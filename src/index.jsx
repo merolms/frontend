@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+
+import { t } from '@/styles/theme';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Provider, useDispatch } from 'react-redux';
@@ -22,9 +24,9 @@ const theme = createTheme({
   primaryColor: 'green',
   colors: {
     green: [
-      '#f0fff4', '#c6f6d5', '#9ae6b4', '#68d391',
-      '#4ade80', '#33a163', '#276749', '#22543d',
-      '#1a2e23', '#122218',
+      t('primary-light'), t('primary-light'), t('primary-light'), t('primary'),
+      t('primary'), t('primary'), t('text-primary'), t('text-primary'),
+      t('text-primary'), t('text-primary'),
     ],
   },
 });

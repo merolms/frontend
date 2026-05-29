@@ -4,6 +4,8 @@ import { SimpleGrid, Paper, Text, Stack, Group, Box, Progress, Button } from '@m
 import { ArrowUp, Bolt, BookOpen, Bot, ChartBar, ChartLine, Check, Clock, Plus, Network, Upload, UserPlus, Users } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { mockDashboardStats, mockDashboardActivity } from '@/app/services/dashboardService';
+
+import { t } from '@/styles/theme';
 import './Dashboard.scss';
 
 const statIcons = {
@@ -53,7 +55,7 @@ const Dashboard = () => {
           <div className='dashboard-columns'>
             <div className='dashboard-left'>
               <Paper className='dashboard-card' p="md" radius="md" withBorder mb="md">
-                <div className='card-header'><h3><BookOpen size={16} color='#33a163' /> Recent Courses</h3></div>
+                <div className='card-header'><h3><BookOpen size={16} color={t('primary')} /> Recent Courses</h3></div>
                 <div className='card-body'>
                   {stats.recentCourses?.map((course) => (
                     <div key={course.id} className='course-item'>
@@ -68,7 +70,7 @@ const Dashboard = () => {
               </Paper>
 
               <Paper className='dashboard-card' p="md" radius="md" withBorder>
-                <div className='card-header'><h3><Clock size={16} color='#2185d0' /> Activity Feed</h3></div>
+                <div className='card-header'><h3><Clock size={16} color={t('accent')} /> Activity Feed</h3></div>
                 <div className='card-body'>
                   {activity?.map((item) => (
                     <div key={item.id} className='activity-item'>
@@ -89,19 +91,19 @@ const Dashboard = () => {
 
             <div className='dashboard-right'>
               <Paper className='dashboard-card quick-actions-card' p="md" radius="md" withBorder mb="md">
-                <div className='card-header'><h3><Bolt size={16} color="#f0a500" /> Quick Actions</h3></div>
+                <div className='card-header'><h3><Bolt size={16} color={t('warning')} /> Quick Actions</h3></div>
                 <div className='card-body'>
                   <div className='quick-actions-grid'>
-                    {/* <button className='quick-action-btn'><Plus size={16} color="#33a163" /><span>Create Course</span></button> */}
-                    <button className='quick-action-btn'><UserPlus size={16} color="#2185d0" /><span>Add User</span></button>
-                    <button className='quick-action-btn'><Upload size={16} color="#f0a500" /><span>Upload Content</span></button>
-                    <button className='quick-action-btn'><ChartBar size={16} color="#00838f" /><span>View Reports</span></button>
+                    {/* <button className='quick-action-btn'><Plus size={16} color={t('primary')} /><span>Create Course</span></button> */}
+                    <button className='quick-action-btn'><UserPlus size={16} color={t('accent')} /><span>Add User</span></button>
+                    <button className='quick-action-btn'><Upload size={16} color={t('warning')} /><span>Upload Content</span></button>
+                    <button className='quick-action-btn'><ChartBar size={16} color={t('accent')} /><span>View Reports</span></button>
                   </div>
                 </div>
               </Paper>
 
               <Paper className='dashboard-card' p="md" radius="md" withBorder mb="md">
-                <div className='card-header'><h3><Users size={16} color="#00838f" /> Team Performance</h3></div>
+                <div className='card-header'><h3><Users size={16} color={t('accent')} /> Team Performance</h3></div>
                 <div className='card-body'>
                   {stats.teamPerformance?.map((team) => (
                     <div key={team.name} className='team-item'>
@@ -113,7 +115,7 @@ const Dashboard = () => {
               </Paper>
 
               <Paper className='dashboard-card' p="md" radius="md" withBorder>
-                <div className='card-header'><h3><ChartLine size={16} color="#9c27b0" /> Enrollment Summary</h3></div>
+                <div className='card-header'><h3><ChartLine size={16} color={t('secondary')} /> Enrollment Summary</h3></div>
                 <div className='card-body'>
                   <div className='enrollment-summary'>
                     <div className='enrollment-stat'><div className='enrollment-value'>{stats.totalEnrollments || 0}</div><div className='enrollment-label'>Total Enrollments</div></div>

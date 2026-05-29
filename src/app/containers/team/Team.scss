@@ -4,8 +4,8 @@
 
 .team-filters {
   padding: 14px 18px !important;
-  background: #f8f9fa !important;
-  border: 1px solid #e8e8e8 !important;
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 10px !important;
   margin-bottom: 16px;
 }
@@ -36,8 +36,8 @@
 // ─── Team Card ──────────────────────────────────────────────
 
 .team-card {
-  background: #fff;
-  border: 1px solid #e8e8e8;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
   border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
@@ -70,15 +70,15 @@
   justify-content: center;
   font-size: 11px;
   font-weight: 700;
-  color: #fff;
+  color: var(--bg-surface);
   padding: 0 6px;
 
   &.active {
-    background: #33a163;
+    background: var(--primary);
   }
 
   &.inactive {
-    background: #999;
+    background: var(--text-muted);
   }
 }
 
@@ -89,13 +89,13 @@
 .team-card-title {
   font-size: 15px;
   font-weight: 700;
-  color: $text-color-dark;
+  color: var(--text-primary);
   margin: 0 0 4px;
 }
 
 .team-card-desc {
   font-size: 12px;
-  color: #888;
+  color: var(--text-muted);
   margin: 0 0 10px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -120,12 +120,12 @@
 .team-stat-value {
   font-size: 16px;
   font-weight: 700;
-  color: $text-color-dark;
+  color: var(--text-primary);
 }
 
 .team-stat-label {
   font-size: 10px;
-  color: #888;
+  color: var(--text-muted);
   margin-top: 2px;
 }
 
@@ -136,14 +136,14 @@
 
   .image {
     margin-right: -8px;
-    border: 2px solid #fff;
+    border: 2px solid var(--bg-surface);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 }
 
 .team-avatar-more {
   font-size: 11px;
-  color: #888;
+  color: var(--text-muted);
   margin-left: 4px;
 }
 
@@ -175,7 +175,7 @@
 .team-detail-header {
   border-radius: 12px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid #e8e8e8 !important;
+  border: 1px solid var(--border-primary) !important;
   margin-bottom: 20px !important;
 }
 
@@ -201,19 +201,19 @@
 .team-quick-stat-value {
   font-size: 28px;
   font-weight: 700;
-  color: $text-color-dark;
+  color: var(--text-primary);
 }
 
 .team-quick-stat-label {
   font-size: 12px;
-  color: #888;
+  color: var(--text-muted);
   margin-top: 4px;
 }
 
 .team-detail-segment {
   border-radius: 12px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid #e8e8e8 !important;
+  border: 1px solid var(--border-primary) !important;
   margin-bottom: 20px;
 
   h3 {
@@ -229,7 +229,7 @@
 .team-members-list {
   .team-member-item {
     padding: 12px 0 !important;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--border-secondary);
 
     &:last-child {
       border-bottom: none;
@@ -242,7 +242,7 @@
 .team-form-segment {
   border-radius: 12px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid #e8e8e8 !important;
+  border: 1px solid var(--border-primary) !important;
   padding: 32px !important;
   max-width: 700px;
 }
@@ -257,18 +257,18 @@
 }
 
 .team-form-subtitle {
-  color: #888;
+  color: var(--text-muted);
   font-size: 14px;
   margin-bottom: 24px;
 }
 
 .team-form-error {
-  background: #fff5f5;
-  border: 1px solid #feb2b2;
+  background: var(--error-light);
+  border: 1px solid var(--error-light);
   border-radius: 8px;
   padding: 12px 16px;
   margin-bottom: 20px;
-  color: #c53030;
+  color: var(--error);
   font-size: 14px;
   display: flex;
   align-items: center;

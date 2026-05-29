@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+
+import { t } from '@/styles/theme';
 import { TextInput, Textarea, Button, Stack, Group, ColorSwatch, SimpleGrid, Accordion, Checkbox, Text, Alert } from '@mantine/core';
 import { AlertCircle } from 'lucide-react';
 import { permissionCatalog } from '@/app/services/authService';
@@ -48,7 +50,7 @@ const RoleForm = ({ initialData = null, onSubmit, onCancel, loading = false, sub
 
         <div>
           <Text size="sm" fw={500} mb={4}>Color</Text>
-          <Group gap={8}>{ROLE_COLORS.map((color) => (<ColorSwatch key={color} color={color} onClick={() => handleChange('color', color)} style={{ cursor: 'pointer', border: formData.color === color ? '3px solid #333' : '1px solid #ddd' }} size={28} />))}</Group>
+          <Group gap={8}>{ROLE_COLORS.map((color) => (<ColorSwatch key={color} color={color} onClick={() => handleChange('color', color)} style={{ cursor: 'pointer', border: formData.color === color ? `3px solid ${t('text-primary')}` : `1px solid ${t('border-primary')}` }} size={28} />))}</Group>
         </div>
 
         <div>

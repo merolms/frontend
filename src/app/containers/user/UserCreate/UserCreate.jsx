@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+
+import { t } from '@/styles/theme';
 import { useNavigate } from 'react-router-dom';
 import { Paper, Breadcrumbs, Anchor, Button, TextInput, Select, Group, Title, Text } from '@mantine/core';
 import { Plus, UserPlus } from 'lucide-react';
@@ -35,7 +37,7 @@ const UserCreate = () => {
       <div className='dashboard-main'>
         <Breadcrumbs mb="md"><Anchor onClick={() => navigate('/users')}>Users</Anchor><span>Create User</span></Breadcrumbs>
         <Paper className='user-form-segment' p="lg" radius="md" withBorder>
-          <Title order={3} mb={4}><UserPlus size={20} color="#33a163" /> Create New User</Title>
+          <Title order={3} mb={4}><UserPlus size={20} color={t('primary')} /> Create New User</Title>
           <Text c="dimmed" size="sm" mb="md">Fill in the details below to create a new user account.</Text>
           {error && <Text c="red" size="sm" mb="sm"><Plus size={14} /> {error}</Text>}
           <form onSubmit={handleSubmit}>

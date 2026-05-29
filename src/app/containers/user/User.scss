@@ -4,8 +4,8 @@
 
 .user-filters {
   padding: 16px 20px !important;
-  background: #f8f9fa !important;
-  border: 1px solid #e8e8e8 !important;
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 12px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
   margin-bottom: 24px;
@@ -32,7 +32,7 @@
 .user-table-segment {
   border-radius: 12px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid #e8e8e8 !important;
+  border: 1px solid var(--border-primary) !important;
   margin-bottom: 24px;
 }
 
@@ -40,9 +40,9 @@
   margin: 0 !important;
 
   th {
-    background: #f8f9fa !important;
+    background: var(--bg-secondary) !important;
     font-weight: 600 !important;
-    color: #555 !important;
+    color: var(--text-secondary) !important;
     font-size: 13px !important;
     padding: 14px 16px !important;
   }
@@ -58,7 +58,7 @@
   transition: background 0.15s ease;
 
   &:hover {
-    background: #f8f9fa !important;
+    background: var(--bg-secondary) !important;
   }
 }
 
@@ -84,7 +84,7 @@
 .user-cell-name {
   font-weight: 600;
   font-size: 14px;
-  color: $text-color-dark;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -92,7 +92,7 @@
 
 .user-cell-email {
   font-size: 12px;
-  color: #888;
+  color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -103,7 +103,7 @@
 .user-profile-card {
   border-radius: 12px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid #e8e8e8 !important;
+  border: 1px solid var(--border-primary) !important;
   text-align: center;
   padding: 32px 24px !important;
 }
@@ -119,11 +119,11 @@
   height: 100px !important;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #e8f5e9;
+  border: 3px solid var(--primary-light);
 }
 
 .user-profile-email {
-  color: #888;
+  color: var(--text-muted);
   font-size: 13px;
   margin-top: 8px;
 }
@@ -139,13 +139,13 @@
   margin-top: 8px;
 
   &.active {
-    background: #e8f5e9;
-    color: #33a163;
+    background: var(--primary-light);
+    color: var(--primary);
   }
 
   &.inactive {
-    background: #f5f5f5;
-    color: #999;
+    background: var(--bg-secondary);
+    color: var(--text-muted);
   }
 }
 
@@ -155,12 +155,12 @@
 
   h4 {
     font-size: 14px !important;
-    color: #555;
+    color: var(--text-secondary);
     margin-bottom: 8px !important;
   }
 
   p {
-    color: #666;
+    color: var(--text-secondary);
     font-size: 13px;
     line-height: 1.5;
   }
@@ -172,10 +172,10 @@
   .item {
     padding: 6px 0 !important;
     font-size: 13px;
-    color: #666;
+    color: var(--text-secondary);
 
     strong {
-      color: #333;
+      color: var(--text-primary);
     }
   }
 }
@@ -185,7 +185,7 @@
 .user-detail-segment {
   border-radius: 12px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid #e8e8e8 !important;
+  border: 1px solid var(--border-primary) !important;
   margin-bottom: 20px;
 
   h3 {
@@ -208,18 +208,18 @@
   text-align: center;
   border-radius: 10px !important;
   box-shadow: none !important;
-  border: 1px solid #e8e8e8 !important;
+  border: 1px solid var(--border-primary) !important;
 }
 
 .user-stat-value {
   font-size: 32px;
   font-weight: 700;
-  color: $primary-color;
+  color: var(--primary);
 }
 
 .user-stat-label {
   font-size: 13px;
-  color: #888;
+  color: var(--text-muted);
   margin-top: 4px;
 }
 
@@ -228,7 +228,7 @@
 .user-form-segment {
   border-radius: 12px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid #e8e8e8 !important;
+  border: 1px solid var(--border-primary) !important;
   padding: 32px !important;
   max-width: 700px;
 }
@@ -243,18 +243,18 @@
 }
 
 .user-form-subtitle {
-  color: #888;
+  color: var(--text-muted);
   font-size: 14px;
   margin-bottom: 24px;
 }
 
 .user-form-error {
-  background: #fff5f5;
-  border: 1px solid #feb2b2;
+  background: var(--error-light);
+  border: 1px solid var(--error-light);
   border-radius: 8px;
   padding: 12px 16px;
   margin-bottom: 20px;
-  color: #c53030;
+  color: var(--error);
   font-size: 14px;
   display: flex;
   align-items: center;

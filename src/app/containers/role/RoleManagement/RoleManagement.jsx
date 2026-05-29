@@ -7,6 +7,8 @@ import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute'
 import { fetchRoles, deleteRole } from '@/app/services/authService';
 import { useToast } from '@/app/context/ToastContext';
 
+import { t } from '@/styles/theme';
+
 const RoleManagement = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
@@ -42,7 +44,7 @@ const RoleManagement = () => {
       <Table.Td><Group gap={8}><Text size="sm" fw={600}>{role.name}</Text>{role.permissions && role.permissions.includes('*') && <Badge color="red" size="xs" variant="filled"><Star size={10} /></Badge>}</Group></Table.Td>
       <Table.Td><Text size="sm" c="dimmed">{role.description}</Text></Table.Td>
       <Table.Td><Button size="xs" variant="subtle" onClick={() => setShowPermissionModal(role)} leftSection={<Eye size={12} />}>{role.permissions && role.permissions.includes('*') ? 'All' : `${(role.permissions || []).length} permissions`}</Button></Table.Td>
-      <Table.Td><Group gap={6}><span style={{ display: 'inline-block', width: 16, height: 16, borderRadius: 3, background: role.color || '#767676' }} /><Text size="xs" c="dimmed">{role.color || 'default'}</Text></Group></Table.Td>
+      <Table.Td><Group gap={6}><span style={{ display: 'inline-block', width: 16, height: 16, borderRadius: 3, background: role.color || t('text-disabled') }} /><Text size="xs" c="dimmed">{role.color || 'default'}</Text></Group></Table.Td>
       <Table.Td ta="center">
         <Group gap={4} justify="center">
           <PermissionGuard permissions={['roles.edit']}><ActionIcon size="sm" variant="default" onClick={() => navigate(`/roles/${role.id}/edit`)}><Pencil size={14} /></ActionIcon></PermissionGuard>
@@ -71,7 +73,7 @@ const RoleManagement = () => {
           {loading ? (
             <Paper p="lg"><Text>Loading roles...</Text></Paper>
           ) : filteredRoles.length === 0 ? (
-            <Paper p="xl" radius="md" ta="center"><Shield size={48} color="#999" /><Title order={4}>No roles found</Title><p>Try adjusting your search.</p></Paper>
+            <Paper p="xl" radius="md" ta="center"><Shield size={48} color={t('text-muted')} /><Title order={4}>No roles found</Title><p>Try adjusting your search.</p></Paper>
           ) : (
             <>
               <Paper p={0} radius="md" withBorder style={{ overflow: 'hidden' }}>

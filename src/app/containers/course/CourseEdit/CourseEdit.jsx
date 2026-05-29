@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+
+import { t } from '@/styles/theme';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Paper, Breadcrumbs, Anchor, Stack, Title, Text, Loader } from '@mantine/core';
 import { AlertCircle, List, Pencil, Plus, Network } from 'lucide-react';
@@ -107,7 +109,7 @@ const CourseEdit = () => {
         <div className='course-form-page'>
           <div style={{ display: 'grid', gridTemplateColumns: '10fr 6fr', gap: 16 }}>
             <Paper className='course-form-card' p="lg" radius="md" withBorder>
-              <Title order={3} mb={4}><Pencil size={20} color="#2185d0" /> Edit Course</Title>
+              <Title order={3} mb={4}><Pencil size={20} color={t('accent')} /> Edit Course</Title>
               <Text c="dimmed" size="sm" mb="md">Update the course metadata and settings.</Text>
 
               <form onSubmit={handleSubmit}>
@@ -117,19 +119,19 @@ const CourseEdit = () => {
 
                   <div>
                     <label style={{ fontWeight: 600, fontSize: 13 }}>Course Title *</label>
-                    <input name='title' value={form.title} onChange={(e) => { setForm(p => ({ ...p, title: e.target.value })); if (errors.title) setErrors(p => ({ ...p, title: null })); }} style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4 }} />
+                    <input name='title' value={form.title} onChange={(e) => { setForm(p => ({ ...p, title: e.target.value })); if (errors.title) setErrors(p => ({ ...p, title: null })); }} style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: `1px solid ${t('border-primary')}`, borderRadius: 4 }} />
                     {errors.title && <Text size="xs" c="red">{errors.title}</Text>}
                   </div>
 
                   <div>
                     <label style={{ fontWeight: 600, fontSize: 13 }}>Description *</label>
-                    <textarea name='description' style={{ width: '100%', minHeight: 110, padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4 }} value={form.description} onChange={(e) => { setForm(p => ({ ...p, description: e.target.value })); if (errors.description) setErrors(p => ({ ...p, description: null })); }} />
+                    <textarea name='description' style={{ width: '100%', minHeight: 110, padding: '8px 12px', marginTop: 4, border: `1px solid ${t('border-primary')}`, borderRadius: 4 }} value={form.description} onChange={(e) => { setForm(p => ({ ...p, description: e.target.value })); if (errors.description) setErrors(p => ({ ...p, description: null })); }} />
                     {errors.description && <Text size="xs" c="red">{errors.description}</Text>}
                   </div>
 
                   <div>
                     <label style={{ fontWeight: 600, fontSize: 13 }}>Category *</label>
-                    <select name='category' value={form.category || ''} onChange={(e) => { setForm(p => ({ ...p, category: e.target.value ? parseInt(e.target.value) : null })); if (errors.category) setErrors(p => ({ ...p, category: null })); }} style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4 }}>
+                    <select name='category' value={form.category || ''} onChange={(e) => { setForm(p => ({ ...p, category: e.target.value ? parseInt(e.target.value) : null })); if (errors.category) setErrors(p => ({ ...p, category: null })); }} style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: `1px solid ${t('border-primary')}`, borderRadius: 4 }}>
                       <option value="">Select a category</option>
                       {categoryOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                     </select>
@@ -138,7 +140,7 @@ const CourseEdit = () => {
 
                   <div>
                     <label style={{ fontWeight: 600, fontSize: 13 }}>Tags</label>
-                    <select multiple name='tags' value={form.tags} onChange={(e) => setForm(p => ({ ...p, tags: Array.from(e.target.selectedOptions, o => o.value) }))} style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: '1px solid #ddd', borderRadius: 4, minHeight: 100 }}>
+                    <select multiple name='tags' value={form.tags} onChange={(e) => setForm(p => ({ ...p, tags: Array.from(e.target.selectedOptions, o => o.value) }))} style={{ width: '100%', padding: '8px 12px', marginTop: 4, border: `1px solid ${t('border-primary')}`, borderRadius: 4, minHeight: 100 }}>
                       {tagOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                     </select>
                   </div>
@@ -146,13 +148,13 @@ const CourseEdit = () => {
                   <div>
                     <label style={{ fontWeight: 600, fontSize: 13 }}>Cover ImageIcon</label>
                     <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-                      <input name='coverImage' placeholder='https://example.com/cover.jpg' value={form.coverImage} onChange={(e) => setForm(p => ({ ...p, coverImage: e.target.value }))} style={{ flex: 1, padding: '8px 12px', border: '1px solid #ddd', borderRadius: 4 }} />
-                      <button type='button' className='mantine-Button-root mantine-Button-variant-default' onClick={() => setUnsplashOpen(true)} disabled={loading} style={{ padding: '8px 12px', border: '1px solid #ddd', borderRadius: 4 }}>Unsplash</button>
+                      <input name='coverImage' placeholder='https://example.com/cover.jpg' value={form.coverImage} onChange={(e) => setForm(p => ({ ...p, coverImage: e.target.value }))} style={{ flex: 1, padding: '8px 12px', border: `1px solid ${t('border-primary')}`, borderRadius: 4 }} />
+                      <button type='button' className='mantine-Button-root mantine-Button-variant-default' onClick={() => setUnsplashOpen(true)} disabled={loading} style={{ padding: '8px 12px', border: `1px solid ${t('border-primary')}`, borderRadius: 4 }}>Unsplash</button>
                     </div>
                     {form.coverImage && (
                       <div style={{ position: 'relative', marginTop: 8, display: 'inline-block' }}>
                         <img src={form.coverImage} alt="Cover" style={{ maxHeight: 180, borderRadius: 4, objectFit: 'cover' }} />
-                        <button type='button' className='cover-remove-btn' onClick={() => setForm(p => ({ ...p, coverImage: '' }))} style={{ position: 'absolute', top: 4, right: 4, padding: 2, border: 'none', background: '#c53030', color: '#fff', borderRadius: 2, cursor: 'pointer' }}>✕</button>
+                        <button type='button' className='cover-remove-btn' onClick={() => setForm(p => ({ ...p, coverImage: '' }))} style={{ position: 'absolute', top: 4, right: 4, padding: 2, border: 'none', background: t('error'), color: t('bg-surface'), borderRadius: 2, cursor: 'pointer' }}>✕</button>
                       </div>
                     )}
                   </div>
@@ -161,7 +163,7 @@ const CourseEdit = () => {
 
                   <div className='course-form-actions' style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 16 }}>
                     <button type='button' className='mantine-Button-root mantine-Button-variant-default' onClick={() => navigate(`/courses/${id}`)} disabled={loading} style={{ padding: '8px 16px' }}>Cancel</button>
-                    <button type='submit' className='mantine-Button-root mantine-Button-variant-filled' disabled={loading} style={{ padding: '8px 16px', background: '#33a163', color: '#fff', border: 'none', borderRadius: 4 }}>{loading ? 'Saving...' : 'Save Changes'}</button>
+                    <button type='submit' className='mantine-Button-root mantine-Button-variant-filled' disabled={loading} style={{ padding: '8px 16px', background: t('primary'), color: t('bg-surface'), border: 'none', borderRadius: 4 }}>{loading ? 'Saving...' : 'Save Changes'}</button>
                   </div>
                 </Stack>
               </form>
@@ -169,7 +171,7 @@ const CourseEdit = () => {
 
             <Stack>
               <Paper className='course-form-tips' p="lg" radius="md" withBorder>
-                <Title order={5}><Plus size={16} color="#f0a500" /> Quick Actions</Title>
+                <Title order={5}><Plus size={16} color={t('warning')} /> Quick Actions</Title>
                 <div className='quick-actions'>
                   <a href={`/courses/${id}/builder`}><Network size={14} /> Open Course Builder</a>
                   <a href={`/courses/${id}/lessons`}><List size={14} /> Manage Lessons</a>

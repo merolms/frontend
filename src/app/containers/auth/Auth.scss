@@ -17,7 +17,7 @@
 }
 
 .auth-card {
-  background: #fff;
+  background: var(--bg-surface);
   border-radius: 16px;
   padding: 40px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -29,13 +29,13 @@
 }
 
 .auth-brand-text {
-  color: $text-color-dark !important;
+  color: var(--text-primary) !important;
   font-size: 28px !important;
   margin: 8px 0 0 !important;
 }
 
 .auth-brand-subtitle {
-  color: #999;
+  color: var(--text-muted);
   font-size: 13px;
   margin: 4px 0 0;
 }
@@ -43,13 +43,13 @@
 .auth-title {
   font-size: 22px !important;
   font-weight: 700 !important;
-  color: $text-color-dark !important;
+  color: var(--text-primary) !important;
   text-align: center;
   margin-bottom: 4px !important;
 }
 
 .auth-subtitle {
-  color: #888;
+  color: var(--text-muted);
   font-size: 14px;
   text-align: center;
   margin-bottom: 24px;
@@ -67,7 +67,7 @@
 
 .auth-forgot-link {
   font-size: 13px;
-  color: $primary-color;
+  color: var(--primary);
 
   &:hover {
     text-decoration: underline;
@@ -83,11 +83,11 @@
   margin-top: 16px;
 
   a {
-    color: #888;
+    color: var(--text-muted);
     font-size: 13px;
 
     &:hover {
-      color: $primary-color;
+      color: var(--primary);
     }
   }
 }
@@ -95,7 +95,7 @@
 // ===== Demo Users =====
 
 .auth-demo-users {
-  background: #f8f9fa;
+  background: var(--bg-secondary);
   border-radius: 10px;
   padding: 16px;
   margin-top: 8px;
@@ -104,7 +104,7 @@
 .auth-demo-title {
   font-size: 12px;
   font-weight: 600;
-  color: #888;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin: 0 0 10px;
@@ -122,14 +122,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  background: #fff;
+  background: var(--bg-surface);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s ease;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--border-primary);
 
   &:hover {
-    border-color: $primary-color;
+    border-color: var(--primary);
     box-shadow: 0 2px 8px rgba(51, 161, 99, 0.1);
   }
 }
@@ -142,15 +142,15 @@
   padding: 2px 8px;
   border-radius: 4px;
 
-  &.admin { background: #ffe8e8; color: #c53030; }
-  &.instructor { background: #e3f2fd; color: #1565c0; }
-  &.teamlead { background: #f3e5f5; color: #7b1fa2; }
-  &.student { background: #e0f2f1; color: #00695c; }
+  &.admin { background: var(--error-light); color: var(--error); }
+  &.instructor { background: var(--accent); color: var(--accent); }
+  &.teamlead { background: var(--secondary); color: var(--secondary); }
+  &.student { background: var(--primary-light); color: var(--accent); }
 }
 
 .auth-demo-email {
   font-size: 12px;
-  color: #888;
+  color: var(--text-muted);
   font-family: monospace;
 }
 
@@ -158,8 +158,8 @@
 
 .role-filters {
   padding: 16px 20px !important;
-  background: #f8f9fa !important;
-  border: 1px solid #e8e8e8 !important;
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 12px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
   margin-bottom: 24px;
@@ -178,7 +178,7 @@
 .role-table-segment {
   border-radius: 12px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid #e8e8e8 !important;
+  border: 1px solid var(--border-primary) !important;
   margin-bottom: 24px;
 }
 
@@ -186,9 +186,9 @@
   margin: 0 !important;
 
   th {
-    background: #f8f9fa !important;
+    background: var(--bg-secondary) !important;
     font-weight: 600 !important;
-    color: #555 !important;
+    color: var(--text-secondary) !important;
     font-size: 13px !important;
     padding: 14px 16px !important;
   }
@@ -218,7 +218,7 @@
 
 .role-permission-modal,
 .role-delete-modal {
-  background: #fff;
+  background: var(--bg-surface);
   border-radius: 12px;
   padding: 28px;
   max-width: 480px;
@@ -241,7 +241,7 @@
   padding: 6px 0;
   font-size: 13px;
   font-family: monospace;
-  color: #555;
+  color: var(--text-secondary);
 }
 
 // ===== Unauthorized Page =====
@@ -251,29 +251,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f5f7fa;
+  background: var(--bg-secondary);
 }
 
 .unauthorized-card {
   text-align: center;
   padding: 60px;
-  background: #fff;
+  background: var(--bg-surface);
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   max-width: 480px;
 
   .unauthorized-icon {
-    color: #f0a500;
+    color: var(--warning);
     margin-bottom: 16px;
   }
 
   h1 {
-    color: $text-color-dark;
+    color: var(--text-primary);
     margin-bottom: 8px;
   }
 
   p {
-    color: #888;
+    color: var(--text-muted);
   }
 }
 
@@ -282,24 +282,24 @@
 .role-form-segment {
   border-radius: 12px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid #e8e8e8 !important;
+  border: 1px solid var(--border-primary) !important;
   padding: 32px !important;
   max-width: 800px;
 }
 
 .role-form-subtitle {
-  color: #888;
+  color: var(--text-muted);
   font-size: 14px;
   margin-bottom: 24px;
 }
 
 .role-form-error {
-  background: #fff5f5;
-  border: 1px solid #feb2b2;
+  background: var(--error-light);
+  border: 1px solid var(--error-light);
   border-radius: 8px;
   padding: 12px 16px;
   margin-bottom: 20px;
-  color: #c53030;
+  color: var(--error);
   font-size: 14px;
   display: flex;
   align-items: center;
@@ -309,13 +309,13 @@
 // ===== Permission Matrix =====
 
 .permission-matrix {
-  border: 1px solid #e8e8e8 !important;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 8px !important;
   box-shadow: none !important;
 }
 
 .permission-domain {
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--border-primary);
 
   &:last-child {
     border-bottom: none;
@@ -324,10 +324,10 @@
 
 .permission-domain-header {
   &:hover {
-    background: #f0f0f0 !important;
+    background: var(--border-secondary) !important;
   }
 }
 
 .permission-domain-body {
-  background: #fafafa;
+  background: var(--bg-secondary);
 }

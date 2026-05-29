@@ -264,7 +264,7 @@ export const reorderLessons = async (courseId, orderedIds) => {
 
 // ==================== MOCK DATA (fallback for dev) ====================
 
-let mockCourses = [
+const mockCourses = [
   {
     id: 1,
     title: 'Introduction to React',
@@ -274,6 +274,11 @@ let mockCourses = [
     status: 'Published',
     author: 'John Doe',
     coverImage: 'https://picsum.photos/seed/react/400/250',
+    images: [
+      'https://picsum.photos/seed/react1/400/250',
+      'https://picsum.photos/seed/react2/400/250',
+      'https://picsum.photos/seed/react3/400/250',
+    ],
     totalLessons: 12,
     enrolledUsers: 45,
     duration: '8 hours',
@@ -289,6 +294,10 @@ let mockCourses = [
     status: 'Published',
     author: 'Jane Smith',
     coverImage: 'https://picsum.photos/seed/css/400/250',
+    images: [
+      'https://picsum.photos/seed/css1/400/250',
+      'https://picsum.photos/seed/css2/400/250',
+    ],
     totalLessons: 8,
     enrolledUsers: 32,
     duration: '5 hours',
@@ -304,6 +313,12 @@ let mockCourses = [
     status: 'DRAFT',
     author: 'Bob Wilson',
     coverImage: 'https://picsum.photos/seed/python/400/250',
+    images: [
+      'https://picsum.photos/seed/py1/400/250',
+      'https://picsum.photos/seed/py2/400/250',
+      'https://picsum.photos/seed/py3/400/250',
+      'https://picsum.photos/seed/py4/400/250',
+    ],
     totalLessons: 20,
     enrolledUsers: 0,
     duration: '15 hours',

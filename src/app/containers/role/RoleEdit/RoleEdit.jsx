@@ -7,6 +7,8 @@ import RoleForm from '@/app/containers/role/RoleForm/RoleForm';
 import { fetchRoleById, updateRole } from '@/app/services/authService';
 import { useToast } from '@/app/context/ToastContext';
 
+import { t } from '@/styles/theme';
+
 const RoleEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -33,7 +35,7 @@ const RoleEdit = () => {
       <div className='dashboard-main'>
         <Breadcrumbs mb="md"><Anchor onClick={() => navigate('/roles')}>Roles</Anchor><span>Edit: {role?.name}</span></Breadcrumbs>
         <Paper className='role-form-segment' p="lg" radius="md" withBorder>
-          <Title order={3} mb={4}><Pencil size={20} color="#2185d0" /> Edit Role</Title>
+          <Title order={3} mb={4}><Pencil size={20} color={t('accent')} /> Edit Role</Title>
           <Text c="dimmed" size="sm" mb="md">Update the role details and permissions.</Text>
           <RoleForm initialData={role} onSubmit={handleSubmit} onCancel={handleCancel} loading={loading} submitLabel='Save Changes' />
         </Paper>

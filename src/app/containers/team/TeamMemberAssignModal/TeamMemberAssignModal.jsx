@@ -4,6 +4,9 @@ import { AlertCircle, Check, Minus, Plus, Users } from 'lucide-react';
 import { fetchTeamMembers, fetchUsers, addMemberToTeam, removeMemberFromTeam } from '@/app/services/teamService';
 import { useToast } from '@/app/context/ToastContext';
 
+import { t } from '@/styles/theme';
+
+
 const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
   const [members, setMembers] = useState([]);
   const [availableUsers, setAvailableUsers] = useState([]);
@@ -63,7 +66,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
             const userName = member.userName || 'Unknown';
             const isBusy = busyIds.has(`remove-${userId}`);
             return (
-              <div key={userId} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: '#f8f9fa', borderRadius: 8, border: '1px solid #e8e8e8' }}>
+              <div key={userId} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: t('bg-secondary'), borderRadius: 8, border: `1px solid ${t('border-primary')}` }}>
                 <Group gap={10}>
                   <Avatar src={member.avatar || 'https://i.pravatar.cc/150?img=1'} size={32} radius="xl" />
                   <div><Text size="sm" fw={600}>{userName}</Text><Badge color={getRoleColor(member.role)} size="xs">{member.role || 'N/A'}</Badge></div>
@@ -75,15 +78,15 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
         </Stack>
       )}
 
-      <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #e8e8e8' }} />
+      <hr style={{ margin: '16px 0', border: 'none', borderTop: `1px solid ${t('border-primary')}` }} />
 
-      <Text fw={600} mb={8}><Plus size={14} color="#2185d0" /> Available Users ({availableUsers.length})</Text>
+      <Text fw={600} mb={8}><Plus size={14} color={t('accent')} /> Available Users ({availableUsers.length})</Text>
       {availableUsers.length === 0 ? <Text c="dimmed" size="sm">All users are already assigned or no users found.</Text> : (
         <Stack gap={4}>
           {availableUsers.map((user) => {
             const isBusy = busyIds.has(`add-${user.id}`);
             return (
-              <div key={user.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: '#fff', borderRadius: 8, border: '1px solid #e8e8e8' }}>
+              <div key={user.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: t('bg-surface'), borderRadius: 8, border: `1px solid ${t('border-primary')}` }}>
                 <Group gap={10}>
                   <Avatar src={user.avatar || 'https://i.pravatar.cc/150?img=1'} size={32} radius="xl" />
                   <div><Text size="sm" fw={600}>{user.firstName} {user.lastName}</Text><Text size="xs" c="dimmed">{user.email}</Text></div>

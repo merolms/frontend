@@ -10,6 +10,8 @@ import GridView from './views/GridView';
 import TableView from './views/TableView';
 import ListView from './views/ListView';
 import CompactView from './views/CompactView';
+
+import { t } from '@/styles/theme';
 import './Course.scss';
 
 const statusOptions = [
@@ -149,7 +151,7 @@ const CourseContainer = () => {
 
           {!error && courses.length === 0 && !loading ? (
             <Paper p="xl" radius="md" withBorder className='courses-empty' ta="center" mt="md">
-              <Text size="xl"><BookOpen size={48} color="#999" /></Text>
+              <Text size="xl"><BookOpen size={48} color={t('text-muted')} /></Text>
               <Text mt="md">No courses found. Try adjusting your filters or create a new course.</Text>
               <PermissionGuard permissions={['courses.create']}>
                 <Button mt="md" leftSection={<Plus size={16} />} onClick={() => navigate('/courses/create')}>Create Course</Button>

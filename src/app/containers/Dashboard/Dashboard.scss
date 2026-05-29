@@ -18,7 +18,7 @@
 // ─── Header ──────────────────────────────────────────────────
 
 .dashboard-header {
-  background: var(--bg-card);
+  background: var(--bg-surface);
   padding: 20px 32px;
   display: flex;
   align-items: center;
@@ -37,7 +37,7 @@
 
   .page-subtitle {
     font-size: 13px;
-    color: var(--text-tertiary);
+    color: var(--text-muted);
     margin: 2px 0 0 0;
   }
 }
@@ -59,7 +59,7 @@
 }
 
 .stat-card {
-  background: var(--bg-card);
+  background: var(--bg-surface);
   border: 1px solid var(--border-primary);
   border-radius: 10px;
   padding: 20px;
@@ -83,13 +83,13 @@
   justify-content: center;
   flex-shrink: 0;
   font-size: 20px;
-  color: #fff;
+  color: var(--bg-surface);
 
-  &.green { background: linear-gradient(135deg, #33a163, #2bbd5a); }
+  &.green { background: linear-gradient(135deg, var(--primary), #2bbd5a); }
   &.teal { background: linear-gradient(135deg, #00b5ad, #00c4b4); }
-  &.orange { background: linear-gradient(135deg, #f2711c, #f48436); }
+  &.orange { background: linear-gradient(135deg, var(--warning), #f48436); }
   &.purple { background: linear-gradient(135deg, #6435c9, #7c4dff); }
-  &.blue { background: linear-gradient(135deg, #2185d0, #42a5f5); }
+  &.blue { background: linear-gradient(135deg, var(--accent), #42a5f5); }
 }
 
 .stat-info {
@@ -106,7 +106,7 @@
 
 .stat-label {
   font-size: 12px;
-  color: var(--text-tertiary);
+  color: var(--text-muted);
   margin-top: 2px;
 }
 
@@ -118,8 +118,8 @@
   align-items: center;
   gap: 3px;
 
-  &.up { color: #33a163; }
-  &.down { color: #dc3545; }
+  &.up { color: var(--primary); }
+  &.down { color: var(--error); }
 }
 
 // ─── Two Column Layout ───────────────────────────────────────
@@ -134,7 +134,7 @@
 // ─── Dashboard Card ──────────────────────────────────────────
 
 .dashboard-card {
-  background: var(--bg-card);
+  background: var(--bg-surface);
   border: 1px solid var(--border-primary);
   border-radius: 10px;
   margin-bottom: 20px;
@@ -190,7 +190,7 @@
 
 .course-item-meta {
   font-size: 11px;
-  color: var(--text-tertiary);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   gap: 3px;
@@ -250,14 +250,14 @@
   flex-shrink: 0;
   margin-top: 4px;
 
-  &.course { background: #33a163; }
-  &.user { background: #2185d0; }
+  &.course { background: var(--primary); }
+  &.user { background: var(--accent); }
   &.team { background: #00b5ad; }
   &.quiz { background: #6435c9; }
-  &.certificate { background: #f2711c; }
-  &.live { background: #e03997; }
-  &.assignment { background: #fbbd08; }
-  &.default { background: #767676; }
+  &.certificate { background: var(--warning); }
+  &.live { background: var(--error); }
+  &.assignment { background: var(--warning); }
+  &.default { background: var(--text-disabled); }
 }
 
 .activity-content {
@@ -274,14 +274,14 @@
 
 .activity-meta {
   font-size: 11px;
-  color: var(--text-tertiary);
+  color: var(--text-muted);
   margin-top: 2px;
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
 
   .activity-date {
-    color: var(--text-tertiary);
+    color: var(--text-muted);
   }
 }
 
@@ -377,7 +377,7 @@
 
 .enrollment-label {
   font-size: 11px;
-  color: var(--text-tertiary);
+  color: var(--text-muted);
   margin-top: 2px;
 }
 

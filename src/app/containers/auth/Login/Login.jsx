@@ -5,6 +5,8 @@ import { Paper, TextInput, Button, Title, Text, Alert, Stack, Anchor, Center, Bo
 import { AlertCircle, GraduationCap, Lock, Mail } from 'lucide-react';
 import { loginUser } from '@/redux/slices/authSlice';
 
+import { t } from '@/styles/theme';
+
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,7 +33,7 @@ const Login = () => {
       <div className='auth-container'>
         <Paper className='auth-card' p="xl" radius="md" withBorder>
           <Center mb="md">
-            {/* <GraduationCap size={48} color="#33a163" /> */}
+            {/* <GraduationCap size={48} color={t('primary')} /> */}
           </Center>
           <Title order={2} ta="center" mb={4} className="auth-brand-text">MeroEdu</Title>
           <Text c="dimmed" ta="center" size="sm" mb="lg">Learning Management System</Text>

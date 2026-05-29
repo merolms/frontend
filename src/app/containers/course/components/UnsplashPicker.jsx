@@ -3,6 +3,8 @@ import { Modal, TextInput, Button, Image, Paper, Text, Group, Stack, Loader, Gri
 import { Check, ImageIcon, Search, X } from 'lucide-react';
 import { searchUnsplash } from '@/app/services/unsplashService';
 
+import { t } from '@/styles/theme';
+
 const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
   const [query, setQuery] = useState(initialQuery || 'education');
   const [results, setResults] = useState([]);
@@ -90,7 +92,7 @@ const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
 
       {!loading && results.length === 0 && !error && (
         <div className='unsplash-empty' ta="center" p="xl">
-          <ImageIcon size={48} color="#999" />
+          <ImageIcon size={48} color={t('text-muted')} />
           <Text mt="sm">Search for images above to get started.</Text>
         </div>
       )}

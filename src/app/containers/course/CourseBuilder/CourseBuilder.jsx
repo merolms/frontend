@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { t, useTheme } from '@/styles/theme';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import './CourseBuilder.scss';
 import LessonPanel from './components/LessonPanel';
@@ -50,13 +51,11 @@ const Spinner = ({ size = 14 }) => (
 const CourseBuilder = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [theme] = useTheme();
 
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
   const [selectedLesson, setSelectedLesson] = useState(null);
-  // ─── Content bridge ─────────────────────────────────────────────
-  // Editor writes to contentRef (never to state during active editing).
-  // State is only updated on explicit save to avoid echo back to editor.
   const contentRef = useRef('');
   const [content, setContent] = useState('');
   const [panelWidth, setPanelWidth] = useState(300);
@@ -99,7 +98,6 @@ const CourseBuilder = () => {
     setContent('');
     contentRef.current = '';
     try {
-      // First try autosave (more recent)
       const autosave = await fetchAutosave(lesson.id);
       if (autosave?.snapshot) {
         const snap = JSON.parse(autosave.snapshot);
@@ -110,7 +108,6 @@ const CourseBuilder = () => {
         contentRef.current = c;
         return;
       }
-      // Fall back to lesson content
       if (lesson.content) {
         const c = typeof lesson.content === 'string' ? lesson.content : JSON.stringify(lesson.content);
         setContent(c);
@@ -142,24 +139,18 @@ const CourseBuilder = () => {
   }, []);
   const handleStatsChange = useCallback(({ words: w }) => setWords(w), []);
 
-  // ─── Reorder lessons ───────────────────────────────────────────
   const handleReorderLessons = useCallback(async (newLessons) => {
-    // Optimistically update local state
     const previousLessons = lessons;
     setLessons(newLessons);
-
-    // Persist new order to backend
     try {
       const orderedIds = newLessons.map((l) => l.id);
       await reorderLessons(id, orderedIds);
     } catch (err) {
-      // Rollback on failure
       setLessons(previousLessons);
       setError(err.message || 'Failed to reorder lessons.');
     }
   }, [lessons, id]);
 
-  // ─── Panel resize ─────────────────────────────────────────────
   const handleResizeStart = useCallback((e) => {
     e.preventDefault();
     setIsResizing(true);
@@ -220,10 +211,10 @@ const CourseBuilder = () => {
     return (
       <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
         <SideBar />
-        <div style={{ marginLeft: 70, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5' }}>
+        <div style={{ marginLeft: 70, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: t('bg-secondary') }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
             <Spinner size={32} />
-            <span style={{ color: '#aaa', fontSize: 14 }}>Loading editor…</span>
+            <span style={{ color: t('text-muted'), fontSize: 14 }}>Loading editor…</span>
           </div>
         </div>
       </div>
@@ -231,11 +222,11 @@ const CourseBuilder = () => {
   }
 
   return (
-    <div >
+    <div>
       <SideBar />
 
       {/* Main panel */}
-      <div style={{ marginLeft: 70, flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#f5f5f5' }}>
+      <div style={{ marginLeft: 70, flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: t('bg-secondary') }}>
 
         {/* ── Top bar ───────────────────────────────────────── */}
         <header style={{
@@ -244,9 +235,9 @@ const CourseBuilder = () => {
           gap: 12,
           height: 52,
           minHeight: 52,
-          background: '#fff',
-          borderBottom: '1px solid #ebebeb',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+          background: t('bg-surface'),
+          borderBottom: `1px solid ${t('border-primary')}`,
+          boxShadow: t('shadow-sm'),
           padding: '0 16px',
           flexShrink: 0,
           zIndex: 50,
@@ -254,12 +245,12 @@ const CourseBuilder = () => {
           {/* Breadcrumb */}
           <nav style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0, fontSize: 13 }}>
             <BreadcrumbButton onClick={() => navigate('/courses')}>Courses</BreadcrumbButton>
-            <span style={{ color: '#ddd' }}>/</span>
+            <span style={{ color: t('text-disabled') }}>/</span>
             <BreadcrumbButton onClick={() => navigate(`/courses/${id}`)} maxWidth={160}>
               {course?.title}
             </BreadcrumbButton>
-            <span style={{ color: '#ddd' }}>/</span>
-            <span style={{ color: '#333', fontWeight: 600, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ color: t('text-disabled') }}>/</span>
+            <span style={{ color: t('text-primary'), fontWeight: 600, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {selectedLesson?.title || 'Untitled'}
             </span>
           </nav>
@@ -267,29 +258,22 @@ const CourseBuilder = () => {
           {/* Right controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
             {words > 0 && (
-              <span style={{ fontSize: 11, color: '#bbb', background: '#f5f5f5', borderRadius: 12, padding: '2px 8px', fontVariantNumeric: 'tabular-nums' }}>
+              <span style={{ fontSize: 11, color: t('text-muted'), background: t('bg-secondary'), borderRadius: 12, padding: '2px 8px', fontVariantNumeric: 'tabular-nums' }}>
                 {words} words
               </span>
             )}
 
             {autosaveStatus === 'saved' && (
-              <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#111' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: t('text-primary') }}>
                 <CheckIcon /> Saved
               </span>
             )}
 
-            <TopBarButton
-              onClick={() => navigate(`/courses/${id}`)}
-              variant="ghost"
-            >
+            <TopBarButton onClick={() => navigate(`/courses/${id}`)} variant="ghost">
               <EyeIcon /> Preview
             </TopBarButton>
 
-            <TopBarButton
-              onClick={handleSave}
-              disabled={saving}
-              variant="primary"
-            >
+            <TopBarButton onClick={handleSave} disabled={saving} variant="primary">
               {saving ? <Spinner /> : <SaveIcon />} Save
             </TopBarButton>
           </div>
@@ -302,9 +286,9 @@ const CourseBuilder = () => {
             alignItems: 'center',
             gap: 8,
             padding: '9px 16px',
-            background: '#fff2f0',
-            borderBottom: '1px solid #ffd4cf',
-            color: '#c53030',
+            background: t('error-light'),
+            borderBottom: `1px solid ${t('error')}33`,
+            color: t('error'),
             fontSize: 13,
             flexShrink: 0,
           }}>
@@ -312,7 +296,7 @@ const CourseBuilder = () => {
             <span style={{ flex: 1 }}>{error}</span>
             <button
               onClick={() => setError(null)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c53030', fontSize: 18, lineHeight: 1, padding: 0 }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: t('error'), fontSize: 18, lineHeight: 1, padding: 0 }}
             >
               ×
             </button>
@@ -339,11 +323,11 @@ const CourseBuilder = () => {
               width: 6,
               flexShrink: 0,
               cursor: 'col-resize',
-              background: isResizing ? 'rgba(0,0,0,0.08)' : 'transparent',
+              background: isResizing ? t('bg-active') : 'transparent',
               transition: 'background 0.15s',
               userSelect: 'none',
             }}
-            onMouseEnter={(e) => { if (!isResizing) e.currentTarget.style.background = 'rgba(0,0,0,0.06)'; }}
+            onMouseEnter={(e) => { if (!isResizing) e.currentTarget.style.background = t('bg-hover'); }}
             onMouseLeave={(e) => { if (!isResizing) e.currentTarget.style.background = 'transparent'; }}
           />
 
@@ -351,8 +335,8 @@ const CourseBuilder = () => {
           <main style={{
             flex: 1,
             overflowY: 'auto',
-            background: '#f5f5f5',
-            backgroundImage: 'radial-gradient(circle, #d0d0d0 1px, transparent 1px)',
+            background: t('bg-secondary'),
+            backgroundImage: `radial-gradient(circle, ${t('border-secondary')} 1px, transparent 1px)`,
             backgroundSize: '24px 24px',
             display: 'flex',
             justifyContent: 'center',
@@ -362,26 +346,26 @@ const CourseBuilder = () => {
             <div style={{
               width: '100%',
               minWidth: 760,
-              background: '#fff',
-              borderRadius: 12,
-              boxShadow: '0 2px 20px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.03)',
+              background: t('bg-surface'),
+              borderRadius: t('radius-lg'),
+              boxShadow: t('shadow-md'),
               padding: '48px 56px 0',
               display: 'flex',
               flexDirection: 'column',
             }}>
               {/* Document header */}
-              <div style={{ marginBottom: 32, paddingBottom: 20, borderBottom: '1px solid #f3f4f6' }}>
+              <div style={{ marginBottom: 32, paddingBottom: 20, borderBottom: `1px solid ${t('border-secondary')}` }}>
                 <div style={{
                   fontSize: 10,
                   fontWeight: 700,
                   letterSpacing: '0.07em',
                   textTransform: 'uppercase',
-                  color: '#d1d5db',
+                  color: t('text-disabled'),
                   marginBottom: 6,
                 }}>
                   Lesson {lessonIndex >= 0 ? lessonIndex + 1 : 1}
                 </div>
-                <h1 style={{ fontSize: '1.8em', fontWeight: 700, color: '#111', margin: 0, lineHeight: 1.25 }}>
+                <h1 style={{ fontSize: '1.8em', fontWeight: 700, color: t('text-primary'), margin: 0, lineHeight: 1.25 }}>
                   {selectedLesson?.title || 'Untitled Lesson'}
                 </h1>
               </div>
@@ -395,6 +379,7 @@ const CourseBuilder = () => {
                   onChange={handleContentChange}
                   onSave={handleSave}
                   onStatsChange={handleStatsChange}
+                  theme={theme}
                 />
               </div>
             </div>
@@ -418,7 +403,7 @@ const BreadcrumbButton = ({ onClick, children, maxWidth = 120 }) => {
         background: 'none',
         border: 'none',
         cursor: 'pointer',
-        color: hovered ? '#111' : '#999',
+        color: hovered ? t('text-primary') : t('text-muted'),
         padding: 0,
         fontSize: 13,
         maxWidth,
@@ -442,7 +427,7 @@ const TopBarButton = ({ onClick, disabled, variant, children }) => {
     gap: 5,
     padding: '5px 13px',
     border: 'none',
-    borderRadius: 7,
+    borderRadius: t('radius-sm'),
     fontSize: 13,
     fontWeight: 500,
     cursor: disabled ? 'default' : 'pointer',
@@ -451,13 +436,13 @@ const TopBarButton = ({ onClick, disabled, variant, children }) => {
 
   const styles = variant === 'primary' ? {
     ...base,
-    background: hovered && !disabled ? '#000' : '#111',
-    color: '#fff',
+    background: hovered && !disabled ? '#000' : t('text-primary'),
+    color: t('text-inverse'),
     opacity: disabled ? 0.7 : 1,
   } : {
     ...base,
-    background: hovered ? '#e8e8e8' : '#f0f0f0',
-    color: '#555',
+    background: hovered ? t('bg-hover') : t('bg-secondary'),
+    color: t('text-secondary'),
   };
 
   return (

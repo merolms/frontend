@@ -4,8 +4,8 @@
 
 .category-filters {
   padding: 14px 18px !important;
-  background: #f8f9fa !important;
-  border: 1px solid #e8e8e8 !important;
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 10px !important;
   margin-bottom: 16px;
 }
@@ -30,7 +30,7 @@
 
 .category-table-segment {
   border-radius: 10px !important;
-  border: 1px solid #e8e8e8 !important;
+  border: 1px solid var(--border-primary) !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
   margin-bottom: 20px;
   background: transparent !important;
@@ -41,7 +41,7 @@
     overflow: hidden;
 
     th {
-      background: #f8f9fa !important;
+      background: var(--bg-secondary) !important;
       font-weight: 600 !important;
       font-size: 12px !important;
       text-transform: uppercase;
@@ -76,18 +76,18 @@
 .category-name {
   font-weight: 600;
   font-size: 13px;
-  color: $text-color-dark;
+  color: var(--text-primary);
 }
 
 .category-slug {
   font-size: 11px;
-  color: #aaa;
+  color: var(--text-muted);
   font-family: monospace;
 }
 
 .category-cell-desc {
   font-size: 12px;
-  color: #888;
+  color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -101,12 +101,12 @@
   padding: 48px 20px;
 
   .ui.header {
-    color: #999 !important;
+    color: var(--text-muted) !important;
     margin: 12px 0 8px !important;
   }
 
   p {
-    color: #aaa;
+    color: var(--text-muted);
     margin-bottom: 16px;
   }
 }
@@ -124,7 +124,7 @@
 
 .skeleton-line {
   height: 12px;
-  background: #f0f0f0;
+  background: var(--border-secondary);
   border-radius: 4px;
   width: 100%;
 }

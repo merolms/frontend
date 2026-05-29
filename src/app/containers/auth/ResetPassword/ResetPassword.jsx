@@ -4,6 +4,8 @@ import { Paper, TextInput, Button, Title, Text, Alert, Stack, Center, Anchor } f
 import { AlertCircle, ArrowLeft, Check, GraduationCap, Lock } from 'lucide-react';
 import { resetPassword } from '@/app/services/authService';
 
+import { t } from '@/styles/theme';
+
 const ResetPassword = () => {
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
@@ -32,7 +34,7 @@ const ResetPassword = () => {
     <div className='auth-page'>
       <div className='auth-container'>
         <Paper className='auth-card' p="xl" radius="md" withBorder>
-          {/* <Center mb="md"><GraduationCap size={48} color="#33a163" /></Center> */}
+          {/* <Center mb="md"><GraduationCap size={48} color={t('primary')} /></Center> */}
           <Title order={3} ta="center" mb="lg">Reset Password</Title>
 
           {success ? (

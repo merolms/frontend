@@ -4,6 +4,8 @@
 
 import { apiGet, apiPost, apiPut, apiDelete } from '@/app/services/http';
 
+import { t } from '@/styles/theme';
+
 // ==================== CATEGORIES ====================
 // GET /categories?start=0&limit=10  → returns Summaries { total, data: Category[] }
 // GET /categories/{id}             → returns Response { data: Category }
@@ -61,7 +63,7 @@ export const createCategory = async (categoryData) => {
       name: categoryData.name || '',
       slug: categoryData.slug || categoryData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
       description: categoryData.description || '',
-      color: categoryData.color || '#1976d2',
+      color: categoryData.color || t('accent'),
       icon: categoryData.icon || 'folder',
       status: 1,
     };
@@ -78,7 +80,7 @@ export const updateCategory = async (id, categoryData) => {
       name: categoryData.name || '',
       slug: categoryData.slug || '',
       description: categoryData.description || '',
-      color: categoryData.color || '#1976d2',
+      color: categoryData.color || t('accent'),
       icon: categoryData.icon || 'folder',
       status: categoryData.status !== undefined ? categoryData.status : 1,
     };
@@ -111,10 +113,13 @@ export const toggleCategoryStatus = async (id) => {
 };
 
 export const getCategoryColorOptions = () => [
-  '#1976d2', '#e91e63', '#4caf50', '#ff9800', '#9c27b0',
-  '#00bcd4', '#ff5722', '#795548', '#607d88', '#009688',
+  'var(--accent)',
+  'var(--error)',
+  'var(--success)',
+  'var(--warning)',
+  'var(--secondary)',
+  'var(--text-secondary)',
 ];
-
 export const getCategoryIconOptions = [
   'code', 'paint brush', 'database', 'server', 'briefcase', 'bullhorn',
   'camera', 'music', 'book', 'globe', 'star', 'heart',
