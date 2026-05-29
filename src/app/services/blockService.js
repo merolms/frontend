@@ -83,6 +83,24 @@ export const fetchAutosave = async (lessonId) => {
   }
 };
 
+// ─── BLOCKS ─────────────────────────────────────────────────────
+
+/**
+ * Fetch all blocks for a lesson from the blocks API.
+ * Returns blocks sorted by order field.
+ */
+export const fetchLessonBlocks = async (lessonId) => {
+  try {
+    const data = await apiGet(`/lessons/${lessonId}/blocks`);
+    const list = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
+    list.sort((a, b) => (a.order || 0) - (b.order || 0));
+    return list;
+  } catch (error) {
+    console.error('Error fetching lesson blocks:', error);
+    throw error;
+  }
+};
+
 // ─── MEDIA UPLOAD ──────────────────────────────────────────────
 
 /**

@@ -71,7 +71,13 @@ const countWords = (blocks) => {
   return n;
 };
 
-const BlockNoteEditorComponent = ({ lessonId, contentRef, onChange, onSave, onStatsChange, theme = 'light' }) => {
+const resolveTheme = () => {
+  if (typeof document === 'undefined') return 'light';
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+};
+
+const BlockNoteEditorComponent = ({ lessonId, contentRef, onChange, onSave, onStatsChange, theme }) => {
+  const [effectiveTheme, setEffectiveTheme] = useState(resolveTheme());
   const changeTimer = useRef(null);
   const isTyping = useRef(false);
   const isSyncing = useRef(false);
@@ -99,6 +105,18 @@ const BlockNoteEditorComponent = ({ lessonId, contentRef, onChange, onSave, onSt
   );
 
   const editor = useCreateBlockNote({ uploadFile });
+
+  // Keep effectiveTheme in sync with <html data-theme> changes
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = () => setEffectiveTheme(resolveTheme());
+    // React to DOM attribute changes set by ThemeContext
+    const observer = new MutationObserver(handler);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    // Also react to system theme changes
+    mq.addEventListener('change', handler);
+    return () => { observer.disconnect(); mq.removeEventListener('change', handler); };
+  }, []);
 
   useEffect(() => {
     if (!editor) return;
@@ -147,10 +165,9 @@ const BlockNoteEditorComponent = ({ lessonId, contentRef, onChange, onSave, onSt
   }, [onSave]);
 
   if (!editor) return null;
-
   return (
     <div>
-      <BlockNoteView editor={editor} theme={theme} />
+      <BlockNoteView editor={editor} theme={effectiveTheme} />
       <div className="bn-statusbar" style={{ color: t('text-muted'), borderTop: `1px solid ${t('border-primary')}` }}>
         <span className="bn-statusbar-stat">{words} {words === 1 ? 'word' : 'words'}</span>
         <span className="bn-statusbar-dot">·</span>

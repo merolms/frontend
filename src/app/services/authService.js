@@ -151,7 +151,7 @@ export const permissionCatalog = {
       { key: 'courses.edit', label: 'Edit Courses' },
       { key: 'courses.delete', label: 'Delete Courses' },
       { key: 'courses.publish', label: 'Publish / Archive Courses' },
-      { key: 'courses.lessons.manage', label: 'Manage Lessons' },
+      { key: 'courses.lessons.manage', label: 'Manage Course Lessons' },
     ],
   },
   users: {

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { setTheme as setThemeToken } from '@/styles/theme';
 
 const THEME_KEY = 'meroedu_theme';
 
@@ -36,6 +37,7 @@ export const ThemeProvider = ({ children }) => {
     const resolved = mode === 'system' ? getSystemTheme() : mode;
     setResolvedTheme(resolved);
     document.documentElement.setAttribute('data-theme', resolved);
+    setThemeToken(resolved);
   }, [mode]);
 
   // Listen for system theme changes
@@ -46,6 +48,7 @@ export const ThemeProvider = ({ children }) => {
       const resolved = getSystemTheme();
       setResolvedTheme(resolved);
       document.documentElement.setAttribute('data-theme', resolved);
+      setThemeToken(resolved);
     };
     mq.addEventListener('change', handler);
     return () => mq.removeEventListener('change', handler);

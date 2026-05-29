@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { t } from '@/styles/theme';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Paper, Breadcrumbs, Anchor, Stack, Title, Text, Loader } from '@mantine/core';
-import { AlertCircle, List, Pencil, Plus, Network } from 'lucide-react';
+import { AlertCircle, Pencil, Plus, Network } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { fetchCourseById, updateCourse } from '@/app/services/courseService';
 import UnsplashPicker from '@/app/containers/course/components/UnsplashPicker';
@@ -174,7 +174,6 @@ const CourseEdit = () => {
                 <Title order={5}><Plus size={16} color={t('warning')} /> Quick Actions</Title>
                 <div className='quick-actions'>
                   <a href={`/courses/${id}/builder`}><Network size={14} /> Open Course Builder</a>
-                  <a href={`/courses/${id}/lessons`}><List size={14} /> Manage Lessons</a>
                 </div>
               </Paper>
               {form.coverImage && (

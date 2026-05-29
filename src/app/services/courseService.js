@@ -170,7 +170,7 @@ export const archiveCourse = async (id) => {
 // ─── LESSONS ─────────────────────────────────────────────────
 
 // Backend API shape for lessons from GET /courses/:id/lessons
-// { id, courseId, title, description, updatedAt, createdAt }
+// { id, courseId, title, content, type, status, sort_order, updatedAt, createdAt }
 const normalizeLesson = (l) => {
   // Content may be a plain HTML string or a JSON-stringified object
   let content = l.content || '';
@@ -186,11 +186,11 @@ const normalizeLesson = (l) => {
     id: l.id,
     courseId: l.courseId || l.course_id,
     title: l.title || '',
-    description: l.description || '',
     duration: l.duration || '',
     content,
     type: l.type || 'text',
     status: l.status || 'published',
+    sort_order: l.sort_order || l.orderNumber || l.order || 0,
     points: l.points || 0,
     updatedAt: l.updated_at ? new Date(l.updated_at * 1000).toISOString().split('T')[0] : (l.updatedAt || ''),
     createdAt: l.created_at ? new Date(l.created_at * 1000).toISOString().split('T')[0] : (l.createdAt || ''),
@@ -216,7 +216,6 @@ export const createLesson = async (courseId, lessonData) => {
     const payload = {
       course_id: parseInt(courseId, 10),
       title: lessonData.title,
-      description: lessonData.description || '',
     };
     const data = await apiPost(`/courses/${courseId}/lessons`, payload);
     return normalizeLesson(data);
@@ -231,7 +230,6 @@ export const updateLesson = async (courseId, lessonId, lessonData) => {
     const payload = {
       course_id: parseInt(courseId, 10),
       title: lessonData.title,
-      description: lessonData.description || '',
       content: lessonData.content || '',
       type: lessonData.type || 'text',
     };
@@ -252,9 +250,10 @@ export const deleteLesson = async (courseId, lessonId) => {
   }
 };
 
-export const reorderLessons = async (courseId, orderedIds) => {
+export const reorderLessons = async (courseId, lessons) => {
   try {
-    const data = await apiPut(`/courses/${courseId}/lessons/reorder`, { lesson_ids: orderedIds });
+    const payload = lessons.map((l, i) => ({ id: l.id, order_number: i + 1 }));
+    const data = await apiPut(`/courses/${courseId}/lessons/reorder`, payload);
     return data;
   } catch (error) {
     console.error('Error reordering lessons:', error);
@@ -331,11 +330,11 @@ export { mockCourses };
 
 const mockLessons = {
   1: [
-    { id: 1, title: 'Getting Started with React', description: 'Introduction to React and its ecosystem', duration: '30 mins', order: 1 },
-    { id: 2, title: 'Components and Props', description: 'Understanding React components', duration: '45 mins', order: 2 },
-    { id: 3, title: 'State and Lifecycle', description: 'Managing state in React', duration: '40 mins', order: 3 },
-    { id: 4, title: 'Hooks in Depth', description: 'useState, useEffect, and custom hooks', duration: '50 mins', order: 4 },
-    { id: 5, title: 'Building a Real App', description: 'Putting it all together', duration: '60 mins', order: 5 },
+    { id: 1, title: 'Getting Started with React', duration: '30 mins', order: 1 },
+    { id: 2, title: 'Components and Props', duration: '45 mins', order: 2 },
+    { id: 3, title: 'State and Lifecycle', duration: '40 mins', order: 3 },
+    { id: 4, title: 'Hooks in Depth', duration: '50 mins', order: 4 },
+    { id: 5, title: 'Building a Real App', duration: '60 mins', order: 5 },
   ],
 };
 

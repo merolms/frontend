@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, Stack, Divider, Button, Group, Text } from '@mantine/core';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { BookOpen, GraduationCap, Hash, Home, LogOut, MessageCircle, Settings, Shield, Network, Tags, User, Users } from 'lucide-react';
+import { BookOpen, GraduationCap, Home, LogOut, Settings, Shield, Network, Tags, Users } from 'lucide-react';
 import SideBarItem from '@/app/containers/SideBar/SideBarItem/SideBarItem';
 import UserProfileInfo from '@/app/components/UserProfileInfo';
 import { logoutUser } from '@/redux/slices/authSlice';
@@ -15,17 +15,14 @@ const navItems = [
   { path: '/users', label: 'Users', icon: 'users' },
   { path: '/teams', label: 'Teams', icon: 'sitemap' },
   { path: '/my-learning', label: 'Learning', icon: 'graduation-cap' },
-  { path: '/chat', label: 'AI Chat', icon: 'comments' },
-  { path: '/slack', label: 'Team Chat', icon: 'hashtag' },
-  { path: '/profile', label: 'Profile', icon: 'id-card' },
   { path: '/settings', label: 'Settings', icon: 'cog' },
   { path: '/roles', label: 'Roles', icon: 'shield' },
 ];
 
 const iconMap = {
   home: Home, book: BookOpen, tags: Tags, users: Users, sitemap: Network,
-  'graduation-cap': BookOpen, comments: MessageCircle, hashtag: Hash,
-  'id-card': User, cog: Settings, shield: Shield,
+  'graduation-cap': BookOpen,
+  cog: Settings, shield: Shield,
 };
 
 export default function SideBar() {

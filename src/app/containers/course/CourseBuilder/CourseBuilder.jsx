@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { t, useTheme } from '@/styles/theme';
+import { t } from '@/styles/theme';
+import { useTheme as useThemeContext } from '@/app/context/ThemeContext';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import './CourseBuilder.scss';
 import LessonPanel from './components/LessonPanel';
@@ -12,7 +13,53 @@ import {
   updateLesson,
   reorderLessons,
 } from '@/app/services/courseService';
-import { saveAutosave, fetchAutosave } from '@/app/services/blockService';
+import { saveAutosave, fetchAutosave, fetchLessonBlocks } from '@/app/services/blockService';
+
+// ─── BLOCKS → BlockNote DOC CONVERTER ───────────────────────────
+// Converts blocks from GET /lessons/{id}/blocks API into BlockNote
+// document format ({id, type, content, props, children}[]).
+
+const PARA_PROPS = { textAlignment: 'left', backgroundColor: 'default', textColor: 'default' };
+
+const convertBlock = (block) => {
+  const type = block.type || 'paragraph';
+  const contentStr = block.content || block.data || '[]';
+  let content = [];
+  try {
+    const parsed = JSON.parse(contentStr);
+    if (Array.isArray(parsed)) {
+      content = parsed.map((item) => ({
+        type: item.type || 'text',
+        text: item.text || '',
+        styles: item.styles || {},
+      }));
+    } else if (typeof parsed === 'string') {
+      content = [{ type: 'text', text: parsed, styles: {} }];
+    }
+  } catch {
+    if (typeof contentStr === 'string' && contentStr.trim()) {
+      content = [{ type: 'text', text: contentStr, styles: {} }];
+    }
+  }
+  // Use title as heading text if content is empty
+  if (content.length === 0 && block.title && block.title !== block.type) {
+    content = [{ type: 'text', text: block.title, styles: {} }];
+  }
+  return {
+    id: String(block.id) || String(Math.random()),
+    type,
+    props: { ...PARA_PROPS },
+    content,
+    children: [],
+  };
+};
+
+const blocksToDoc = (blocks) => {
+  if (!blocks || blocks.length === 0) return [];
+  // Sort by order field
+  const sorted = [...blocks].sort((a, b) => (a.order || 0) - (b.order || 0));
+  return sorted.map(convertBlock);
+};
 
 // ─── Icons ───────────────────────────────────────────────────────
 const SaveIcon = () => (
@@ -51,7 +98,7 @@ const Spinner = ({ size = 14 }) => (
 const CourseBuilder = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [theme] = useTheme();
+  const { resolvedTheme: theme } = useThemeContext();
 
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
@@ -77,11 +124,12 @@ const CourseBuilder = () => {
       const courseData = await fetchCourseById(id);
       setCourse(courseData);
       const lessonList = await fetchLessons(id);
+      lessonList.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
       if (lessonList?.length > 0) {
         setLessons(lessonList);
         await loadLesson(lessonList[0]);
       } else {
-        const newLesson = await createLesson(id, { title: 'Lesson 1', description: '' });
+        const newLesson = await createLesson(id, { title: 'Lesson 1' });
         setLessons([newLesson]);
         setSelectedLesson(newLesson);
         setContent('');
@@ -97,7 +145,9 @@ const CourseBuilder = () => {
     setSelectedLesson(lesson);
     setContent('');
     contentRef.current = '';
+    clearTimeout(autosaveTimer.current);
     try {
+      // 1) Try autosave first (most recent edits)
       const autosave = await fetchAutosave(lesson.id);
       if (autosave?.snapshot) {
         const snap = JSON.parse(autosave.snapshot);
@@ -108,13 +158,23 @@ const CourseBuilder = () => {
         contentRef.current = c;
         return;
       }
-      if (lesson.content) {
-        const c = typeof lesson.content === 'string' ? lesson.content : JSON.stringify(lesson.content);
-        setContent(c);
-        contentRef.current = c;
+    } catch { /* ignore autosave errors */ }
+
+    // 2) Fetch blocks from API and build BlockNote document
+    try {
+      const blocks = await fetchLessonBlocks(lesson.id);
+      if (blocks.length > 0) {
+        const doc = blocksToDoc(blocks);
+        const json = JSON.stringify(doc);
+        setContent(json);
+        contentRef.current = json;
         return;
       }
-    } catch { /* ignore */ }
+    } catch { /* ignore blocks fetch errors */ }
+
+    // 3) Empty lesson — nothing to load
+    setContent('');
+    contentRef.current = '';
   };
 
   const handleSave = async () => {
@@ -122,6 +182,7 @@ const CourseBuilder = () => {
     try {
       setSaving(true);
       setError(null);
+      clearTimeout(autosaveTimer.current);
       const currentContent = contentRef.current;
       await saveAutosave(selectedLesson.id, JSON.stringify({ content: currentContent, format: 'blocknote' }));
       await updateLesson(id, selectedLesson.id, { title: selectedLesson.title, content: currentContent, type: 'blocknote' });
@@ -134,17 +195,40 @@ const CourseBuilder = () => {
     }
   };
 
+  const autosaveTimer = useRef(null);
+
+  const doAutosave = useCallback(async () => {
+    if (!selectedLesson) return;
+    const currentContent = contentRef.current;
+    if (!currentContent) return;
+    try {
+      await saveAutosave(selectedLesson.id, JSON.stringify({ content: currentContent, format: 'blocknote' }));
+      setAutosaveStatus('saved');
+      setTimeout(() => setAutosaveStatus(''), 2500);
+    } catch (err) {
+      console.error('Autosave failed:', err);
+    }
+  }, [selectedLesson]);
+
+  const scheduleAutosave = useCallback(() => {
+    clearTimeout(autosaveTimer.current);
+    autosaveTimer.current = setTimeout(doAutosave, 1000);
+  }, [doAutosave]);
+
+  useEffect(() => () => clearTimeout(autosaveTimer.current), []);
+
   const handleContentChange = useCallback((json) => {
     contentRef.current = json;
-  }, []);
+    scheduleAutosave();
+  }, [scheduleAutosave]);
   const handleStatsChange = useCallback(({ words: w }) => setWords(w), []);
 
   const handleReorderLessons = useCallback(async (newLessons) => {
     const previousLessons = lessons;
-    setLessons(newLessons);
+    const reordered = newLessons.map((l, i) => ({ ...l, sort_order: i + 1 }));
+    setLessons(reordered);
     try {
-      const orderedIds = newLessons.map((l) => l.id);
-      await reorderLessons(id, orderedIds);
+      await reorderLessons(id, reordered);
     } catch (err) {
       setLessons(previousLessons);
       setError(err.message || 'Failed to reorder lessons.');
@@ -194,7 +278,7 @@ const CourseBuilder = () => {
   const handleAddLesson = async () => {
     try {
       setAddingLesson(true);
-      const newLesson = await createLesson(id, { title: `Lesson ${lessons.length + 1}`, description: '' });
+      const newLesson = await createLesson(id, { title: `Lesson ${lessons.length + 1}` });
       setLessons([...lessons, newLesson]);
       await loadLesson(newLesson);
     } catch (err) {

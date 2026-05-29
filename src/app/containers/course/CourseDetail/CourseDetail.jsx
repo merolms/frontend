@@ -102,7 +102,6 @@ const CourseDetail = () => {
           <Group>
             <PermissionGuard permissions={['courses.lessons.manage']}><Button component={Link} to={`/courses/${id}/builder`} leftSection={<Network size={14} />}>Open Builder</Button></PermissionGuard>
             <PermissionGuard permissions={['courses.edit']}><Button component={Link} to={`/courses/${id}/edit`} variant="default" leftSection={<Pencil size={14} />}>Edit Details</Button></PermissionGuard>
-            <PermissionGuard permissions={['courses.lessons.manage']}><Button component={Link} to={`/courses/${id}/lessons`} variant="default" leftSection={<ListIcon size={14} />}>Manage Lessons</Button></PermissionGuard>
           </Group>
           <Group>
             {enrollment?.status === 'active' && <Button component={Link} to={`/courses/${id}/learn`} leftSection={<Plus size={14} />}>Continue Learning</Button>}
@@ -159,7 +158,7 @@ const CourseDetail = () => {
                       {lessons.map((lesson, index) => (
                         <List.Item key={lesson.id} className='course-lesson-item'>
                           <div className='course-lesson-number'>{index + 1}</div>
-                          <div><Text fw={600}>{lesson.title}</Text><Text c="dimmed" size="sm">{lesson.description}</Text></div>
+                          <div><Text fw={600}>{lesson.title}</Text></div>
                           {lesson.duration && <Badge size="xs" color="teal" leftSection={<Clock size={10} />}>{lesson.duration}</Badge>}
                         </List.Item>
                       ))}

@@ -52,7 +52,7 @@ const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
   const handleConfirm = () => { if (selectedUrl) { onSelect(selectedUrl); onClose(); } };
 
   return (
-    <Modal opened={open} onClose={onClose} title="Select Cover ImageIcon from Unsplash" size="lg" className='unsplash-picker-modal'>
+    <Modal opened={open} onClose={onClose} title="Select Cover Image from Unsplash" size="lg" className='unsplash-picker-modal'>
       <form onSubmit={handleSearch} className='unsplash-search-bar'>
         <TextInput
           ref={inputRef}
@@ -77,7 +77,7 @@ const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
             {results.map((photo) => (
               <Grid.Col key={photo.id} span={3}>
                 <div className={`unsplash-grid-item ${selectedId === photo.id ? 'selected' : ''}`} onClick={() => handleSelect(photo)} style={{ position: 'relative', cursor: 'pointer' }}>
-                  <ImageIcon src={photo.thumb} alt={photo.alt} className='unsplash-thumb' radius="sm" />
+                  <Image src={photo.thumb} alt={photo.alt} className='unsplash-thumb' radius="sm" />
                   {selectedId === photo.id && (
                     <div className='unsplash-selected-badge' style={{ position: 'absolute', top: 4, right: 4 }}>
                       <Check size={20} color="green" />
@@ -107,7 +107,7 @@ const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
 
       <Group justify="flex-end" mt="md">
         <Button variant="default" onClick={onClose} leftSection={<X size={14} />}>Cancel</Button>
-        <Button onClick={handleConfirm} disabled={!selectedUrl} leftSection={<Check size={14} />}>Use Selected ImageIcon</Button>
+        <Button onClick={handleConfirm} disabled={!selectedUrl} leftSection={<Check size={14} />}>Use Selected Image</Button>
       </Group>
     </Modal>
   );

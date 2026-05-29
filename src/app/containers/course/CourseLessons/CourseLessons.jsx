@@ -81,7 +81,7 @@ const CourseLessons = () => {
                       <div key={lesson.id} className='lesson-card' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 12, border: `1px solid ${t('border-primary')}`, borderRadius: 8, marginBottom: 8 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                           <div className='lesson-card-number' style={{ width: 32, height: 32, borderRadius: 16, background: t('bg-hover'), display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600 }}>{index + 1}</div>
-                          <div><Title order={5} style={{ margin: 0 }}>{lesson.title}</Title><Text c="dimmed" size="sm">{lesson.description}</Text>{lesson.duration && <Badge size="xs" color="teal" mt={4} leftSection={<Clock size={10} />}>{lesson.duration}</Badge>}</div>
+                          <div><Title order={5} style={{ margin: 0 }}>{lesson.title}</Title>{lesson.duration && <Badge size="xs" color="teal" mt={4} leftSection={<Clock size={10} />}>{lesson.duration}</Badge>}</div>
                         </div>
                         <PermissionGuard permissions={['courses.lessons.manage']}>
                           <Group gap={4}>
