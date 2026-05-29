@@ -142,14 +142,18 @@ const CourseBuilder = () => {
   };
 
   const loadLesson = async (lesson) => {
+    // console.log(`[loadLesson] lesson ${lesson.id}: ${lesson.title}`);
     setSelectedLesson(lesson);
     setContent('');
     contentRef.current = '';
     clearTimeout(autosaveTimer.current);
+    lastAutosaveContent.current = '';
     try {
       // 1) Try autosave first (most recent edits)
       const autosave = await fetchAutosave(lesson.id);
       if (autosave?.snapshot) {
+
+        console.log(`[loadLesson] lesson ${lesson.id}: found autosave`);
         const snap = JSON.parse(autosave.snapshot);
         const c = Array.isArray(snap) ? JSON.stringify(snap)
           : snap.content ? (typeof snap.content === 'string' ? snap.content : JSON.stringify(snap.content))
@@ -158,23 +162,31 @@ const CourseBuilder = () => {
         contentRef.current = c;
         return;
       }
-    } catch { /* ignore autosave errors */ }
+      console.log(`[loadLesson] lesson ${lesson.id}: no autosave, fetching blocks`);
+    } catch (err) {
+      console.log(`[loadLesson] lesson ${lesson.id}: autosave error`, err.message);
+    }
 
-    // 2) Fetch blocks from API and build BlockNote document
-    try {
-      const blocks = await fetchLessonBlocks(lesson.id);
-      if (blocks.length > 0) {
-        const doc = blocksToDoc(blocks);
-        const json = JSON.stringify(doc);
-        setContent(json);
-        contentRef.current = json;
-        return;
-      }
-    } catch { /* ignore blocks fetch errors */ }
+    // // 2) Fetch blocks from API and build BlockNote document
+    // try {
+    //   const blocks = await fetchLessonBlocks(lesson.id);
+    //   if (blocks.length > 0) {
+    //     console.log(`[loadLesson] lesson ${lesson.id}: loaded ${blocks.length} blocks`);
+    //     const doc = blocksToDoc(blocks);
+    //     const json = JSON.stringify(doc);
+    //     setContent(json);
+    //     contentRef.current = json;
+    //     return;
+    //   }
+    //   console.log(`[loadLesson] lesson ${lesson.id}: no blocks found`);
+    // } catch (err) {
+    //   console.log(`[loadLesson] lesson ${lesson.id}: blocks fetch error`, err.message);
+    // }
 
     // 3) Empty lesson — nothing to load
-    setContent('');
-    contentRef.current = '';
+    // console.log(`[loadLesson] lesson ${lesson.id}: empty lesson`);
+    // setContent('');
+    // contentRef.current = '';
   };
 
   const handleSave = async () => {
@@ -185,9 +197,10 @@ const CourseBuilder = () => {
       clearTimeout(autosaveTimer.current);
       const currentContent = contentRef.current;
       await saveAutosave(selectedLesson.id, JSON.stringify({ content: currentContent, format: 'blocknote' }));
-      await updateLesson(id, selectedLesson.id, { title: selectedLesson.title, content: currentContent, type: 'blocknote' });
+      // await updateLesson(id, selectedLesson.id, { title: selectedLesson.title, content: currentContent, type: 'blocknote' });
+      lastAutosaveContent.current = currentContent;
       setAutosaveStatus('saved');
-      setTimeout(() => setAutosaveStatus(''), 2500);
+      setTimeout(() => setAutosaveStatus(''), 3000);
     } catch (err) {
       setError(err.message || 'Failed to save.');
     } finally {
@@ -196,27 +209,36 @@ const CourseBuilder = () => {
   };
 
   const autosaveTimer = useRef(null);
+  const lastAutosaveContent = useRef('');
+  const isSavingAutosave = useRef(false);
 
   const doAutosave = useCallback(async () => {
-    if (!selectedLesson) return;
+    if (!selectedLesson || isSavingAutosave.current) return;
     const currentContent = contentRef.current;
-    if (!currentContent) return;
+    if (!currentContent || currentContent === lastAutosaveContent.current) return;
+    isSavingAutosave.current = true;
     try {
       await saveAutosave(selectedLesson.id, JSON.stringify({ content: currentContent, format: 'blocknote' }));
+      lastAutosaveContent.current = currentContent;
       setAutosaveStatus('saved');
-      setTimeout(() => setAutosaveStatus(''), 2500);
+      // Clear the "saved" indicator after 3s, but only if no newer change came in
+      clearTimeout(autosaveTimer.current);
+      autosaveTimer.current = setTimeout(() => setAutosaveStatus(''), 3000);
     } catch (err) {
       console.error('Autosave failed:', err);
+    } finally {
+      isSavingAutosave.current = false;
     }
   }, [selectedLesson]);
 
   const scheduleAutosave = useCallback(() => {
     clearTimeout(autosaveTimer.current);
-    autosaveTimer.current = setTimeout(doAutosave, 1000);
+    autosaveTimer.current = setTimeout(doAutosave, 3000);
   }, [doAutosave]);
 
   useEffect(() => () => clearTimeout(autosaveTimer.current), []);
 
+  // Track whether user has changed content since last autosave
   const handleContentChange = useCallback((json) => {
     contentRef.current = json;
     scheduleAutosave();
@@ -455,10 +477,11 @@ const CourseBuilder = () => {
               </div>
 
               {/* BlockNote editor */}
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1 , minHeight: "100vh"}}>
                 <BlockNoteEditor
                   key={selectedLesson?.id}
                   lessonId={selectedLesson?.id}
+                  content={content}
                   contentRef={contentRef}
                   onChange={handleContentChange}
                   onSave={handleSave}

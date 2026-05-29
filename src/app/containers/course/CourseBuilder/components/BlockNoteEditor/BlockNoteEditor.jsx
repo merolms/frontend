@@ -6,6 +6,7 @@ import { useCreateBlockNote } from '@blocknote/react';
 import { t } from '@/styles/theme';
 import { uploadBlockMedia } from '@/app/services/blockService';
 import './BlockNoteEditor.scss';
+import { ArrowConversionExtension } from "./extensions/ArrowConversionExtension";
 
 const PARA_PROPS = {
   textAlignment: 'left',
@@ -76,27 +77,11 @@ const resolveTheme = () => {
   return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
 };
 
-const BlockNoteEditorComponent = ({ lessonId, contentRef, onChange, onSave, onStatsChange, theme }) => {
+const BlockNoteEditorComponent = ({ lessonId, content, contentRef, onChange, onSave, onStatsChange, theme }) => {
   const [effectiveTheme, setEffectiveTheme] = useState(resolveTheme());
-  const changeTimer = useRef(null);
-  const isTyping = useRef(false);
   const isSyncing = useRef(false);
   const [words, setWords] = useState(0);
   const [ready, setReady] = useState(false);
-
-  const notifyChange = useCallback(
-    (doc) => {
-      if (isSyncing.current) return;
-      const wc = countWords(doc);
-      const json = JSON.stringify(doc);
-      setWords(wc);
-      contentRef.current = json;
-      onStatsChange?.({ words: wc });
-      onChange?.(json);
-    },
-    [onChange, onStatsChange, contentRef]
-  );
-
   const loadedContent = useRef(null);
 
   const uploadFile = useCallback(
@@ -104,39 +89,42 @@ const BlockNoteEditorComponent = ({ lessonId, contentRef, onChange, onSave, onSt
     [lessonId]
   );
 
-  const editor = useCreateBlockNote({ uploadFile });
+  const editor = useCreateBlockNote({ 
+    uploadFile ,
+        _tiptapOptions: {
+      extensions: [ArrowConversionExtension],
+    },
+  });
 
   // Keep effectiveTheme in sync with <html data-theme> changes
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     const handler = () => setEffectiveTheme(resolveTheme());
-    // React to DOM attribute changes set by ThemeContext
     const observer = new MutationObserver(handler);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-    // Also react to system theme changes
     mq.addEventListener('change', handler);
     return () => { observer.disconnect(); mq.removeEventListener('change', handler); };
   }, []);
 
-  useEffect(() => {
-    if (!editor) return;
-    const unsubscribe = editor.onChange(() => {
-      isTyping.current = true;
-      clearTimeout(changeTimer.current);
-      changeTimer.current = setTimeout(() => {
-        try { notifyChange(editor.document); }
-        finally { isTyping.current = false; }
-      }, 500);
-    });
-    return unsubscribe;
-  }, [editor, notifyChange]);
-
   useEffect(() => { if (editor) setReady(true); }, [editor]);
 
+  // BlockNoteView onChange — fires on every document change
+  const handleChange = useCallback(() => {
+    if (isSyncing.current) return;
+    const doc = editor.document;
+    const wc = countWords(doc);
+    const json = JSON.stringify(doc);
+    setWords(wc);
+    contentRef.current = json;
+    onStatsChange?.({ words: wc });
+    onChange?.(json);
+  }, [editor, onChange, onStatsChange, contentRef]);
+
+  // Sync content from parent into the editor.
+  // Runs when: lesson changes, editor mounts, parent content prop changes.
   useEffect(() => {
     if (!editor || !ready) return;
-    if (isTyping.current) return;
-    const raw = contentRef.current;
+    const raw = contentRef.current || content || '';
     if (loadedContent.current === raw) return;
     loadedContent.current = raw;
     const blocks = sanitizeBlocks(raw);
@@ -152,10 +140,9 @@ const BlockNoteEditorComponent = ({ lessonId, contentRef, onChange, onSave, onSt
       }
     } catch (e) { console.error('Sync failed:', e); }
     isSyncing.current = false;
-  }, [lessonId, editor, ready]);
+  }, [lessonId, editor, ready, content]);
 
-  useEffect(() => () => clearTimeout(changeTimer.current), []);
-
+  // Ctrl+S / Cmd+S to save
   useEffect(() => {
     const handler = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); onSave?.(); }
@@ -165,17 +152,77 @@ const BlockNoteEditorComponent = ({ lessonId, contentRef, onChange, onSave, onSt
   }, [onSave]);
 
   if (!editor) return null;
+
   return (
     <div>
-      <BlockNoteView editor={editor} theme={effectiveTheme} />
-      <div className="bn-statusbar" style={{ color: t('text-muted'), borderTop: `1px solid ${t('border-primary')}` }}>
-        <span className="bn-statusbar-stat">{words} {words === 1 ? 'word' : 'words'}</span>
-        <span className="bn-statusbar-dot">·</span>
-        <span className="bn-statusbar-stat">~{Math.max(1, Math.ceil(words / 200))} min read</span>
-        <span className="bn-statusbar-hint">
-          Type <kbd>/</kbd> for blocks · <kbd>⌘S</kbd> to save
-        </span>
-      </div>
+      <BlockNoteView editor={editor} theme={effectiveTheme} onChange={handleChange} className="block-note-editor" />
+<div
+  className="bn-statusbar"
+  style={{
+    borderTop: `1px solid ${t('border-primary')}`,
+    background: t('surface-secondary'),
+    color: t('text-secondary'),
+    padding: '8px 14px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '12px',
+    fontSize: '12px',
+    backdropFilter: 'blur(10px)',
+  }}
+>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <span style={{ color: t('text-primary'), fontWeight: 600 }}>
+      {words.toLocaleString()} {words === 1 ? 'word' : 'words'}
+    </span>
+
+    <span style={{ opacity: 0.4 }}>•</span>
+
+    <span>
+      ~{Math.max(1, Math.ceil(words / 200))} min read
+    </span>
+  </div>
+
+  <div
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '6px',
+      color: t('text-muted'),
+      whiteSpace: 'nowrap',
+    }}
+  >
+    <span>Type</span>
+
+    <kbd
+      style={{
+        background: t('surface-primary'),
+        border: `1px solid ${t('border-secondary')}`,
+        borderRadius: '5px',
+        padding: '1px 5px',
+        fontSize: '11px',
+        color: t('text-primary'),
+      }}
+    >
+      /
+    </kbd>
+
+    <span>•</span>
+
+    <kbd
+      style={{
+        background: t('surface-primary'),
+        border: `1px solid ${t('border-secondary')}`,
+        borderRadius: '5px',
+        padding: '1px 5px',
+        fontSize: '11px',
+        color: t('text-primary'),
+      }}
+    >
+      ⌘S
+    </kbd>
+  </div>
+</div>
     </div>
   );
 };

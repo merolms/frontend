@@ -194,7 +194,6 @@ const normalizeLesson = (l) => {
     points: l.points || 0,
     updatedAt: l.updated_at ? new Date(l.updated_at * 1000).toISOString().split('T')[0] : (l.updatedAt || ''),
     createdAt: l.created_at ? new Date(l.created_at * 1000).toISOString().split('T')[0] : (l.createdAt || ''),
-    contents: l.contents || [],
     tags: l.tags || [],
   };
 };
