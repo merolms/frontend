@@ -4,6 +4,7 @@ import CourseContainer from '@/app/containers/course/Course';
 import CourseDetail from '@/app/containers/course/CourseDetail/CourseDetail';
 import CourseCreate from '@/app/containers/course/CourseCreate/CourseCreate';
 import CourseBuilder from '@/app/containers/course/CourseBuilder/CourseBuilder';
+import CoursePreview from '@/app/containers/course/CoursePreview/CoursePreview';
 import UserContainer from '@/app/containers/user/User';
 import UserCreate from '@/app/containers/user/UserCreate/UserCreate';
 import UserEdit from '@/app/containers/user/UserEdit/UserEdit';
@@ -41,6 +42,7 @@ const protectedRoutes = [
   { path: '/courses', element: <ProtectedRoute permissions={['courses.view']}><CourseContainer /></ProtectedRoute> },
   { path: '/courses/create', element: <ProtectedRoute permissions={['courses.create']}><CourseCreate /></ProtectedRoute> },
   { path: '/courses/:id/builder/:lessonId?', element: <ProtectedRoute permissions={['courses.edit']}><CourseBuilder /></ProtectedRoute> },
+  { path: '/courses/:id/preview/:lessonId?', element: <ProtectedRoute permissions={['courses.edit']}><CoursePreview /></ProtectedRoute> },
   { path: '/courses/:id', element: <ProtectedRoute permissions={['courses.view']}><CourseDetail /></ProtectedRoute> },
   { path: '/courses/:id/edit', element: <ProtectedRoute permissions={['courses.edit']}><CourseEdit /></ProtectedRoute> },
   { path: '/categories', element: <ProtectedRoute permissions={['courses.view']}><CategoryManagement /></ProtectedRoute> },

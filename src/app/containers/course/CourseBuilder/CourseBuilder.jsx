@@ -11,6 +11,7 @@ import {
   fetchLessons,
   createLesson,
   updateLesson,
+  deleteLesson,
   reorderLessons,
 } from '@/app/services/courseService';
 import { saveAutosave, fetchAutosave, fetchLessonBlocks } from '@/app/services/blockService';
@@ -297,6 +298,30 @@ const CourseBuilder = () => {
     }
   };
 
+  const handleDeleteLesson = async (lessonId) => {
+    if (!window.confirm('Delete this lesson? This cannot be undone.')) return;
+    try {
+      await deleteLesson(id, lessonId);
+      const updated = lessons.filter((l) => l.id !== lessonId);
+      setLessons(updated);
+      // If the deleted lesson was selected, select the next one (or previous if last)
+      if (selectedLesson?.id === lessonId) {
+        const idx = lessons.findIndex((l) => l.id === lessonId);
+        const next = updated[idx] || updated[idx - 1] || null;
+        if (next) {
+          await loadLesson(next);
+          navigate(`/courses/${id}/builder/${next.id}`, { replace: true });
+        } else {
+          setSelectedLesson(null);
+          setContent('');
+          contentRef.current = '';
+        }
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to delete lesson.');
+    }
+  };
+
   const handleAddLesson = async () => {
     try {
       setAddingLesson(true);
@@ -375,7 +400,7 @@ const CourseBuilder = () => {
               </span>
             )}
 
-            <TopBarButton onClick={() => navigate(`/courses/${id}`)} variant="ghost">
+            <TopBarButton onClick={() => navigate(`/courses/${id}/preview/${selectedLesson?.id || lessonId || ''}`)} variant="ghost">
               <EyeIcon /> Preview
             </TopBarButton>
 
@@ -417,6 +442,7 @@ const CourseBuilder = () => {
             onSelectLesson={handleSelectLesson}
             onAddLesson={handleAddLesson}
             onRenameLesson={handleRenameLesson}
+            onDeleteLesson={handleDeleteLesson}
             adding={addingLesson}
             width={panelWidth}
             onReorder={handleReorderLessons}
