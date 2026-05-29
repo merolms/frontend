@@ -82,6 +82,7 @@ const BlockNoteEditorComponent = ({ lessonId, content, contentRef, onChange, onS
   const isSyncing = useRef(false);
   const [words, setWords] = useState(0);
   const [ready, setReady] = useState(false);
+  const [pasteError, setPasteError] = useState(false);
   const loadedContent = useRef(null);
 
   const uploadFile = useCallback(
@@ -89,9 +90,9 @@ const BlockNoteEditorComponent = ({ lessonId, content, contentRef, onChange, onS
     [lessonId]
   );
 
-  const editor = useCreateBlockNote({ 
-    uploadFile ,
-        _tiptapOptions: {
+  const editor = useCreateBlockNote({
+    uploadFile,
+    _tiptapOptions: {
       extensions: [ArrowConversionExtension],
     },
   });
@@ -111,14 +112,19 @@ const BlockNoteEditorComponent = ({ lessonId, content, contentRef, onChange, onS
   // BlockNoteView onChange — fires on every document change
   const handleChange = useCallback(() => {
     if (isSyncing.current) return;
-    const doc = editor.document;
-    const wc = countWords(doc);
-    const json = JSON.stringify(doc);
-    setWords(wc);
-    contentRef.current = json;
-    onStatsChange?.({ words: wc });
-    onChange?.(json);
-  }, [editor, onChange, onStatsChange, contentRef]);
+    if (pasteError) return; // skip processing during paste error recovery
+    try {
+      const doc = editor.document;
+      const wc = countWords(doc);
+      const json = JSON.stringify(doc);
+      setWords(wc);
+      contentRef.current = json;
+      onStatsChange?.({ words: wc });
+      onChange?.(json);
+    } catch (e) {
+      console.error('handleChange error:', e);
+    }
+  }, [editor, onChange, onStatsChange, contentRef, pasteError]);
 
   // Sync content from parent into the editor.
   // Runs when: lesson changes, editor mounts, parent content prop changes.
@@ -141,6 +147,23 @@ const BlockNoteEditorComponent = ({ lessonId, content, contentRef, onChange, onS
     } catch (e) { console.error('Sync failed:', e); }
     isSyncing.current = false;
   }, [lessonId, editor, ready, content]);
+
+  // Catch paste errors from BlockNote's internal pasteHTML handler.
+  // When pasting external HTML, BlockNote can throw "Invalid array length"
+  // inside its serializeBlocks/blocksToFullHTML chain.
+  useEffect(() => {
+    const onError = (event) => {
+      if (event.error instanceof RangeError && event.error.message.includes('Invalid array length')) {
+        console.warn('Caught paste error, suppressing re-throw');
+        event.preventDefault();
+        setPasteError(true);
+        // Reset paste error flag after a tick so user can continue editing
+        setTimeout(() => setPasteError(false), 100);
+      }
+    };
+    window.addEventListener('error', onError);
+    return () => window.removeEventListener('error', onError);
+  }, []);
 
   // Ctrl+S / Cmd+S to save
   useEffect(() => {

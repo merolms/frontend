@@ -97,7 +97,7 @@ const Spinner = ({ size = 14 }) => (
 // ─── CourseBuilder ───────────────────────────────────────────────
 const CourseBuilder = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id, lessonId } = useParams();
   const { resolvedTheme: theme } = useThemeContext();
 
   const [course, setCourse] = useState(null);
@@ -127,12 +127,19 @@ const CourseBuilder = () => {
       lessonList.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
       if (lessonList?.length > 0) {
         setLessons(lessonList);
-        await loadLesson(lessonList[0]);
+        // If URL has a lessonId, try to select that lesson; otherwise fall back to first
+        let targetLesson = lessonList[0];
+        if (lessonId) {
+          const found = lessonList.find((l) => String(l.id) === String(lessonId));
+          if (found) targetLesson = found;
+        }
+        await loadLesson(targetLesson);
       } else {
         const newLesson = await createLesson(id, { title: 'Lesson 1' });
         setLessons([newLesson]);
         setSelectedLesson(newLesson);
         setContent('');
+        navigate(`/courses/${id}/builder/${newLesson.id}`, { replace: true });
       }
     } catch (err) {
       setError(err.message || 'Failed to load course.');
@@ -142,18 +149,19 @@ const CourseBuilder = () => {
   };
 
   const loadLesson = async (lesson) => {
-    // console.log(`[loadLesson] lesson ${lesson.id}: ${lesson.title}`);
     setSelectedLesson(lesson);
     setContent('');
     contentRef.current = '';
     clearTimeout(autosaveTimer.current);
     lastAutosaveContent.current = '';
+
+    // Update URL to reflect selected lesson (replace to avoid history spam)
+    navigate(`/courses/${id}/builder/${lesson.id}`, { replace: true });
+
     try {
       // 1) Try autosave first (most recent edits)
       const autosave = await fetchAutosave(lesson.id);
       if (autosave?.snapshot) {
-
-        console.log(`[loadLesson] lesson ${lesson.id}: found autosave`);
         const snap = JSON.parse(autosave.snapshot);
         const c = Array.isArray(snap) ? JSON.stringify(snap)
           : snap.content ? (typeof snap.content === 'string' ? snap.content : JSON.stringify(snap.content))
@@ -162,31 +170,23 @@ const CourseBuilder = () => {
         contentRef.current = c;
         return;
       }
-      console.log(`[loadLesson] lesson ${lesson.id}: no autosave, fetching blocks`);
-    } catch (err) {
-      console.log(`[loadLesson] lesson ${lesson.id}: autosave error`, err.message);
-    }
+    } catch { /* ignore autosave errors */ }
 
-    // // 2) Fetch blocks from API and build BlockNote document
-    // try {
-    //   const blocks = await fetchLessonBlocks(lesson.id);
-    //   if (blocks.length > 0) {
-    //     console.log(`[loadLesson] lesson ${lesson.id}: loaded ${blocks.length} blocks`);
-    //     const doc = blocksToDoc(blocks);
-    //     const json = JSON.stringify(doc);
-    //     setContent(json);
-    //     contentRef.current = json;
-    //     return;
-    //   }
-    //   console.log(`[loadLesson] lesson ${lesson.id}: no blocks found`);
-    // } catch (err) {
-    //   console.log(`[loadLesson] lesson ${lesson.id}: blocks fetch error`, err.message);
-    // }
+    // 2) Fetch blocks from API and build BlockNote document
+    try {
+      const blocks = await fetchLessonBlocks(lesson.id);
+      if (blocks.length > 0) {
+        const doc = blocksToDoc(blocks);
+        const json = JSON.stringify(doc);
+        setContent(json);
+        contentRef.current = json;
+        return;
+      }
+    } catch { /* ignore blocks fetch errors */ }
 
     // 3) Empty lesson — nothing to load
-    // console.log(`[loadLesson] lesson ${lesson.id}: empty lesson`);
-    // setContent('');
-    // contentRef.current = '';
+    setContent('');
+    contentRef.current = '';
   };
 
   const handleSave = async () => {

@@ -40,7 +40,7 @@ const protectedRoutes = [
   { path: '/', element: <ProtectedRoute><Dashboard /></ProtectedRoute>, permissions: ['dashboard.view'] },
   { path: '/courses', element: <ProtectedRoute permissions={['courses.view']}><CourseContainer /></ProtectedRoute> },
   { path: '/courses/create', element: <ProtectedRoute permissions={['courses.create']}><CourseCreate /></ProtectedRoute> },
-  { path: '/courses/:id/builder', element: <ProtectedRoute permissions={['courses.edit']}><CourseBuilder /></ProtectedRoute> },
+  { path: '/courses/:id/builder/:lessonId?', element: <ProtectedRoute permissions={['courses.edit']}><CourseBuilder /></ProtectedRoute> },
   { path: '/courses/:id', element: <ProtectedRoute permissions={['courses.view']}><CourseDetail /></ProtectedRoute> },
   { path: '/courses/:id/edit', element: <ProtectedRoute permissions={['courses.edit']}><CourseEdit /></ProtectedRoute> },
   { path: '/categories', element: <ProtectedRoute permissions={['courses.view']}><CategoryManagement /></ProtectedRoute> },
