@@ -1,71 +1,51 @@
 import React, { useState } from 'react';
-
 import { t } from '@/styles/theme';
 import { useNavigate } from 'react-router-dom';
-import { Paper, Breadcrumbs, Anchor, Button, TextInput, Textarea, Group, Title, Text, Stack, ColorInput, Center } from '@mantine/core';
-import { Plus, Users } from 'lucide-react';
-import SideBar from '@/app/containers/SideBar/SideBar';
+import { Users, ChevronRight } from 'lucide-react';
+import DashboardLayout from '@/components/ui/dashboard-layout';
+import { Button } from '@/components/ui/button';
+import { Paper } from '@/components/ui/card';
+import TeamForm from '@/app/containers/team/TeamForm/TeamForm';
 import { createTeam } from '@/app/services/teamService';
 import { useToast } from '@/app/context/ToastContext';
 
-const PRESET_COLORS = [t('accent'), t('secondary'), t('warning'), t('primary'), t('error'), t('accent'), t('warning'), t('secondary'), t('accent'), t('error'), t('success'), t('warning')];
+const PRESET_COLORS = [t('accent'), t('secondary'), t('warning'), t('primary'), t('error'), t('success')];
 
 const TeamCreate = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [formData, setFormData] = useState({ name: '', description: '', color: t('accent'), status: 1 });
 
-  const handleChange = (field, value) => setFormData((prev) => ({ ...prev, [field]: value }));
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.name.trim()) { setError('Team name is required.'); return; }
-    try { setLoading(true); setError(null); const team = await createTeam(formData); addToast(`Team "${team.name}" created successfully`, 'success'); navigate(`/teams/${team.id}`); }
-    catch (err) { setError(err.message || 'Failed to create team.'); } finally { setLoading(false); }
+  const handleSubmit = async (formData) => {
+    try {
+      setLoading(true);
+      const team = await createTeam(formData);
+      addToast(`Team "${team.name}" created successfully`, 'success');
+      navigate(`/teams/${team.id}`);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
-  const handleCancel = () => navigate('/teams');
 
   return (
-    <div className='dashboard-layout'>
-      <SideBar />
-      <div className='dashboard-main'>
-        <Breadcrumbs mb="md" className="breadcrumb"><Anchor onClick={() => navigate('/teams')}>Teams</Anchor><span>Create Team</span></Breadcrumbs>
-
-        <Paper className='team-form-segment' p="lg" radius="md" withBorder>
-          <Title order={3} mb={4}><Users size={20} color={t('primary')} /> Create New Team</Title>
-          <Text c="dimmed" size="sm" mb="md">Set up a new team and start assigning members.</Text>
-
-          {error && <Text c="red" size="sm" mb="sm" className="team-form-error">Team name is required.</Text>}
-
-          <form onSubmit={handleSubmit}>
-            <Stack>
-              <TextInput label="Team Name *" name="name" placeholder="e.g. Engineering Team" value={formData.name} onChange={(e) => handleChange('name', e.target.value)} />
-              <Textarea label="Description" name="description" placeholder="What is this team about?" minRows={3} value={formData.description} onChange={(e) => handleChange('description', e.target.value)} />
-
-              <div>
-                <Text size="sm" fw={500} mb={4}>Color</Text>
-                <Group gap={8}>
-                  <ColorInput name="color" value={formData.color} onChange={(v) => handleChange('color', v)} format="hex" size="md" swatches={PRESET_COLORS} />
-                  <div style={{ width: 32, height: 32, borderRadius: 6, background: formData.color, border: `1px solid ${t('border-primary')}`, flexShrink: 0 }} />
-                  <Text size="sm" c="dimmed" ff="monospace">{formData.color}</Text>
-                </Group>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
-                  {PRESET_COLORS.map((c) => (
-                    <button key={c} type='button' onClick={() => handleChange('color', c)} style={{ width: 28, height: 28, borderRadius: 4, background: c, border: formData.color === c ? `2px solid ${t('border-primary')}` : `1px solid ${t('border-primary')}`, cursor: 'pointer', padding: 0 }} title={c} />
-                  ))}
-                </div>
-              </div>
-
-              <Group justify="flex-end" mt="md">
-                <Button variant="default" onClick={handleCancel} disabled={loading}>Cancel</Button>
-                <Button type="submit" loading={loading}>{loading ? 'Creating...' : 'Create Team'}</Button>
-              </Group>
-            </Stack>
-          </form>
-        </Paper>
+    <DashboardLayout title="Create Team" subtitle="Set up a new team and start assigning members">
+      <div className="flex items-center gap-1 text-xs text-text-muted mb-4">
+        <button onClick={() => navigate('/teams')} className="text-primary hover:underline">Teams</button>
+        <ChevronRight size={12} />
+        <span>Create Team</span>
       </div>
-    </div>
+
+      <Paper className="p-6 max-w-2xl">
+        <h2 className="text-base font-semibold text-text-primary mb-1">
+          <Users size={16} className="inline mr-1" style={{ color: t('primary') }} />
+          Create New Team
+        </h2>
+        <p className="text-xs text-text-muted mb-4">Set up a new team and start assigning members.</p>
+        <TeamForm onSubmit={handleSubmit} onCancel={() => navigate('/teams')} loading={loading} />
+      </Paper>
+    </DashboardLayout>
   );
 };
 

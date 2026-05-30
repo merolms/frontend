@@ -1,67 +1,32 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  Paper, Breadcrumbs, Anchor, Button, Progress, Title,
-  Text, Skeleton, Group
-} from '@mantine/core';
-import { ArrowLeft, ArrowRight, BookOpen, Check } from 'lucide-react';
-import SideBar from '@/app/containers/SideBar/SideBar';
+import { ArrowLeft, ArrowRight, BookOpen, Check, Loader, ChevronRight } from 'lucide-react';
+import DashboardLayout from '@/components/ui/dashboard-layout';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { fetchCourseById, fetchLessons } from '@/app/services/courseService';
 import { fetchAutosave } from '@/app/services/blockService';
 import { t } from '@/styles/theme';
 import { useTheme as useThemeContext } from '@/app/context/ThemeContext';
-import { BlockNoteView } from '@blocknote/mantine';
-import { useCreateBlockNote } from '@blocknote/react';
-import '@blocknote/core/fonts/inter.css';
-import '@blocknote/mantine/style.css';
-import './CourseViewer.scss';
+import { useCreateBlockNote, BlockNoteViewRaw as BlockNoteView } from '@blocknote/react';
+import '@blocknote/react/style.css';
 
-const PARA_PROPS = {
-  textAlignment: 'left',
-  backgroundColor: 'default',
-  textColor: 'default',
-};
+const PARA_PROPS = { textAlignment: 'left', backgroundColor: 'default', textColor: 'default' };
 
 const toInlineContent = (content) => {
   if (!content) return [];
-  if (Array.isArray(content)) {
-    return content
-      .filter((c) => c && c.type)
-      .map((c) =>
-        c.type === 'text'
-          ? { type: 'text', text: c.text || '', styles: c.styles || {} }
-          : c
-      );
-  }
-  if (typeof content === 'string' && content.trim()) {
-    return [{ type: 'text', text: content, styles: {} }];
-  }
-  if (typeof content === 'object' && content.text) {
-    return [{ type: 'text', text: content.text, styles: content.styles || {} }];
-  }
+  if (Array.isArray(content)) return content.filter((c) => c && c.type).map((c) => c.type === 'text' ? { type: 'text', text: c.text || '', styles: c.styles || {} } : c);
+  if (typeof content === 'string' && content.trim()) return [{ type: 'text', text: content, styles: {} }];
+  if (typeof content === 'object' && content.text) return [{ type: 'text', text: content.text, styles: content.styles || {} }];
   return [];
 };
 
 const sanitizeBlocks = (content) => {
   if (!content) return [];
   let parsed;
-  try {
-    parsed = typeof content === 'string' ? JSON.parse(content) : content;
-  } catch {
-    if (typeof content === 'string' && content.trim()) {
-      return [{ type: 'paragraph', props: { ...PARA_PROPS }, content: [{ type: 'text', text: content, styles: {} }], children: [] }];
-    }
-    return [];
-  }
+  try { parsed = typeof content === 'string' ? JSON.parse(content) : content; } catch { return typeof content === 'string' && content.trim() ? [{ type: 'paragraph', props: { ...PARA_PROPS }, content: [{ type: 'text', text: content, styles: {} }], children: [] }] : []; }
   if (!Array.isArray(parsed)) return [];
-  return parsed
-    .filter((b) => b && b.type)
-    .map((b) => ({
-      type: b.type,
-      props: b.props || { ...PARA_PROPS },
-      content: toInlineContent(b.content),
-      children: Array.isArray(b.children) ? sanitizeBlocks(b.children) : [],
-    }));
+  return parsed.filter((b) => b && b.type).map((b) => ({ type: b.type, props: b.props || { ...PARA_PROPS }, content: toInlineContent(b.content), children: Array.isArray(b.children) ? sanitizeBlocks(b.children) : [] }));
 };
 
 const CourseViewer = () => {
@@ -80,42 +45,29 @@ const CourseViewer = () => {
 
   const loadData = async () => {
     try {
-      setLoading(true);
-      setError(null);
+      setLoading(true); setError(null);
       const [c, l] = await Promise.all([fetchCourseById(id), fetchLessons(id)]);
       setCourse(c);
       const sorted = (l || []).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
       setLessons(sorted);
-
-      // Fetch content for all lessons (from autosave first, then lesson.content)
       const contents = {};
       await Promise.all((l || []).map(async (lesson) => {
         try {
           const autosave = await fetchAutosave(lesson.id);
           if (autosave?.snapshot) {
             const snap = JSON.parse(autosave.snapshot);
-            const raw = Array.isArray(snap) ? snap
-              : snap.content ? (typeof snap.content === 'string' ? snap.content : JSON.stringify(snap.content))
-              : snap;
+            const raw = Array.isArray(snap) ? snap : snap.content ? (typeof snap.content === 'string' ? snap.content : JSON.stringify(snap.content)) : snap;
             contents[lesson.id] = raw;
             return;
           }
         } catch { /* ignore */ }
-        if (lesson.content) {
-          contents[lesson.id] = typeof lesson.content === 'string' ? lesson.content : JSON.stringify(lesson.content);
-        }
+        if (lesson.content) contents[lesson.id] = typeof lesson.content === 'string' ? lesson.content : JSON.stringify(lesson.content);
       }));
       setLessonContents(contents);
-    } catch (err) {
-      setError(err.message || 'Failed to load course.');
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { setError(err.message || 'Failed to load course.'); } finally { setLoading(false); }
   };
 
-  const goToLesson = useCallback((idx) => {
-    if (idx >= 0 && idx < lessons.length) setActiveIndex(idx);
-  }, [lessons.length]);
+  const goToLesson = useCallback((idx) => { if (idx >= 0 && idx < lessons.length) setActiveIndex(idx); }, [lessons.length]);
 
   const activeLesson = lessons[activeIndex];
   const activeContent = activeLesson ? lessonContents[activeLesson.id] : null;
@@ -124,206 +76,113 @@ const CourseViewer = () => {
   const editor = useCreateBlockNote();
   useEffect(() => {
     if (!editor) return;
-    if (sanitizedBlocks.length > 0) {
-      try { editor.replaceBlocks(editor.document, sanitizedBlocks); } catch { /* ignore */ }
-    } else {
-      try { editor.replaceBlocks(editor.document, []); } catch { /* ignore */ }
-    }
-  }, [activeLesson?.id, editor]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (sanitizedBlocks.length > 0) { try { editor.replaceBlocks(editor.document, sanitizedBlocks); } catch { /* ignore */ } }
+    else { try { editor.replaceBlocks(editor.document, []); } catch { /* ignore */ } }
+  }, [activeLesson?.id, editor]);
 
-  // ─── Loading ───────────────────────────────────────────────────
+  // Loading state
   if (loading) {
     return (
-      <div className='dashboard-layout'>
-        <SideBar />
-        <div className='dashboard-main' style={{ padding: '40px 24px' }}>
-          <Skeleton height={40} width={300} mb="lg" />
-          <Grid>
-            <Grid.Col span={9}><Skeleton height={400} /></Grid.Col>
-            <Grid.Col span={3}><Skeleton height={400} /></Grid.Col>
-          </Grid>
+      <DashboardLayout>
+        <div className="flex items-center justify-center py-20">
+          <Loader className="animate-spin text-text-muted" size={20} />
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   if (error) {
     return (
-      <div className='dashboard-layout'>
-        <SideBar />
-        <div className='dashboard-main' style={{ padding: 24 }}>
-          <Paper p="lg"><Text c="red">{error}</Text></Paper>
-        </div>
-      </div>
+      <DashboardLayout>
+        <p style={{ color: 'var(--error)' }}>{error}</p>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className='dashboard-layout'>
-      <SideBar />
-
-      <div className='dashboard-main' style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-
-        {/* ── Top bar ─────────────────────────────────────────── */}
-        <header style={{
-          display: 'flex', alignItems: 'center', gap: 12,
-          height: 52, minHeight: 52,
-          background: t('bg-surface'), borderBottom: `1px solid ${t('border-primary')}`,
-          padding: '0 16px', flexShrink: 0, zIndex: 50,
-        }}>
-          <Breadcrumbs style={{ flex: 1, fontSize: 13 }}>
-            <Anchor onClick={() => navigate('/courses')}>Courses</Anchor>
-            <Anchor onClick={() => navigate(`/courses/${id}`)}>{course?.title}</Anchor>
-            <span>{activeLesson?.title || 'Preview'}</span>
-          </Breadcrumbs>
-          <Text size="sm" style={{ color: t('text-muted') }}>
-            Lesson {activeIndex + 1} of {lessons.length}
-          </Text>
-        </header>
-
-        {/* ── Main content ────────────────────────────────────── */}
-        <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
-
-          {/* Lesson content area */}
-          <main style={{
-            flex: 1, overflowY: 'auto', padding: '32px 24px',
-            background: t('bg-secondary'),
-            display: 'flex', justifyContent: 'center',
-          }}>
-            <div style={{
-              width: '100%', maxWidth: 780,
-              background: t('bg-surface'),
-              borderRadius: t('radius-lg'),
-              boxShadow: t('shadow-md'),
-              padding: '40px 48px',
-              minHeight: 500,
-            }}>
-              {/* Lesson header */}
-              <div style={{
-                marginBottom: 28, paddingBottom: 20,
-                borderBottom: `1px solid ${t('border-secondary')}`,
-              }}>
-                <Text size={10} fw={700} tt="uppercase" ls="0.07em" style={{ color: t('text-disabled'), marginBottom: 6 }}>
-                  Lesson {activeIndex + 1}
-                </Text>
-                <Title order={2} style={{ color: t('text-primary'), margin: 0, lineHeight: 1.25 }}>
-                  {activeLesson?.title || 'Untitled Lesson'}
-                </Title>
-
-              </div>
-
-              {/* BlockNote read-only content */}
-              {editor && sanitizedBlocks.length > 0 ? (
-                <div style={{ minHeight: 200 }}>
-                  <BlockNoteView editor={editor} editable={false} theme={theme} />
-                </div>
-              ) : (
-                <div style={{
-                  minHeight: 200, display: 'flex', alignItems: 'center',
-                  justifyContent: 'center', color: t('text-muted'), fontSize: 14,
-                }}>
-                  <BookOpen size={32} style={{ opacity: 0.3, marginRight: 12 }} />
-                  This lesson has no content yet.
-                </div>
-              )}
-
-              {/* Navigation */}
-              <div style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                marginTop: 40, paddingTop: 20,
-                borderTop: `1px solid ${t('border-secondary')}`,
-              }}>
-                <Button
-                  variant="subtle"
-                  leftSection={<ArrowLeft size={14} />}
-                  onClick={() => goToLesson(activeIndex - 1)}
-                  disabled={activeIndex === 0}
-                  style={{ color: t('text-secondary') }}
-                >
-                  Previous
-                </Button>
-                <Text size="xs" style={{ color: t('text-muted') }}>
-                  {activeIndex + 1} / {lessons.length}
-                </Text>
-                <Button
-                  variant="subtle"
-                  rightSection={<ArrowRight size={14} />}
-                  onClick={() => goToLesson(activeIndex + 1)}
-                  disabled={activeIndex >= lessons.length - 1}
-                  style={{ color: t('text-secondary') }}
-                >
-                  Next
-                </Button>
-              </div>
-            </div>
-          </main>
-
-          {/* Right sidebar — lesson outline */}
-          <aside style={{
-            width: 280, flexShrink: 0,
-            background: t('bg-surface'),
-            borderLeft: `1px solid ${t('border-primary')}`,
-            display: 'flex', flexDirection: 'column',
-            overflow: 'hidden',
-          }}>
-            <div style={{
-              padding: '16px 16px 12px', flexShrink: 0,
-              borderBottom: `1px solid ${t('border-primary')}`,
-              background: t('bg-secondary'),
-            }}>
-              <Text size="xs" fw={700} tt="uppercase" ls="0.06em" style={{ color: t('text-muted') }}>
-                Lessons
-              </Text>
-              <Progress
-                value={lessons.length > 0 ? ((activeIndex + 1) / lessons.length) * 100 : 0}
-                size="xs" mt="sm" style={{ '--progress-section-color': 'var(--primary)' }}
-              />
-              <Text size="xs" mt={4} style={{ color: t('text-muted') }}>
-                {activeIndex + 1} of {lessons.length} completed
-              </Text>
-            </div>
-
-            <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
-              {lessons.map((lesson, idx) => {
-                const isActive = idx === activeIndex;
-                return (
-                  <div
-                    key={lesson.id}
-                    onClick={() => goToLesson(idx)}
-                    style={{
-                      padding: '10px 16px',
-                      cursor: 'pointer',
-                      background: isActive ? t('bg-active') : 'transparent',
-                      borderLeft: isActive ? `2px solid ${t('text-primary')}` : '2px solid transparent',
-                      transition: 'background 0.12s',
-                    }}
-                    onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = t('bg-hover'); }}
-                    onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
-                  >
-                    <Group justify="space-between" gap={8} wrap="nowrap">
-                      <Text
-                        size="sm"
-                        fw={isActive ? 600 : 400}
-                        style={{
-                          color: isActive ? t('text-primary') : t('text-secondary'),
-                          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                        }}
-                      >
-                        <span style={{ color: t('text-muted'), marginRight: 6 }}>
-                          {String(idx + 1).padStart(2, '0')}
-                        </span>
-                        {lesson.title || `Lesson ${idx + 1}`}
-                      </Text>
-                      {idx < activeIndex && <Check size={14} color="green" style={{ flexShrink: 0 }} />}
-                    </Group>
-                  </div>
-                );
-              })}
-            </div>
-          </aside>
+    <DashboardLayout>
+      {/* Top bar */}
+      <div className="flex items-center gap-3 border-b border-border bg-bg-surface px-4 h-14 shrink-0">
+        <div className="flex items-center gap-1 text-xs text-text-muted">
+          <button onClick={() => navigate('/courses')} className="text-primary hover:underline cursor-pointer">Courses</button>
+          <ChevronRight size={12} />
+          <button onClick={() => navigate(`/courses/${id}`)} className="text-primary hover:underline cursor-pointer">{course?.title}</button>
+          <ChevronRight size={12} />
+          <span>{activeLesson?.title || 'Preview'}</span>
         </div>
+        <span className="ml-auto text-sm text-text-muted">Lesson {activeIndex + 1} of {lessons.length}</span>
       </div>
-    </div>
+
+      {/* Main content */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Lesson content area */}
+        <main className="flex-1 overflow-y-auto p-8 flex justify-center" style={{ background: t('bg-secondary') }}>
+          <div className="w-full max-w-3xl rounded-xl p-12 min-h-[500px]" style={{ background: t('bg-surface'), boxShadow: t('shadow-md') }}>
+            <div className="mb-7 pb-5 border-b" style={{ borderColor: t('border-secondary') }}>
+              <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--text-muted)' }}>Lesson {activeIndex + 1}</p>
+              <h2 className="text-xl font-semibold text-text-primary m-0 leading-tight">{activeLesson?.title || 'Untitled Lesson'}</h2>
+            </div>
+
+            {editor && sanitizedBlocks.length > 0 ? (
+              <div style={{ minHeight: 200 }}>
+                <BlockNoteView editor={editor} editable={false} theme={theme} />
+              </div>
+            ) : (
+              <div className="min-h-[200px] flex items-center justify-center text-text-muted">
+                <BookOpen size={32} className="opacity-30 mr-3" />
+                This lesson has no content yet.
+              </div>
+            )}
+
+            <div className="flex justify-between items-center mt-10 pt-5 border-t" style={{ borderColor: t('border-secondary') }}>
+              <Button variant="ghost" size="sm" onClick={() => goToLesson(activeIndex - 1)} disabled={activeIndex === 0}>
+                <ArrowLeft size={14} /> Previous
+              </Button>
+              <span className="text-xs text-text-muted">{activeIndex + 1} / {lessons.length}</span>
+              <Button variant="ghost" size="sm" onClick={() => goToLesson(activeIndex + 1)} disabled={activeIndex >= lessons.length - 1}>
+                Next <ArrowRight size={14} />
+              </Button>
+            </div>
+          </div>
+        </main>
+
+        {/* Right sidebar — lesson outline */}
+        <aside className="w-72 shrink-0 border-l border-border flex flex-col overflow-hidden" style={{ background: t('bg-surface') }}>
+          <div className="px-4 pt-4 pb-3 shrink-0 border-b border-border" style={{ background: t('bg-secondary') }}>
+            <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Lessons</p>
+            <div className="mt-2 w-full h-1 rounded-full overflow-hidden bg-bg-surface-active">
+              <div className="h-full rounded-full bg-primary" style={{ width: `${lessons.length > 0 ? ((activeIndex + 1) / lessons.length) * 100 : 0}%` }} />
+            </div>
+            <p className="text-xs text-text-muted mt-1">{activeIndex + 1} of {lessons.length} completed</p>
+          </div>
+
+          <div className="flex-1 overflow-y-auto py-2">
+            {lessons.map((lesson, idx) => {
+              const isActive = idx === activeIndex;
+              return (
+                <div
+                  key={lesson.id}
+                  onClick={() => goToLesson(idx)}
+                  className="px-4 py-2.5 cursor-pointer transition-colors"
+                  style={{
+                    background: isActive ? t('bg-surface-active') : 'transparent',
+                    borderLeft: isActive ? `2px solid var(--text-primary)` : '2px solid transparent',
+                  }}
+                >
+                  <div className="flex justify-between items-center gap-2">
+                    <span className={`text-xs truncate ${isActive ? 'font-semibold text-text-primary' : 'text-text-secondary'}`}>
+                      <span className="text-text-muted mr-1.5">{String(idx + 1).padStart(2, '0')}</span>
+                      {lesson.title || `Lesson ${idx + 1}`}
+                    </span>
+                    {idx < activeIndex && <Check size={12} className="text-success shrink-0" />}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </aside>
+      </div>
+    </DashboardLayout>
   );
 };
 

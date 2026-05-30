@@ -1,8 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Paper, TextInput, Button, Select, Group, Box, Stack, Text, Pagination, SimpleGrid, Loader, Badge, Anchor } from '@mantine/core';
-import { AlertCircle, BookOpen, Plus, RefreshCw, Search } from 'lucide-react';
-import SideBar from '@/app/containers/SideBar/SideBar';
+import { BookOpen, Plus, RefreshCw, Search } from 'lucide-react';
+import DashboardLayout from '@/components/ui/dashboard-layout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Pagination } from '@/components/ui/pagination';
+import { Paper } from '@/components/ui/card';
 import { fetchCourses, mockCategories } from '@/app/services/courseService';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
 import ViewModeSwitcher from './views/ViewModeSwitcher';
@@ -11,23 +17,20 @@ import TableView from './views/TableView';
 import ListView from './views/ListView';
 import CompactView from './views/CompactView';
 
-import { t } from '@/styles/theme';
-import './Course.scss';
-
 const statusOptions = [
-  { value: '', label: 'All' },
+  { value: 'all', label: 'All' },
   { value: 'Published', label: 'Published' },
   { value: 'DRAFT', label: 'Draft' },
   { value: 'Archived', label: 'Archived' },
 ];
 
 const categoryOptions = [
-  { value: '', label: 'All Categories' },
+  { value: 'all', label: 'All Categories' },
   ...mockCategories.map((cat) => ({ value: cat, label: cat })),
 ];
 
 const sortOptions = [
-  { value: '', label: 'Newest First' },
+  { value: 'all', label: 'Newest First' },
   { value: 'title', label: 'Title A-Z' },
 ];
 
@@ -99,77 +102,91 @@ const CourseContainer = () => {
   };
 
   return (
-    <div className='dashboard-layout'>
-      <SideBar />
-      <div className='dashboard-main'>
-        <div className='dashboard-header'>
-          <div className='header-left'>
-            <h1 className='page-title'>Courses</h1>
-            <p className='page-subtitle'>{total} course{total !== 1 ? 's' : ''} total</p>
-          </div>
-          <div className='header-right'>
-            <PermissionGuard permissions={['courses.create']}>
-              <Button leftSection={<Plus size={16} />} onClick={() => navigate('/courses/create')}>New Course</Button>
-            </PermissionGuard>
-          </div>
-        </div>
-
-        <div className='dashboard-content'>
-          <Paper className='course-filters' p="sm" radius="md" withBorder mb="md">
-            <div className='course-filters-row' style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-              <form className='course-search-form' onSubmit={handleSearch} style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
-                <TextInput
-                  placeholder='Search courses...'
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  leftSection={<Search size={16} />}
-                  style={{ flex: 1 }}
-                />
-              </form>
-              <Select placeholder='Status' data={statusOptions} value={status} onChange={(v) => updateParams({ status: v || '', page: 1 })} className='course-filter-dropdown' allowDeselect={false} />
-              <Select placeholder='Category' data={categoryOptions} value={category} onChange={(v) => updateParams({ category: v || '', page: 1 })} className='course-filter-dropdown' allowDeselect={false} />
-              <Select placeholder='Sort' data={sortOptions} value={sort} onChange={(v) => updateParams({ sort: v || '', page: 1 })} className='course-filter-dropdown' allowDeselect={false} />
-              <Button variant="default" onClick={handleClear}>Clear</Button>
-              <ViewModeSwitcher value={viewMode} onChange={(mode) => updateParams({ view: mode, page: 1 })} />
-            </div>
-
-            {(status || category || search) && (
-              <div className='active-filters' style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
-                <Text size="xs" c="dimmed">Filters:</Text>
-                {search && <Badge size="sm" variant="light" color="blue" onClose={() => { setSearchInput(''); updateParams({ search: '', page: 1 }); }}>Search: {search}</Badge>}
-                {status && <Badge size="sm" variant="light" color="green" onClose={() => updateParams({ status: '', page: 1 })}>{status}</Badge>}
-                {category && <Badge size="sm" variant="light" color="teal" onClose={() => updateParams({ category: '', page: 1 })}>{category}</Badge>}
-              </div>
-            )}
-          </Paper>
-
-          {error && !loading && (
-            <Paper p="md" radius="md" withBorder className='courses-empty'>
-              <Group><AlertCircle color="red" /><Text>{error}</Text><Button size="xs" leftSection={<RefreshCw size={14} />} onClick={fetchData}>Retry</Button></Group>
-            </Paper>
-          )}
-
-          {!error && courses.length === 0 && !loading ? (
-            <Paper p="xl" radius="md" withBorder className='courses-empty' ta="center" mt="md">
-              <Text size="xl"><BookOpen size={48} color={t('text-muted')} /></Text>
-              <Text mt="md">No courses found. Try adjusting your filters or create a new course.</Text>
-              <PermissionGuard permissions={['courses.create']}>
-                <Button mt="md" leftSection={<Plus size={16} />} onClick={() => navigate('/courses/create')}>Create Course</Button>
-              </PermissionGuard>
-            </Paper>
-          ) : !error && (
-            <>
-              {renderView()}
-              {totalPages > 1 && (
-                <div className='courses-pagination' style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
-                  <Pagination total={totalPages} value={page} onChange={(p) => updateParams({ page: p })} />
-                </div>
-              )}
-            </>
-          )}
-        </div>
+    <DashboardLayout
+      title="Courses"
+      subtitle={`${total} course${total !== 1 ? 's' : ''} total`}
+    >
+      {/* Action bar */}
+      <div className="mb-4 flex items-center justify-end">
+        <PermissionGuard permissions={['courses.create']}>
+          <Button size="sm" onClick={() => navigate('/courses/create')}>
+            <Plus size={14} /> New Course
+          </Button>
+        </PermissionGuard>
       </div>
-    </div>
+
+      {/* Filters */}
+      <Paper className="p-3 mb-4">
+        <div className="flex items-center gap-2 flex-wrap">
+          <form className="flex items-center gap-2 flex-1" onSubmit={handleSearch}>
+            <div className="relative flex-1">
+              <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
+              <Input
+                placeholder="Search courses..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+          </form>
+          <Select value={status} onValueChange={(v) => updateParams({ status: v === 'all' ? '' : v, page: 1 })}>
+            <SelectTrigger className="w-32"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectContent>{statusOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+          </Select>
+          <Select value={category} onValueChange={(v) => updateParams({ category: v === 'all' ? '' : v, page: 1 })}>
+            <SelectTrigger className="w-36"><SelectValue placeholder="Category" /></SelectTrigger>
+            <SelectContent>{categoryOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+          </Select>
+          <Select value={sort} onValueChange={(v) => updateParams({ sort: v === 'all' ? '' : v, page: 1 })}>
+            <SelectTrigger className="w-36"><SelectValue placeholder="Sort" /></SelectTrigger>
+            <SelectContent>{sortOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+          </Select>
+          <Button variant="default" size="sm" onClick={handleClear}>Clear</Button>
+          <ViewModeSwitcher value={viewMode} onChange={(mode) => updateParams({ view: mode, page: 1 })} />
+        </div>
+
+        {(status || category || search) && (
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-xs text-text-muted">Filters:</span>
+            {search && <Badge variant="blue" onClose={() => { setSearchInput(''); updateParams({ search: '', page: 1 }); }}>Search: {search}</Badge>}
+            {status && <Badge variant="green" onClose={() => updateParams({ status: '', page: 1 })}>{status}</Badge>}
+            {category && <Badge variant="teal" onClose={() => updateParams({ category: '', page: 1 })}>{category}</Badge>}
+          </div>
+        )}
+      </Paper>
+
+      {/* Error */}
+      {error && !loading && (
+        <Paper p="md" className="mb-4">
+          <div className="flex items-center gap-2 text-error">
+            <span>{error}</span>
+            <Button size="xs" variant="default" leftSection={<RefreshCw size={12} />} onClick={fetchData}>Retry</Button>
+          </div>
+        </Paper>
+      )}
+
+      {/* Empty */}
+      {!error && courses.length === 0 && !loading ? (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <BookOpen size={48} className="text-text-muted mb-3" />
+          <p className="text-text-secondary">No courses found. Try adjusting your filters or create a new course.</p>
+          <PermissionGuard permissions={['courses.create']}>
+            <Button size="sm" className="mt-4" onClick={() => navigate('/courses/create')}>
+              <Plus size={14} /> Create Course
+            </Button>
+          </PermissionGuard>
+        </div>
+      ) : !error && (
+        <>
+          {renderView()}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-4">
+              <Pagination total={totalPages} value={page} onChange={(p) => updateParams({ page: p })} />
+            </div>
+          )}
+        </>
+      )}
+    </DashboardLayout>
   );
 };
 

@@ -1,11 +1,10 @@
 import React from 'react';
-import { SimpleGrid } from '@mantine/core';
 
 const CourseGrid = (props) => {
   return (
-    <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="md">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
       {props.rows}
-    </SimpleGrid>
+    </div>
   );
 };
 

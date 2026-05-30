@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Paper, Breadcrumbs, Anchor, Button, Title, Text, Loader } from '@mantine/core';
-import { AlertCircle, Pencil, Plus } from 'lucide-react';
-import SideBar from '@/app/containers/SideBar/SideBar';
+import { Pencil, Loader, ChevronRight, AlertCircle } from 'lucide-react';
+import DashboardLayout from '@/components/ui/dashboard-layout';
+import { Button } from '@/components/ui/button';
+import { Paper } from '@/components/ui/card';
 import TeamForm from '@/app/containers/team/TeamForm/TeamForm';
 import { fetchTeamById, updateTeam } from '@/app/services/teamService';
 import { useToast } from '@/app/context/ToastContext';
-
 import { t } from '@/styles/theme';
 
 const TeamEdit = () => {
@@ -19,44 +19,63 @@ const TeamEdit = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const loadTeam = async () => { try { setFetching(true); const data = await fetchTeamById(id); setTeam(data); } catch (err) { setError('Failed to load team data.'); } finally { setFetching(false); } };
+    const loadTeam = async () => {
+      try { setFetching(true); const data = await fetchTeamById(id); setTeam(data); }
+      catch (err) { setError('Failed to load team data.'); }
+      finally { setFetching(false); }
+    };
     loadTeam();
   }, [id]);
 
   const handleSubmit = async (formData) => {
-    try { setLoading(true); setError(null); const updated = await updateTeam(id, formData); addToast(`Team "${formData.name}" updated successfully`, 'success'); navigate(`/teams/${updated.id}`); }
-    catch (err) { setError('Failed to update team. Please try again.'); } finally { setLoading(false); }
+    try {
+      setLoading(true); setError(null);
+      const updated = await updateTeam(id, formData);
+      addToast(`Team "${formData.name}" updated successfully`, 'success');
+      navigate(`/teams/${updated.id}`);
+    } catch (err) { setError('Failed to update team. Please try again.'); }
+    finally { setLoading(false); }
   };
-  const handleCancel = () => navigate(`/teams/${id}`);
 
-  if (fetching) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" radius="md" mt={40}><Loader /><Title order={4}>Loading...</Title></Paper></div></div>);
-  if (error && !team) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" radius="md" mt={40}><AlertCircle color="red" /> {error}<br /><Button onClick={() => navigate('/teams')}>Back to Teams</Button></Paper></div></div>);
+  if (fetching) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center py-20">
+          <Loader className="animate-spin text-text-muted" size={20} />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (error && !team) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center gap-2 text-error py-4"><AlertCircle size={14} /> {error}</div>
+        <Button size="sm" onClick={() => navigate('/teams')}>Back to Teams</Button>
+      </DashboardLayout>
+    );
+  }
 
   return (
-    <div className='dashboard-layout'>
-      <SideBar />
-      <div className='dashboard-main'>
-        <Breadcrumbs mb="md" className="breadcrumb">
-          <Anchor onClick={() => navigate('/teams')}>Teams</Anchor>
-          <Anchor onClick={() => navigate(`/teams/${id}`)}>{team?.name}</Anchor>
-          <span>Edit</span>
-        </Breadcrumbs>
-
-        <div className='dashboard-header'>
-          <div className='header-left'>
-            <h1 className='page-title'>Teams</h1>
-            <p className='page-subtitle'>Edit team</p>
-          </div>
-        </div>
-
-        <Paper className='team-form-segment' p="lg" radius="md" withBorder>
-          <Title order={3} mb={4}><Pencil size={20} color={t('accent')} /> Edit Team</Title>
-          <Text c="dimmed" size="sm" mb="md">Update the team details below.</Text>
-          {error && <Text c="red" size="sm" mb="sm"><Plus size={14} /> {error}</Text>}
-          <TeamForm initialData={team} onSubmit={handleSubmit} onCancel={handleCancel} loading={loading} submitLabel='Save Changes' />
-        </Paper>
+    <DashboardLayout title="Edit Team" subtitle="Update the team details below">
+      <div className="flex items-center gap-1 text-xs text-text-muted mb-4">
+        <button onClick={() => navigate('/teams')} className="text-primary hover:underline">Teams</button>
+        <ChevronRight size={12} />
+        <button onClick={() => navigate(`/teams/${id}`)} className="text-primary hover:underline">{team?.name}</button>
+        <ChevronRight size={12} />
+        <span>Edit</span>
       </div>
-    </div>
+
+      <Paper className="p-6 max-w-2xl">
+        <h2 className="text-base font-semibold text-text-primary mb-1">
+          <Pencil size={16} className="inline mr-1" style={{ color: t('accent') }} />
+          Edit Team
+        </h2>
+        <p className="text-xs text-text-muted mb-4">Update the team details below.</p>
+        {error && <p className="text-xs text-error mb-3">{error}</p>}
+        <TeamForm initialData={team} onSubmit={handleSubmit} onCancel={() => navigate(`/teams/${id}`)} loading={loading} submitLabel="Save Changes" />
+      </Paper>
+    </DashboardLayout>
   );
 };
 

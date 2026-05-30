@@ -1,16 +1,21 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { Paper, TextInput, Button, Select, SimpleGrid, Avatar, Group, Text, Stack, Card, Badge, ActionIcon, Pagination, Skeleton } from '@mantine/core';
 import { AlertCircle, Plus, Search, Users } from 'lucide-react';
-import SideBar from '@/app/containers/SideBar/SideBar';
+import DashboardLayout from '@/components/ui/dashboard-layout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Paper } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Pagination } from '@/components/ui/pagination';
+import { t } from '@/styles/theme';
 import TeamMemberAssignModal from '@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { fetchTeams, fetchTeamMembers, deleteTeam } from '@/app/services/teamService';
 
-import { t } from '@/styles/theme';
-import './Team.scss';
-
-const statusOptions = [{ value: '', label: 'All' }, { value: '1', label: 'Active' }, { value: '0', label: 'Inactive' }];
+const statusOptions = [{ value: 'all', label: 'All' }, { value: '1', label: 'Active' }, { value: '0', label: 'Inactive' }];
 const sortOptions = [{ value: 'newest', label: 'Newest First' }, { value: 'name', label: 'Name A-Z' }];
 const AVATAR_COUNT = 4;
 
@@ -40,13 +45,28 @@ const TeamContainer = () => {
       const teamList = Array.isArray(data) ? data : [];
       let filtered = teamList;
       if (statusFilter) filtered = filtered.filter((t) => String(t.status) === statusFilter);
-      if (search) { const q = search.toLowerCase(); filtered = filtered.filter((t) => (t.name || '').toLowerCase().includes(q) || (t.description || '').toLowerCase().includes(q)); }
+      if (search) {
+        const q = search.toLowerCase();
+        filtered = filtered.filter((t) =>
+          (t.name || '').toLowerCase().includes(q) || (t.description || '').toLowerCase().includes(q)
+        );
+      }
       const teamsWithMembers = await Promise.all(filtered.map(async (team) => {
-        try { const members = await fetchTeamMembers(team.id); return { ...team, memberCount: members.length, memberAvatars: members.slice(0, AVATAR_COUNT).map((m) => ({ avatar: m.avatar || 'https://i.pravatar.cc/150?img=1', userName: m.userName || 'Unknown' })) }; }
-        catch { return { ...team, memberCount: 0, memberAvatars: [] }; }
+        try {
+          const members = await fetchTeamMembers(team.id);
+          return {
+            ...team,
+            memberCount: members.length,
+            memberAvatars: members.slice(0, AVATAR_COUNT).map((m) => ({
+              avatar: m.avatar || 'https://i.pravatar.cc/150?img=1',
+              userName: m.userName || 'Unknown',
+            })),
+          };
+        } catch { return { ...team, memberCount: 0, memberAvatars: [] }; }
       }));
       setTeams(teamsWithMembers); setTotal(teamsWithMembers.length);
-    } catch (err) { setError(err.message || 'Failed to load teams'); } finally { setLoading(false); }
+    } catch (err) { setError(err.message || 'Failed to load teams'); }
+    finally { setLoading(false); }
   }, [search, statusFilter, sort, page]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
@@ -69,60 +89,119 @@ const TeamContainer = () => {
   const handleClear = () => { setSearchInput(''); setSearchParams(new URLSearchParams()); };
 
   return (
-    <div className='dashboard-layout'>
-      <SideBar />
-      <div className='dashboard-main'>
-        <div className='dashboard-header'>
-          <div className='header-left'><h1 className='page-title'>Teams</h1><p className='page-subtitle'>{total} team{total !== 1 ? 's' : ''} total</p></div>
-          <div className='header-right'><Button leftSection={<Plus size={14} />} onClick={() => navigate('/teams/create')}>New Team</Button></div>
+    <>
+      <DashboardLayout
+        title="Teams"
+        subtitle={`${total} team${total !== 1 ? 's' : ''} total`}
+      >
+        {/* Action bar */}
+        <div className="mb-4 flex items-center justify-end">
+          <Button size="sm" onClick={() => navigate('/teams/create')}>
+            <Plus size={14} /> New Team
+          </Button>
         </div>
 
-        <div className='dashboard-content'>
-          {error && <Paper p="sm" radius="md" withBorder mb="md"><Text c="red"><AlertCircle size={14} /> {error}</Text></Paper>}
+        {/* Error */}
+        {error && (
+          <div className="flex items-center gap-2 rounded-lg border border-error/30 bg-error/5 px-3 py-2.5 text-sm text-error mb-4">
+            <AlertCircle size={14} /> {error}
+          </div>
+        )}
 
-          <Paper className='team-filters' p="sm" radius="md" withBorder mb="md">
-            <Group gap={8} style={{ flexWrap: 'wrap' }}>
-              <form className='team-search-form' onSubmit={handleSearch}><TextInput placeholder="Search teams..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} leftSection={<Search size={16} />} /></form>
-              <Select placeholder="Status" data={statusOptions} value={statusFilter} onChange={(v) => updateParams({ status: v || '', page: 1 })} className='team-filter-dropdown' allowDeselect={false} />
-              <Select placeholder="Sort" data={sortOptions} value={sort} onChange={(v) => updateParams({ sort: v, page: 1 })} className='team-filter-dropdown' allowDeselect={false} />
-              <Button variant="default" onClick={handleClear}>Clear</Button>
-            </Group>
-          </Paper>
+        {/* Filters */}
+        <Paper className="p-3 mb-4">
+          <div className="flex items-center gap-2 flex-wrap">
+            <form className="flex items-center gap-2 flex-1" onSubmit={handleSearch}>
+              <div className="relative flex-1">
+                <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
+                <Input
+                  placeholder="Search teams..."
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  className="pl-8"
+                />
+              </div>
+            </form>
+            <Select value={statusFilter} onValueChange={(v) => updateParams({ status: v === 'all' ? '' : v, page: 1 })}>
+              <SelectTrigger className="w-28"><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectContent>{statusOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+            </Select>
+            <Select value={sort} onValueChange={(v) => updateParams({ sort: v, page: 1 })}>
+              <SelectTrigger className="w-32"><SelectValue placeholder="Sort" /></SelectTrigger>
+              <SelectContent>{sortOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+            </Select>
+            <Button variant="default" size="sm" onClick={handleClear}>Clear</Button>
+          </div>
+        </Paper>
 
-          {loading ? (
-            <Paper p="lg" radius="md" withBorder className='team-grid-segment'>
-              <SimpleGrid cols={4}>{[...Array(4)].map((_, i) => <Skeleton key={i} height={200} radius="md" />)}</SimpleGrid>
-            </Paper>
-          ) : teams.length === 0 ? (
-            <Paper p="xl" radius="md" className='team-empty' ta="center">
-              <Users size={48} color={t('text-muted')} /><Title order={4}>No teams found</Title><Text c="dimmed">Try adjusting your filters or create a new team.</Text>
-              <Button mt="md" leftSection={<Plus size={14} />} onClick={() => navigate('/teams/create')}>Create Team</Button>
-            </Paper>
-          ) : (
-            <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="md" className='teams-grid'>
-              {teams.map((team) => (
-                <Card key={team.id} className='team-card' padding="md" radius="md" withBorder style={{ cursor: 'pointer' }} onClick={() => navigate(`/teams/${team.id}`)}>
-                  <div className='team-card-header' style={{ background: team.color || t('accent'), padding: 12, margin: '-16px -16px 12px', borderRadius: '8px 8px 0 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Users size={20} color="rgba(255,255,255,0.8)" />
-                    <Badge size="xs" color={team.status === 1 ? 'green' : 'gray'} variant="filled">{team.status === 1 ? 'Active' : 'Inactive'}</Badge>
-                  </div>
-                  <Text fw={600} size="sm" className="team-card-title">{team.name}</Text>
-                  <Text size="xs" c="dimmed" lineClamp={2}>{team.description || 'No description'}</Text>
-                  <Group gap={4} mt={8}>
-                    {team.memberAvatars?.map((m, idx) => <Avatar key={idx} src={m.avatar} size={24} radius="xl" title={m.userName} />)}
-                    {team.memberCount > AVATAR_COUNT && <Text size="xs" c="dimmed">+{team.memberCount - AVATAR_COUNT}</Text>}
-                    {team.memberCount === 0 && <Text size="xs" c="dimmed">No members</Text>}
-                  </Group>
-                </Card>
-              ))}
-            </SimpleGrid>
-          )}
-        </div>
-      </div>
+        {/* Content */}
+        {loading ? (
+          <div className="grid grid-cols-4 gap-4">
+            {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-48" />)}
+          </div>
+        ) : teams.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <Users size={48} className="text-text-muted mb-3" />
+            <p className="text-sm font-medium text-text-primary">No teams found</p>
+            <p className="text-xs text-text-muted mt-1">Try adjusting your filters or create a new team.</p>
+            <Button size="sm" className="mt-4" onClick={() => navigate('/teams/create')}>
+              <Plus size={14} /> Create Team
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {teams.map((team) => (
+              <div
+                key={team.id}
+                className="rounded-lg border border-border bg-bg-surface p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => navigate(`/teams/${team.id}`)}
+              >
+                <div
+                  className="rounded-t-lg p-3 -mx-4 -mt-4 mb-3 flex items-center justify-between"
+                  style={{ background: team.color || t('accent'), borderRadius: '8px 8px 0 0' }}
+                >
+                  <Users size={18} className="text-white/80" />
+                  <Badge variant={team.status === 1 ? 'green' : 'gray'}>{team.status === 1 ? 'Active' : 'Inactive'}</Badge>
+                </div>
+                <h3 className="text-sm font-semibold text-text-primary">{team.name}</h3>
+                <p className="text-xs text-text-muted mt-0.5 line-clamp-2">{team.description || 'No description'}</p>
+                <div className="flex items-center gap-1 mt-3">
+                  {team.memberAvatars?.map((m, idx) => (
+                    <Avatar key={idx} className="h-6 w-6">
+                      <AvatarImage src={m.avatar} />
+                      <AvatarFallback className="text-[10px]">{m.userName?.[0]}</AvatarFallback>
+                    </Avatar>
+                  ))}
+                  {team.memberCount > AVATAR_COUNT && (
+                    <span className="text-[11px] text-text-muted ml-1">+{team.memberCount - AVATAR_COUNT}</span>
+                  )}
+                  {team.memberCount === 0 && (
+                    <span className="text-[11px] text-text-muted">No members</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </DashboardLayout>
 
-      {assignTeam && <TeamMemberAssignModal open={!!assignTeam} onClose={() => setAssignTeam(null)} team={assignTeam} onUpdated={fetchData} />}
-      <DeleteModal open={!!deleteTarget} onConfirm={handleDelete} onCancel={() => setDeleteTarget(null)} itemName={deleteTarget?.name} itemType='team' loading={actionLoading} />
-    </div>
+      {assignTeam && (
+        <TeamMemberAssignModal
+          open={!!assignTeam}
+          onClose={() => setAssignTeam(null)}
+          team={assignTeam}
+          onUpdated={fetchData}
+        />
+      )}
+      <DeleteModal
+        open={!!deleteTarget}
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteTarget(null)}
+        itemName={deleteTarget?.name}
+        itemType="team"
+        loading={actionLoading}
+      />
+    </>
   );
 };
 

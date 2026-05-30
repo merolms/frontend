@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { TextInput, Button, Group, ScrollArea, Stack, Text, Avatar, Badge, Tooltip } from '@mantine/core';
 import { Check, ChevronDown, Hash, Paperclip, Send, Smile, Users, X } from 'lucide-react';
-import SideBar from '@/app/containers/SideBar/SideBar';
+import DashboardLayout from '@/components/ui/dashboard-layout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { chatStore, getUserById, getUsers } from '@/app/store/chatStore';
-import './Slack.scss';
 
 const EMOJI_LIST = ['👍', '❤️', '🔥', '🎉', '😂', '🚀', '👀', '💯', '✅', '🙌'];
 
@@ -38,79 +40,141 @@ const SlackChat = () => {
   const users = getUsers();
 
   return (
-    <div className='dashboard-layout'>
-      <SideBar />
-      <div className='dashboard-main'>
-        <div className='slack-layout'>
-          <div className='slack-channels'>
-            <div className='slack-workspace-header'><h3>MeroEdu <ChevronDown size={14} /></h3></div>
-            <div className='slack-section'><div className='slack-section-header'>Channels</div>
-              {channels.map((ch) => (<div key={ch.id} className={`slack-channel-item ${activeChannel === ch.id ? 'active' : ''}`} onClick={() => chatStore.setActiveChannel(ch.id)}><span className='channel-icon'>#</span><span className='channel-name'>{ch.name}</span>{ch.unread > 0 && <span className='unread-badge'>{ch.unread}</span>}</div>))}
+    <DashboardLayout title="Slack Chat" subtitle="Team communication">
+      <div className="flex flex-1 overflow-hidden">
+        {/* Channels sidebar */}
+        <aside className="w-56 shrink-0 border-r border-border flex flex-col overflow-hidden" style={{ background: 'var(--bg-surface)' }}>
+          <div className="px-4 py-3 border-b border-border flex items-center gap-1">
+            <h3 className="text-sm font-semibold text-text-primary">MeroEdu</h3>
+            <ChevronDown size={12} className="text-text-muted" />
+          </div>
+          <div className="px-3 py-2">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted mb-1">Channels</p>
+            {channels.map((ch) => (
+              <div key={ch.id} className={`flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer text-xs ${activeChannel === ch.id ? 'bg-bg-surface-active font-medium text-text-primary' : 'text-text-secondary hover:bg-bg-surface-hover'}`} onClick={() => chatStore.setActiveChannel(ch.id)}>
+                <Hash size={12} />
+                <span>{ch.name}</span>
+                {ch.unread > 0 && <span className="ml-auto rounded-full bg-error text-white text-[10px] px-1.5 py-0.5">{ch.unread}</span>}
+              </div>
+            ))}
+          </div>
+          <div className="px-3 py-2">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted mb-1">Direct Messages</p>
+            {users.filter((u) => u.id !== user?.id).map((u) => (
+              <div key={u.id} className={`flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer text-xs ${activeDM === u.id ? 'bg-bg-surface-active font-medium text-text-primary' : 'text-text-secondary hover:bg-bg-surface-hover'}`} onClick={() => chatStore.setActiveDM(u.id)}>
+                <span className={`h-2 w-2 rounded-full ${u.status === 'online' ? 'bg-success' : 'bg-text-muted'}`} />
+                <span>{u.name}</span>
+              </div>
+            ))}
+          </div>
+        </aside>
+
+        {/* Main chat area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Chat header */}
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-border shrink-0">
+            <div className="flex items-center gap-2">
+              {activeDMUser ? (
+                <>
+                  <span className={`h-2 w-2 rounded-full ${activeDMUser.status === 'online' ? 'bg-success' : 'bg-text-muted'}`} />
+                  <h3 className="text-sm font-semibold text-text-primary">{activeDMUser.name}</h3>
+                  <span className="text-xs text-text-muted">{activeDMUser.role}</span>
+                </>
+              ) : (
+                <>
+                  <Hash size={14} className="text-text-muted" />
+                  <h3 className="text-sm font-semibold text-text-primary">{activeChannelData?.name}</h3>
+                  <span className="text-xs text-text-muted">{activeChannelData?.description}</span>
+                </>
+              )}
             </div>
-            <div className='slack-section'><div className='slack-section-header'>Direct Messages</div>
-              {users.filter((u) => u.id !== user?.id).map((u) => (<div key={u.id} className={`slack-channel-item dm ${activeDM === u.id ? 'active' : ''}`} onClick={() => chatStore.setActiveDM(u.id)}><span className={`user-status-dot ${u.status}`} /><span className='channel-name'>{u.name}</span></div>))}
-            </div>
+            <Button variant="default" size="icon" onClick={() => setShowUserPanel(!showUserPanel)}>
+              <Users size={14} />
+            </Button>
           </div>
 
-          <div className='slack-main'>
-            <div className='slack-chat-header'>
-              <div className='chat-header-left'>
-                {activeDMUser ? (<><span className={`user-status-dot ${activeDMUser.status}`} /><h3>{activeDMUser.name}</h3><span className='user-role'>{activeDMUser.role}</span></>) : (<><span className='channel-icon'>#</span><h3>{activeChannelData?.name}</h3><span className='channel-description'>{activeChannelData?.description}</span></>)}
-              </div>
-              <div className='chat-header-right'><Button size="xs" variant="default" onClick={() => setShowUserPanel(!showUserPanel)}><Users size={14} /></Button></div>
-            </div>
-
-            <ScrollArea className='slack-messages' h="calc(100vh - 200px)">
-              {groupedMessages.map((item) => {
-                if (item.type === 'header') return (<div key={item.id} className='date-divider'><span>{item.text}</span></div>);
-                const msgUser = getUserById(item.userId); const isOwn = item.userId === user?.id;
-                return (
-                  <div key={item.id} className={`slack-message ${isOwn ? 'own' : ''}`}>
-                    <Avatar src={msgUser?.avatar || 'https://i.pravatar.cc/150?img=3'} size={36} radius="sm" />
-                    <div className='message-body'>
-                      <div className='message-header'><span className='message-author'>{msgUser?.name || 'Unknown'}</span><span className='message-time'>{formatTime(item.timestamp)}</span></div>
-                      <div className='message-text'>{item.text}</div>
-                      {Object.keys(item.reactions || {}).length > 0 && (
-                        <div className='message-reactions'>
-                          {Object.entries(item.reactions).map(([emoji, userIds]) => (<button key={emoji} className={`reaction-btn ${userIds.includes(user?.id) ? 'active' : ''}`} onClick={() => handleReaction(item.id, emoji)}><span>{emoji}</span><span className='reaction-count'>{userIds.length}</span></button>))}
-                        </div>
-                      )}
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {groupedMessages.map((item) => {
+              if (item.type === 'header') return <div key={item.id} className="text-center text-xs text-text-muted my-4">{item.text}</div>;
+              const msgUser = getUserById(item.userId); const isOwn = item.userId === user?.id;
+              return (
+                <div key={item.id} className={`flex gap-3 ${isOwn ? 'flex-row-reverse' : ''}`}>
+                  <Avatar className="h-9 w-9 shrink-0">
+                    <AvatarImage src={msgUser?.avatar || 'https://i.pravatar.cc/150?img=3'} />
+                    <AvatarFallback>{(msgUser?.name || 'U')[0]}</AvatarFallback>
+                  </Avatar>
+                  <div className="max-w-[70%]">
+                    <div className="flex items-baseline gap-2 mb-0.5">
+                      <span className="text-xs font-semibold text-text-primary">{msgUser?.name || 'Unknown'}</span>
+                      <span className="text-[10px] text-text-muted">{formatTime(item.timestamp)}</span>
                     </div>
+                    <div className="rounded-lg px-3 py-2 text-sm bg-bg-surface border border-border" style={{ whiteSpace: 'pre-wrap' }}>
+                      {item.text}
+                    </div>
+                    {Object.keys(item.reactions || {}).length > 0 && (
+                      <div className="flex gap-1 mt-1">
+                        {Object.entries(item.reactions).map(([emoji, userIds]) => (
+                          <button key={emoji} className={`flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[11px] border ${userIds.includes(user?.id) ? 'border-primary bg-primary-light' : 'border-border bg-bg-surface'}`} onClick={() => handleReaction(item.id, emoji)}>
+                            <span>{emoji}</span><span>{userIds.length}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                );
-              })}
-              {typingUsers.length > 0 && (<div className='typing-indicator'><div className='typing-dots'><span /><span /><span /></div><span>{typingUsers.map((id) => getUserById(id)?.name).join(', ')} typing...</span></div>)}
-              <div ref={messagesEndRef} />
-            </ScrollArea>
-
-            <div className='slack-input-area'>
-              <div className='slack-input-wrapper'>
-                <TextInput ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKeyDown} placeholder={`Message ${activeDMUser ? activeDMUser.name : `#${activeChannelData?.name || ''}`}`} className='slack-textarea' style={{ flex: 1 }} />
-                <div className='slack-input-actions'>
-                  <Button size="xs" variant="subtle"><Smile size={14} /></Button>
-                  <Button size="xs" variant="subtle"><Paperclip size={14} /></Button>
-                  <Button size="xs" onClick={handleSend} disabled={!input.trim()}><Send size={14} /></Button>
                 </div>
+              );
+            })}
+            {typingUsers.length > 0 && (
+              <div className="flex items-center gap-2 text-xs text-text-muted">
+                <div className="flex gap-0.5"><span className="h-1.5 w-1.5 rounded-full bg-text-muted animate-bounce" /><span className="h-1.5 w-1.5 rounded-full bg-text-muted animate-bounce" style={{ animationDelay: '0.1s' }} /><span className="h-1.5 w-1.5 rounded-full bg-text-muted animate-bounce" style={{ animationDelay: '0.2s' }} /></div>
+                <span>{typingUsers.map((id) => getUserById(id)?.name).join(', ')} typing...</span>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Input */}
+          <div className="px-4 py-3 border-t border-border shrink-0">
+            <div className="flex items-center gap-2">
+              <Input ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKeyDown} placeholder={`Message ${activeDMUser ? activeDMUser.name : `#${activeChannelData?.name || ''}`}`} />
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="icon"><Smile size={14} /></Button>
+                <Button variant="ghost" size="icon"><Paperclip size={14} /></Button>
+                <Button size="icon" onClick={handleSend} disabled={!input.trim()}><Send size={14} /></Button>
               </div>
             </div>
           </div>
-
-          {showUserPanel && (
-            <div className='slack-users-panel'>
-              <div className='users-panel-header'><h4>Members</h4><Button size="xs" variant="subtle" onClick={() => setShowUserPanel(false)}><X size={14} /></Button></div>
-              <div className='users-panel-list'>
-                {users.map((u) => (
-                  <div key={u.id} className='user-panel-item' onClick={() => { chatStore.setActiveDM(u.id); setShowUserPanel(false); }}>
-                    <div className='user-panel-avatar'><Avatar src={u.avatar} size={32} radius="xl" /><span className={`user-status-dot ${u.status}`} /></div>
-                    <div className='user-panel-info'><div className='user-panel-name'>{u.name}</div><div className='user-panel-role'>{u.role}</div></div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
+
+        {/* Users panel */}
+        {showUserPanel && (
+          <aside className="w-56 shrink-0 border-l border-border flex flex-col overflow-hidden" style={{ background: 'var(--bg-surface)' }}>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+              <h4 className="text-sm font-semibold text-text-primary">Members</h4>
+              <Button variant="ghost" size="icon" onClick={() => setShowUserPanel(false)}><X size={14} /></Button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-2 space-y-1">
+              {users.map((u) => (
+                <div key={u.id} className="flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer hover:bg-bg-surface-hover" onClick={() => { chatStore.setActiveDM(u.id); setShowUserPanel(false); }}>
+                  <div className="relative">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={u.avatar} />
+                      <AvatarFallback>{u.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <span className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-bg-surface ${u.status === 'online' ? 'bg-success' : 'bg-text-muted'}`} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-text-primary">{u.name}</p>
+                    <p className="text-[11px] text-text-muted">{u.role}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </aside>
+        )}
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

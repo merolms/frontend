@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Paper, Title, Text, Badge, Button, Progress, Grid, Image, Stack, Group, Skeleton } from '@mantine/core';
-import { ArrowRight, BookOpen, Clock } from 'lucide-react';
-import SideBar from '@/app/containers/SideBar/SideBar';
+import { ArrowRight, BookOpen, Clock, Loader } from 'lucide-react';
+import DashboardLayout from '@/components/ui/dashboard-layout';
+import { Button } from '@/components/ui/button';
+import { Paper } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { fetchEnrollments } from '@/app/services/enrollmentService';
 import { useSelector } from 'react-redux';
 
@@ -20,38 +22,50 @@ const MyLearning = () => {
   };
 
   return (
-    <div className='dashboard-layout'>
-      <SideBar />
-      <div className='dashboard-main'>
-        <div className='dashboard-header'><div className='header-left'><h1 className='page-title'>My Learning</h1><p className='page-subtitle'>Track your enrolled courses and progress.</p></div></div>
-        <div className='dashboard-content'>
-          {loading ? (
-            <Grid>{[...Array(4)].map((_, i) => (<Grid.Col key={i} span={6}><Skeleton height={200} radius="md" /></Grid.Col>))}</Grid>
-          ) : enrollments.length === 0 ? (
-            <Paper p="xl" radius="md" ta="center"><Title order={4} c="dimmed">No enrollments yet</Title><Text>Browse courses to start learning.</Text><Button mt="md" component={Link} to="/courses">Browse Courses</Button></Paper>
-          ) : (
-            <Grid>
-              {enrollments.map((enrollment) => (
-                <Grid.Col key={enrollment.id} span={6}>
-                  <Paper p="md" radius="md" withBorder>
-                    <Group justify="space-between" wrap="nowrap">
-                      <Image src={enrollment.coverImage} width={100} height={70} radius="sm" />
-                      <div style={{ flex: 1 }}>
-                        <Text fw={600} lineClamp={1}>{enrollment.title}</Text>
-                        <Text size="sm" c="dimmed"><Clock size={12} /> {enrollment.duration}</Text>
-                        <Progress value={enrollment.progress || 0} size="sm" radius="xl" mt={4} />
-                        <Text size="xs" c="dimmed">{enrollment.progress || 0}% complete</Text>
-                      </div>
-                      <Button size="sm" component={Link} to={`/courses/${enrollment.courseId}/learn`} leftSection={<ArrowRight size={14} />}>Continue</Button>
-                    </Group>
-                  </Paper>
-                </Grid.Col>
-              ))}
-            </Grid>
-          )}
+    <DashboardLayout
+      title="My Learning"
+      subtitle="Track your enrolled courses and progress"
+    >
+      {loading ? (
+        <div className="grid grid-cols-2 gap-4">
+          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-32" />)}
         </div>
-      </div>
-    </div>
+      ) : enrollments.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <BookOpen size={48} className="text-text-muted mb-3" />
+          <p className="text-sm font-medium text-text-primary">No enrollments yet</p>
+          <p className="text-xs text-text-muted mt-1">Browse courses to start learning.</p>
+          <Button size="sm" className="mt-4" onClick={() => navigate('/courses')}>Browse Courses</Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-4">
+          {enrollments.map((enrollment) => (
+            <Paper key={enrollment.id} className="p-4">
+              <div className="flex items-start gap-3">
+                {enrollment.coverImage ? (
+                  <img src={enrollment.coverImage} alt={enrollment.title} className="w-24 h-16 object-cover rounded-md shrink-0" />
+                ) : (
+                  <div className="w-24 h-16 rounded-md bg-bg-surface-active flex items-center justify-center shrink-0">
+                    <BookOpen size={20} className="text-text-muted" />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-semibold text-text-primary line-clamp-1">{enrollment.title}</h4>
+                  <p className="text-xs text-text-muted flex items-center gap-1 mt-0.5"><Clock size={10} /> {enrollment.duration}</p>
+                  <div className="mt-2 w-full h-1.5 rounded-full bg-bg-surface-active overflow-hidden">
+                    <div className="h-full rounded-full bg-primary" style={{ width: `${enrollment.progress || 0}%` }} />
+                  </div>
+                  <p className="text-[11px] text-text-muted mt-0.5">{enrollment.progress || 0}% complete</p>
+                </div>
+                <Button size="sm" variant="default" onClick={() => navigate(`/courses/${enrollment.courseId}/learn`)}>
+                  <ArrowRight size={14} /> Continue
+                </Button>
+              </div>
+            </Paper>
+          ))}
+        </div>
+      )}
+    </DashboardLayout>
   );
 };
 

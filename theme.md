@@ -11,7 +11,6 @@ A complete semantic color system inspired by modern SaaS products like:
 This system is optimized for:
 
 * TailwindCSS
-* Mantine
 * React
 * Dashboard UIs
 * Editors (BlockNote / Tiptap)
@@ -367,7 +366,6 @@ Requirements:
   - warning
   - error
 - Apply consistent spacing, radius, and shadow scales
-- Ensure Mantine components follow theme tokens
 - Ensure BlockNote editor follows the same theme
 - Fix hover, active, disabled, and focus states globally
 - Use accessible contrast ratios

@@ -1,22 +1,35 @@
 import React from 'react';
-import { SegmentedControl, Tooltip } from '@mantine/core';
-import { LayoutGrid, List, Table as TableIcon } from 'lucide-react';
+import { LayoutGrid, List, Table as TableIcon, AlignLeft } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const viewModes = [
-  { value: 'grid', label: 'Grid', icon: <LayoutGrid size={16} /> },
-  { value: 'table', label: 'Table', icon: <TableIcon size={16} /> },
-  { value: 'list', label: 'List', icon: <List size={16} /> },
-  { value: 'compact', label: 'Compact', icon: <List size={16} /> },
+  { value: 'grid', label: 'Grid', icon: LayoutGrid },
+  { value: 'table', label: 'Table', icon: TableIcon },
+  { value: 'list', label: 'List', icon: List },
+  { value: 'compact', label: 'Compact', icon: AlignLeft },
 ];
 
 const ViewModeSwitcher = ({ value, onChange }) => (
-  <SegmentedControl
-    value={value}
-    onChange={onChange}
-    data={viewModes.map(m => ({ value: m.value, label: (<Tooltip label={m.label}>{m.icon}</Tooltip>) }))}
-    className='view-mode-switcher'
-    size="sm"
-  />
+  <div className="flex items-center rounded-md border border-border overflow-hidden">
+    {viewModes.map((m) => {
+      const Icon = m.icon;
+      return (
+        <button
+          key={m.value}
+          title={m.label}
+          onClick={() => onChange(m.value)}
+          className={cn(
+            'flex h-7 w-7 items-center justify-center transition-colors cursor-pointer',
+            value === m.value
+              ? 'bg-primary text-white'
+              : 'text-text-muted hover:bg-bg-surface-active'
+          )}
+        >
+          <Icon size={14} />
+        </button>
+      );
+    })}
+  </div>
 );
 
 export default ViewModeSwitcher;

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-
 import { t } from '@/styles/theme';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Paper, Breadcrumbs, Anchor, Button, TextInput, Select, Group, Title, Text, Loader } from '@mantine/core';
-import { AlertCircle, Pencil, Plus } from 'lucide-react';
-import SideBar from '@/app/containers/SideBar/SideBar';
+import { Pencil, Loader, ChevronRight, AlertCircle } from 'lucide-react';
+import DashboardLayout from '@/components/ui/dashboard-layout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Paper } from '@/components/ui/card';
 import { fetchUserById, updateUser } from '@/app/services/userService';
 import { fetchRoles } from '@/app/services/authService';
 import { useToast } from '@/app/context/ToastContext';
@@ -21,50 +23,129 @@ const UserEdit = () => {
   const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', role: 'Student', phone: '', bio: '', status: 1 });
 
   useEffect(() => {
-    const loadRoles = async () => { try { const roles = await fetchRoles(); setRoleOptions(roles.map((r) => ({ value: r.name, label: r.name }))); } catch (err) { setRoleOptions([{ value: 'Student', label: 'Student' }, { value: 'Instructor', label: 'Instructor' }]); } };
+    const loadRoles = async () => {
+      try {
+        const roles = await fetchRoles();
+        setRoleOptions(roles.map((r) => ({ value: r.name, label: r.name })));
+      } catch (err) {
+        setRoleOptions([{ value: 'Student', label: 'Student' }, { value: 'Instructor', label: 'Instructor' }]);
+      }
+    };
     loadRoles();
   }, []);
 
   useEffect(() => {
-    const loadUser = async () => { try { setFetching(true); const data = await fetchUserById(id); setUser(data); setFormData({ firstName: data.firstName || '', lastName: data.lastName || '', email: data.email || '', role: data.role || 'Student', phone: data.phone || '', bio: data.bio || '', status: data.status !== undefined ? data.status : 1 }); } catch (err) { setError('Failed to load user data.'); } finally { setFetching(false); } };
+    const loadUser = async () => {
+      try {
+        setFetching(true);
+        const data = await fetchUserById(id);
+        setUser(data);
+        setFormData({
+          firstName: data.firstName || '', lastName: data.lastName || '',
+          email: data.email || '', role: data.role || 'Student',
+          phone: data.phone || '', bio: data.bio || '',
+          status: data.status !== undefined ? data.status : 1,
+        });
+      } catch (err) { setError('Failed to load user data.'); }
+      finally { setFetching(false); }
+    };
     loadUser();
   }, [id]);
 
   const handleChange = (field, value) => setFormData((prev) => ({ ...prev, [field]: value }));
-  const handleSubmit = async (e) => { e.preventDefault(); try { setLoading(true); setError(null); const updated = await updateUser(id, formData); addToast(`${formData.firstName} ${formData.lastName} updated successfully`, 'success'); navigate(`/users/${id}`); } catch (err) { setError(err.message || 'Failed to update user.'); } finally { setLoading(false); } };
-  const handleCancel = () => navigate(`/users/${id}`);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true); setError(null);
+      const updated = await updateUser(id, formData);
+      addToast(`${formData.firstName} ${formData.lastName} updated successfully`, 'success');
+      navigate(`/users/${id}`);
+    } catch (err) { setError(err.message || 'Failed to update user.'); }
+    finally { setLoading(false); }
+  };
 
-  if (fetching) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" mt={40}><Loader /><Title order={4}>Loading...</Title></Paper></div></div>);
+  if (fetching) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center py-20">
+          <Loader className="animate-spin text-text-muted" size={20} />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
-    <div className='dashboard-layout'>
-      <SideBar />
-      <div className='dashboard-main'>
-        <Breadcrumbs mb="md"><Anchor onClick={() => navigate('/users')}>Users</Anchor><Anchor onClick={() => navigate(`/users/${id}`)}>{user?.firstName} {user?.lastName}</Anchor><span>Edit</span></Breadcrumbs>
-        <Paper className='user-form-segment' p="lg" radius="md" withBorder>
-          <Title order={3} mb={4}><Pencil size={20} color={t('accent')} /> Edit User</Title>
-          <Text c="dimmed" size="sm" mb="md">Update the user details below.</Text>
-          {error && <Text c="red" size="sm" mb="sm"><Plus size={14} /> {error}</Text>}
-          <form onSubmit={handleSubmit}>
-            <Group grow>
-              <TextInput label="First Name *" placeholder="John" value={formData.firstName} onChange={(e) => handleChange('firstName', e.target.value)} required />
-              <TextInput label="Last Name *" placeholder="Doe" value={formData.lastName} onChange={(e) => handleChange('lastName', e.target.value)} required />
-            </Group>
-            <TextInput label="Email *" placeholder="john@example.com" type="email" value={formData.email} onChange={(e) => handleChange('email', e.target.value)} required mt="sm" />
-            <Group grow mt="sm">
-              <Select label="Role" data={roleOptions} value={formData.role} onChange={(v) => handleChange('role', v)} />
-              <Select label="Status" data={[{ value: 1, label: 'Active' }, { value: 0, label: 'Inactive' }]} value={formData.status} onChange={(v) => handleChange('status', v)} />
-            </Group>
-            <TextInput label="Phone" placeholder="+1 555-0100" value={formData.phone} onChange={(e) => handleChange('phone', e.target.value)} mt="sm" />
-            <TextInput label="Bio" placeholder="Short bio..." value={formData.bio} onChange={(e) => handleChange('bio', e.target.value)} mt="sm" />
-            <Group justify="flex-end" mt="lg">
-              <Button variant="default" onClick={handleCancel} disabled={loading}>Cancel</Button>
-              <Button type="submit" loading={loading}>{loading ? 'Saving...' : 'Save Changes'}</Button>
-            </Group>
-          </form>
-        </Paper>
+    <DashboardLayout title="Edit User" subtitle="Update the user details">
+      <div className="flex items-center gap-1 text-xs text-text-muted mb-4">
+        <button onClick={() => navigate('/users')} className="text-primary hover:underline">Users</button>
+        <ChevronRight size={12} />
+        <button onClick={() => navigate(`/users/${id}`)} className="text-primary hover:underline">{user?.firstName} {user?.lastName}</button>
+        <ChevronRight size={12} />
+        <span>Edit</span>
       </div>
-    </div>
+
+      {error && (
+        <div className="flex items-center gap-2 text-error text-sm mb-4">
+          <AlertCircle size={14} /> {error}
+        </div>
+      )}
+
+      <Paper className="p-6 max-w-2xl">
+        <h2 className="text-base font-semibold text-text-primary mb-1">
+          <Pencil size={16} className="inline mr-1" style={{ color: t('accent') }} />
+          Edit User
+        </h2>
+        <p className="text-xs text-text-muted mb-4">Update the user details below.</p>
+
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-medium text-text-primary">First Name *</label>
+              <Input placeholder="John" value={formData.firstName} onChange={(e) => handleChange('firstName', e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-text-primary">Last Name *</label>
+              <Input placeholder="Doe" value={formData.lastName} onChange={(e) => handleChange('lastName', e.target.value)} />
+            </div>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-text-primary">Email *</label>
+            <Input type="email" placeholder="john@example.com" value={formData.email} onChange={(e) => handleChange('email', e.target.value)} />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-medium text-text-primary">Role</label>
+              <Select value={formData.role} onValueChange={(v) => handleChange('role', v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{roleOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-text-primary">Status</label>
+              <Select value={String(formData.status)} onValueChange={(v) => handleChange('status', parseInt(v))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">Active</SelectItem>
+                  <SelectItem value="0">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-text-primary">Phone</label>
+            <Input placeholder="+1 555-0100" value={formData.phone} onChange={(e) => handleChange('phone', e.target.value)} />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-text-primary">Bio</label>
+            <Input placeholder="Short bio..." value={formData.bio} onChange={(e) => handleChange('bio', e.target.value)} />
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button type="button" variant="default" onClick={() => navigate(`/users/${id}`)} disabled={loading}>Cancel</Button>
+            <Button type="submit" disabled={loading}>{loading ? 'Saving...' : 'Save Changes'}</Button>
+          </div>
+        </form>
+      </Paper>
+    </DashboardLayout>
   );
 };
 

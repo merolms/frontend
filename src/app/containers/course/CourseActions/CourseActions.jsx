@@ -1,50 +1,75 @@
 import React from 'react';
-import { Button, Modal, Title, Text, Group, Stack } from '@mantine/core';
 import { AlertCircle, Archive, Check, Trash2, X } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogOverlay } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 export const PublishModal = ({ open, onConfirm, onCancel, courseTitle, loading = false }) => (
-  <Modal opened={open} onClose={loading ? undefined : onCancel} title="Publish Course" centered closeOnClickOutside={!loading} closeOnEscape={!loading} className="ui modal">
-    <Stack gap="md">
-      <Text size="sm">
-        Are you sure you want to publish <strong>{courseTitle}</strong>?
-        Once published, it will be visible to all users.
-      </Text>
-      <Group justify="flex-end">
-        <Button variant="default" onClick={onCancel} disabled={loading}>Cancel</Button>
-        <Button color="green" onClick={onConfirm} loading={loading} leftSection={<Check size={16} />}>Publish</Button>
-      </Group>
-    </Stack>
-  </Modal>
+  <Dialog open={open} onOpenChange={loading ? undefined : onCancel}>
+    {open && (
+      <>
+        <DialogOverlay />
+        <DialogContent>
+          <DialogHeader><DialogTitle>Publish Course</DialogTitle></DialogHeader>
+          <p className="text-sm text-text-secondary">
+            Are you sure you want to publish <strong>{courseTitle}</strong>?
+            Once published, it will be visible to all users.
+          </p>
+          <DialogFooter>
+            <Button variant="default" onClick={onCancel} disabled={loading}>Cancel</Button>
+            <Button variant="green" onClick={onConfirm} disabled={loading}>
+              <Check size={14} /> Publish
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </>
+    )}
+  </Dialog>
 );
 
 export const ArchiveModal = ({ open, onConfirm, onCancel, courseTitle, loading = false }) => (
-  <Modal opened={open} onClose={loading ? undefined : onCancel} title="Archive Course" centered closeOnClickOutside={!loading} closeOnEscape={!loading} className="ui modal">
-    <Stack gap="md">
-      <Text size="sm">
-        Are you sure you want to archive <strong>{courseTitle}</strong>?
-        Archived courses are hidden from users but can be restored later.
-      </Text>
-      <Group justify="flex-end">
-        <Button variant="default" onClick={onCancel} disabled={loading}>Cancel</Button>
-        <Button color="orange" onClick={onConfirm} loading={loading} leftSection={<Archive size={16} />}>Archive</Button>
-      </Group>
-    </Stack>
-  </Modal>
+  <Dialog open={open} onOpenChange={loading ? undefined : onCancel}>
+    {open && (
+      <>
+        <DialogOverlay />
+        <DialogContent>
+          <DialogHeader><DialogTitle>Archive Course</DialogTitle></DialogHeader>
+          <p className="text-sm text-text-secondary">
+            Are you sure you want to archive <strong>{courseTitle}</strong>?
+            Archived courses are hidden from users but can be restored later.
+          </p>
+          <DialogFooter>
+            <Button variant="default" onClick={onCancel} disabled={loading}>Cancel</Button>
+            <Button variant="orange" onClick={onConfirm} disabled={loading}>
+              <Archive size={14} /> Archive
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </>
+    )}
+  </Dialog>
 );
 
 export const DeleteModal = ({ open, onConfirm, onCancel, itemName, itemType = 'course', loading = false }) => (
-  <Modal opened={open} onClose={loading ? undefined : onCancel} title={`Delete ${itemType === 'lesson' ? 'Lesson' : 'Course'}`} centered closeOnClickOutside={!loading} closeOnEscape={!loading} className="ui modal">
-    <Stack gap="md">
-      <Text size="sm">
-        Are you sure you want to delete <strong>{itemName}</strong>?
-        This action cannot be undone.
-      </Text>
-      <Group justify="flex-end">
-        <Button variant="default" onClick={onCancel} disabled={loading}>Cancel</Button>
-        <Button color="red" onClick={onConfirm} loading={loading} leftSection={<Trash2 size={16} />}>Delete</Button>
-      </Group>
-    </Stack>
-  </Modal>
+  <Dialog open={open} onOpenChange={loading ? undefined : onCancel}>
+    {open && (
+      <>
+        <DialogOverlay />
+        <DialogContent>
+          <DialogHeader><DialogTitle>Delete {itemType === 'lesson' ? 'Lesson' : itemType === 'user' ? 'User' : itemType === 'team' ? 'Team' : 'Course'}</DialogTitle></DialogHeader>
+          <p className="text-sm text-text-secondary">
+            Are you sure you want to delete <strong>{itemName}</strong>?
+            This action cannot be undone.
+          </p>
+          <DialogFooter>
+            <Button variant="default" onClick={onCancel} disabled={loading}>Cancel</Button>
+            <Button variant="danger" onClick={onConfirm} disabled={loading}>
+              <Trash2 size={14} /> Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </>
+    )}
+  </Dialog>
 );
 
 export default { PublishModal, ArchiveModal, DeleteModal };

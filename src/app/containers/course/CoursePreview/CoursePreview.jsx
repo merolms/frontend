@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { Paper, Breadcrumbs, Anchor, Button, Progress, Title, Text, Skeleton, Group } from '@mantine/core';
-import { ArrowLeft, ArrowRight, BookOpen, Edit3 } from 'lucide-react';
-import SideBar from '@/app/containers/SideBar/SideBar';
+import { ArrowLeft, ArrowRight, BookOpen, Edit3, ChevronRight } from 'lucide-react';
 import { fetchCourseById, fetchLessons } from '@/app/services/courseService';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Paper } from '@/components/ui/card';
 import { fetchAutosave, fetchLessonBlocks } from '@/app/services/blockService';
 import { t } from '@/styles/theme';
 import { useTheme as useThemeContext } from '@/app/context/ThemeContext';
-import { BlockNoteView } from '@blocknote/mantine';
-import { useCreateBlockNote } from '@blocknote/react';
-import '@blocknote/core/fonts/inter.css';
-import '@blocknote/mantine/style.css';
+import '@blocknote/react/style.css';
+import { BlockNoteViewRaw as BlockNoteView, useCreateBlockNote } from '@blocknote/react';
 
 const PARA_PROPS = { textAlignment: 'left', backgroundColor: 'default', textColor: 'default' };
 
@@ -189,11 +188,10 @@ const CoursePreview = () => {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-        <SideBar />
+      <div style={{ display: 'flex' }}>
         <div style={{ marginLeft: 70, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: t('bg-secondary') }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-            <Skeleton height={32} width={200} />
+            <Skeleton className="h-8 w-48" />
             <span style={{ color: t('text-muted'), fontSize: 14 }}>Loading preview…</span>
           </div>
         </div>
@@ -203,18 +201,16 @@ const CoursePreview = () => {
 
   if (error) {
     return (
-      <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-        <SideBar />
+      <div style={{ display: 'flex' }}>
         <div style={{ marginLeft: 70, flex: 1, padding: 24 }}>
-          <Paper p="lg"><Text c="red">{error}</Text></Paper>
+          <Paper className="p-6"><p style={{ color: 'var(--error)' }}>{error}</p></Paper>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      <SideBar />
+    <div style={{ display: 'flex' }}>
       <div style={{ marginLeft: 70, flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: t('bg-secondary') }}>
 
         {/* Top bar */}
@@ -223,26 +219,27 @@ const CoursePreview = () => {
           background: t('bg-surface'), borderBottom: `1px solid ${t('border-primary')}`,
           padding: '0 16px', flexShrink: 0, zIndex: 50,
         }}>
-          <Breadcrumbs style={{ flex: 1, fontSize: 13 }}>
-            <Anchor onClick={() => navigate('/courses')}>Courses</Anchor>
-            <Anchor onClick={() => navigate(`/courses/${id}`)}>{course?.title}</Anchor>
+          <div style={{ flex: 1, fontSize: 13 }} className="flex items-center gap-1 text-xs text-text-muted">
+            <button onClick={() => navigate('/courses')} className="text-primary hover:underline cursor-pointer">Courses</button>
+            <ChevronRight size={12} />
+            <button onClick={() => navigate(`/courses/${id}`)} className="text-primary hover:underline cursor-pointer">{course?.title}</button>
+            <ChevronRight size={12} />
             <span>{selectedLesson?.title || 'Preview'}</span>
-          </Breadcrumbs>
-          <Text size="sm" style={{ color: t('text-muted') }}>
+          </div>
+          <span style={{ color: t('text-muted'), fontSize: 14 }}>
             Lesson {lessonIndex >= 0 ? lessonIndex + 1 : 1} of {lessons.length}
-          </Text>
+          </span>
           <Button
-            variant="light"
-            size="xs"
-            leftSection={<Edit3 size={13} />}
+            variant="ghost"
+            size="sm"
             onClick={() => navigate(`/courses/${id}/builder/${selectedLesson?.id || lessonId || ''}`)}
           >
-            Edit
+            <Edit3 size={13} /> Edit
           </Button>
         </header>
 
         {/* Main content */}
-        <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
+        <div style={{ flex: 1, display: 'flex', }}>
           <LessonPanel
             lessons={lessons}
             selectedLessonId={selectedLesson?.id}
@@ -256,21 +253,20 @@ const CoursePreview = () => {
             display: 'flex', justifyContent: 'center',
           }}>
             <div style={{
-              width: '100%', maxWidth: 780,
+              width: '100%',
               background: t('bg-surface'),
               borderRadius: t('radius-lg'),
               boxShadow: t('shadow-md'),
               padding: '40px 48px',
-              minHeight: 500,
             }}>
               {/* Lesson header */}
               <div style={{ marginBottom: 28, paddingBottom: 20, borderBottom: `1px solid ${t('border-secondary')}` }}>
-                <Text size={10} fw={700} tt="uppercase" ls="0.07em" style={{ color: t('text-disabled'), marginBottom: 6 }}>
+                <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text-muted)', marginBottom: 6 }}>
                   Lesson {lessonIndex >= 0 ? lessonIndex + 1 : 1}
-                </Text>
-                <Title order={2} style={{ color: t('text-primary'), margin: 0, lineHeight: 1.25 }}>
+                </p>
+                <h2 style={{ color: 'var(--text-primary)', margin: 0, lineHeight: 1.25, fontSize: '1.25rem', fontWeight: 600 }}>
                   {selectedLesson?.title || 'Untitled Lesson'}
-                </Title>
+                </h2>
               </div>
 
               {/* BlockNote read-only content */}
@@ -294,14 +290,14 @@ const CoursePreview = () => {
                 marginTop: 40, paddingTop: 20,
                 borderTop: `1px solid ${t('border-secondary')}`,
               }}>
-                <Button variant="subtle" leftSection={<ArrowLeft size={14} />} onClick={goToPrev} disabled={!canGoPrev} style={{ color: t('text-secondary') }}>
-                  Previous
+                <Button variant="ghost" size="sm" onClick={goToPrev} disabled={!canGoPrev} style={{ color: t('text-secondary') }}>
+                  <ArrowLeft size={14} /> Previous
                 </Button>
-                <Text size="xs" style={{ color: t('text-muted') }}>
+                <span style={{ color: t('text-muted'), fontSize: 12 }}>
                   {lessonIndex + 1} / {lessons.length}
-                </Text>
-                <Button variant="subtle" rightSection={<ArrowRight size={14} />} onClick={goToNext} disabled={!canGoNext} style={{ color: t('text-secondary') }}>
-                  Next
+                </span>
+                <Button variant="ghost" size="sm" onClick={goToNext} disabled={!canGoNext} style={{ color: t('text-secondary') }}>
+                  Next <ArrowRight size={14} />
                 </Button>
               </div>
             </div>

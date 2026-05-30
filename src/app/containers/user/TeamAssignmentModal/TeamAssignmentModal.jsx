@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Avatar, Group, Text, Stack, Badge, Loader } from '@mantine/core';
-import { Check, Plus, Users } from 'lucide-react';
+import { Check, Plus, Users, Loader } from 'lucide-react';
 import { fetchTeams } from '@/app/services/teamService';
-
-import { t } from '@/styles/theme';
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { t } from '@/styles/theme';
 
 const TeamAssignmentModal = ({ open, onClose, user, onUpdated }) => {
@@ -24,23 +23,37 @@ const TeamAssignmentModal = ({ open, onClose, user, onUpdated }) => {
   if (!user) return null;
 
   return (
-    <Modal opened={open} onClose={onClose} title={`Assign Teams — ${user.firstName} ${user.lastName}`} size="sm">
-      {error && <Text c="red" size="sm" mb="sm">{error}</Text>}
-      {loading ? <Loader size="sm" /> : teams.length === 0 ? <Text c="dimmed">No teams available.</Text> : (
-        <Stack gap={8}>
-          {teams.map((team) => (
-            <div key={team.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', border: `1px solid ${t('border-primary')}`, borderRadius: 8, cursor: 'pointer' }} onClick={() => setError('Team assignment is not yet supported by the backend.')}>
-              <Group gap={8}>
-                <Users size={16} color={isAssigned(team.name) ? 'green' : 'gray'} />
-                <Text size="sm" fw={500}>{team.name}</Text>
-              </Group>
-              {isAssigned(team.name) ? <Badge color="green" size="xs" leftSection={<Check size={10} />}>Assigned</Badge> : <Badge color="gray" size="xs" leftSection={<Plus size={10} />}>Assign</Badge>}
-            </div>
-          ))}
-        </Stack>
-      )}
-      <Group justify="flex-end" mt="md"><Button variant="default" onClick={onClose} disabled={saving}>Done</Button></Group>
-    </Modal>
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-sm">
+        <DialogHeader><DialogTitle>Assign Teams — {user.firstName} {user.lastName}</DialogTitle></DialogHeader>
+        {error && <p className="text-xs text-error mb-2">{error}</p>}
+        {loading ? (
+          <Loader size={14} className="animate-spin text-text-muted mt-2" />
+        ) : teams.length === 0 ? (
+          <p className="text-xs text-text-muted">No teams available.</p>
+        ) : (
+          <div className="space-y-2">
+            {teams.map((team) => (
+              <div key={team.id} className="flex items-center justify-between rounded-lg px-3 py-2 cursor-pointer" style={{ border: `1px solid ${t('border-primary')}` }}
+                onClick={() => setError('Team assignment is not yet supported by the backend.')}>
+                <div className="flex items-center gap-2">
+                  <Users size={14} className={isAssigned(team.name) ? 'text-success' : 'text-text-muted'} />
+                  <p className="text-xs font-medium text-text-primary">{team.name}</p>
+                </div>
+                {isAssigned(team.name) ? (
+                  <Badge variant="green" className="text-[10px]"><Check size={8} /> Assigned</Badge>
+                ) : (
+                  <Badge variant="gray" className="text-[10px]"><Plus size={8} /> Assign</Badge>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="flex justify-end mt-4">
+          <Button variant="default" onClick={onClose} disabled={saving}>Done</Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

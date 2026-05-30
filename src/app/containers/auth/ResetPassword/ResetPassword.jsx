@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Paper, TextInput, Button, Title, Text, Alert, Stack, Center, Anchor } from '@mantine/core';
-import { AlertCircle, ArrowLeft, Check, GraduationCap, Lock } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Check, Lock } from 'lucide-react';
 import { resetPassword } from '@/app/services/authService';
-
-import { t } from '@/styles/theme';
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -19,49 +16,65 @@ const ResetPassword = () => {
     if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
     if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
     try {
-      setLoading(true);
-      setError(null);
+      setLoading(true); setError(null);
       await resetPassword('mock-token', password);
       setSuccess(true);
-    } catch (err) {
-      setError(err.message || 'Something went wrong.');
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { setError(err.message || 'Something went wrong.'); }
+    finally { setLoading(false); }
   };
 
   return (
-    <div className='auth-page'>
-      <div className='auth-container'>
-        <Paper className='auth-card' p="xl" radius="md" withBorder>
-          {/* <Center mb="md"><GraduationCap size={48} color={t('primary')} /></Center> */}
-          <Title order={3} ta="center" mb="lg">Reset Password</Title>
+    <div className="auth-page">
+      <div className="auth-container">
+        <div className="auth-card">
+          <h2 className="text-lg font-semibold text-text-primary text-center mb-6">Reset Password</h2>
 
           {success ? (
-            <Stack>
-              <Alert icon={<Check size={16} />} color="green">
-                <Text fw={600} size="sm">Password Reset Successful</Text>
-                <Text size="sm">Your password has been updated. You can now sign in with your new password.</Text>
-              </Alert>
-              <Button fullWidth onClick={() => navigate('/login')} mt="md">Go to Sign In</Button>
-            </Stack>
+            <div className="space-y-4">
+              <div className="flex items-start gap-2 rounded-lg border border-success/30 bg-success/5 px-3 py-2.5 text-sm text-success">
+                <Check size={16} className="mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-semibold text-sm">Password Reset Successful</p>
+                  <p className="text-xs">Your password has been updated. You can now sign in with your new password.</p>
+                </div>
+              </div>
+              <button onClick={() => navigate('/login')} className="w-full h-10 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-colors cursor-pointer">
+                Go to Sign In
+              </button>
+            </div>
           ) : (
             <>
-              <Text c="dimmed" ta="center" size="sm" mb="md">Enter your new password below.</Text>
-              {error && <Alert icon={<AlertCircle size={16} />} color="red" mb="md" size="sm">{error}</Alert>}
-              <form onSubmit={handleSubmit}>
-                <Stack gap="sm">
-                  <TextInput label="New Password" placeholder="At least 6 characters" type="password" leftSection={<Lock size={16} />} value={password} onChange={(e) => setPassword(e.target.value)} required />
-                  <TextInput label="Confirm Password" placeholder="Re-enter your password" type="password" leftSection={<Lock size={16} />} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
-                  <Button fullWidth size="lg" type="submit" loading={loading} className="auth-submit-btn">Reset Password</Button>
-                </Stack>
+              <p className="text-xs text-text-muted text-center mb-4">Enter your new password below.</p>
+              {error && (
+                <div className="flex items-center gap-2 rounded-lg border border-error/30 bg-error/5 px-3 py-2.5 text-sm text-error mb-4">
+                  <AlertCircle size={14} /> {error}
+                </div>
+              )}
+              <form onSubmit={handleSubmit} className="space-y-3">
+                <div>
+                  <label className="text-sm font-medium text-text-primary">New Password</label>
+                  <div className="relative mt-1">
+                    <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+                    <input type="password" placeholder="At least 6 characters" value={password} onChange={(e) => setPassword(e.target.value)} required className="input-field pl-9" />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-text-primary">Confirm Password</label>
+                  <div className="relative mt-1">
+                    <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+                    <input type="password" placeholder="Re-enter your password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required className="input-field pl-9" />
+                  </div>
+                </div>
+                <button type="submit" disabled={loading} className="w-full h-10 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-colors cursor-pointer disabled:opacity-50">
+                  {loading ? 'Resetting...' : 'Reset Password'}
+                </button>
               </form>
-              <Anchor component={Link} to="/login" ta="center" mt="md" size="sm">
-                <ArrowLeft size={14} style={{ marginRight: 4, verticalAlign: 'middle' }} /> Back to Sign In
-              </Anchor>
+              <Link to="/login" className="flex items-center justify-center gap-1 text-xs text-primary hover:underline mt-4">
+                <ArrowLeft size={12} /> Back to Sign In
+              </Link>
             </>
           )}
-        </Paper>
+        </div>
       </div>
     </div>
   );

@@ -1,141 +1,80 @@
 import React from 'react';
-import { Card, Text, Group, Badge, SimpleGrid, Skeleton } from '@mantine/core';
-import { Carousel } from '@mantine/carousel';
-
 import { BookOpen, Clock, List, Star, User } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { getStatusLabel, getCategoryColor } from './viewHelpers';
-
-
 import { t } from '@/styles/theme';
 
 const CourseCard = ({ course, navigate }) => {
   const status = getStatusLabel(course.status);
-
-  // Build slides: prefer images array, fall back to coverImage, else placeholder
-  const slides = course.images?.length
-    ? course.images
-    : course.coverImage
-      ? [course.coverImage]
-      : [];
+  const slide = course.coverImage || (course.images?.[0]);
 
   return (
-    <Card
-      className='course-card'
-      padding="sm"
-      radius="md"
-      withBorder
-      style={{ cursor: 'pointer', height: '100%', display: 'flex', flexDirection: 'column' }}
+    <div
+      className="rounded-lg border border-border bg-bg-surface shadow-sm cursor-pointer hover:shadow-md transition-shadow overflow-hidden flex flex-col h-full"
       onClick={() => navigate(`/courses/${course.id}`)}
     >
-      <Card.Section>
-        {slides.length > 1 ? (
-          <Carousel
-            withIndicators
-            height={180}
-            loop
-            align="start"
-            containScroll="trimSnaps"
-            styles={{
-              control: {
-                background: t('bg-surface'),
-                border: `1px solid ${t('border-primary')}`,
-                color: t('text-primary'),
-              },
-              indicator: {
-                background: t('text-muted'),
-              },
-            }}
-          >
-            {slides.map((img, i) => (
-              <Carousel.Slide key={i}>
-                <img
-                  src={img}
-                  alt={`${course.title} ${i + 1}`}
-                  className='course-card-image'
-                />
-              </Carousel.Slide>
-            ))}
-          </Carousel>
-        ) : slides.length === 1 ? (
-          <img
-            src={slides[0]}
-            alt={course.title}
-            className='course-card-image'
-          />
-        ) : (
-          <div className='course-card-image course-card-no-image'>
-            <BookOpen size={48} color={t('text-muted')} />
-          </div>
-        )}
-      </Card.Section>
+      {/* Image */}
+      {slide ? (
+        <img src={slide} alt={course.title} className="w-full h-40 object-cover" />
+      ) : (
+        <div className="w-full h-40 flex items-center justify-center bg-bg-surface-active">
+          <BookOpen size={48} className="text-text-muted" />
+        </div>
+      )}
 
-      <div className='course-card-body'>
-        <div className='course-card-meta-row'>
-          <Badge size="sm" variant="light" color={getCategoryColor(course.category)}>
-            {course.category}
-          </Badge>
-          <Text size="xs" c="dimmed" className='course-card-author'>
-            <User size={12} /> {course.author}
-          </Text>
+      <div className="p-3 flex-1 flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <Badge variant="default">{course.category}</Badge>
+          <span className="text-[11px] text-text-muted flex items-center gap-1"><User size={10} /> {course.author}</span>
         </div>
 
-        <Text className='course-card-title' fw={600} size="sm" lineClamp={2}>
-          {course.title}
-        </Text>
+        <h3 className="text-sm font-semibold text-text-primary line-clamp-2">{course.title}</h3>
+        <p className="text-[11px] text-text-muted line-clamp-2">{course.description}</p>
 
-        <Text size="xs" c="dimmed" lineClamp={2} mt={4}>
-          {course.description}
-        </Text>
-
-        <Group gap={8} mt={8}>
-          <Text size="xs" c="dimmed"><List size={12} /> {course.totalLessons} Lessons</Text>
-          <Text size="xs" c="dimmed"><User size={12} /> {course.enrolledUsers}</Text>
-          <Text size="xs" c="dimmed"><Clock size={12} /> {course.duration}</Text>
-        </Group>
+        <div className="flex items-center gap-3 mt-auto text-[11px] text-text-muted">
+          <span className="flex items-center gap-1"><List size={10} /> {course.totalLessons}</span>
+          <span className="flex items-center gap-1"><User size={10} /> {course.enrolledUsers}</span>
+          <span className="flex items-center gap-1"><Clock size={10} /> {course.duration}</span>
+        </div>
 
         {course.tags?.length > 0 && (
-          <Group gap={4} mt={6}>
-            {course.tags.slice(0, 3).map((tag) => (
-              <Badge key={tag} size="xs" variant="outline">{tag}</Badge>
-            ))}
-            {course.tags.length > 3 && (
-              <Badge size="xs" variant="outline">+{course.tags.length - 3}</Badge>
-            )}
-          </Group>
+          <div className="flex items-center gap-1">
+            {course.tags.slice(0, 3).map((tag) => <Badge key={tag} variant="default" className="text-[10px]">{tag}</Badge>)}
+            {course.tags.length > 3 && <Badge variant="default" className="text-[10px]">+{course.tags.length - 3}</Badge>}
+          </div>
         )}
 
-        {status && (
-          <Badge size="xs" variant="light" color={status.color} mt={6}>
-            {status.text}
-          </Badge>
-        )}
+        {status && <Badge variant={status.color === 'grey' ? 'gray' : status.color}>{status.text}</Badge>}
       </div>
-    </Card>
+    </div>
   );
 };
 
 const GridView = ({ courses, navigate, loading }) => {
   if (loading) {
     return (
-      <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="md">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {[...Array(8)].map((_, i) => (
-          <Card key={i} padding="sm" radius="md" withBorder>
-            <Card.Section><Skeleton height={180} /></Card.Section>
-            <Skeleton height={16} mt="sm" radius="xl" />
-            <Skeleton height={12} mt={6} radius="xl" width="60%" />
-            <Skeleton height={12} mt={4} radius="xl" width="40%" />
-          </Card>
+          <div key={i} className="rounded-lg border border-border bg-bg-surface overflow-hidden">
+            <Skeleton className="h-40 w-full" />
+            <div className="p-3 space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-3 w-3/5" />
+              <Skeleton className="h-3 w-2/5" />
+            </div>
+          </div>
         ))}
-      </SimpleGrid>
+      </div>
     );
   }
 
   return (
-    <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="md">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {courses.map((course) => (
         <CourseCard key={course.id} course={course} navigate={navigate} />
       ))}
-    </SimpleGrid>
+    </div>
   );
 };
 

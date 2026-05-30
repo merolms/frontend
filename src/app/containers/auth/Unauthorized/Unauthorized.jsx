@@ -1,23 +1,24 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Stack, Text, Center } from '@mantine/core';
 import { ArrowLeft, Ban, Home } from 'lucide-react';
 
 const Unauthorized = () => {
   const navigate = useNavigate();
   return (
-    <div className='unauthorized-page'>
-      <Center>
-        <Stack align="center" className='unauthorized-card'>
-          <Ban size={64} className='unauthorized-icon' />
-          <Text size="xl" fw={700}>Access Denied</Text>
-          <Text c="dimmed" ta="center">You don't have permission to view this page. Contact your administrator if you believe this is an error.</Text>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginTop: 24 }}>
-            <Button variant="default" onClick={() => navigate(-1)} leftSection={<ArrowLeft size={16} />}>Go Back</Button>
-            <Button onClick={() => navigate('/')} leftSection={<Home size={16} />}>Dashboard</Button>
-          </div>
-        </Stack>
-      </Center>
+    <div className="flex min-h-screen items-center justify-center bg-bg-primary p-4">
+      <div className="text-center space-y-4 max-w-md">
+        <Ban size={48} className="mx-auto text-error" />
+        <h1 className="text-xl font-bold text-text-primary">Access Denied</h1>
+        <p className="text-sm text-text-muted">You don't have permission to view this page. Contact your administrator if you believe this is an error.</p>
+        <div className="flex items-center justify-center gap-3">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-1 h-8 px-3 rounded-md border border-border text-xs text-text-secondary hover:bg-bg-surface-hover cursor-pointer">
+            <ArrowLeft size={14} /> Go Back
+          </button>
+          <button onClick={() => navigate('/')} className="flex items-center gap-1 h-8 px-3 rounded-md bg-primary text-white text-xs font-medium hover:bg-primary-hover cursor-pointer">
+            <Home size={14} /> Dashboard
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

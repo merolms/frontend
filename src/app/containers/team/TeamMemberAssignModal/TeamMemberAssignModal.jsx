@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Avatar, Group, Text, Stack, Badge, ActionIcon, Loader, Alert } from '@mantine/core';
-import { AlertCircle, Check, Minus, Plus, Users } from 'lucide-react';
+import { AlertCircle, Check, Loader, Minus, Plus } from 'lucide-react';
 import { fetchTeamMembers, fetchUsers, addMemberToTeam, removeMemberFromTeam } from '@/app/services/teamService';
 import { useToast } from '@/app/context/ToastContext';
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { t } from '@/styles/theme';
-
 
 const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
   const [members, setMembers] = useState([]);
@@ -52,59 +53,93 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
 
   if (!team) return null;
 
-  const getRoleColor = (role) => { switch (role) { case 'Administrator': return 'red'; case 'Instructor': return 'blue'; case 'Team Lead': return 'purple'; case 'Student': return 'teal'; default: return 'gray'; } };
+  const getRoleColor = (role) => { switch (role) { case 'Administrator': return 'red'; case 'Instructor': return 'blue'; case 'Team Lead': return 'orange'; case 'Student': return 'green'; default: return 'gray'; } };
 
   return (
-    <Modal opened={open} onClose={busyIds.size === 0 ? onClose : undefined} title={`Manage Members — ${team.name}`} size="lg" className="ui modal">
-      {error && <Alert icon={<AlertCircle size={16} />} color="red" mb="md" size="sm">{error}</Alert>}
+    <Dialog open={open} onOpenChange={busyIds.size === 0 ? onClose : undefined}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader><DialogTitle>Manage Members — {team.name}</DialogTitle></DialogHeader>
 
-      <Text fw={600} mb={8}><Check size={14} color="green" /> Current Members ({members.length})</Text>
-      {loading ? <Loader size="sm" /> : members.length === 0 ? <Text c="dimmed" size="sm">No members assigned yet.</Text> : (
-        <Stack gap={4} mb="md">
-          {members.map((member) => {
-            const userId = member.userID || member.userId;
-            const userName = member.userName || 'Unknown';
-            const isBusy = busyIds.has(`remove-${userId}`);
-            return (
-              <div key={userId} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: t('bg-secondary'), borderRadius: 8, border: `1px solid ${t('border-primary')}` }}>
-                <Group gap={10}>
-                  <Avatar src={member.avatar || 'https://i.pravatar.cc/150?img=1'} size={32} radius="xl" />
-                  <div><Text size="sm" fw={600}>{userName}</Text><Badge color={getRoleColor(member.role)} size="xs">{member.role || 'N/A'}</Badge></div>
-                </Group>
-                <ActionIcon size="sm" color="red" onClick={() => handleRemoveMember(member)} disabled={isBusy} loading={isBusy}><Minus size={14} /></ActionIcon>
-              </div>
-            );
-          })}
-        </Stack>
-      )}
+        {error && (
+          <div className="flex items-center gap-2 text-error text-sm">
+            <AlertCircle size={14} /> {error}
+          </div>
+        )}
 
-      <hr style={{ margin: '16px 0', border: 'none', borderTop: `1px solid ${t('border-primary')}` }} />
+        <p className="text-xs font-semibold text-text-primary flex items-center gap-1">
+          <Check size={12} className="text-success" /> Current Members ({members.length})
+        </p>
+        {loading ? (
+          <Loader size={14} className="animate-spin text-text-muted mt-2" />
+        ) : members.length === 0 ? (
+          <p className="text-xs text-text-muted mt-1">No members assigned yet.</p>
+        ) : (
+          <div className="space-y-1 mt-2 mb-4">
+            {members.map((member) => {
+              const userId = member.userID || member.userId;
+              const userName = member.userName || 'Unknown';
+              const isBusy = busyIds.has(`remove-${userId}`);
+              return (
+                <div key={userId} className="flex items-center justify-between rounded-lg px-3 py-2.5" style={{ background: t('bg-secondary'), border: `1px solid ${t('border-primary')}` }}>
+                  <div className="flex items-center gap-2.5">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={member.avatar || 'https://i.pravatar.cc/150?img=1'} />
+                      <AvatarFallback>{userName[0]}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-xs font-semibold text-text-primary">{userName}</p>
+                      <Badge variant={getRoleColor(member.role)} className="text-[10px] mt-0.5">{member.role || 'N/A'}</Badge>
+                    </div>
+                  </div>
+                  <button className="flex h-7 w-7 items-center justify-center rounded-md text-error hover:bg-error/10 disabled:opacity-50 cursor-pointer" onClick={() => handleRemoveMember(member)} disabled={isBusy}>
+                    <Minus size={12} />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
-      <Text fw={600} mb={8}><Plus size={14} color={t('accent')} /> Available Users ({availableUsers.length})</Text>
-      {availableUsers.length === 0 ? <Text c="dimmed" size="sm">All users are already assigned or no users found.</Text> : (
-        <Stack gap={4}>
-          {availableUsers.map((user) => {
-            const isBusy = busyIds.has(`add-${user.id}`);
-            return (
-              <div key={user.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: t('bg-surface'), borderRadius: 8, border: `1px solid ${t('border-primary')}` }}>
-                <Group gap={10}>
-                  <Avatar src={user.avatar || 'https://i.pravatar.cc/150?img=1'} size={32} radius="xl" />
-                  <div><Text size="sm" fw={600}>{user.firstName} {user.lastName}</Text><Text size="xs" c="dimmed">{user.email}</Text></div>
-                </Group>
-                <Group gap={8}>
-                  <Badge color={getRoleColor(user.role)} size="xs">{user.role}</Badge>
-                  <ActionIcon size="sm" color="green" onClick={() => handleAddMember(user)} disabled={isBusy} loading={isBusy}><Plus size={14} /></ActionIcon>
-                </Group>
-              </div>
-            );
-          })}
-        </Stack>
-      )}
+        <hr className="border-border" />
 
-      <Group justify="flex-end" mt="md">
-        <Button variant="default" onClick={onClose} disabled={busyIds.size > 0}>Done</Button>
-      </Group>
-    </Modal>
+        <p className="text-xs font-semibold text-text-primary flex items-center gap-1">
+          <Plus size={12} style={{ color: t('accent') }} /> Available Users ({availableUsers.length})
+        </p>
+        {availableUsers.length === 0 ? (
+          <p className="text-xs text-text-muted mt-1">All users are already assigned or no users found.</p>
+        ) : (
+          <div className="space-y-1 mt-2">
+            {availableUsers.map((user) => {
+              const isBusy = busyIds.has(`add-${user.id}`);
+              return (
+                <div key={user.id} className="flex items-center justify-between rounded-lg px-3 py-2.5" style={{ background: t('bg-surface'), border: `1px solid ${t('border-primary')}` }}>
+                  <div className="flex items-center gap-2.5">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user.avatar || 'https://i.pravatar.cc/150?img=1'} />
+                      <AvatarFallback>{user.firstName?.[0]}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-xs font-semibold text-text-primary">{user.firstName} {user.lastName}</p>
+                      <p className="text-[11px] text-text-muted">{user.email}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={getRoleColor(user.role)} className="text-[10px]">{user.role}</Badge>
+                    <button className="flex h-7 w-7 items-center justify-center rounded-md text-success hover:bg-success/10 disabled:opacity-50 cursor-pointer" onClick={() => handleAddMember(user)} disabled={isBusy}>
+                      <Plus size={12} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="flex justify-end mt-4">
+          <Button variant="default" onClick={onClose} disabled={busyIds.size > 0}>Done</Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

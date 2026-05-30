@@ -1,23 +1,21 @@
 import React from 'react';
-import { Card, Text, Group, Badge, Image } from '@mantine/core';
 import { BookOpen, Calendar, Users } from 'lucide-react';
-import './CourseGridItem.scss';
 
 const GridItem = (props) => {
   const course = props.course;
   return (
-    <Card className='course-grid-item' padding="md" radius="md" withBorder>
-      <Card.Section>
-        <Image src={course.CoverImage} height={160} className='course-grid-image" />
-      </Card.Section>
-      <Text fw={600} className='course-grid-title' mt="sm">{course.Title}</Text>
-      <Text size="sm" c="dimmed" className='course-grid-description' lineClamp={2}>{course.Description}</Text>
-      <Group gap={8} mt="sm">
-        <Text size="xs" c="dimmed"><BookOpen size={12} /> Course Type</Text>
-        <Text size="xs" c="dimmed"><Calendar size={12} /> 11 Dec 2020</Text>
-        <Text size="xs" c="dimmed"><Users size={12} /> 50</Text>
-      </Group>
-    </Card>
+    <div className="rounded-lg border border-border bg-bg-surface shadow-sm overflow-hidden">
+      <img src={course.CoverImage} alt={course.Title} className="w-full h-40 object-cover" />
+      <div className="p-4">
+        <h3 className="text-sm font-semibold text-text-primary">{course.Title}</h3>
+        <p className="text-xs text-text-muted mt-1 line-clamp-2">{course.Description}</p>
+        <div className="flex items-center gap-3 mt-3 text-[11px] text-text-muted">
+          <span className="flex items-center gap-1"><BookOpen size={10} /> Course Type</span>
+          <span className="flex items-center gap-1"><Calendar size={10} /> 11 Dec 2020</span>
+          <span className="flex items-center gap-1"><Users size={10} /> 50</span>
+        </div>
+      </div>
+    </div>
   );
 };
 

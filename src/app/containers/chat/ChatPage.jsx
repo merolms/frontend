@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { Paper, TextInput, Button, Select, Modal, Text, Stack, Group, ScrollArea, Alert } from '@mantine/core';
 import { Bot, Plus, Send, Settings, User } from 'lucide-react';
-import SideBar from '@/app/containers/SideBar/SideBar';
+import DashboardLayout from '@/components/ui/dashboard-layout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Paper } from '@/components/ui/card';
 import { sendMessage, getChatSettings, saveChatSettings, AVAILABLE_MODELS, API_PRESETS, testConnection } from '@/app/services/chatService';
-import './Chat.scss';
 
 const ChatPage = () => {
   const user = useSelector((s) => s.auth.user);
@@ -42,60 +46,146 @@ const ChatPage = () => {
 
   const formatContent = (text) => {
     if (!text) return null;
-    return text.split('\n').map((line, i) => { let f = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); f = f.replace(/\*(.*?)\*/g, '<em>$1</em>'); if (f.trim() === '') return <div key={i} />; return <div key={i} dangerouslySetInnerHTML={{ __html: f }} />; });
+    return text.split('\n').map((line, i) => {
+      let f = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      f = f.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      if (f.trim() === '') return <div key={i} />;
+      return <div key={i} dangerouslySetInnerHTML={{ __html: f }} />;
+    });
   };
 
   return (
-    <div className='dashboard-layout'>
-      <SideBar />
-      <div className='dashboard-main'>
-        <div className='dashboard-header'>
-          <div className='header-left'><h1 className='page-title'>AI Chat</h1><p className='page-subtitle'>{isLoading ? 'Thinking...' : streamText ? 'Typing...' : settings.enabled ? `Connected • ${settings.model}` : 'Built-in responses'}</p></div>
-          <div className='header-right'><Plus onClick={() => setShowSettings(true)} variant="default"><Settings size={16} /></Plus></div>
+    <>
+      <DashboardLayout
+        title="AI Chat"
+        subtitle={isLoading ? 'Thinking...' : streamText ? 'Typing...' : settings.enabled ? `Connected • ${settings.model}` : 'Built-in responses'}
+      >
+        {/* Settings button */}
+        <div className="mb-4 flex items-center justify-end">
+          <Button variant="default" size="sm" onClick={() => setShowSettings(true)}>
+            <Settings size={14} /> Settings
+          </Button>
         </div>
 
-        <div className='chat-page'>
-          <ScrollArea className='chat-messages' h="calc(100vh - 200px)">
-            {messages.map((msg) => (
-              <div key={msg.id} className={`chat-message ${msg.role} ${msg.error ? 'error' : ''} ${msg.mock ? 'mock' : ''}`}>
-                <div className='chat-avatar'>{msg.role === 'user' ? <User size={20} /> : <Bot size={20} />}</div>
-                <div className='chat-bubble'>
-                  <div className='chat-content'>{formatContent(msg.content)}</div>
-                  <div className='chat-time'>{msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}{msg.mock && <span className='mock-badge'>demo</span>}</div>
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto space-y-3 mb-4" style={{ maxHeight: 'calc(100vh - 280px)' }}>
+          {messages.map((msg) => (
+            <div key={msg.id} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-bg-surface-active shrink-0">
+                {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
+              </div>
+              <div className={`rounded-lg px-3 py-2 max-w-[70%] ${msg.role === 'user' ? 'bg-primary text-white' : 'bg-bg-surface border border-border'}`}>
+                <div className="text-sm" style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</div>
+                <div className="text-[10px] opacity-60 mt-1 text-right">
+                  {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {msg.mock && <span className="ml-1 text-warning">demo</span>}
                 </div>
               </div>
-            ))}
-            {streamText && (<div className='chat-message assistant'><div className='chat-avatar'><Bot size={20} /></div><div className='chat-bubble'><div className='chat-content'>{formatContent(streamText)}</div></div></div>)}
-            {isLoading && !streamText && (<div className='chat-message assistant'><div className='chat-avatar'><Bot size={20} /></div><div className='chat-bubble typing'><div className='typing-dots'><span /><span /><span /></div></div></div>)}
-            <div ref={messagesEndRef} />
-          </ScrollArea>
-
-          <Paper className='chat-input-segment' p="sm" radius="md" withBorder>
-            <Group>
-              <TextInput ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKeyDown} placeholder="Type your message..." style={{ flex: 1 }} disabled={isLoading} className='chat-textarea' />
-              <Button leftSection={<Send size={14} />} onClick={handleSend} disabled={!input.trim() || isLoading} className='chat-send-btn'>Send</Button>
-            </Group>
-          </Paper>
+            </div>
+          ))}
+          {streamText && (
+            <div className="flex gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-bg-surface-active"><Bot size={16} /></div>
+              <div className="rounded-lg px-3 py-2 bg-bg-surface border border-border max-w-[70%]">
+                <div className="text-sm" style={{ whiteSpace: 'pre-wrap' }}>{streamText}</div>
+              </div>
+            </div>
+          )}
+          {isLoading && !streamText && (
+            <div className="flex gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-bg-surface-active"><Bot size={16} /></div>
+              <div className="rounded-lg px-3 py-2 bg-bg-surface border border-border">
+                <div className="flex gap-1"><span className="h-2 w-2 rounded-full bg-text-muted animate-bounce" /><span className="h-2 w-2 rounded-full bg-text-muted animate-bounce" style={{ animationDelay: '0.1s' }} /><span className="h-2 w-2 rounded-full bg-text-muted animate-bounce" style={{ animationDelay: '0.2s' }} /></div>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
         </div>
 
-        <Modal opened={showSettings} onClose={() => setShowSettings(false)} title="AI Chat Settings" size="md">
-          <Stack>
-            <Select label="API Provider" data={API_PRESETS.map((p) => ({ value: p.name, label: p.name }))} value={selectedPreset} onChange={(v) => { setSelectedPreset(v); const preset = API_PRESETS.find((p) => p.name === v); if (preset) setSettings((s) => ({ ...s, apiBase: preset.base, model: preset.models[0] || s.model })); }} />
-            <TextInput label="API Key" type="password" value={settings.apiKey} onChange={(e) => setSettings((s) => ({ ...s, apiKey: e.target.value }))} placeholder="sk-... or your API key" />
-            <TextInput label="API Base URL" value={settings.apiBase} onChange={(e) => setSettings((s) => ({ ...s, apiBase: e.target.value }))} placeholder="https://api.openai.com/v1" />
-            <Select label="Model" data={AVAILABLE_MODELS.map((m) => ({ value: m.id, label: m.name }))} value={settings.model} onChange={(v) => setSettings((s) => ({ ...s, model: v }))} />
-            <Group>
-              <Button onClick={async () => { setTestStatus({ testing: true }); const result = await testConnection(settings); setTestStatus(result); setTimeout(() => setTestStatus(null), 4000); }} loading={testStatus?.testing}>Test Connection</Button>
-              {testStatus && !testStatus.testing && <Alert color={testStatus.success ? 'green' : 'red'}>{testStatus.success ? '✅ Connection successful!' : `❌ ${testStatus.error}`}</Alert>}
-            </Group>
-            <Group justify="flex-end">
-              <Button variant="default" onClick={() => setShowSettings(false)}>Cancel</Button>
-              <Button onClick={() => { saveChatSettings(settings); setShowSettings(false); }} disabled={!settings.apiKey}>Save & Enable</Button>
-            </Group>
-          </Stack>
-        </Modal>
-      </div>
-    </div>
+        {/* Input */}
+        <Paper className="p-3">
+          <div className="flex items-center gap-2">
+            <Textarea
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Type your message..."
+              className="flex-1 min-h-[40px] max-h-[120px]"
+              rows={1}
+            />
+            <Button size="sm" onClick={handleSend} disabled={!input.trim() || isLoading}>
+              <Send size={14} /> Send
+            </Button>
+          </div>
+        </Paper>
+      </DashboardLayout>
+
+      {/* Settings Modal */}
+      <Dialog open={showSettings} onOpenChange={setShowSettings}>
+        {showSettings && (
+          <DialogContent className="max-w-md">
+            <DialogHeader><DialogTitle>AI Chat Settings</DialogTitle></DialogHeader>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-medium text-text-primary">API Provider</label>
+                <Select value={selectedPreset} onValueChange={(v) => {
+                  setSelectedPreset(v);
+                  const preset = API_PRESETS.find((p) => p.name === v);
+                  if (preset) setSettings((s) => ({ ...s, apiBase: preset.base, model: preset.models[0] || s.model }));
+                }}>
+                  <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {API_PRESETS.map((p) => <SelectItem key={p.name} value={p.name}>{p.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-text-primary">API Key</label>
+                <Input type="password" value={settings.apiKey} onChange={(e) => setSettings((s) => ({ ...s, apiKey: e.target.value }))} placeholder="sk-... or your API key" className="mt-1" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-text-primary">API Base URL</label>
+                <Input value={settings.apiBase} onChange={(e) => setSettings((s) => ({ ...s, apiBase: e.target.value }))} placeholder="https://api.openai.com/v1" className="mt-1" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-text-primary">Model</label>
+                <Select value={settings.model} onValueChange={(v) => setSettings((s) => ({ ...s, model: v }))}>
+                  <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {AVAILABLE_MODELS.map((m) => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={async () => {
+                    setTestStatus({ testing: true });
+                    const result = await testConnection(settings);
+                    setTestStatus(result);
+                    setTimeout(() => setTestStatus(null), 4000);
+                  }}
+                  disabled={testStatus?.testing}
+                >
+                  Test Connection
+                </Button>
+                {testStatus && !testStatus.testing && (
+                  <span className={`ml-2 text-sm ${testStatus.success ? 'text-success' : 'text-error'}`}>
+                    {testStatus.success ? '✅ Connection successful!' : `❌ ${testStatus.error}`}
+                  </span>
+                )}
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="default" onClick={() => setShowSettings(false)}>Cancel</Button>
+                <Button onClick={() => { saveChatSettings(settings); setShowSettings(false); }} disabled={!settings.apiKey}>Save & Enable</Button>
+              </div>
+            </div>
+          </DialogContent>
+        )}
+      </Dialog>
+    </>
   );
 };
 

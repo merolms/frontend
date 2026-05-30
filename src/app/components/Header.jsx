@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
-import { Button, Menu, Burger, Box } from '@mantine/core';
+import React from 'react';
 import { MenuIcon } from 'lucide-react';
 
 function Header(props) {
-  const [visible, setVisibility] = useState(true);
-  const toggleVisibility = () => { setVisibility(true); };
-
   return (
-    <Box className='header bg-white'>
-      <Button variant="subtle" color="gray" p="xs" onClick={props.toggleVisibiltiy} style={{ background: 'transparent' }}>
-        <MenuIcon size={24} />
-      </Button>
-    </Box>
+    <div className="flex h-14 items-center border-b border-border bg-bg-surface px-4">
+      <button
+        className="flex h-8 w-8 items-center justify-center rounded-md text-text-secondary hover:bg-bg-surface-hover transition-colors cursor-pointer"
+        onClick={props.toggleVisibiltiy}
+      >
+        <MenuIcon size={20} />
+      </button>
+    </div>
   );
 }
 

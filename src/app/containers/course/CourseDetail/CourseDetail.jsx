@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
-
 import { t } from '@/styles/theme';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Paper, Breadcrumbs, Anchor, Button, Badge, Group, Grid, Stack, Title, Text, Tabs, List, Image, SimpleGrid } from '@mantine/core';
-import {  AlertCircle, Archive, BookOpen, Check, Clock, Eye, Folder, ListIcon, Pencil, Plus, Network, Star, Trash2, User  } from 'lucide-react';
-import SideBar from '@/app/containers/SideBar/SideBar';
+import { AlertCircle, Archive, BookOpen, Check, Clock, Eye, ChevronRight, List, Pencil, Plus, Network, Star, Trash2, User, Folder, Loader } from 'lucide-react';
+import DashboardLayout from '@/components/ui/dashboard-layout';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Paper } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { fetchCourseById, fetchLessons, publishCourse, archiveCourse, deleteCourse } from '@/app/services/courseService';
 import { PublishModal, ArchiveModal, DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
 import { isEnrolled, enrollInCourse, dropCourse } from '@/app/services/enrollmentService';
-import './CourseDetail.scss';
 
 const CourseDetail = () => {
   const navigate = useNavigate();
@@ -52,155 +53,261 @@ const CourseDetail = () => {
   const handleArchive = async () => { try { setActionLoading(true); const updated = await archiveCourse(id); setCourse(updated); } catch (err) { alert(err.message); } finally { setActionLoading(false); setActiveModal(null); } };
   const handleDelete = async () => { try { setActionLoading(true); await deleteCourse(id); navigate('/courses'); } catch (err) { alert(err.message); setActionLoading(false); setActiveModal(null); } };
 
-  const statusConfig = { Published: { color: 'green', icon: 'check circle', text: 'Published' }, DRAFT: { color: 'gray', icon: 'edit', text: 'Draft' }, Archived: { color: 'orange', icon: 'archive', text: 'Archived' } };
+  const statusConfig = {
+    Published: { color: 'green', text: 'Published' },
+    DRAFT: { color: 'gray', text: 'Draft' },
+    Archived: { color: 'orange', text: 'Archived' },
+  };
 
   if (loading) {
-    return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" radius="md" mt={40}><Title order={4}>Loading...</Title></Paper></div></div>);
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center py-20">
+          <Loader className="animate-spin text-text-muted" size={20} />
+        </div>
+      </DashboardLayout>
+    );
   }
+
   if (error || !course) {
-    return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" radius="md" mt={40}><AlertCircle color="red" /> {error || 'Course not found'}<br /><Button mt="sm" onClick={() => navigate('/courses')}>Back to Courses</Button></Paper></div></div>);
+    return (
+      <DashboardLayout>
+        <div className="flex items-center gap-2 text-error py-4">
+          <AlertCircle size={14} /> {error || 'Course not found'}
+        </div>
+        <Button size="sm" onClick={() => navigate('/courses')}>Back to Courses</Button>
+      </DashboardLayout>
+    );
   }
 
   const status = statusConfig[course.status] || statusConfig.DRAFT;
 
   return (
-    <div className='dashboard-layout'>
-      <SideBar />
-      <div className='dashboard-main'>
-        <div className='course-detail-breadcrumb'>
-          <Breadcrumbs><Anchor onClick={() => navigate('/courses')}>Courses</Anchor><span>{course.title}</span></Breadcrumbs>
+    <>
+      <DashboardLayout>
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-1 text-xs text-text-muted mb-3">
+          <button onClick={() => navigate('/courses')} className="text-primary hover:underline">Courses</button>
+          <ChevronRight size={12} />
+          <span>{course.title}</span>
         </div>
 
-        <div className='course-detail-hero'>
-          <div className='course-hero-bg' style={{ background: course.coverImage ? `linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%), url(${course.coverImage}) center/cover` : 'linear-gradient(135deg, #1a2332 0%, #232f3e 100%)' }}>
-            <div className='course-hero-content'>
-              <div className='course-hero-left'>
-                <Badge color={status.color} size="lg" mb="sm"><Check size={12} /> {status.text}</Badge>
-                <Title order={1} className='course-hero-title'>{course.title}</Title>
-                <Text className='course-hero-description'>{course.description}</Text>
-                <Group gap={8} className='course-hero-meta'>
-                  <span><User size={14} /> {course.author}</span><span className='meta-sep'>·</span>
-                  <span><Folder size={14} /> {course.category}</span><span className='meta-sep'>·</span>
-                  <span><Clock size={14} /> {course.duration}</span>
-                </Group>
-                {course.tags?.length > 0 && (
-                  <Group gap={4} className='course-hero-tags'>{course.tags.map((tag) => (<Badge key={tag} size="sm" variant="filled" color="gray">{tag}</Badge>))}</Group>
-                )}
+        {/* Hero */}
+        <div className="rounded-xl overflow-hidden mb-4" style={{ background: course.coverImage ? `linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%), url(${course.coverImage}) center/cover` : 'linear-gradient(135deg, #1a2332 0%, #232f3e 100%)' }}>
+          <div className="flex items-start justify-between p-6 gap-6">
+            <div className="flex-1 space-y-2">
+              <Badge variant={status.color === 'green' ? 'green' : status.color === 'orange' ? 'orange' : 'gray'}>
+                <Check size={10} /> {status.text}
+              </Badge>
+              <h1 className="text-xl font-bold text-white">{course.title}</h1>
+              <p className="text-sm text-white/80 max-w-xl">{course.description}</p>
+              <div className="flex items-center gap-3 text-xs text-white/60">
+                <span className="flex items-center gap-1"><User size={12} /> {course.author}</span>
+                <span>·</span>
+                <span className="flex items-center gap-1"><Folder size={12} /> {course.category}</span>
+                <span>·</span>
+                <span className="flex items-center gap-1"><Clock size={12} /> {course.duration}</span>
               </div>
-              <div className='course-hero-right'>
-                <SimpleGrid cols={3} className='course-hero-stats'>
-                  <div className='course-stat'><ListIcon size={24} color={t('accent')} /><div className='course-stat-value'>{course.totalLessons}</div><div className='course-stat-label'>Lessons</div></div>
-                  <div className='course-stat'><User size={24} color={t('primary')} /><div className='course-stat-value'>0</div><div className='course-stat-label'>Enrolled</div></div>
-                  <div className='course-stat'><Star size={24} color={t('warning')} /><div className='course-stat-value'>—</div><div className='course-stat-label'>Rating</div></div>
-                </SimpleGrid>
+              {course.tags?.length > 0 && (
+                <div className="flex items-center gap-1.5 mt-1">
+                  {course.tags.map((tag) => (
+                    <span key={tag} className="px-2 py-0.5 rounded-full bg-white/20 text-white text-[11px]">{tag}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="flex gap-8 shrink-0">
+              <div className="text-center text-white">
+                <List size={20} className="mx-auto mb-1" style={{ color: t('accent') }} />
+                <div className="text-lg font-bold">{course.totalLessons}</div>
+                <div className="text-[11px] text-white/60">Lessons</div>
+              </div>
+              <div className="text-center text-white">
+                <User size={20} className="mx-auto mb-1" style={{ color: t('primary') }} />
+                <div className="text-lg font-bold">0</div>
+                <div className="text-[11px] text-white/60">Enrolled</div>
+              </div>
+              <div className="text-center text-white">
+                <Star size={20} className="mx-auto mb-1" style={{ color: t('warning') }} />
+                <div className="text-lg font-bold">—</div>
+                <div className="text-[11px] text-white/60">Rating</div>
               </div>
             </div>
           </div>
         </div>
 
-        <Group justify="space-between" className='course-detail-actions' my="md">
-          <Group>
-            <PermissionGuard permissions={['courses.lessons.manage']}><Button component={Link} to={`/courses/${id}/builder`} leftSection={<Network size={14} />}>Open Builder</Button></PermissionGuard>
-            <PermissionGuard permissions={['courses.edit']}><Button component={Link} to={`/courses/${id}/edit`} variant="default" leftSection={<Pencil size={14} />}>Edit Details</Button></PermissionGuard>
-          </Group>
-          <Group>
-            {enrollment?.status === 'active' && <Button component={Link} to={`/courses/${id}/learn`} leftSection={<Plus size={14} />}>Continue Learning</Button>}
-            {enrollment?.status === 'completed' && <Button component={Link} to={`/courses/${id}/learn`} variant="default" leftSection={<Eye size={14} />}>Review Course</Button>}
-            {enrollment?.status === 'dropped' && <Button color="green" onClick={handleEnroll} loading={actionLoading} leftSection={<Plus size={14} />}>Re-enroll</Button>}
-            {enrollment?.status === 'active' && <Button variant="default" color="red" onClick={handleDrop} loading={actionLoading} leftSection={<Plus size={14} />}>Drop</Button>}
-            {!enrollment && user && course.status === 'Published' && <Button color="green" onClick={handleEnroll} loading={actionLoading} leftSection={<Plus size={14} />}>Enroll Now</Button>}
-            {course.status !== 'Published' && (<PermissionGuard permissions={['courses.publish']}><Button color="green" variant="light" leftSection={<Check size={14} />} onClick={() => setActiveModal('publish')}>Publish</Button></PermissionGuard>)}
-            {course.status !== 'Archived' && <Button color="orange" variant="light" leftSection={<Archive size={14} />} onClick={() => setActiveModal('archive')}>Archive</Button>}
-            <PermissionGuard permissions={['courses.delete']}><Button color="red" variant="light" leftSection={<Trash2 size={14} />} onClick={() => setActiveModal('delete')}>Delete</Button></PermissionGuard>
-          </Group>
-        </Group>
+        {/* Actions */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <PermissionGuard permissions={['courses.lessons.manage']}>
+              <Button size="sm" onClick={() => navigate(`/courses/${id}/builder`)}><Network size={14} /> Open Builder</Button>
+            </PermissionGuard>
+            <PermissionGuard permissions={['courses.edit']}>
+              <Button size="sm" variant="default" onClick={() => navigate(`/courses/${id}/edit`)}><Pencil size={14} /> Edit Details</Button>
+            </PermissionGuard>
+          </div>
+          <div className="flex items-center gap-2">
+            {enrollment?.status === 'active' && <Button size="sm" variant="default" onClick={() => navigate(`/courses/${id}/learn`)}><Plus size={14} /> Continue Learning</Button>}
+            {enrollment?.status === 'completed' && <Button size="sm" variant="default" onClick={() => navigate(`/courses/${id}/learn`)}><Eye size={14} /> Review Course</Button>}
+            {enrollment?.status === 'dropped' && <Button size="sm" variant="green" onClick={handleEnroll}><Plus size={14} /> Re-enroll</Button>}
+            {enrollment?.status === 'active' && <Button size="sm" variant="default" onClick={handleDrop}><Plus size={14} /> Drop</Button>}
+            {!enrollment && user && course.status === 'Published' && <Button size="sm" variant="green" onClick={handleEnroll}><Plus size={14} /> Enroll Now</Button>}
+            {course.status !== 'Published' && (
+              <PermissionGuard permissions={['courses.publish']}>
+                <Button size="sm" variant="ghost" onClick={() => setActiveModal('publish')}><Check size={14} /> Publish</Button>
+              </PermissionGuard>
+            )}
+            {course.status !== 'Archived' && <Button size="sm" variant="ghost" onClick={() => setActiveModal('archive')}><Archive size={14} /> Archive</Button>}
+            <PermissionGuard permissions={['courses.delete']}>
+              <Button size="sm" variant="ghost" onClick={() => setActiveModal('delete')}><Trash2 size={14} /> Delete</Button>
+            </PermissionGuard>
+          </div>
+        </div>
 
-        <Grid className='course-detail-grid'>
-          <Grid.Col span={10}>
-            <Paper className='course-detail-main' p="md" radius="md" withBorder>
+        {/* Tabs + Sidebar */}
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-7">
+            <Paper className="p-4">
               <Tabs defaultValue="overview">
-                <Tabs.List>
-                  <Tabs.Tab value="overview">Overview</Tabs.Tab>
-                  <Tabs.Tab value="lessons">Lessons ({lessons.length})</Tabs.Tab>
-                </Tabs.List>
-
-                <Tabs.Panel value="overview" pt="md">
+                <TabsList>
+                  <TabsTrigger value="overview">Overview</TabsTrigger>
+                  <TabsTrigger value="lessons">Lessons ({lessons.length})</TabsTrigger>
+                </TabsList>
+                <TabsContent value="overview" className="space-y-4">
                   {course?.description && (
-                    <div className='course-overview-section'><Title order={5}>About This Course</Title><Text>{course.description}</Text></div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-text-primary mb-2">About This Course</h3>
+                      <p className="text-xs text-text-secondary">{course.description}</p>
+                    </div>
                   )}
                   {course?.tags?.length > 0 && (
-                    <div className='course-overview-section'><Title order={5}>Topics Covered</Title><Group gap={4}>{course.tags.map((tag) => (<Badge key={tag} color="teal" size="sm">{tag}</Badge>))}</Group></div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-text-primary mb-2">Topics Covered</h3>
+                      <div className="flex items-center gap-1.5">
+                        {course.tags.map((tag) => <Badge key={tag} variant="teal">{tag}</Badge>)}
+                      </div>
+                    </div>
                   )}
-                  <div className='course-overview-section'><Title order={5}>Course Details</Title>
-                    <Grid>
-                      <Grid.Col span={6}>
-                        <List spacing="xs">
-                          <List.Item icon={<User size={16} color={t('accent')} />}><Text fw={600}>Instructor</Text><Text c="dimmed">{course?.author || 'N/A'}</Text></List.Item>
-                          <List.Item icon={<Folder size={16} color={t('secondary')} />}><Text fw={600}>Category</Text><Text c="dimmed">{course?.category || 'N/A'}</Text></List.Item>
-                          <List.Item icon={<Clock size={16} color={t('warning')} />}><Text fw={600}>Duration</Text><Text c="dimmed">{course?.duration || 'N/A'}</Text></List.Item>
-                        </List>
-                      </Grid.Col>
-                      <Grid.Col span={6}>
-                        <List spacing="xs">
-                          <List.Item icon={<ListIcon size={16} color={t('primary')} />}><Text fw={600}>Lessons</Text><Text c="dimmed">{course?.totalLessons || 0}</Text></List.Item>
-                          <List.Item icon={<BookOpen size={16} color={t('accent')} />}><Text fw={600}>Created</Text><Text c="dimmed">{course?.createdAt || 'N/A'}</Text></List.Item>
-                        </List>
-                      </Grid.Col>
-                    </Grid>
+                  <div>
+                    <h3 className="text-sm font-semibold text-text-primary mb-2">Course Details</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <div className="flex items-start gap-2">
+                          <User size={14} className="mt-0.5" style={{ color: t('accent') }} />
+                          <div>
+                            <div className="text-xs font-semibold text-text-primary">Instructor</div>
+                            <div className="text-xs text-text-muted">{course?.author || 'N/A'}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Folder size={14} className="mt-0.5" style={{ color: t('secondary') }} />
+                          <div>
+                            <div className="text-xs font-semibold text-text-primary">Category</div>
+                            <div className="text-xs text-text-muted">{course?.category || 'N/A'}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Clock size={14} className="mt-0.5" style={{ color: t('warning') }} />
+                          <div>
+                            <div className="text-xs font-semibold text-text-primary">Duration</div>
+                            <div className="text-xs text-text-muted">{course?.duration || 'N/A'}</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-start gap-2">
+                          <List size={14} className="mt-0.5" style={{ color: t('primary') }} />
+                          <div>
+                            <div className="text-xs font-semibold text-text-primary">Lessons</div>
+                            <div className="text-xs text-text-muted">{course?.totalLessons || 0}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <BookOpen size={14} className="mt-0.5" style={{ color: t('accent') }} />
+                          <div>
+                            <div className="text-xs font-semibold text-text-primary">Created</div>
+                            <div className="text-xs text-text-muted">{course?.createdAt || 'N/A'}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </Tabs.Panel>
-
-                <Tabs.Panel value="lessons" pt="md">
+                </TabsContent>
+                <TabsContent value="lessons">
                   {lessons.length === 0 ? (
-                    <div className='course-empty-state'><BookOpen size={48} color={t('text-muted')} /><Title order={4} c="dimmed">No lessons yet</Title><p>Start building your course by adding the first lesson.</p></div>
+                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                      <BookOpen size={48} className="text-text-muted mb-3" />
+                      <p className="text-sm font-medium text-text-primary">No lessons yet</p>
+                      <p className="text-xs text-text-muted mt-1">Start building your course by adding the first lesson.</p>
+                    </div>
                   ) : (
-                    <List spacing="sm" className='course-lessons-list'>
+                    <div className="space-y-2">
                       {lessons.map((lesson, index) => (
-                        <List.Item key={lesson.id} className='course-lesson-item'>
-                          <div className='course-lesson-number'>{index + 1}</div>
-                          <div><Text fw={600}>{lesson.title}</Text></div>
-                          {lesson.duration && <Badge size="xs" color="teal" leftSection={<Clock size={10} />}>{lesson.duration}</Badge>}
-                        </List.Item>
+                        <div key={lesson.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-bg-surface-hover transition-colors">
+                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-light text-[11px] font-semibold text-primary">{index + 1}</div>
+                          <div className="flex-1 text-xs font-semibold text-text-primary">{lesson.title}</div>
+                          {lesson.duration && <Badge variant="teal">{lesson.duration}</Badge>}
+                        </div>
                       ))}
-                    </List>
+                    </div>
                   )}
-                </Tabs.Panel>
+                </TabsContent>
               </Tabs>
             </Paper>
-          </Grid.Col>
+          </div>
 
-          <Grid.Col span={6}>
-            <Paper className='course-sidebar-card' p="md" radius="md" withBorder mb="md">
-              <Title order={5} mb="sm"><ListIcon size={16} color={t('primary')} /> Course Content</Title>
+          <div className="col-span-5 space-y-4">
+            <Paper className="p-4">
+              <h3 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-1">
+                <List size={14} style={{ color: t('primary') }} /> Course Content
+              </h3>
               {lessons.length === 0 ? (
-                <div className='course-sidebar-empty'><BookOpen size={32} color={t('text-muted')} /><Text c="dimmed" size="sm">No lessons added yet.</Text></div>
+                <div className="flex flex-col items-center py-6 text-center">
+                  <BookOpen size={28} className="text-text-muted" />
+                  <p className="text-xs text-text-muted mt-2">No lessons added yet.</p>
+                </div>
               ) : (
-                <List spacing="xs" className='course-sidebar-lessons'>
+                <div className="space-y-1">
                   {lessons.map((lesson, index) => (
-                    <List.Item key={lesson.id} className='course-sidebar-lesson'>
-                      <div className='course-lesson-num'>{index + 1}</div>
-                      <div><Text fw={500} size="sm">{lesson.title}</Text>{lesson.duration && <Text c="dimmed" size="xs"><Clock size={10} /> {lesson.duration}</Text>}</div>
-                    </List.Item>
+                    <div key={lesson.id} className="flex items-center gap-2 p-1.5 rounded-md hover:bg-bg-surface-hover transition-colors">
+                      <div className="text-[11px] font-medium text-text-muted w-4">{index + 1}</div>
+                      <div className="flex-1">
+                        <div className="text-xs font-medium text-text-primary">{lesson.title}</div>
+                        {lesson.duration && <div className="text-[11px] text-text-muted flex items-center gap-1"><Clock size={9} /> {lesson.duration}</div>}
+                      </div>
+                    </div>
                   ))}
-                </List>
+                </div>
               )}
             </Paper>
 
-            <Paper className='course-sidebar-card' p="md" radius="md" withBorder>
-              <Title order={5} mb="sm">Quick Info</Title>
-              <List spacing="xs">
-                <List.Item icon={<Star size={14} />}><Text fw={600}>Created</Text><Text c="dimmed">{course.createdAt}</Text></List.Item>
-                <List.Item icon={<Star size={14} />}><Text fw={600}>Last Updated</Text><Text c="dimmed">{course.updatedAt}</Text></List.Item>
-              </List>
+            <Paper className="p-4">
+              <h3 className="text-sm font-semibold text-text-primary mb-3">Quick Info</h3>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Star size={12} />
+                  <div>
+                    <div className="text-xs font-semibold text-text-primary">Created</div>
+                    <div className="text-xs text-text-muted">{course.createdAt}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Star size={12} />
+                  <div>
+                    <div className="text-xs font-semibold text-text-primary">Last Updated</div>
+                    <div className="text-xs text-text-muted">{course.updatedAt}</div>
+                  </div>
+                </div>
+              </div>
             </Paper>
-          </Grid.Col>
-        </Grid>
+          </div>
+        </div>
+      </DashboardLayout>
 
-        <PublishModal open={activeModal === 'publish'} onConfirm={handlePublish} onCancel={() => setActiveModal(null)} courseTitle={course.title} loading={actionLoading} />
-        <ArchiveModal open={activeModal === 'archive'} onConfirm={handleArchive} onCancel={() => setActiveModal(null)} courseTitle={course.title} loading={actionLoading} />
-        <DeleteModal open={activeModal === 'delete'} onConfirm={handleDelete} onCancel={() => setActiveModal(null)} itemName={course.title} loading={actionLoading} />
-      </div>
-    </div>
+      <PublishModal open={activeModal === 'publish'} onConfirm={handlePublish} onCancel={() => setActiveModal(null)} courseTitle={course.title} loading={actionLoading} />
+      <ArchiveModal open={activeModal === 'archive'} onConfirm={handleArchive} onCancel={() => setActiveModal(null)} courseTitle={course.title} loading={actionLoading} />
+      <DeleteModal open={activeModal === 'delete'} onConfirm={handleDelete} onCancel={() => setActiveModal(null)} itemName={course.title} loading={actionLoading} />
+    </>
   );
 };
 

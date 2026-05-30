@@ -1,21 +1,25 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Paper, TextInput, Button, Select, Table, Badge, Group, Text, Stack, Pagination, Skeleton, ActionIcon } from '@mantine/core';
-import { AlertCircle, Check, Folder, Pencil, Plus, Search, Trash2 } from 'lucide-react';
-import SideBar from '@/app/containers/SideBar/SideBar';
+import { AlertCircle, Folder, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import DashboardLayout from '@/components/ui/dashboard-layout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Paper } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Pagination } from '@/components/ui/pagination';
 import { fetchCategoriesWithPagination, deleteCategory, toggleCategoryStatus, createCategory, updateCategory } from '@/app/services/categoryService';
 import CategoryForm from '../components/CategoryForm';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
 import { useToast } from '@/app/context/ToastContext';
-
 import { t } from '@/styles/theme';
-import './Category.scss';
 
 export { fetchCategoriesWithPagination, deleteCategory, toggleCategoryStatus };
 
-const statusOptions = [{ value: '', label: 'All Status' }, { value: '1', label: 'Active' }, { value: '0', label: 'Inactive' }];
-const sortOptions = [{ value: '', label: 'Default' }, { value: 'name', label: 'Name A-Z' }, { value: 'recent', label: 'Recently Updated' }];
+const statusOptions = [{ value: 'all', label: 'All Status' }, { value: '1', label: 'Active' }, { value: '0', label: 'Inactive' }];
+const sortOptions = [{ value: 'all', label: 'Default' }, { value: 'name', label: 'Name A-Z' }, { value: 'recent', label: 'Recently Updated' }];
 
 const CategoryManagement = () => {
   const navigate = useNavigate();
@@ -71,67 +75,139 @@ const CategoryManagement = () => {
   };
 
   const handleToggleStatus = async (cat) => { try { await toggleCategoryStatus(cat.id); await fetchData(); } catch (err) { alert(err.message); } };
-
   const handleClear = () => { setSearchInput(''); setSearch(''); setStatusFilter(''); setSort(''); setPage(1); };
 
-  const rows = categories.map((cat) => (
-    <Table.Tr key={cat.id} className={cat.status === 0 ? 'status-inactive' : ''}>
-      <Table.Td><Group gap={8}><span className='category-dot' style={{ width: 8, height: 8, borderRadius: 4, background: cat.color || t('accent') }} /><div><Text size="sm" fw={600}>{cat.name}</Text>{cat.slug && <Text size="xs" c="dimmed">{cat.slug}</Text>}</div></Group></Table.Td>
-      <Table.Td><Text size="sm" c="dimmed">{cat.description || '—'}</Text></Table.Td>
-      <Table.Td ta="center"><Badge size="sm" variant="light" color={(cat.courseCount || 0) > 0 ? 'blue' : 'gray'}>{cat.courseCount || 0}</Badge></Table.Td>
-      <Table.Td><Badge size="sm" variant="light" color={cat.status === 1 ? 'green' : 'gray'}>{cat.status === 1 ? 'Active' : 'Inactive'}</Badge></Table.Td>
-      <Table.Td><Text size="xs" c="dimmed">{cat.updatedAt ? new Date(cat.updatedAt * 1000).toLocaleDateString() : '—'}</Text></Table.Td>
-      <Table.Td ta="center">
-        <Group gap={4} justify="center">
-          <PermissionGuard permissions={['courses.edit']}><ActionIcon size="sm" variant="default" onClick={() => handleEdit(cat)} title="Edit"><Pencil size={14} /></ActionIcon></PermissionGuard>
-          <ActionIcon size="sm" variant="default" onClick={() => handleToggleStatus(cat)} title={cat.status === 1 ? 'Deactivate' : 'Activate'}>{cat.status === 1 ? <Plus size={14} /> : <Check size={14} />}</ActionIcon>
-          <PermissionGuard permissions={['courses.delete']}><ActionIcon size="sm" color="red" variant="default" onClick={() => setDeleteTarget(cat)} title="Delete"><Trash2 size={14} /></ActionIcon></PermissionGuard>
-        </Group>
-      </Table.Td>
-    </Table.Tr>
-  ));
-
   return (
-    <div className='dashboard-layout'>
-      <SideBar />
-      <div className='dashboard-main'>
-        <div className='dashboard-header'>
-          <div className='header-left'><h1 className='page-title'>Categories</h1><p className='page-subtitle'>{total} categor{total === 1 ? 'y' : 'ies'} total</p></div>
-          <div className='header-right'><PermissionGuard permissions={['courses.create']}><Button leftSection={<Plus size={14} />} onClick={handleCreate}>New Category</Button></PermissionGuard></div>
+    <>
+      <DashboardLayout
+        title="Categories"
+        subtitle={`${total} categor${total === 1 ? 'y' : 'ies'} total`}
+      >
+        {/* Action bar */}
+        <div className="mb-4 flex items-center justify-end">
+          <PermissionGuard permissions={['courses.create']}>
+            <Button size="sm" onClick={handleCreate}><Plus size={14} /> New Category</Button>
+          </PermissionGuard>
         </div>
 
-        <div className='dashboard-content'>
-          {error && <Paper p="sm" radius="md" withBorder mb="md"><Text c="red"><AlertCircle size={14} /> {error}</Text></Paper>}
+        {/* Error */}
+        {error && (
+          <div className="flex items-center gap-2 text-error text-sm mb-4">
+            <AlertCircle size={14} /> {error}
+          </div>
+        )}
 
-          <Paper className='category-filters' p="sm" radius="md" withBorder mb="md">
-            <Group gap={8} style={{ flexWrap: 'wrap' }}>
-              <form className='category-search-form' onSubmit={handleSearch}><TextInput placeholder="Search categories..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} leftSection={<Search size={16} />} /></form>
-              <Select placeholder="Status" data={statusOptions} value={statusFilter} onChange={(v) => { setStatusFilter(v || ''); setPage(1); }} className='category-filter-dropdown' allowDeselect={false} />
-              <Select placeholder="Sort" data={sortOptions} value={sort} onChange={(v) => { setSort(v || ''); setPage(1); }} className='category-filter-dropdown' allowDeselect={false} />
-              <Button variant="default" onClick={handleClear}>Clear</Button>
-            </Group>
-          </Paper>
+        {/* Filters */}
+        <Paper className="p-3 mb-4">
+          <div className="flex items-center gap-2 flex-wrap">
+            <form className="flex items-center gap-2 flex-1" onSubmit={handleSearch}>
+              <div className="relative flex-1">
+                <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
+                <Input placeholder="Search categories..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} className="pl-8" />
+              </div>
+            </form>
+            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v === 'all' ? '' : v); setPage(1); }}>
+              <SelectTrigger className="w-32"><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectContent>{statusOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+            </Select>
+            <Select value={sort} onValueChange={(v) => { setSort(v === 'all' ? '' : v); setPage(1); }}>
+              <SelectTrigger className="w-36"><SelectValue placeholder="Sort" /></SelectTrigger>
+              <SelectContent>{sortOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+            </Select>
+            <Button variant="default" size="sm" onClick={handleClear}>Clear</Button>
+          </div>
+        </Paper>
 
-          <Paper className='category-table-segment' p={0} radius="md" withBorder>
-            {loading ? (
-              <Table><Table.Thead><Table.Tr><Table.Th>Category</Table.Th><Table.Th>Description</Table.Th><Table.Th>Courses</Table.Th><Table.Th>Status</Table.Th><Table.Th>Updated</Table.Th><Table.Th>Actions</Table.Th></Table.Tr></Table.Thead><Table.Tbody>{[...Array(5)].map((_, i) => (<Table.Tr key={i}><Table.Td colSpan={6}><Skeleton height={20} /></Table.Td></Table.Tr>))}</Table.Tbody></Table>
-            ) : categories.length === 0 ? (
-              <div className='category-empty' ta="center" p="xl"><Folder size={48} color={t('text-muted')} /><Title order={4} c="dimmed">No categories found</Title><Text>Try adjusting your filters or create a new category.</Text><PermissionGuard permissions={['courses.create']}><Button mt="md" onClick={handleCreate} leftSection={<Plus size={14} />}>Create First Category</Button></PermissionGuard></div>
-            ) : (
-              <Table striped className='category-table'>
-                <Table.Thead><Table.Tr><Table.Th>Category</Table.Th><Table.Th>Description</Table.Th><Table.Th ta="center">Courses</Table.Th><Table.Th>Status</Table.Th><Table.Th>Updated</Table.Th><Table.Th ta="center">Actions</Table.Th></Table.Tr></Table.Thead>
-                <Table.Tbody>{rows}</Table.Tbody>
-              </Table>
-            )}
-          </Paper>
+        {/* Table */}
+        <Paper className="overflow-hidden">
+          {loading ? (
+            <div className="space-y-2 p-4">
+              {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}
+            </div>
+          ) : categories.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <Folder size={48} className="text-text-muted mb-3" />
+              <p className="text-sm font-medium text-text-primary">No categories found</p>
+              <p className="text-xs text-text-muted mt-1">Try adjusting your filters or create a new category.</p>
+              <PermissionGuard permissions={['courses.create']}>
+                <Button size="sm" className="mt-4" onClick={handleCreate}><Plus size={14} /> Create First Category</Button>
+              </PermissionGuard>
+            </div>
+          ) : (
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="px-4 py-2.5 text-left text-xs font-medium text-text-muted">Category</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-medium text-text-muted">Description</th>
+                  <th className="px-4 py-2.5 text-center text-xs font-medium text-text-muted">Courses</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-medium text-text-muted">Status</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-medium text-text-muted">Updated</th>
+                  <th className="px-4 py-2.5 text-center text-xs font-medium text-text-muted">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {categories.map((cat) => (
+                  <tr key={cat.id} className={`hover:bg-bg-surface-hover transition-colors ${cat.status === 0 ? 'opacity-60' : ''}`}>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <span className="inline-block h-2 w-2 rounded" style={{ background: cat.color || t('accent') }} />
+                        <div>
+                          <span className="text-xs font-semibold text-text-primary">{cat.name}</span>
+                          {cat.slug && <p className="text-[11px] text-text-muted">{cat.slug}</p>}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-xs text-text-muted">{cat.description || '—'}</td>
+                    <td className="px-4 py-3 text-center">
+                      <Badge variant={(cat.courseCount || 0) > 0 ? 'blue' : 'gray'}>{(cat.courseCount || 0)}</Badge>
+                    </td>
+                    <td className="px-4 py-3">
+                      <Badge variant={cat.status === 1 ? 'green' : 'gray'}>{cat.status === 1 ? 'Active' : 'Inactive'}</Badge>
+                    </td>
+                    <td className="px-4 py-3 text-[11px] text-text-muted">
+                      {cat.updatedAt ? new Date(cat.updatedAt * 1000).toLocaleDateString() : '—'}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-center gap-1">
+                        <PermissionGuard permissions={['courses.edit']}>
+                          <button className="flex h-7 w-7 items-center justify-center rounded-md border border-border hover:bg-bg-surface-active text-text-secondary" onClick={() => handleEdit(cat)} title="Edit">
+                            <Pencil size={12} />
+                          </button>
+                        </PermissionGuard>
+                        <button className="flex h-7 w-7 items-center justify-center rounded-md border border-border hover:bg-bg-surface-active text-text-secondary" onClick={() => handleToggleStatus(cat)} title={cat.status === 1 ? 'Deactivate' : 'Activate'}>
+                          <Trash2 size={12} />
+                        </button>
+                        <PermissionGuard permissions={['courses.delete']}>
+                          <button className="flex h-7 w-7 items-center justify-center rounded-md border border-border hover:bg-error/10 text-error" onClick={() => setDeleteTarget(cat)} title="Delete">
+                            <Trash2 size={12} />
+                          </button>
+                        </PermissionGuard>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </Paper>
 
-          {totalPages > 1 && (<div className='category-pagination' style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}><Pagination total={totalPages} value={page} onChange={setPage} /></div>)}
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-4">
+            <Pagination total={totalPages} value={page} onChange={setPage} />
+          </div>
+        )}
 
-          {formOpen && <CategoryForm category={editingCat} onSubmit={handleFormSubmit} onClose={() => { setFormOpen(false); setEditingCat(null); }} loading={actionLoading} />}
-          <DeleteModal open={!!deleteTarget} onConfirm={handleDelete} onCancel={() => setDeleteTarget(null)} itemName={deleteTarget?.name} itemType='category' loading={actionLoading} />
-        </div>
-      </div>
-    </div>
+        {formOpen && (
+          <CategoryForm
+            category={editingCat}
+            onSubmit={handleFormSubmit}
+            onClose={() => { setFormOpen(false); setEditingCat(null); }}
+            loading={actionLoading}
+          />
+        )}
+        <DeleteModal open={!!deleteTarget} onConfirm={handleDelete} onCancel={() => setDeleteTarget(null)} itemName={deleteTarget?.name} itemType="category" loading={actionLoading} />
+      </DashboardLayout>
+    </>
   );
 };
 

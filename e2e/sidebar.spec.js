@@ -12,7 +12,7 @@ test.describe('Sidebar Navigation', () => {
 
     const navLabels = [
       'Dashboard', 'Courses', 'Categories', 'Users', 'Teams',
-      'Learning', 'AI Chat', 'Team Chat', 'Profile', 'Settings', 'Roles',
+      'Learning', 'Settings', 'Roles',
     ];
 
     for (const label of navLabels) {
@@ -35,8 +35,8 @@ test.describe('Sidebar Navigation', () => {
     await expect(page).toHaveURL('/teams');
   });
 
-  test('navigating to Profile page via sidebar', async ({ page }) => {
-    await page.locator('.sidebar-item-label').filter({ hasText: 'Profile' }).first().click();
+  test('navigating to Profile page via profile card', async ({ page }) => {
+    await page.click('.sidebar-profile-card');
     await expect(page).toHaveURL('/profile');
   });
 

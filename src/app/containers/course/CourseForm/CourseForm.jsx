@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { TextInput, Textarea, Select, Button, FileButton, Group, Stack, Image, Text, Paper } from '@mantine/core';
 import { ImageIcon, Save, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Paper } from '@/components/ui/card';
 import { fetchCategories } from '@/app/services/categoryService';
 import UnsplashPicker from '@/app/containers/course/components/UnsplashPicker';
 
@@ -39,41 +43,92 @@ const CourseForm = ({ initialData = null, onSubmit, onCancel, loading = false, s
   };
 
   return (
-    <form onSubmit={handleSubmit} className='course-form'>
-      <Stack gap="sm">
-        {Object.keys(errors).length > 0 && <Paper p="sm" withBorder><Text size="sm" c="red">Please fix the errors below.</Text></Paper>}
+    <form onSubmit={handleSubmit} className="course-form space-y-3">
+      {Object.keys(errors).length > 0 && (
+        <Paper className="p-3">
+          <p className="text-sm text-error">Please fix the errors below.</p>
+        </Paper>
+      )}
 
-        <TextInput label="Course Title" placeholder="e.g., Advanced React Patterns" value={formData.title} onChange={(e) => handleChange('title', e.target.value)} error={errors.title} required />
-        <Textarea label="Description" placeholder="What will students learn?" minRows={4} value={formData.description} onChange={(e) => handleChange('description', e.target.value)} error={errors.description} required />
-        <Select label="Category" placeholder="Select a category" data={categoryOptions} value={formData.category} onChange={(v) => handleChange('category', v)} error={errors.category} required searchable />
-        <Select label="Tags" placeholder="Add tags to help discovery" data={tagOptions} value={formData.tags} onChange={(v) => handleChange('tags', v)} searchable multiple />
-
-        <div>
-          <Text size="sm" fw={500} mb={4}>Cover ImageIcon</Text>
-          <Group>
-            <TextInput placeholder="https://example.com/cover.jpg" value={formData.coverImage} onChange={(e) => handleChange('coverImage', e.target.value)} style={{ flex: 1 }} />
-            <Button variant="default" leftSection={<ImageIcon size={14} />} onClick={() => setUnsplashOpen(true)} disabled={loading}>Unsplash</Button>
-          </Group>
-          {formData.coverImage && (
-            <div style={{ marginTop: 8, position: 'relative', display: 'inline-block' }}>
-              <ImageIcon src={formData.coverImage} radius="sm" height={180} fit="cover" />
-              <Button size="xs" color="red" variant="filled" onClick={() => handleChange('coverImage', '')} style={{ position: 'absolute', top: 4, right: 4 }}><Trash2 size={12} /></Button>
-            </div>
-          )}
-        </div>
-
-        <UnsplashPicker
-          open={unsplashOpen}
-          onClose={() => setUnsplashOpen(false)}
-          onSelect={(url) => { handleChange('coverImage', url); setUnsplashOpen(false); }}
-          initialQuery={formData.title || 'education'}
+      <div>
+        <label className="text-sm font-medium text-text-primary">Course Title</label>
+        <Input
+          placeholder="e.g., Advanced React Patterns"
+          value={formData.title}
+          onChange={(e) => handleChange('title', e.target.value)}
+          className={errors.title ? 'border-error' : ''}
         />
+        {errors.title && <p className="text-xs text-error mt-1">{errors.title}</p>}
+      </div>
 
-        <Group justify="flex-end" mt="md">
-          {onCancel && <Button variant="default" onClick={onCancel} disabled={loading}>Cancel</Button>}
-          <Button type="submit" loading={loading} leftSection={<Save size={14} />}>{submitLabel}</Button>
-        </Group>
-      </Stack>
+      <div>
+        <label className="text-sm font-medium text-text-primary">Description</label>
+        <Textarea
+          placeholder="What will students learn?"
+          value={formData.description}
+          onChange={(e) => handleChange('description', e.target.value)}
+          className={errors.description ? 'border-error' : ''}
+          rows={4}
+        />
+        {errors.description && <p className="text-xs text-error mt-1">{errors.description}</p>}
+      </div>
+
+      <div>
+        <label className="text-sm font-medium text-text-primary">Category</label>
+        <Select value={formData.category} onValueChange={(v) => handleChange('category', v)}>
+          <SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger>
+          <SelectContent>{categoryOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+        </Select>
+        {errors.category && <p className="text-xs text-error mt-1">{errors.category}</p>}
+      </div>
+
+      <div>
+        <label className="text-sm font-medium text-text-primary">Tags</label>
+        <Select value={formData.tags} onValueChange={(v) => handleChange('tags', v)}>
+          <SelectTrigger><SelectValue placeholder="Add tags to help discovery" /></SelectTrigger>
+          <SelectContent>{tagOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <label className="text-sm font-medium text-text-primary">Cover Image</label>
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder="https://example.com/cover.jpg"
+            value={formData.coverImage}
+            onChange={(e) => handleChange('coverImage', e.target.value)}
+          />
+          <Button type="button" variant="default" size="sm" onClick={() => setUnsplashOpen(true)} disabled={loading}>
+            <ImageIcon size={14} /> Unsplash
+          </Button>
+        </div>
+        {formData.coverImage && (
+          <div className="mt-2 relative inline-block">
+            <img src={formData.coverImage} alt="Cover" className="h-36 rounded-md object-cover" />
+            <Button
+              type="button"
+              size="xs"
+              variant="danger"
+              onClick={() => handleChange('coverImage', '')}
+              className="absolute top-1 right-1"
+            >
+              <Trash2 size={10} />
+            </Button>
+          </div>
+        )}
+      </div>
+
+      <UnsplashPicker
+        open={unsplashOpen}
+        onClose={() => setUnsplashOpen(false)}
+        onSelect={(url) => { handleChange('coverImage', url); setUnsplashOpen(false); }}
+        initialQuery={formData.title || 'education'}
+      />
+
+      <div className="flex justify-end gap-2 pt-2">
+        {onCancel && <Button type="button" variant="default" onClick={onCancel} disabled={loading}>Cancel</Button>}
+        <Button type="submit" disabled={loading}><Save size={14} /> {submitLabel}</Button>
+      </div>
     </form>
   );
 };

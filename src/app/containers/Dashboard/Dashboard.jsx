@@ -1,129 +1,148 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { SimpleGrid, Paper, Text, Stack, Group, Box, Progress, Button } from '@mantine/core';
-import { ArrowUp, Bolt, BookOpen, Bot, ChartBar, ChartLine, Check, Clock, Plus, Network, Upload, UserPlus, Users } from 'lucide-react';
+import { ArrowUp, BookOpen, Users, Network, ChartLine, Clock, Bolt, UserPlus, Upload, ChartBar } from 'lucide-react';
 import SideBar from '@/app/containers/SideBar/SideBar';
 import { mockDashboardStats, mockDashboardActivity } from '@/app/services/dashboardService';
 
-import { t } from '@/styles/theme';
-import './Dashboard.scss';
-
-const statIcons = {
-  green: BookOpen, teal: Users, orange: Network, purple: ChartLine,
-};
-const statColors = { green: 'green', teal: 'teal', orange: 'orange', purple: 'violet' };
+const statConfig = [
+  { key: 'courses', label: 'Total Courses', icon: BookOpen, bg: 'rgba(34,197,94,0.12)', color: '#15803D' },
+  { key: 'users', label: 'Total Users', icon: Users, bg: 'rgba(99,102,241,0.12)', color: '#4338CA' },
+  { key: 'teams', label: 'Total Teams', icon: Network, bg: 'rgba(245,158,11,0.12)', color: '#B45309' },
+  { key: 'completion', label: 'Avg. Completion', icon: ChartLine, bg: 'rgba(139,92,246,0.12)', color: '#7C3AED' },
+];
 
 const Dashboard = () => {
   const user = useSelector((s) => s.auth.user);
   const stats = mockDashboardStats;
   const activity = mockDashboardActivity;
 
+  const statValues = { courses: stats.totalCourses, users: stats.totalUsers, teams: stats.totalTeams, completion: stats.avgCompletion };
+  const growthValues = { courses: stats.courseGrowth, users: stats.userGrowth, teams: stats.teamGrowth, completion: stats.completionTrend };
+
+  const s = (token) => `var(--${token})`;
+
   return (
-    <div className='dashboard-layout'>
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       <SideBar />
-      <div className="dashboard-main">
-        <div className='dashboard-header'>
-          <div className='header-left'>
-            <h1 className='page-title'>Dashboard</h1>
-            <p className='page-subtitle'>Welcome back{user ? `, ${user.firstName}` : ''}! Here's your overview.</p>
+      <div style={{ flex: 1, marginLeft: 70, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: s('bg-primary') }}>
+        <div style={{ position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', height: 56, borderBottom: `1px solid ${s('border-primary')}`, padding: '0 24px', background: 'rgba(248,250,252,0.9)', backdropFilter: 'blur(8px)' }}>
+          <div>
+            <h1 style={{ fontSize: 18, fontWeight: 600, color: s('text-primary'), margin: 0 }}>Dashboard</h1>
+            <p style={{ fontSize: 13, color: s('text-muted'), margin: 0 }}>Welcome back{user ? `, ${user.firstName}` : ''}! Here's your overview.</p>
           </div>
         </div>
 
-        <div className='dashboard-content'>
-          <SimpleGrid cols={4} mb="md" className="stats-row">
-            {[
-              { label: 'Total Courses', value: stats.totalCourses, color: 'green', growth: stats.courseGrowth },
-              { label: 'Total Users', value: stats.totalUsers, color: 'teal', growth: stats.userGrowth },
-              { label: 'Total Teams', value: stats.totalTeams, color: 'orange', growth: stats.teamGrowth },
-              { label: 'Avg. Completion', value: stats.avgCompletion, color: 'purple', growth: stats.completionTrend },
-            ].map((s) => (
-              <Paper key={s.label} className='stat-card' p="md" radius="md" withBorder>
-                <div className='stat-card-inner'>
-                  <Box className={`stat-icon ${s.color}`}>
-                    {React.createElement(statIcons[s.color], { size: 24 })}
-                  </Box>
-                  <div className='stat-info'>
-                    <Text className='stat-value' size="xl" fw={700}>{s.value}</Text>
-                    <Text className='stat-label' size="sm" c="dimmed">{s.label}</Text>
-                    <Text className='stat-trend up' size="xs" c="green"><ArrowUp size={12} /> {s.growth}</Text>
+        <div style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
+          {/* Stats */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
+            {statConfig.map((st) => (
+              <div key={st.key} style={{ borderRadius: 12, border: `1px solid ${s('border-primary')}`, background: s('bg-surface'), padding: 16, boxShadow: s('shadow-sm') }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, borderRadius: 10, background: st.bg }}>
+                    <st.icon size={20} style={{ color: st.color }} />
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: 24, fontWeight: 700, lineHeight: 1.2, color: s('text-primary') }}>{statValues[st.key]}</div>
+                    <div style={{ fontSize: 12, color: s('text-muted') }}>{st.label}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: '#15803D', marginTop: 2 }}>
+                      <ArrowUp size={10} /><span>{growthValues[st.key]}</span>
+                    </div>
                   </div>
                 </div>
-              </Paper>
+              </div>
             ))}
-          </SimpleGrid>
+          </div>
 
-          <div className='dashboard-columns'>
-            <div className='dashboard-left'>
-              <Paper className='dashboard-card' p="md" radius="md" withBorder mb="md">
-                <div className='card-header'><h3><BookOpen size={16} color={t('primary')} /> Recent Courses</h3></div>
-                <div className='card-body'>
+          {/* Two columns */}
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              {/* Recent Courses */}
+              <div style={{ borderRadius: 12, border: `1px solid ${s('border-primary')}`, background: s('bg-surface'), boxShadow: s('shadow-sm') }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: `1px solid ${s('border-primary')}` }}>
+                  <BookOpen size={16} style={{ color: s('primary') }} />
+                  <h3 style={{ fontSize: 14, fontWeight: 600, color: s('text-primary'), margin: 0 }}>Recent Courses</h3>
+                </div>
+                <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {stats.recentCourses?.map((course) => (
-                    <div key={course.id} className='course-item'>
-                      <div className='course-item-info'><h4>{course.title}</h4><span className='course-item-meta'><Users size={12} /> {course.users} users</span></div>
-                      <div className='course-item-progress'>
-                        <Progress value={course.progress} size="sm" radius="xl" style={{ width: 80 }} />
-                        <span>{course.progress}%</span>
+                    <div key={course.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 8, padding: 8 }}>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <h4 style={{ fontSize: 13, fontWeight: 500, color: s('text-primary'), margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{course.title}</h4>
+                        <span style={{ fontSize: 11, color: s('text-muted') }}>{course.users} users</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                        <div style={{ width: 80, height: 6, borderRadius: 3, background: s('bg-secondary'), overflow: 'hidden' }}>
+                          <div style={{ height: '100%', borderRadius: 3, width: `${course.progress}%`, background: s('primary') }} />
+                        </div>
+                        <span style={{ fontSize: 11, color: s('text-muted'), width: 32, textAlign: 'right' }}>{course.progress}%</span>
                       </div>
                     </div>
                   ))}
                 </div>
-              </Paper>
+              </div>
 
-              <Paper className='dashboard-card' p="md" radius="md" withBorder>
-                <div className='card-header'><h3><Clock size={16} color={t('accent')} /> Activity Feed</h3></div>
-                <div className='card-body'>
+              {/* Activity Feed */}
+              <div style={{ borderRadius: 12, border: `1px solid ${s('border-primary')}`, background: s('bg-surface'), boxShadow: s('shadow-sm') }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: `1px solid ${s('border-primary')}` }}>
+                  <Clock size={16} style={{ color: s('accent') }} />
+                  <h3 style={{ fontSize: 14, fontWeight: 600, color: s('text-primary'), margin: 0 }}>Activity Feed</h3>
+                </div>
+                <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {activity?.map((item) => (
-                    <div key={item.id} className='activity-item'>
-                      <div className={`activity-dot ${item.type}`} />
-                      <div className='activity-content'>
-                        <div className='activity-title'>{item.title}</div>
-                        <div className='activity-meta'>
-                          {item.course && <span>{item.course}</span>}
-                          {item.user && <span>{item.user}</span>}
-                          <span className='activity-date'>{item.date}</span>
+                    <div key={item.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                      <div style={{ marginTop: 6, width: 8, height: 8, borderRadius: '50%', flexShrink: 0, background: item.type === 'enroll' ? '#22C55E' : item.type === 'complete' ? '#6366F1' : '#F59E0B' }} />
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: 13, color: s('text-primary') }}>{item.title}</div>
+                        <div style={{ fontSize: 11, color: s('text-muted'), overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {[item.course, item.user, item.date].filter(Boolean).join(' · ')}
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
-              </Paper>
+              </div>
             </div>
 
-            <div className='dashboard-right'>
-              <Paper className='dashboard-card quick-actions-card' p="md" radius="md" withBorder mb="md">
-                <div className='card-header'><h3><Bolt size={16} color={t('warning')} /> Quick Actions</h3></div>
-                <div className='card-body'>
-                  <div className='quick-actions-grid'>
-                    {/* <button className='quick-action-btn'><Plus size={16} color={t('primary')} /><span>Create Course</span></button> */}
-                    <button className='quick-action-btn'><UserPlus size={16} color={t('accent')} /><span>Add User</span></button>
-                    <button className='quick-action-btn'><Upload size={16} color={t('warning')} /><span>Upload Content</span></button>
-                    <button className='quick-action-btn'><ChartBar size={16} color={t('accent')} /><span>View Reports</span></button>
-                  </div>
+            {/* Right column */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              {/* Quick Actions */}
+              <div style={{ borderRadius: 12, border: `1px solid ${s('border-primary')}`, background: s('bg-surface'), boxShadow: s('shadow-sm') }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: `1px solid ${s('border-primary')}` }}>
+                  <Bolt size={16} style={{ color: s('warning') }} />
+                  <h3 style={{ fontSize: 14, fontWeight: 600, color: s('text-primary'), margin: 0 }}>Quick Actions</h3>
                 </div>
-              </Paper>
+                <div style={{ padding: 16, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                  {[
+                    { icon: UserPlus, label: 'Add User', color: s('accent') },
+                    { icon: Upload, label: 'Upload', color: s('warning') },
+                    { icon: ChartBar, label: 'Reports', color: s('accent') },
+                  ].map((action) => (
+                    <button key={action.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, borderRadius: 8, border: `1px solid ${s('border-primary')}`, padding: 12, fontSize: 11, color: s('text-secondary'), background: 'transparent', cursor: 'pointer' }}>
+                      <action.icon size={14} style={{ color: action.color }} />
+                      <span>{action.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-              <Paper className='dashboard-card' p="md" radius="md" withBorder mb="md">
-                <div className='card-header'><h3><Users size={16} color={t('accent')} /> Team Performance</h3></div>
-                <div className='card-body'>
-                  {stats.teamPerformance?.map((team) => (
-                    <div key={team.name} className='team-item'>
-                      <div className='team-info'><span className='team-name'>{team.name}</span><span className='team-progress-text'>{team.progress}%</span></div>
-                      <Progress value={team.progress} size="sm" radius="xl" color={team.color} />
+              {/* Enrollment Summary */}
+              <div style={{ borderRadius: 12, border: `1px solid ${s('border-primary')}`, background: s('bg-surface'), boxShadow: s('shadow-sm') }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: `1px solid ${s('border-primary')}` }}>
+                  <ChartLine size={16} style={{ color: s('secondary') }} />
+                  <h3 style={{ fontSize: 14, fontWeight: 600, color: s('text-primary'), margin: 0 }}>Enrollment Summary</h3>
+                </div>
+                <div style={{ padding: 16, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, textAlign: 'center' }}>
+                  {[
+                    { value: stats.totalEnrollments || 0, label: 'Total' },
+                    { value: stats.activeEnrollments || 0, label: 'Active' },
+                    { value: stats.completedEnrollments || 0, label: 'Completed' },
+                  ].map((item) => (
+                    <div key={item.label}>
+                      <div style={{ fontSize: 20, fontWeight: 700, color: s('text-primary') }}>{item.value}</div>
+                      <div style={{ fontSize: 11, color: s('text-muted') }}>{item.label}</div>
                     </div>
                   ))}
                 </div>
-              </Paper>
-
-              <Paper className='dashboard-card' p="md" radius="md" withBorder>
-                <div className='card-header'><h3><ChartLine size={16} color={t('secondary')} /> Enrollment Summary</h3></div>
-                <div className='card-body'>
-                  <div className='enrollment-summary'>
-                    <div className='enrollment-stat'><div className='enrollment-value'>{stats.totalEnrollments || 0}</div><div className='enrollment-label'>Total Enrollments</div></div>
-                    <div className='enrollment-stat'><div className='enrollment-value'>{stats.activeEnrollments || 0}</div><div className='enrollment-label'>Active</div></div>
-                    <div className='enrollment-stat'><div className='enrollment-value'>{stats.completedEnrollments || 0}</div><div className='enrollment-label'>Completed</div></div>
-                  </div>
-                </div>
-              </Paper>
+              </div>
             </div>
           </div>
         </div>

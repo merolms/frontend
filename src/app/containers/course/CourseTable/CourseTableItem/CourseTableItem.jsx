@@ -1,16 +1,17 @@
 import React from 'react';
-import { Table } from '@mantine/core';
 
 const CourseTableItem = (props) => {
   const course = props.course;
   return (
-    <Table.Tr>
-      <Table.Td component="a" href="courses/1">{course.Title}</Table.Td>
-      <Table.Td>{course.Category}</Table.Td>
-      <Table.Td>{course.Lesson}</Table.Td>
-      <Table.Td>{course.Status}</Table.Td>
-      <Table.Td>{course.Author}</Table.Td>
-    </Table.Tr>
+    <tr className="hover:bg-bg-surface-hover transition-colors">
+      <td className="px-4 py-3 text-xs text-text-primary">
+        <a href="courses/1">{course.Title}</a>
+      </td>
+      <td className="px-4 py-3 text-xs text-text-muted">{course.Category}</td>
+      <td className="px-4 py-3 text-xs text-text-muted">{course.Lesson}</td>
+      <td className="px-4 py-3 text-xs text-text-muted">{course.Status}</td>
+      <td className="px-4 py-3 text-xs text-text-muted">{course.Author}</td>
+    </tr>
   );
 };
 

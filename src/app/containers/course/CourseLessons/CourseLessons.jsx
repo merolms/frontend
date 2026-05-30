@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { Paper, Breadcrumbs, Anchor, Button, Badge, Grid, Title, Text, Stack, List, Loader, Group } from '@mantine/core';
-import { AlertCircle, BookOpen, Clock, Info, ListIcon, Pencil, Plus, Network, Trash2 } from 'lucide-react';
-import SideBar from '@/app/containers/SideBar/SideBar';
+import { AlertCircle, BookOpen, Clock, Eye, List, Pencil, Plus, Network, Trash2, ChevronRight, Loader } from 'lucide-react';
+import DashboardLayout from '@/components/ui/dashboard-layout';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Paper } from '@/components/ui/card';
 import LessonForm from '@/app/containers/course/LessonForm/LessonForm';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { fetchCourseById, fetchLessons, createLesson, updateLesson, deleteLesson as apiDeleteLesson } from '@/app/services/courseService';
 import { PermissionGuard } from '@/app/components/ProtectedRoute/ProtectedRoute';
-
 import { t } from '@/styles/theme';
-
-import './CourseLessons.scss';
 
 const CourseLessons = () => {
   const navigate = useNavigate();
@@ -45,76 +44,103 @@ const CourseLessons = () => {
     catch (err) { alert(err.message || 'Failed to delete lesson.'); } finally { setSaving(false); }
   };
 
-  if (loading) {
-    return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><div className='course-form-page'><Paper p="lg" radius="md"><Loader /><Title order={4}>Loading...</Title></Paper></div></div></div>);
-  }
-
   return (
-    <div className='dashboard-layout'>
-      <SideBar />
-      <div className='dashboard-main'>
-        <div className='course-form-page'>
-          <Breadcrumbs mb="md">
-            <Anchor onClick={() => navigate('/courses')}>Courses</Anchor>
-            <Anchor onClick={() => navigate(`/courses/${id}`)}>{course?.title}</Anchor>
-            <span>Lessons</span>
-          </Breadcrumbs>
+    <>
+      <DashboardLayout title={course?.title ? `Lessons: ${course.title}` : 'Lessons'} subtitle={`${lessons.length} lesson${lessons.length !== 1 ? 's' : ''}`}>
+        <div className="flex items-center gap-1 text-xs text-text-muted mb-4">
+          <button onClick={() => navigate('/courses')} className="text-primary hover:underline">Courses</button>
+          <ChevronRight size={12} />
+          <button onClick={() => navigate(`/courses/${id}`)} className="text-primary hover:underline">{course?.title}</button>
+          <ChevronRight size={12} />
+          <span>Lessons</span>
+        </div>
 
-          <Grid>
-            <Grid.Col span={10}>
-              <Paper className='course-form-card' p="lg" radius="md" withBorder>
-                <div className='lessons-header' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                  <div><Title order={3}><ListIcon size={20} color={t('accent')} /> Lessons</Title><Text c="dimmed" size="sm">{lessons.length} lesson{lessons.length !== 1 ? 's' : ''} in "{course?.title}"</Text></div>
-                  <PermissionGuard permissions={['courses.lessons.manage']}><Button leftSection={<Plus size={14} />} onClick={() => { setEditingLesson(null); setLessonModalOpen(true); }}>Add Lesson</Button></PermissionGuard>
+        {loading ? (
+          <div className="flex items-center justify-center py-20"><Loader className="animate-spin text-text-muted" size={20} /></div>
+        ) : (
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-10">
+              <Paper className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-base font-semibold text-text-primary flex items-center gap-1">
+                      <List size={16} style={{ color: t('accent') }} /> Lessons
+                    </h2>
+                    <p className="text-xs text-text-muted">{lessons.length} lesson{lessons.length !== 1 ? 's' : ''} in "{course?.title}"</p>
+                  </div>
+                  <PermissionGuard permissions={['courses.lessons.manage']}>
+                    <Button size="sm" onClick={() => { setEditingLesson(null); setLessonModalOpen(true); }}>
+                      <Plus size={14} /> Add Lesson
+                    </Button>
+                  </PermissionGuard>
                 </div>
 
                 {lessons.length === 0 ? (
-                  <div className='lessons-empty' ta="center" p="xl">
-                    <BookOpen size={48} color={t('text-muted')} /><Title order={4} c="dimmed">No lessons yet</Title>
-                    <Text mb="md">Start building your course by adding the first lesson.</Text>
-                    <PermissionGuard permissions={['courses.lessons.manage']}><Button leftSection={<Plus size={14} />} onClick={() => { setEditingLesson(null); setLessonModalOpen(true); }}>Create First Lesson</Button></PermissionGuard>
-                    <PermissionGuard permissions={['courses.lessons.manage']}><Button variant="default" mt="sm" component={Link} to={`/courses/${id}/builder`} leftSection={<Network size={14} />}>Or use the Course Builder</Button></PermissionGuard>
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <BookOpen size={48} className="text-text-muted mb-3" />
+                    <p className="text-sm font-medium text-text-primary">No lessons yet</p>
+                    <p className="text-xs text-text-muted mt-1 mb-4">Start building your course by adding the first lesson.</p>
+                    <PermissionGuard permissions={['courses.lessons.manage']}>
+                      <Button size="sm" onClick={() => { setEditingLesson(null); setLessonModalOpen(true); }}>
+                        <Plus size={14} /> Create First Lesson
+                      </Button>
+                    </PermissionGuard>
+                    <PermissionGuard permissions={['courses.lessons.manage']}>
+                      <Button variant="default" size="sm" className="mt-2" onClick={() => navigate(`/courses/${id}/builder`)}>
+                        <Network size={14} /> Or use the Course Builder
+                      </Button>
+                    </PermissionGuard>
                   </div>
                 ) : (
-                  <div className='lessons-list'>
+                  <div className="space-y-2">
                     {lessons.map((lesson, index) => (
-                      <div key={lesson.id} className='lesson-card' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 12, border: `1px solid ${t('border-primary')}`, borderRadius: 8, marginBottom: 8 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <div className='lesson-card-number' style={{ width: 32, height: 32, borderRadius: 16, background: t('bg-hover'), display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600 }}>{index + 1}</div>
-                          <div><Title order={5} style={{ margin: 0 }}>{lesson.title}</Title>{lesson.duration && <Badge size="xs" color="teal" mt={4} leftSection={<Clock size={10} />}>{lesson.duration}</Badge>}</div>
+                      <div key={lesson.id} className="flex items-center justify-between p-3 rounded-lg border border-border">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-bg-surface-active text-xs font-semibold text-text-secondary">{index + 1}</div>
+                          <div>
+                            <h4 className="text-sm font-semibold text-text-primary">{lesson.title}</h4>
+                            {lesson.duration && <Badge variant="teal" className="text-[10px] mt-1"><Clock size={9} /> {lesson.duration}</Badge>}
+                          </div>
                         </div>
                         <PermissionGuard permissions={['courses.lessons.manage']}>
-                          <Group gap={4}>
-                            <Button size="xs" variant="default" leftSection={<Pencil size={12} />} onClick={() => { setEditingLesson(lesson); setLessonModalOpen(true); }} title="Edit">Edit</Button>
-                            <Button size="xs" color="red" variant="default" leftSection={<Trash2 size={12} />} onClick={() => setDeleteModal({ open: true, lesson })} title="Delete">Delete</Button>
-                          </Group>
+                          <div className="flex items-center gap-1">
+                            <Button size="xs" variant="default" onClick={() => { setEditingLesson(lesson); setLessonModalOpen(true); }}>
+                              <Pencil size={10} /> Edit
+                            </Button>
+                            <Button size="xs" variant="default" onClick={() => setDeleteModal({ open: true, lesson })}>
+                              <Trash2 size={10} /> Delete
+                            </Button>
+                          </div>
                         </PermissionGuard>
                       </div>
                     ))}
                   </div>
                 )}
               </Paper>
-            </Grid.Col>
+            </div>
 
-            <Grid.Col span={6}>
-              <Paper className='lessons-sidebar-card' p="lg" radius="md" withBorder>
-                <Title order={5} mb="sm"><Info size={16} /> About Lessons</Title>
-                <Text size="sm" c="dimmed">Lessons are the building blocks of your course. Each lesson can contain text, video, audio, or other content types.</Text>
-                <hr style={{ margin: '12px 0', border: 'none',  borderTop: `1px solid ${t('border-primary')}` }} />
-                <Title order={6} mb="sm">Quick Actions</Title>
-                <div className='quick-actions'>
-                  <PermissionGuard permissions={['courses.lessons.manage']}><Button fullWidth size="sm" leftSection={<Plus size={14} />} onClick={() => { setEditingLesson(null); setLessonModalOpen(true); }}>Add New Lesson</Button></PermissionGuard>
-                  <Button fullWidth size="sm" variant="default" component={Link} to={`/courses/${id}/builder`} mt="xs" leftSection={<Network size={14} />}>Open Builder</Button>
+            <div className="col-span-2">
+              <Paper className="p-6">
+                <h3 className="text-sm font-semibold text-text-primary mb-3">Quick Actions</h3>
+                <div className="space-y-2">
+                  <PermissionGuard permissions={['courses.lessons.manage']}>
+                    <Button size="sm" className="w-full" onClick={() => { setEditingLesson(null); setLessonModalOpen(true); }}>
+                      <Plus size={14} /> Add New Lesson
+                    </Button>
+                  </PermissionGuard>
+                  <Button size="sm" variant="default" className="w-full" onClick={() => navigate(`/courses/${id}/builder`)}>
+                    <Network size={14} /> Open Builder
+                  </Button>
                 </div>
               </Paper>
-            </Grid.Col>
-          </Grid>
-        </div>
+            </div>
+          </div>
+        )}
+      </DashboardLayout>
 
-        <LessonForm open={lessonModalOpen} onClose={() => { setLessonModalOpen(false); setEditingLesson(null); }} onSubmit={handleLessonSubmit} initialData={editingLesson} loading={saving} />
-        <DeleteModal open={deleteModal.open} onConfirm={handleDeleteLesson} onCancel={() => setDeleteModal({ open: false, lesson: null })} itemName={deleteModal.lesson?.title} itemType='lesson' loading={saving} />
-      </div>
-    </div>
+      <LessonForm open={lessonModalOpen} onClose={() => { setLessonModalOpen(false); setEditingLesson(null); }} onSubmit={handleLessonSubmit} initialData={editingLesson} loading={saving} />
+      <DeleteModal open={deleteModal.open} onConfirm={handleDeleteLesson} onCancel={() => setDeleteModal({ open: false, lesson: null })} itemName={deleteModal.lesson?.title} itemType="lesson" loading={saving} />
+    </>
   );
 };
 

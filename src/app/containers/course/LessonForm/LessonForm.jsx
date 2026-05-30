@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, TextInput, Textarea, Button, Stack, Group } from '@mantine/core';
 import { Save, X } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 const LessonForm = ({ open, onClose, onSubmit, initialData = null, loading = false }) => {
   const [formData, setFormData] = useState({ title: '', duration: '', content: '' });
@@ -33,17 +36,52 @@ const LessonForm = ({ open, onClose, onSubmit, initialData = null, loading = fal
   const isEditing = !!initialData;
 
   return (
-    <Modal opened={open} onClose={onClose} title={isEditing ? 'Edit Lesson' : 'Create Lesson'} size="lg" closeOnClickOutside={!loading} closeOnEscape={!loading}>
-      <Stack gap="sm">
-        <TextInput label="Lesson Title" placeholder="Enter a lesson title" value={formData.title} onChange={(e) => handleChange('title', e.target.value)} error={errors.title} required />
-        <TextInput label="Duration" placeholder="e.g., 30 mins, 1 hour" value={formData.duration} onChange={(e) => handleChange('duration', e.target.value)} />
-        <Textarea label="Content" placeholder="Lesson content or notes" minRows={5} value={formData.content} onChange={(e) => handleChange('content', e.target.value)} />
-      </Stack>
-      <Group justify="flex-end" mt="md">
-        <Button variant="default" onClick={onClose} disabled={loading} leftSection={<X size={14} />}>Cancel</Button>
-        <Button onClick={handleSubmit} loading={loading} leftSection={<Save size={14} />}>{isEditing ? 'Save Changes' : 'Create Lesson'}</Button>
-      </Group>
-    </Modal>
+    <Dialog open={open} onOpenChange={loading ? undefined : onClose}>
+      {open && (
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{isEditing ? 'Edit Lesson' : 'Create Lesson'}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <label className="text-sm font-medium text-text-primary">Lesson Title</label>
+              <Input
+                placeholder="Enter a lesson title"
+                value={formData.title}
+                onChange={(e) => handleChange('title', e.target.value)}
+                className={errors.title ? 'border-error' : ''}
+              />
+              {errors.title && <p className="text-xs text-error mt-1">{errors.title}</p>}
+            </div>
+            <div>
+              <label className="text-sm font-medium text-text-primary">Duration</label>
+              <Input
+                placeholder="e.g., 30 mins, 1 hour"
+                value={formData.duration}
+                onChange={(e) => handleChange('duration', e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-text-primary">Content</label>
+              <Textarea
+                placeholder="Lesson content or notes"
+                value={formData.content}
+                onChange={(e) => handleChange('content', e.target.value)}
+                rows={5}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="default" onClick={onClose} disabled={loading}>
+              <X size={14} /> Cancel
+            </Button>
+            <Button onClick={handleSubmit} disabled={loading}>
+              <Save size={14} /> {isEditing ? 'Save Changes' : 'Create Lesson'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      )}
+    </Dialog>
   );
 };
 

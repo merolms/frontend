@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Paper, Breadcrumbs, Anchor, Title, Text, Loader, Alert, Button } from '@mantine/core';
-import { AlertCircle, Pencil } from 'lucide-react';
-import SideBar from '@/app/containers/SideBar/SideBar';
+import { Pencil, Loader, ChevronRight, AlertCircle } from 'lucide-react';
+import DashboardLayout from '@/components/ui/dashboard-layout';
+import { Button } from '@/components/ui/button';
+import { Paper } from '@/components/ui/card';
 import RoleForm from '@/app/containers/role/RoleForm/RoleForm';
 import { fetchRoleById, updateRole } from '@/app/services/authService';
 import { useToast } from '@/app/context/ToastContext';
-
 import { t } from '@/styles/theme';
 
 const RoleEdit = () => {
@@ -19,28 +19,59 @@ const RoleEdit = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const loadRole = async () => { try { setFetching(true); const data = await fetchRoleById(id); if (!data) setError('Role not found.'); else setRole(data); } catch (err) { setError('Failed to load role data.'); } finally { setFetching(false); } };
+    const loadRole = async () => {
+      try { setFetching(true); const data = await fetchRoleById(id); if (!data) setError('Role not found.'); else setRole(data); }
+      catch (err) { setError('Failed to load role data.'); }
+      finally { setFetching(false); }
+    };
     loadRole();
   }, [id]);
 
-  const handleSubmit = async (formData) => { try { setLoading(true); setError(null); await updateRole(id, formData); addToast(`Role "${formData.name}" updated successfully`, 'success'); navigate('/roles'); } catch (err) { setError(err.message || 'Failed to update role.'); } finally { setLoading(false); } };
-  const handleCancel = () => navigate('/roles');
+  const handleSubmit = async (formData) => {
+    try {
+      setLoading(true); setError(null);
+      await updateRole(id, formData);
+      addToast(`Role "${formData.name}" updated successfully`, 'success');
+      navigate('/roles');
+    } catch (err) { setError(err.message || 'Failed to update role.'); }
+    finally { setLoading(false); }
+  };
 
-  if (fetching) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Paper p="lg" radius="md" mt={40}><Loader /><Title order={4}>Loading...</Title></Paper></div></div>);
-  if (error && !role) return (<div className='dashboard-layout'><SideBar /><div className='dashboard-main'><Alert icon={<AlertCircle size={16} />} color="red">{error}</Alert><Button mt="md" onClick={() => navigate('/roles')}>Back to Roles</Button></div></div>);
+  if (fetching) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center py-20"><Loader className="animate-spin text-text-muted" size={20} /></div>
+      </DashboardLayout>
+    );
+  }
+
+  if (error && !role) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center gap-2 text-error py-4"><AlertCircle size={14} /> {error}</div>
+        <Button size="sm" onClick={() => navigate('/roles')}>Back to Roles</Button>
+      </DashboardLayout>
+    );
+  }
 
   return (
-    <div className='dashboard-layout'>
-      <SideBar />
-      <div className='dashboard-main'>
-        <Breadcrumbs mb="md"><Anchor onClick={() => navigate('/roles')}>Roles</Anchor><span>Edit: {role?.name}</span></Breadcrumbs>
-        <Paper className='role-form-segment' p="lg" radius="md" withBorder>
-          <Title order={3} mb={4}><Pencil size={20} color={t('accent')} /> Edit Role</Title>
-          <Text c="dimmed" size="sm" mb="md">Update the role details and permissions.</Text>
-          <RoleForm initialData={role} onSubmit={handleSubmit} onCancel={handleCancel} loading={loading} submitLabel='Save Changes' />
-        </Paper>
+    <DashboardLayout title="Edit Role" subtitle="Update the role details and permissions">
+      <div className="flex items-center gap-1 text-xs text-text-muted mb-4">
+        <button onClick={() => navigate('/roles')} className="text-primary hover:underline">Roles</button>
+        <ChevronRight size={12} />
+        <span>Edit: {role?.name}</span>
       </div>
-    </div>
+
+      <Paper className="p-6 max-w-2xl">
+        <h2 className="text-base font-semibold text-text-primary mb-1">
+          <Pencil size={16} className="inline mr-1" style={{ color: t('accent') }} />
+          Edit Role
+        </h2>
+        <p className="text-xs text-text-muted mb-4">Update the role details and permissions.</p>
+        {error && <p className="text-xs text-error mb-3">{error}</p>}
+        <RoleForm initialData={role} onSubmit={handleSubmit} onCancel={() => navigate('/roles')} loading={loading} submitLabel="Save Changes" />
+      </Paper>
+    </DashboardLayout>
   );
 };
 

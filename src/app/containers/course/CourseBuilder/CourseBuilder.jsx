@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { t } from '@/styles/theme';
 import { useTheme as useThemeContext } from '@/app/context/ThemeContext';
 import SideBar from '@/app/containers/SideBar/SideBar';
-import './CourseBuilder.scss';
 import LessonPanel from './components/LessonPanel';
 import BlockNoteEditor from './components/BlockNoteEditor/BlockNoteEditor';
 import {
@@ -353,100 +352,43 @@ const CourseBuilder = () => {
   }
 
   return (
-    <div>
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       <SideBar />
 
-      {/* Main panel */}
-      <div style={{ marginLeft: 70, flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: t('bg-secondary') }}>
+      <div style={{ marginLeft: 70, flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
-        {/* ── Top bar ───────────────────────────────────────── */}
+        {/* Top bar */}
         <header style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
-          height: 52,
-          minHeight: 52,
-          background: t('bg-surface'),
-          borderBottom: `1px solid ${t('border-primary')}`,
-          boxShadow: t('shadow-sm'),
-          padding: '0 16px',
-          flexShrink: 0,
-          zIndex: 50,
+          display: 'flex', alignItems: 'center', gap: 12, height: 52, minHeight: 52,
+          background: t('bg-surface'), borderBottom: `1px solid ${t('border-primary')}`,
+          boxShadow: t('shadow-sm'), padding: '0 16px', flexShrink: 0, zIndex: 50,
         }}>
-          {/* Breadcrumb */}
           <nav style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0, fontSize: 13 }}>
             <BreadcrumbButton onClick={() => navigate('/courses')}>Courses</BreadcrumbButton>
             <span style={{ color: t('text-disabled') }}>/</span>
-            <BreadcrumbButton onClick={() => navigate(`/courses/${id}`)} maxWidth={160}>
-              {course?.title}
-            </BreadcrumbButton>
+            <BreadcrumbButton onClick={() => navigate(`/courses/${id}`)} maxWidth={160}>{course?.title}</BreadcrumbButton>
             <span style={{ color: t('text-disabled') }}>/</span>
-            <span style={{ color: t('text-primary'), fontWeight: 600, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {selectedLesson?.title || 'Untitled'}
-            </span>
+            <span style={{ color: t('text-primary'), fontWeight: 600, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selectedLesson?.title || 'Untitled'}</span>
           </nav>
-
-          {/* Right controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-            {words > 0 && (
-              <span style={{ fontSize: 11, color: t('text-muted'), background: t('bg-secondary'), borderRadius: 12, padding: '2px 8px', fontVariantNumeric: 'tabular-nums' }}>
-                {words} words
-              </span>
-            )}
-
-            {autosaveStatus === 'saved' && (
-              <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: t('text-primary') }}>
-                <CheckIcon /> Saved
-              </span>
-            )}
-
-            <TopBarButton onClick={() => navigate(`/courses/${id}/preview/${selectedLesson?.id || lessonId || ''}`)} variant="ghost">
-              <EyeIcon /> Preview
-            </TopBarButton>
-
-            <TopBarButton onClick={handleSave} disabled={saving} variant="primary">
-              {saving ? <Spinner /> : <SaveIcon />} Save
-            </TopBarButton>
+            {words > 0 && <span style={{ fontSize: 11, color: t('text-muted'), background: t('bg-secondary'), borderRadius: 12, padding: '2px 8px', fontVariantNumeric: 'tabular-nums' }}>{words} words</span>}
+            {autosaveStatus === 'saved' && <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: t('text-primary') }}><CheckIcon /> Saved</span>}
+            <TopBarButton onClick={() => navigate(`/courses/${id}/preview/${selectedLesson?.id || lessonId || ''}`)} variant="ghost"><EyeIcon /> Preview</TopBarButton>
+            <TopBarButton onClick={handleSave} disabled={saving} variant="primary">{saving ? <Spinner /> : <SaveIcon />} Save</TopBarButton>
           </div>
         </header>
 
-        {/* ── Error bar ─────────────────────────────────────── */}
+        {/* Error bar */}
         {error && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '9px 16px',
-            background: t('error-light'),
-            borderBottom: `1px solid ${t('error')}33`,
-            color: t('error'),
-            fontSize: 13,
-            flexShrink: 0,
-          }}>
-            <AlertIcon />
-            <span style={{ flex: 1 }}>{error}</span>
-            <button
-              onClick={() => setError(null)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: t('error'), fontSize: 18, lineHeight: 1, padding: 0 }}
-            >
-              ×
-            </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 16px', background: t('error-light'), borderBottom: `1px solid ${t('error')}33`, color: t('error'), fontSize: 13, flexShrink: 0 }}>
+            <AlertIcon /><span style={{ flex: 1 }}>{error}</span>
+            <button onClick={() => setError(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: t('error'), fontSize: 18, lineHeight: 1, padding: 0 }}>×</button>
           </div>
         )}
 
-        {/* ── Editor layout ──────────────────────────────────── */}
-        <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
-          <LessonPanel
-            lessons={lessons}
-            selectedLessonId={selectedLesson?.id}
-            onSelectLesson={handleSelectLesson}
-            onAddLesson={handleAddLesson}
-            onRenameLesson={handleRenameLesson}
-            onDeleteLesson={handleDeleteLesson}
-            adding={addingLesson}
-            width={panelWidth}
-            onReorder={handleReorderLessons}
-          />
+        {/* ── Editor layout (fills remaining height, scrollable) ── */}
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', overflow: 'hidden' }}>
+          <LessonPanel lessons={lessons} selectedLessonId={selectedLesson?.id} onSelectLesson={handleSelectLesson} onAddLesson={handleAddLesson} onRenameLesson={handleRenameLesson} onDeleteLesson={handleDeleteLesson} adding={addingLesson} width={panelWidth} onReorder={handleReorderLessons} />
 
           {/* Resize handle */}
           <div
@@ -466,7 +408,9 @@ const CourseBuilder = () => {
           {/* Scrollable canvas */}
           <main style={{
             flex: 1,
+            minWidth: 0,
             overflowY: 'auto',
+            overflowX: 'hidden',
             background: t('bg-secondary'),
             backgroundImage: `radial-gradient(circle, ${t('border-secondary')} 1px, transparent 1px)`,
             backgroundSize: '24px 24px',
@@ -481,11 +425,11 @@ const CourseBuilder = () => {
               background: t('bg-surface'),
               borderRadius: t('radius-lg'),
               boxShadow: t('shadow-md'),
-              padding: '48px 56px 0',
+              padding: '48px 56px',
               display: 'flex',
               flexDirection: 'column',
+              flexShrink: 0,
             }}>
-              {/* Document header */}
               <div style={{ marginBottom: 32, paddingBottom: 20, borderBottom: `1px solid ${t('border-secondary')}` }}>
                 <div style={{
                   fontSize: 10,
@@ -503,7 +447,7 @@ const CourseBuilder = () => {
               </div>
 
               {/* BlockNote editor */}
-              <div style={{ flex: 1 , minHeight: "100vh"}}>
+              <div style={{ flex: 1}}>
                 <BlockNoteEditor
                   key={selectedLesson?.id}
                   lessonId={selectedLesson?.id}

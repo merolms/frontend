@@ -1,66 +1,65 @@
 import React from 'react';
-import { Table, Text, Group, Badge, Avatar, Skeleton } from '@mantine/core';
-import { BookOpen, ChevronRight, List, Network, User, Users, Table as TableIcon } from 'lucide-react';
+import { BookOpen, ChevronRight, List, Network, User, Users, Pencil } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getStatusLabel, getCategoryColor } from './viewHelpers';
 
 const TableView = ({ courses, navigate, loading }) => {
   if (loading) {
     return (
-      <Table>
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>Course</Table.Th><Table.Th>Category</Table.Th><Table.Th>Status</Table.Th>
-            <Table.Th ta="center">Lessons</Table.Th><Table.Th ta="center">Enrolled</Table.Th><Table.Th ta="center">Actions</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {[...Array(6)].map((_, i) => (
-            <Table.Tr key={i}>
-              {[5, 2, 2, 1, 1, 2].map((_, j) => <Table.Td key={j}><Skeleton height={16} /></Table.Td>)}
-            </Table.Tr>
-          ))}
-        </Table.Tbody>
-      </Table>
+      <div className="space-y-2">
+        <Skeleton className="h-8 w-full" />
+        {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}
+      </div>
     );
   }
 
-  const rows = courses.map((course) => {
-    const status = getStatusLabel(course.status);
-    return (
-      <Table.Tr key={course.id}>
-        <Table.Td>
-          <Group gap="sm" onClick={() => navigate(`/courses/${course.id}`)} style={{ cursor: 'pointer' }}>
-            <Avatar src={course.coverImage} size={40} radius="sm" />
-            <div>
-              <Text size="sm" fw={500}>{course.title}</Text>
-              <Text size="xs" c="dimmed" lineClamp={1}>{course.description}</Text>
-            </div>
-          </Group>
-        </Table.Td>
-        <Table.Td><Badge size="sm" variant="light" color={getCategoryColor(course.category)}>{course.category}</Badge></Table.Td>
-        <Table.Td>{status && <Badge size="sm" variant="light" color={status.color}>{status.text}</Badge>}</Table.Td>
-        <Table.Td ta="center"><Text size="sm"><List size={12} /> {course.totalLessons}</Text></Table.Td>
-        <Table.Td ta="center"><Text size="sm"><Users size={12} /> {course.enrolledUsers}</Text></Table.Td>
-        <Table.Td ta="center">
-          <Group gap={4} justify="center">
-            <Badge component={Link} to={`/courses/${course.id}`} size="sm" variant="outline" leftSection={<ChevronRight size={10} />} style={{ cursor: 'pointer' }}>View</Badge>
-            <Badge component={Link} to={`/courses/${course.id}/builder`} size="sm" variant="outline" leftSection={<Network size={10} />} style={{ cursor: 'pointer' }}>Builder</Badge>
-          </Group>
-        </Table.Td>
-      </Table.Tr>
-    );
-  });
-
   return (
-    <Table striped highlightOnHover>
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>Course</Table.Th><Table.Th>Category</Table.Th><Table.Th>Status</Table.Th>
-          <Table.Th ta="center">Lessons</Table.Th><Table.Th ta="center">Enrolled</Table.Th><Table.Th ta="center">Actions</Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>{rows}</Table.Tbody>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Course</TableHead>
+          <TableHead>Category</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead className="text-center">Lessons</TableHead>
+          <TableHead className="text-center">Enrolled</TableHead>
+          <TableHead className="text-center">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {courses.map((course) => {
+          const status = getStatusLabel(course.status);
+          return (
+            <TableRow key={course.id}>
+              <TableCell>
+                <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate(`/courses/${course.id}`)}>
+                  <Avatar className="h-10 w-10 rounded-md">
+                    <AvatarImage src={course.coverImage} />
+                    <AvatarFallback>{(course.title?.[0] || 'C').toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <div className="text-xs font-medium text-text-primary">{course.title}</div>
+                    <div className="text-[11px] text-text-muted line-clamp-1">{course.description}</div>
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell><Badge variant={getCategoryColor(course.category)}>{course.category}</Badge></TableCell>
+              <TableCell>{status && <Badge variant={status.color === 'grey' ? 'gray' : status.color}>{status.text}</Badge>}</TableCell>
+              <TableCell className="text-center text-xs text-text-muted">{course.totalLessons}</TableCell>
+              <TableCell className="text-center text-xs text-text-muted">{course.enrolledUsers}</TableCell>
+              <TableCell>
+                <div className="flex items-center justify-center gap-1">
+                  <Link to={`/courses/${course.id}`} className="text-[11px] text-primary hover:underline">View</Link>
+                  <Link to={`/courses/${course.id}/builder`} className="text-[11px] text-primary hover:underline">Builder</Link>
+                </div>
+              </TableCell>
+            </TableRow>
+          );
+        })}
+      </TableBody>
     </Table>
   );
 };

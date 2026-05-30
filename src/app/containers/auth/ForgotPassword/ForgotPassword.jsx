@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Paper, TextInput, Button, Title, Text, Alert, Stack, Center, Anchor } from '@mantine/core';
-import { AlertCircle, ArrowLeft, Check, GraduationCap, Mail } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Check, Mail } from 'lucide-react';
 import { forgotPassword } from '@/app/services/authService';
-
-import { t } from '@/styles/theme';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -14,49 +11,56 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      setLoading(true);
-      setError(null);
-      await forgotPassword(email);
-      setSuccess(true);
-    } catch (err) {
-      setError(err.message || 'Something went wrong.');
-    } finally {
-      setLoading(false);
-    }
+    try { setLoading(true); setError(null); await forgotPassword(email); setSuccess(true); }
+    catch (err) { setError(err.message || 'Something went wrong.'); }
+    finally { setLoading(false); }
   };
 
   return (
-    <div className='auth-page'>
-      <div className='auth-container'>
-        <Paper className='auth-card' p="xl" radius="md" withBorder>
-          {/* <Center mb="md"><GraduationCap size={48} color={t('primary')} /></Center> */}
-          <Title order={3} ta="center" mb="lg">Forgot Password</Title>
+    <div className="auth-page">
+      <div className="auth-container">
+        <div className="auth-card">
+          <h2 className="text-lg font-semibold text-text-primary text-center mb-6">Forgot Password</h2>
 
           {success ? (
-            <Stack>
-              <Alert icon={<Check size={16} />} color="green">
-                <Text fw={600} size="sm">Check your email</Text>
-                <Text size="sm">If an account with that email exists, we've sent password reset instructions.</Text>
-              </Alert>
-              <Button fullWidth component={Link} to="/login" mt="md" leftSection={<ArrowLeft size={16} />}>Back to Sign In</Button>
-            </Stack>
+            <div className="space-y-4">
+              <div className="flex items-start gap-2 rounded-lg border border-success/30 bg-success/5 px-3 py-2.5 text-sm text-success">
+                <Check size={16} className="mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-semibold text-sm">Check your email</p>
+                  <p className="text-xs">If an account with that email exists, we've sent password reset instructions.</p>
+                </div>
+              </div>
+              <Link to="/login" className="flex items-center justify-center gap-1 w-full h-10 rounded-lg border border-border text-sm text-text-primary hover:bg-bg-surface-hover transition-colors">
+                <ArrowLeft size={14} /> Back to Sign In
+              </Link>
+            </div>
           ) : (
             <>
-              <Text c="dimmed" ta="center" size="sm" mb="md">Enter your email address and we'll send you instructions to reset your password.</Text>
-              {error && <Alert icon={<AlertCircle size={16} />} color="red" mb="md" size="sm">{error}</Alert>}
-              <form onSubmit={handleSubmit}>
-                <Stack gap="sm">
-                  <TextInput label="Email" placeholder="you@example.com" type="email" leftSection={<Mail size={16} />} value={email} onChange={(e) => setEmail(e.target.value)} required />
-                  <Button fullWidth size="lg" type="submit" loading={loading} className="auth-submit-btn">Send Reset Link</Button>
-                </Stack>
+              <p className="text-xs text-text-muted text-center mb-4">Enter your email address and we'll send you instructions to reset your password.</p>
+              {error && (
+                <div className="flex items-center gap-2 rounded-lg border border-error/30 bg-error/5 px-3 py-2.5 text-sm text-error mb-4">
+                  <AlertCircle size={14} /> {error}
+                </div>
+              )}
+              <form onSubmit={handleSubmit} className="space-y-3">
+                <div>
+                  <label className="text-sm font-medium text-text-primary">Email</label>
+                  <div className="relative mt-1">
+                    <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+                    <input type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required className="input-field pl-9" />
+                  </div>
+                </div>
+                <button type="submit" disabled={loading} className="w-full h-10 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-colors cursor-pointer disabled:opacity-50">
+                  {loading ? 'Sending...' : 'Send Reset Link'}
+                </button>
               </form>
-              <Anchor component={Link} to="/login" ta="center" mt="md" size="sm">
-                <ArrowLeft size={14} style={{ marginRight: 4, verticalAlign: 'middle' }} /> Back to Sign In
-              </Anchor>
+              <Link to="/login" className="flex items-center justify-center gap-1 text-xs text-primary hover:underline mt-4">
+                <ArrowLeft size={12} /> Back to Sign In
+              </Link>
             </>
           )}
-        </Paper>
+        </div>
       </div>
     </div>
   );

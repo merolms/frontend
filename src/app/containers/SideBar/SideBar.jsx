@@ -1,29 +1,19 @@
 import React from 'react';
-import { NavLink, Stack, Divider, Button, Group, Text } from '@mantine/core';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { BookOpen, GraduationCap, Home, LogOut, Settings, Shield, Network, Tags, Users } from 'lucide-react';
-import SideBarItem from '@/app/containers/SideBar/SideBarItem/SideBarItem';
-import UserProfileInfo from '@/app/components/UserProfileInfo';
 import { logoutUser } from '@/redux/slices/authSlice';
-import './SideBar.scss';
 
 const navItems = [
-  { path: '/', label: 'Dashboard', icon: 'home' },
-  { path: '/courses', label: 'Courses', icon: 'book' },
-  { path: '/categories', label: 'Categories', icon: 'tags' },
-  { path: '/users', label: 'Users', icon: 'users' },
-  { path: '/teams', label: 'Teams', icon: 'sitemap' },
-  { path: '/my-learning', label: 'Learning', icon: 'graduation-cap' },
-  { path: '/settings', label: 'Settings', icon: 'cog' },
-  { path: '/roles', label: 'Roles', icon: 'shield' },
+  { path: '/', label: 'Dashboard', icon: Home },
+  { path: '/courses', label: 'Courses', icon: BookOpen },
+  { path: '/categories', label: 'Categories', icon: Tags },
+  { path: '/users', label: 'Users', icon: Users },
+  { path: '/teams', label: 'Teams', icon: Network },
+  { path: '/my-learning', label: 'Learning', icon: GraduationCap },
+  { path: '/settings', label: 'Settings', icon: Settings },
+  { path: '/roles', label: 'Roles', icon: Shield },
 ];
-
-const iconMap = {
-  home: Home, book: BookOpen, tags: Tags, users: Users, sitemap: Network,
-  'graduation-cap': BookOpen,
-  cog: Settings, shield: Shield,
-};
 
 export default function SideBar() {
   const location = useLocation();
@@ -32,51 +22,53 @@ export default function SideBar() {
   const user = useSelector((state) => state.auth.user);
   const currentPath = location.pathname;
 
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    navigate('/login');
+  const handleLogout = () => { dispatch(logoutUser()); navigate('/login'); };
+
+  const isActive = (path) => {
+    if (path === '/') return currentPath === '/';
+    return currentPath === path || currentPath.startsWith(path + '/');
   };
 
   return (
-    <div className='sidebar-wrapper'>
-      <div className='sidebar-header'>
-        <div className='sidebar-brand'>
-          <GraduationCap className='brand-icon' />
-        </div>
+    <div className="sidebar-wrapper">
+      <div className="flex h-14 items-center justify-center border-b" style={{ borderColor: 'var(--border-primary)' }}>
+        <GraduationCap size={24} className="text-primary" />
       </div>
 
-      <div className='sidebar-nav'>
-        <Stack gap={2} className='side-menu'>
+      <nav className="flex-1 overflow-y-auto px-2 py-3">
+        <div className="flex flex-col gap-1">
           {navItems.map((item) => {
-            const Icon = iconMap[item.icon] || Home;
-            const isActive = item.path === '/' ? currentPath === '/' : currentPath === item.path || currentPath.startsWith(item.path + '/');
+            const active = isActive(item.path);
+            const Icon = item.icon;
             return (
-              <SideBarItem
-                key={item.path}
-                path={item.path}
-                label={item.label}
-                icon={item.icon}
-                IconComponent={Icon}
-                active={isActive}
-              />
+              <Link key={item.path} to={item.path} title={item.label}
+                className={`group flex h-10 w-10 items-center justify-center rounded-lg transition-colors mx-auto ${active ? 'bg-primary text-white' : 'text-text-muted hover:bg-bg-surface-hover hover:text-text-primary'}`}>
+                <Icon size={18} />
+              </Link>
             );
           })}
-        </Stack>
-      </div>
+        </div>
+      </nav>
 
-      <div className='sidebar-footer'>
+      <div className="border-t p-2" style={{ borderColor: 'var(--border-primary)' }}>
         {user && (
           <>
-            <div className='sidebar-profile-card' onClick={() => navigate('/profile')} role='button' title='View profile'>
-              <UserProfileInfo
-                image={user.avatar}
-                primaryText={`${user.firstName} ${user.lastName}`}
-                secondaryText={user.role}
-              />
-            </div>
-            <button className='sidebar-logout-btn' onClick={handleLogout} title='Sign Out'>
-              <LogOut />
-              <span>Sign Out</span>
+            <button onClick={() => navigate('/profile')}
+              className="flex w-full items-center gap-2 rounded-lg p-2 hover:bg-bg-surface-hover transition-colors"
+              title={`${user.firstName} ${user.lastName}`}>
+              {user.avatar ? (
+                <img src={user.avatar} alt={user.firstName} className="h-8 w-8 rounded-full object-cover" />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium text-white" style={{ background: 'var(--primary)' }}>
+                  {user.firstName?.[0] || 'U'}
+                </div>
+              )}
+            </button>
+            <button onClick={handleLogout} title="Sign Out"
+              className="mt-1 flex h-10 w-10 items-center justify-center rounded-lg mx-auto text-text-muted transition-colors"
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; e.currentTarget.style.color = 'var(--error)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)'; }}>
+              <LogOut size={16} />
             </button>
           </>
         )}

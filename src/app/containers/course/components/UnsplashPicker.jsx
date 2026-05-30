@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Modal, TextInput, Button, Image, Paper, Text, Group, Stack, Loader, Grid } from '@mantine/core';
-import { Check, ImageIcon, Search, X } from 'lucide-react';
+import { Check, ImageIcon, Search, X, Loader } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { searchUnsplash } from '@/app/services/unsplashService';
-
 import { t } from '@/styles/theme';
 
 const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
@@ -23,7 +24,8 @@ const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
     setError(null);
     try {
       const data = await searchUnsplash(q, p);
-      if (p === 1) { setResults(data.results); } else { setResults(prev => [...prev, ...data.results]); }
+      if (p === 1) { setResults(data.results); }
+      else { setResults((prev) => [...prev, ...data.results]); }
       setTotalPages(data.total_pages || 1);
       setPage(p);
     } catch (err) { setError(err.message || 'Failed to search images.'); }
@@ -32,8 +34,11 @@ const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
 
   useEffect(() => {
     if (open) {
-      setQuery(initialQuery || 'education'); setSelectedId(null); setSelectedUrl(null);
-      setResults([]); setError(null);
+      setQuery(initialQuery || 'education');
+      setSelectedId(null);
+      setSelectedUrl(null);
+      setResults([]);
+      setError(null);
       setTimeout(() => doSearch(initialQuery || 'education', 1), 100);
       setTimeout(() => inputRef.current?.focus(), 300);
     }
@@ -52,64 +57,80 @@ const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = '' }) => {
   const handleConfirm = () => { if (selectedUrl) { onSelect(selectedUrl); onClose(); } };
 
   return (
-    <Modal opened={open} onClose={onClose} title="Select Cover Image from Unsplash" size="lg" className='unsplash-picker-modal'>
-      <form onSubmit={handleSearch} className='unsplash-search-bar'>
-        <TextInput
-          ref={inputRef}
-          placeholder='Search photos (e.g., technology, nature, business)...'
-          value={query}
-          onChange={(e) => handleInputChange(e.target.value)}
-          leftSection={<Search size={16} />}
-          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSearch(e); } }}
-          className='unsplash-search-input'
-        />
-      </form>
+    <Dialog open={open} onOpenChange={onClose}>
+      {open && (
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Select Cover Image from Unsplash</DialogTitle>
+          </DialogHeader>
 
-      {error && (
-        <Paper p="sm" mb="sm" className='unsplash-error' withBorder>
-          <Text size="sm" c="red">{error}</Text>
-        </Paper>
+          <form onSubmit={handleSearch}>
+            <div className="relative">
+              <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
+              <Input
+                ref={inputRef}
+                placeholder="Search photos (e.g., technology, nature, business)..."
+                value={query}
+                onChange={(e) => handleInputChange(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+          </form>
+
+          {error && (
+            <div className="rounded-lg border border-error/30 bg-error/5 p-3 text-sm text-error">{error}</div>
+          )}
+
+          {results.length > 0 && (
+            <div className="max-h-96 overflow-y-auto">
+              <div className="grid grid-cols-4 gap-2">
+                {results.map((photo) => (
+                  <div
+                    key={photo.id}
+                    className={`relative cursor-pointer rounded-md overflow-hidden border-2 ${selectedId === photo.id ? 'border-primary' : 'border-transparent'}`}
+                    onClick={() => handleSelect(photo)}
+                  >
+                    <img src={photo.thumb} alt={photo.alt} className="aspect-square w-full object-cover" />
+                    {selectedId === photo.id && (
+                      <div className="absolute top-1 right-1 rounded-full bg-success p-1">
+                        <Check size={12} className="text-white" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {!loading && results.length === 0 && !error && (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <ImageIcon size={48} className="text-text-muted" />
+              <p className="text-sm text-text-muted mt-2">Search for images above to get started.</p>
+            </div>
+          )}
+
+          {loading && (
+            <div className="flex items-center justify-center gap-2 py-4">
+              <Loader size={14} className="animate-spin text-text-muted" />
+              <span className="text-sm text-text-muted">Searching Unsplash...</span>
+            </div>
+          )}
+
+          {results.length > 0 && page < totalPages && !loading && (
+            <div className="text-center">
+              <Button variant="default" size="sm" onClick={handleLoadMore}>
+                <Search size={14} /> Load More
+              </Button>
+            </div>
+          )}
+
+          <div className="flex justify-end gap-2 mt-2">
+            <Button variant="default" onClick={onClose}><X size={14} /> Cancel</Button>
+            <Button onClick={handleConfirm} disabled={!selectedUrl}><Check size={14} /> Use Selected Image</Button>
+          </div>
+        </DialogContent>
       )}
-
-      {results.length > 0 && (
-        <div className='unsplash-grid' style={{ maxHeight: 400, overflowY: 'auto' }}>
-          <Grid gutter="sm">
-            {results.map((photo) => (
-              <Grid.Col key={photo.id} span={3}>
-                <div className={`unsplash-grid-item ${selectedId === photo.id ? 'selected' : ''}`} onClick={() => handleSelect(photo)} style={{ position: 'relative', cursor: 'pointer' }}>
-                  <Image src={photo.thumb} alt={photo.alt} className='unsplash-thumb' radius="sm" />
-                  {selectedId === photo.id && (
-                    <div className='unsplash-selected-badge' style={{ position: 'absolute', top: 4, right: 4 }}>
-                      <Check size={20} color="green" />
-                    </div>
-                  )}
-                </div>
-              </Grid.Col>
-            ))}
-          </Grid>
-        </div>
-      )}
-
-      {!loading && results.length === 0 && !error && (
-        <div className='unsplash-empty' ta="center" p="xl">
-          <ImageIcon size={48} color={t('text-muted')} />
-          <Text mt="sm">Search for images above to get started.</Text>
-        </div>
-      )}
-
-      {loading && <Group justify="center" p="md"><Loader size="sm" /><Text size="sm">Searching Unsplash...</Text></Group>}
-
-      {results.length > 0 && page < totalPages && !loading && (
-        <div className='unsplash-load-more' ta="center" mt="sm">
-          <Button variant="default" leftSection={<Search size={14} />} onClick={handleLoadMore}>Load More</Button>
-        </div>
-      )}
-
-      <Group justify="flex-end" mt="md">
-        <Button variant="default" onClick={onClose} leftSection={<X size={14} />}>Cancel</Button>
-        <Button onClick={handleConfirm} disabled={!selectedUrl} leftSection={<Check size={14} />}>Use Selected Image</Button>
-      </Group>
-    </Modal>
+    </Dialog>
   );
 };
 

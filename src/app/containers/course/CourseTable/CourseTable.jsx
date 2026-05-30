@@ -1,22 +1,21 @@
 import React from 'react';
-import { Table } from '@mantine/core';
 
 function CourseTable(props) {
   return (
-    <Table striped>
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>Course Name</Table.Th>
-          <Table.Th>Category</Table.Th>
-          <Table.Th>Lessons</Table.Th>
-          <Table.Th>Status</Table.Th>
-          <Table.Th>Author</Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>
+    <table className="w-full text-sm">
+      <thead>
+        <tr className="border-b border-border">
+          <th className="px-4 py-2.5 text-left text-xs font-medium text-text-muted">Course Name</th>
+          <th className="px-4 py-2.5 text-left text-xs font-medium text-text-muted">Category</th>
+          <th className="px-4 py-2.5 text-left text-xs font-medium text-text-muted">Lessons</th>
+          <th className="px-4 py-2.5 text-left text-xs font-medium text-text-muted">Status</th>
+          <th className="px-4 py-2.5 text-left text-xs font-medium text-text-muted">Author</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-border">
         {props.rows}
-      </Table.Tbody>
-    </Table>
+      </tbody>
+    </table>
   );
 }
 

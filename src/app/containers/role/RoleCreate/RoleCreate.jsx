@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Paper, Breadcrumbs, Anchor, Button, Title, Text } from '@mantine/core';
-import { Shield } from 'lucide-react';
-import SideBar from '@/app/containers/SideBar/SideBar';
+import { Shield, ChevronRight } from 'lucide-react';
+import DashboardLayout from '@/components/ui/dashboard-layout';
+import { Paper } from '@/components/ui/card';
 import RoleForm from '@/app/containers/role/RoleForm/RoleForm';
 import { createRole } from '@/app/services/authService';
 import { useToast } from '@/app/context/ToastContext';
-
 import { t } from '@/styles/theme';
 
 const RoleCreate = () => {
@@ -16,26 +15,33 @@ const RoleCreate = () => {
   const [error, setError] = useState(null);
 
   const handleSubmit = async (formData) => {
-    try { setLoading(true); setError(null); await createRole(formData); addToast(`Role "${formData.name}" created successfully`, 'success'); navigate('/roles'); }
-    catch (err) { setError(err.message || 'Failed to create role.'); } finally { setLoading(false); }
+    try {
+      setLoading(true); setError(null);
+      await createRole(formData);
+      addToast(`Role "${formData.name}" created successfully`, 'success');
+      navigate('/roles');
+    } catch (err) { setError(err.message || 'Failed to create role.'); }
+    finally { setLoading(false); }
   };
-  const handleCancel = () => navigate('/roles');
 
   return (
-    <div className='dashboard-layout'>
-      <SideBar />
-      <div className='dashboard-main'>
-        <div className='dashboard-header'><div className='header-left'><h1 className='page-title'>Roles & Permissions</h1><p className='page-subtitle'>Create new role</p></div></div>
-        <div className='dashboard-content'>
-          <Breadcrumbs mb="md"><Anchor onClick={() => navigate('/roles')}>Roles</Anchor><span>Create Role</span></Breadcrumbs>
-          <Paper className='role-form-segment' p="lg" radius="md" withBorder>
-            <Title order={3} mb={4}><Shield size={20} color={t('primary')} /> Create New Role</Title>
-            <Text c="dimmed" size="sm" mb="md">Define a new role and assign permissions to it.</Text>
-            <RoleForm onSubmit={handleSubmit} onCancel={handleCancel} loading={loading} submitLabel='Create Role' />
-          </Paper>
-        </div>
+    <DashboardLayout title="Create Role" subtitle="Define a new role and assign permissions">
+      <div className="flex items-center gap-1 text-xs text-text-muted mb-4">
+        <button onClick={() => navigate('/roles')} className="text-primary hover:underline">Roles</button>
+        <ChevronRight size={12} />
+        <span>Create Role</span>
       </div>
-    </div>
+
+      <Paper className="p-6 max-w-2xl">
+        <h2 className="text-base font-semibold text-text-primary mb-1">
+          <Shield size={16} className="inline mr-1" style={{ color: t('primary') }} />
+          Create New Role
+        </h2>
+        <p className="text-xs text-text-muted mb-4">Define a new role and assign permissions to it.</p>
+        {error && <p className="text-xs text-error mb-3">{error}</p>}
+        <RoleForm onSubmit={handleSubmit} onCancel={() => navigate('/roles')} loading={loading} submitLabel="Create Role" />
+      </Paper>
+    </DashboardLayout>
   );
 };
 
