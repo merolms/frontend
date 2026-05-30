@@ -215,6 +215,7 @@ export const createLesson = async (courseId, lessonData) => {
     const payload = {
       course_id: parseInt(courseId, 10),
       title: lessonData.title,
+      order_number: lessonData.sort_order || 0
     };
     const data = await apiPost(`/courses/${courseId}/lessons`, payload);
     return normalizeLesson(data);
@@ -262,7 +263,7 @@ export const reorderLessons = async (courseId, lessons) => {
 
 // ==================== MOCK DATA (fallback for dev) ====================
 
-const mockCourses = [
+let mockCourses = [
   {
     id: 1,
     title: 'Introduction to React',

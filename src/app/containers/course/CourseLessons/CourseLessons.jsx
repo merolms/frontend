@@ -32,7 +32,7 @@ const CourseLessons = () => {
   const handleLessonSubmit = async (formData) => {
     setSaving(true);
     try {
-      if (editingLesson) { await updateLesson(id, editingLesson.id, formData); } else { await createLesson(id, formData); }
+      if (editingLesson) { await updateLesson(id, editingLesson.id, formData); } else { await createLesson(id, { ...formData, sort_order: lessons.length + 1 }); }
       setLessonModalOpen(false); setEditingLesson(null); await loadData();
     } catch (err) { alert(err.message || 'Failed to save lesson.'); } finally { setSaving(false); }
   };

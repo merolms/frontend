@@ -10,6 +10,8 @@ import { t } from '@/styles/theme';
 import { useTheme as useThemeContext } from '@/app/context/ThemeContext';
 import '@blocknote/react/style.css';
 import { BlockNoteViewRaw as BlockNoteView, useCreateBlockNote } from '@blocknote/react';
+import SideBar from '@/app/containers/SideBar/SideBar';
+
 
 const PARA_PROPS = { textAlignment: 'left', backgroundColor: 'default', textColor: 'default' };
 
@@ -211,6 +213,7 @@ const CoursePreview = () => {
 
   return (
     <div style={{ display: 'flex' }}>
+      <SideBar />
       <div style={{ marginLeft: 70, flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: t('bg-secondary') }}>
 
         {/* Top bar */}

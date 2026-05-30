@@ -178,7 +178,7 @@ const BlockNoteEditorComponent = ({ lessonId, content, contentRef, onChange, onS
 
   return (
     <div>
-      <BlockNoteView editor={editor} theme={effectiveTheme} onChange={handleChange} className="block-note-editor" />
+      <BlockNoteView editor={editor} theme={effectiveTheme} onChange={handleChange}  />
 <div
   className="bn-statusbar"
   style={{

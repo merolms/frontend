@@ -14,8 +14,7 @@ const Badge = React.forwardRef(({ className, variant = 'default', children, onCl
           'bg-accent/12 text-accent': variant === 'blue',
           'bg-warning/12 text-warning': variant === 'orange',
           'bg-error/12 text-error': variant === 'red',
-          'bg-bg-surface-active text-text-muted': variant === 'gray',
-          'bg-accent/12 text-accent': variant === 'teal',
+          'bg-bg-surface-active text-text-muted': variant === 'gray'
         },
         className
       )}

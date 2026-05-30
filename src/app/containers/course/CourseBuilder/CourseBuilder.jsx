@@ -135,7 +135,7 @@ const CourseBuilder = () => {
         }
         await loadLesson(targetLesson);
       } else {
-        const newLesson = await createLesson(id, { title: 'Lesson 1' });
+        const newLesson = await createLesson(id, { title: 'Lesson 1', sort_order: 1 });
         setLessons([newLesson]);
         setSelectedLesson(newLesson);
         setContent('');
@@ -324,7 +324,7 @@ const CourseBuilder = () => {
   const handleAddLesson = async () => {
     try {
       setAddingLesson(true);
-      const newLesson = await createLesson(id, { title: `Lesson ${lessons.length + 1}` });
+      const newLesson = await createLesson(id, { title: `Lesson ${lessons.length + 1}`, sort_order: lessons.length + 1 });
       setLessons([...lessons, newLesson]);
       await loadLesson(newLesson);
     } catch (err) {
@@ -352,7 +352,7 @@ const CourseBuilder = () => {
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <div style={{ display: 'flex'}}>
       <SideBar />
 
       <div style={{ marginLeft: 70, flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
