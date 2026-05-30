@@ -1,33 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { t } from '@/styles/theme';
-import { useNavigate, useParams, Link } from 'react-router-dom';
-import { AlertCircle, Pencil, Plus, Network, Image, Loader, X, Lightbulb } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { AlertCircle, Pencil, Plus, Network, X, Lightbulb, Loader } from 'lucide-react';
 import DashboardLayout from '@/components/ui/dashboard-layout';
-
-const tagOptions = [
-  'javascript', 'react', 'python', 'css', 'html', 'nodejs', 'typescript',
-  'machine-learning', 'data-science', 'design', 'ui', 'ux', 'devops',
-  'cloud', 'aws', 'docker', 'api', 'database', 'security',
-].map((tag) => ({ value: tag, label: tag }));
-
-const categoryOptions = [
-  { value: 1, label: 'Programming' },
-  { value: 2, label: 'Design' },
-  { value: 3, label: 'Data Science' },
-  { value: 4, label: 'DevOps' },
-  { value: 5, label: 'Business' },
-];
+import { fetchCategories } from '@/app/services/categoryService';
+import UnsplashPicker from '@/app/containers/course/components/UnsplashPicker';
 
 const CourseEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const currentUser = useSelector((state) => state.auth.user);
   const [course, setCourse] = useState(null);
-  const [form, setForm] = useState({ title: '', description: '', category: null, tags: [], coverImage: '' });
+  const [categories, setCategories] = useState([]);
+  const [form, setForm] = useState({ title: '', description: '', category: null, coverImage: '' });
   const [fetching, setFetching] = useState(true);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [unsplashOpen, setUnsplashOpen] = useState(false);
+
+  useEffect(() => {
+    fetchCategories().then((cats) => {
+      setCategories(cats.map((c) => ({ value: c.id, label: c.name })));
+    }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     const load = async () => {
@@ -38,7 +35,7 @@ const CourseEdit = () => {
         setForm({
           title: data.title || '', description: data.description || '',
           category: data.categoryID || data.category || null,
-          tags: data.tags || [], coverImage: data.coverImage || data.imageURL || '',
+          coverImage: data.coverImage || data.imageURL || '',
           status: data.status || 'DRAFT',
         });
       } catch (err) { setApiError(err.message || 'Failed to load course data.'); }
@@ -53,6 +50,8 @@ const CourseEdit = () => {
     if (form.title.trim().length < 3) e.title = 'Title must be at least 3 characters';
     if (!form.description.trim()) e.description = 'Description is required';
     if (!form.category) e.category = 'Category is required';
+        console.log('Form data:', form.category);
+
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -64,7 +63,10 @@ const CourseEdit = () => {
     setApiError(null);
     try {
       const { updateCourse } = await import('@/app/services/courseService');
-      await updateCourse(id, form);
+      await updateCourse(id, {
+        ...form,
+        authorID: currentUser?.id ?? null,
+      });
       navigate(`/courses/${id}`);
     } catch (err) {
       setApiError(err.message || 'Failed to update course. Please try again.');
@@ -143,18 +145,9 @@ const CourseEdit = () => {
                   onChange={(e) => { setForm(p => ({ ...p, category: e.target.value ? parseInt(e.target.value) : null })); if (errors.category) setErrors(p => ({ ...p, category: null })); }}
                   className={inputCls}>
                   <option value="">Select a category</option>
-                  {categoryOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                  {categories.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
                 {errors.category && <p className="text-[11px] text-error mt-0.5">{errors.category}</p>}
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-text-primary">Tags</label>
-                <select multiple name="tags" value={form.tags}
-                  onChange={(e) => setForm(p => ({ ...p, tags: Array.from(e.target.selectedOptions, o => o.value) }))}
-                  className={`${inputCls} min-h-[100px]`}>
-                  {tagOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
               </div>
 
               <div>
@@ -209,8 +202,26 @@ const CourseEdit = () => {
               <img src={form.coverImage} alt="Cover" className="w-full rounded-md" />
             </div>
           )}
+          <div className="rounded-lg border border-border bg-bg-surface p-6 shadow-sm space-y-2">
+            <h3 className="text-sm font-semibold text-text-primary flex items-center gap-1">
+              <Lightbulb size={14} /> Tips
+            </h3>
+            <ul className="list-disc list-inside text-xs text-text-muted space-y-1">
+              <li>Choose a descriptive, specific title</li>
+              <li>Write a compelling description (100-200 words)</li>
+              <li>Select the most relevant category</li>
+              <li>Use a high-quality cover image (16:9 ratio)</li>
+            </ul>
+          </div>
         </div>
       </div>
+
+      <UnsplashPicker
+        open={unsplashOpen}
+        onClose={() => setUnsplashOpen(false)}
+        onSelect={(url) => { setForm(p => ({ ...p, coverImage: url })); setUnsplashOpen(false); }}
+        initialQuery={form.title || 'education'}
+      />
     </DashboardLayout>
   );
 };

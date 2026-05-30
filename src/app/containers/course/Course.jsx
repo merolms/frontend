@@ -57,7 +57,7 @@ const CourseContainer = () => {
     try {
       setLoading(true);
       setError(null);
-      const limit = viewMode === 'list' ? 10 : viewMode === 'compact' ? 15 : 8;
+      const limit = viewMode === 'list' ? 10 : viewMode === 'compact' ? 15 : 80;
       const data = await fetchCourses({ search, status, category, sort, page, limit });
       setCourses(data.courses);
       setTotalPages(data.totalPages);
@@ -104,7 +104,7 @@ const CourseContainer = () => {
   return (
     <DashboardLayout
       title="Courses"
-      subtitle={`${total} course${total !== 1 ? 's' : ''} total`}
+      subtitle={loading ? 'Loading...' : `${total} course${total !== 1 ? 's' : ''} total${totalPages > 1 ? ` · Page ${page} of ${totalPages}` : ''}`}
     >
       {/* Action bar */}
       <div className="mb-4 flex items-center justify-end">

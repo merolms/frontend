@@ -83,7 +83,7 @@ const normalizePhoto = (photo) => ({
   profile: photo.user.links.html,
   profileImage: photo.user.profile_image?.small || '',
   alt: photo.alt_description || photo.description || 'Unsplash image',
-  color: photo.color || t('border-primary'),
+  color: photo.color || '#4060e0',
   width: photo.width,
   height: photo.height,
 });
@@ -105,7 +105,7 @@ const fallbackSearch = (query, page, perPage) => {
       profile: 'https://picsum.photos',
       profileImage: '',
       alt: `${query || 'education'} - image ${idx + 1}`,
-      color: t('text-disabled'),
+      color: '#999999',
       width: 800,
       height: 450,
     });

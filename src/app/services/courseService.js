@@ -46,11 +46,25 @@ export const fetchCourses = async (params = {}) => {
     queryParams.set('start', start);
     queryParams.set('limit', limit);
 
-    const data = await apiGet(`/courses?${queryParams.toString()}`);
-
-    // Backend returns: { message, data: [courses], total }
-    const rawCourses = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
-    const total = data.total || rawCourses.length;
+    const qs = queryParams.toString();
+    const url = `/courses${qs ? '?' + qs : ''}`;
+    const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:9090';
+    const token = localStorage.getItem('auth_token');
+    const res = await fetch(`${API_BASE}${url}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (!res.ok) throw new Error('Failed to fetch courses: ' + res.status);
+    const body = await res.json();
+    const envelope = body.data || body;
+    const rawCourses = Array.isArray(envelope.data)
+      ? envelope.data
+      : Array.isArray(envelope)
+        ? envelope
+        : [];
+    const total = envelope.total !== undefined ? envelope.total : rawCourses.length;
     const totalPages = Math.ceil(total / limit);
 
     return {
@@ -85,13 +99,11 @@ export const fetchCourseById = async (id) => {
  */
 export const createCourse = async (courseData) => {
   try {
-    const categoryID = (courseData.categoryID != null && !isNaN(Number(courseData.categoryID)))
-      ? Number(courseData.categoryID) : null;
     const payload = {
       title: courseData.title,
       description: courseData.description,
       image_url: courseData.coverImage || courseData.imageURL || '',
-      category_id: categoryID,
+      category_id: courseData.category || null,
       author_id: courseData.authorID || null,
       status: courseData.status || 'DRAFT',
     };
@@ -109,13 +121,11 @@ export const createCourse = async (courseData) => {
 export const updateCourse = async (id, courseData) => {
   try {
     // Only send category_id if it's a valid number; otherwise null
-    const categoryID = (courseData.categoryID != null && !isNaN(Number(courseData.categoryID)))
-      ? Number(courseData.categoryID) : null;
     const payload = {
       title: courseData.title,
       description: courseData.description,
       image_url: courseData.coverImage || courseData.imageURL || '',
-      category_id: categoryID,
+      category_id: courseData.category || null,
       author_id: courseData.authorID || null,
       status: courseData.status || 'DRAFT',
     };
