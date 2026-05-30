@@ -18,8 +18,37 @@ export const fetchTeams = async (params = {}) => {
     const queryParams = new URLSearchParams();
     if (params.start !== undefined) queryParams.set('start', params.start);
     if (params.limit !== undefined) queryParams.set('limit', params.limit);
-    const data = await apiGet(`/teams?${queryParams}`);
-    return Array.isArray(data) ? data : [];
+    const token = localStorage.getItem('auth_token');
+    const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:9090';
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    const url = `/teams?${queryParams}`;
+    const [res, statRes] = await Promise.all([
+      fetch(`${API_BASE}${url}`, { headers }),
+      fetch(`${API_BASE}/teams/stat`, { headers }),
+    ]);
+
+    if (!res.ok) throw new Error('Failed to fetch teams: ' + res.status);
+    const body = await res.json();
+    const envelope = body.data || body;
+    const list = Array.isArray(envelope.data)
+      ? envelope.data
+      : Array.isArray(envelope)
+        ? envelope
+        : [];
+
+    let total = list.length;
+    if (statRes.ok) {
+      const statBody = await statRes.json();
+      if (statBody.data && typeof statBody.data.count === 'number') {
+        total = statBody.data.count;
+      }
+    }
+
+    return { teams: list, total };
   } catch (error) {
     console.error('Error fetching teams:', error);
     throw error;
@@ -90,9 +119,17 @@ export const fetchTeamMembers = async (teamId) => {
   }
 };
 
-export const addMemberToTeam = async (teamId, userId) => {
+export const addMemberToTeam = async (teamId, userData) => {
   try {
-    return await apiPost(`/teams/${teamId}/members`, { userId });
+    const body = {
+      userId: userData.id,
+      teamId: parseInt(teamId, 10),
+      userName: `${userData.firstName || ''} ${userData.lastName || ''}`.trim(),
+      userEmail: userData.email || '',
+      role: userData.role || 'Student',
+      avatar: userData.avatar || '',
+    };
+    return await apiPost(`/teams/${teamId}/members`, body);
   } catch (error) {
     console.error('Error adding member:', error);
     throw error;

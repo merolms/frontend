@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AlertCircle, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import DashboardLayout from '@/components/ui/dashboard-layout';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Paper } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
+import { Pagination } from '@/components/ui/pagination';
 import { DeleteModal } from '@/app/containers/course/CourseActions/CourseActions';
 import { fetchUsers, deleteUser } from '@/app/services/userService';
 import { fetchRoles } from '@/app/services/authService';
@@ -17,6 +18,7 @@ import { useToast } from '@/app/context/ToastContext';
 
 const statusOptions = [{ value: 'all', label: 'All Status' }, { value: '1', label: 'Active' }, { value: '0', label: 'Inactive' }];
 const sortOptions = [{ value: 'joined', label: 'Newest First' }, { value: 'name', label: 'Name A-Z' }, { value: 'email', label: 'Email A-Z' }];
+const limit = 10;
 
 const getRoleColor = (role) => {
   switch (role) {
@@ -36,6 +38,7 @@ const UserContainer = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [roleOptions, setRoleOptions] = useState([{ value: 'all', label: 'All Roles' }]);
@@ -60,10 +63,10 @@ const UserContainer = () => {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true); setError(null);
-      const params = { start: (page - 1) * 10, limit: 10 };
+      const params = { start: (page - 1) * limit, limit };
       if (sort) params.sort = sort;
-      const data = await fetchUsers(params);
-      let filtered = Array.isArray(data) ? data : [];
+      const result = await fetchUsers(params);
+      let filtered = Array.isArray(result.users) ? result.users : [];
       if (roleFilter) filtered = filtered.filter((u) => u.role === roleFilter);
       if (statusFilter) filtered = filtered.filter((u) => String(u.status) === statusFilter);
       if (search) {
@@ -74,7 +77,9 @@ const UserContainer = () => {
           (u.email || '').toLowerCase().includes(q)
         );
       }
-      setUsers(filtered); setTotal(filtered.length);
+      setUsers(filtered);
+      setTotal(result.total);
+      setTotalPages(Math.ceil(result.total / limit) || 1);
     } catch (err) { setError(err.message || 'Failed to load users'); }
     finally { setLoading(false); }
   }, [search, roleFilter, statusFilter, sort, page]);
@@ -109,32 +114,24 @@ const UserContainer = () => {
         title="Users"
         subtitle={`${total} user${total !== 1 ? 's' : ''} total`}
       >
-        {/* Action bar */}
         <div className="mb-4 flex items-center justify-end">
           <Button size="sm" onClick={() => navigate('/users/create')}>
             <Plus size={14} /> Add User
           </Button>
         </div>
 
-        {/* Error */}
         {error && (
           <div className="flex items-center gap-2 rounded-lg border border-error/30 bg-error/5 px-3 py-2.5 text-sm text-error mb-4">
             <AlertCircle size={14} /> {error}
           </div>
         )}
 
-        {/* Filters */}
         <Paper className="p-3 mb-4">
           <div className="flex items-center gap-2 flex-wrap">
             <form className="flex items-center gap-2 flex-1" onSubmit={handleSearch}>
               <div className="relative flex-1">
                 <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
-                <Input
-                  placeholder="Search by name, email..."
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  className="pl-8"
-                />
+                <Input placeholder="Search by name, email..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} className="pl-8" />
               </div>
             </form>
             <Select value={roleFilter} onValueChange={(v) => updateParams({ role: v === 'all' ? '' : v, page: 1 })}>
@@ -153,7 +150,6 @@ const UserContainer = () => {
           </div>
         </Paper>
 
-        {/* Table */}
         {loading ? (
           <div className="space-y-3">
             {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}
@@ -166,64 +162,72 @@ const UserContainer = () => {
             </Button>
           </div>
         ) : (
-          <Paper className="overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Joined</TableHead>
-                  <TableHead className="text-center">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(`/users/${user.id}`)}>
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={user.avatar || 'https://i.pravatar.cc/150?img=1'} />
-                          <AvatarFallback>{(user.firstName?.[0] || 'U').toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="text-xs font-semibold text-text-primary">{user.firstName} {user.lastName}</div>
-                          <div className="text-[11px] text-text-muted">{user.email}</div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={getRoleColor(user.role)}>{user.role}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={user.status === 1 ? 'green' : 'gray'}>{user.status === 1 ? 'Active' : 'Inactive'}</Badge>
-                    </TableCell>
-                    <TableCell className="text-[11px] text-text-muted">
-                      {user.created_at ? new Date(user.created_at * 1000).toLocaleDateString() : '—'}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center justify-center gap-1">
-                        <button
-                          className="flex h-7 w-7 items-center justify-center rounded-md border border-border hover:bg-bg-surface-active text-text-secondary"
-                          onClick={() => navigate(`/users/${user.id}/edit`)}
-                          title="Edit"
-                        >
-                          <Pencil size={12} />
-                        </button>
-                        <button
-                          className="flex h-7 w-7 items-center justify-center rounded-md border border-border hover:bg-error/10 text-error"
-                          onClick={() => setDeleteTarget(user)}
-                          title="Delete"
-                        >
-                          <Trash2 size={12} />
-                        </button>
-                      </div>
-                    </TableCell>
+          <>
+            <Paper className="overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>User</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Joined</TableHead>
+                    <TableHead className="text-center">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Paper>
+                </TableHeader>
+                <TableBody>
+                  {users.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(`/users/${user.id}`)}>
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={user.avatar || 'https://i.pravatar.cc/150?img=1'} />
+                            <AvatarFallback>{(user.firstName?.[0] || 'U').toUpperCase()}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="text-xs font-semibold text-text-primary">{user.firstName} {user.lastName}</div>
+                            <div className="text-[11px] text-text-muted">{user.email}</div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={getRoleColor(user.role)}>{user.role}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={user.status === 1 ? 'green' : 'gray'}>{user.status === 1 ? 'Active' : 'Inactive'}</Badge>
+                      </TableCell>
+                      <TableCell className="text-[11px] text-text-muted">
+                        {user.created_at ? new Date(user.created_at * 1000).toLocaleDateString() : '—'}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center justify-center gap-1">
+                          <button
+                            className="flex h-7 w-7 items-center justify-center rounded-md border border-border hover:bg-bg-surface-active text-text-secondary"
+                            onClick={() => navigate(`/users/${user.id}/edit`)}
+                            title="Edit"
+                          >
+                            <Pencil size={12} />
+                          </button>
+                          <button
+                            className="flex h-7 w-7 items-center justify-center rounded-md border border-border hover:bg-error/10 text-error"
+                            onClick={() => setDeleteTarget(user)}
+                            title="Delete"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
+
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-4">
+                <Pagination total={totalPages} value={page} onChange={(p) => updateParams({ page: p })} />
+              </div>
+            )}
+          </>
         )}
       </DashboardLayout>
 

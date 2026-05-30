@@ -57,7 +57,7 @@ const CourseContainer = () => {
     try {
       setLoading(true);
       setError(null);
-      const limit = viewMode === 'list' ? 10 : viewMode === 'compact' ? 15 : 80;
+      const limit = viewMode === 'list' ? 10 : viewMode === 'compact' ? 15 : 8;
       const data = await fetchCourses({ search, status, category, sort, page, limit });
       setCourses(data.courses);
       setTotalPages(data.totalPages);

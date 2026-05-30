@@ -46,25 +46,40 @@ export const fetchCourses = async (params = {}) => {
     queryParams.set('start', start);
     queryParams.set('limit', limit);
 
-    const qs = queryParams.toString();
-    const url = `/courses${qs ? '?' + qs : ''}`;
-    const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:9090';
     const token = localStorage.getItem('auth_token');
-    const res = await fetch(`${API_BASE}${url}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-    if (!res.ok) throw new Error('Failed to fetch courses: ' + res.status);
-    const body = await res.json();
+    const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:9090';
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    const url = `/courses?${queryParams}`;
+    const [listRes, statRes] = await Promise.all([
+      fetch(`${API_BASE}${url}`, { headers }),
+      fetch(`${API_BASE}/courses/stat`, { headers }),
+    ]);
+
+    if (!listRes.ok) throw new Error('Failed to fetch courses: ' + listRes.status);
+    const body = await listRes.json();
     const envelope = body.data || body;
     const rawCourses = Array.isArray(envelope.data)
       ? envelope.data
       : Array.isArray(envelope)
         ? envelope
         : [];
-    const total = envelope.total !== undefined ? envelope.total : rawCourses.length;
+
+    let total = rawCourses.length;
+    if (statRes.ok) {
+      const statBody = await statRes.json();
+      if (statBody.data && typeof statBody.data.count === 'number') {
+        total = statBody.data.count;
+      } else if (envelope.total !== undefined) {
+        total = envelope.total;
+      }
+    } else if (envelope.total !== undefined) {
+      total = envelope.total;
+    }
+
     const totalPages = Math.ceil(total / limit);
 
     return {

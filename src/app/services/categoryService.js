@@ -36,12 +36,25 @@ export const fetchCategoriesWithPagination = async (params = {}) => {
     const queryParams = new URLSearchParams();
     if (params.start !== undefined) queryParams.set('start', params.start);
     if (params.limit !== undefined) queryParams.set('limit', params.limit);
-    const data = await apiGet(`/categories?${queryParams}`);
-    if (data && Array.isArray(data.data)) {
-      return { categories: data.data, total: data.total || data.data.length };
-    }
-    const arr = Array.isArray(data) ? data : [];
-    return { categories: arr, total: arr.length };
+    const token = localStorage.getItem('auth_token');
+    const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:9090';
+    const url = `/categories?${queryParams}`;
+    const res = await fetch(`${API_BASE}${url}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (!res.ok) throw new Error('Failed to fetch categories: ' + res.status);
+    const body = await res.json();
+    const envelope = body.data || body;
+    const list = Array.isArray(envelope.data)
+      ? envelope.data
+      : Array.isArray(envelope)
+        ? envelope
+        : [];
+    const total = envelope.total !== undefined ? envelope.total : list.length;
+    return { categories: list, total };
   } catch (error) {
     console.error('Error fetching categories:', error);
     throw error;

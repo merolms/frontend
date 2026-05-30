@@ -19,9 +19,10 @@ const Pagination = ({ total, value, onChange, className }) => {
       <button
         onClick={() => onChange(Math.max(1, value - 1))}
         disabled={value === 1}
-        className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-text-secondary hover:bg-bg-surface-disabled disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+        className="flex h-8 items-center gap-1 rounded-md border border-border px-2 text-text-secondary hover:bg-bg-surface-active disabled:opacity-50 disabled:pointer-events-none cursor-pointer text-xs"
       >
         <ChevronLeft size={14} />
+        <span>Previous</span>
       </button>
       {pages.map((p, i) =>
         p === '...' ? (
@@ -44,8 +45,9 @@ const Pagination = ({ total, value, onChange, className }) => {
       <button
         onClick={() => onChange(Math.min(total, value + 1))}
         disabled={value === total}
-        className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-text-secondary hover:bg-bg-surface-active disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+        className="flex h-8 items-center gap-1 rounded-md border border-border px-2 text-text-secondary hover:bg-bg-surface-active disabled:opacity-50 disabled:pointer-events-none cursor-pointer text-xs"
       >
+        <span>Next</span>
         <ChevronRight size={14} />
       </button>
     </div>

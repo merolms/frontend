@@ -16,9 +16,37 @@ export const fetchUsers = async (params = {}) => {
     const queryParams = new URLSearchParams();
     if (params.start !== undefined) queryParams.set('start', params.start);
     if (params.limit !== undefined) queryParams.set('limit', params.limit);
-    const data = await apiGet(`/users?${queryParams}`);
-    // Backend returns UserResponse[] directly in data
-    return Array.isArray(data) ? data : [];
+    const token = localStorage.getItem('auth_token');
+    const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:9090';
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    const url = `/users?${queryParams}`;
+    const [res, statRes] = await Promise.all([
+      fetch(`${API_BASE}${url}`, { headers }),
+      fetch(`${API_BASE}/users/stat`, { headers }),
+    ]);
+
+    if (!res.ok) throw new Error('Failed to fetch users: ' + res.status);
+    const body = await res.json();
+    const envelope = body.data || body;
+    const list = Array.isArray(envelope.data)
+      ? envelope.data
+      : Array.isArray(envelope)
+        ? envelope
+        : [];
+
+    let total = list.length;
+    if (statRes.ok) {
+      const statBody = await statRes.json();
+      if (statBody.data && typeof statBody.data.count === 'number') {
+        total = statBody.data.count;
+      }
+    }
+
+    return { users: list, total };
   } catch (error) {
     console.error('Error fetching users:', error);
     throw error;

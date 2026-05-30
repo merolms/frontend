@@ -26,6 +26,7 @@ const TeamContainer = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [assignTeam, setAssignTeam] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
@@ -36,13 +37,15 @@ const TeamContainer = () => {
   const sort = searchParams.get('sort') || '';
   const [searchInput, setSearchInput] = useState(search);
 
+  const limit = 8;
+
   const fetchData = useCallback(async () => {
     try {
       setLoading(true); setError(null);
-      const params = { start: (page - 1) * 8, limit: 8 };
+      const params = { start: (page - 1) * limit, limit };
       if (sort) params.sort = sort;
-      const data = await fetchTeams(params);
-      const teamList = Array.isArray(data) ? data : [];
+      const result = await fetchTeams(params);
+      const teamList = Array.isArray(result.teams) ? result.teams : [];
       let filtered = teamList;
       if (statusFilter) filtered = filtered.filter((t) => String(t.status) === statusFilter);
       if (search) {
@@ -64,7 +67,9 @@ const TeamContainer = () => {
           };
         } catch { return { ...team, memberCount: 0, memberAvatars: [] }; }
       }));
-      setTeams(teamsWithMembers); setTotal(teamsWithMembers.length);
+      setTeams(teamsWithMembers);
+      setTotal(result.total);
+      setTotalPages(Math.ceil(result.total / limit) || 1);
     } catch (err) { setError(err.message || 'Failed to load teams'); }
     finally { setLoading(false); }
   }, [search, statusFilter, sort, page]);
@@ -149,6 +154,7 @@ const TeamContainer = () => {
             </Button>
           </div>
         ) : (
+          <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {teams.map((team) => (
               <div
@@ -182,6 +188,12 @@ const TeamContainer = () => {
               </div>
             ))}
           </div>
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-4">
+              <Pagination total={totalPages} value={page} onChange={(p) => updateParams({ page: p })} />
+            </div>
+          )}
+          </>
         )}
       </DashboardLayout>
 
