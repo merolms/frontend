@@ -2,60 +2,80 @@
 
 export const DEMO_USERS = {
   admin: {
-    email: 'admin@meroedu.com',
-    password: 'admin123',
-    firstName: 'John',
-    lastName: 'Doe',
-    role: 'Administrator',
-    permissions: ['*'],
+    email: "admin@meroedu.com",
+    password: "admin123",
+    firstName: "John",
+    lastName: "Doe",
+    role: "Administrator",
+    permissions: ["*"],
   },
   instructor: {
-    email: 'instructor@meroedu.com',
-    password: 'instructor123',
-    firstName: 'Jane',
-    lastName: 'Smith',
-    role: 'Instructor',
+    email: "instructor@meroedu.com",
+    password: "instructor123",
+    firstName: "Jane",
+    lastName: "Smith",
+    role: "Instructor",
     permissions: [
-      'dashboard.view',
-      'courses.view', 'courses.create', 'courses.edit', 'courses.lessons.manage',
-      'users.view', 'teams.view', 'reports.view',
+      "dashboard.view",
+      "courses.view",
+      "courses.create",
+      "courses.edit",
+      "courses.lessons.manage",
+      "users.view",
+      "teams.view",
+      "reports.view",
     ],
   },
   student: {
-    email: 'student@meroedu.com',
-    password: 'student123',
-    firstName: 'Bob',
-    lastName: 'Wilson',
-    role: 'Student',
-    permissions: ['dashboard.view', 'courses.view'],
+    email: "student@meroedu.com",
+    password: "student123",
+    firstName: "Bob",
+    lastName: "Wilson",
+    role: "Student",
+    permissions: ["dashboard.view", "courses.view"],
   },
 };
 
 export async function mockLogin(page, user = DEMO_USERS.admin) {
-  const fakeToken = 'mock-jwt-token-' + Date.now();
+  const fakeToken = "mock-jwt-token-" + Date.now();
 
-  await page.addInitScript(({ user: userData, token }) => {
-    localStorage.setItem('auth_token', token);
-    localStorage.setItem('auth_user', JSON.stringify({
-      id: 1,
-      email: userData.email,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      role: userData.role,
-      avatar: 'https://i.pravatar.cc/150?img=1',
-      permissions: userData.permissions,
-    }));
-  }, { user, fakeToken });
+  await page.addInitScript(
+    ({ user: userData, token }) => {
+      localStorage.setItem("auth_token", token);
+      localStorage.setItem(
+        "auth_user",
+        JSON.stringify({
+          id: 1,
+          email: userData.email,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          role: userData.role,
+          avatar: "https://i.pravatar.cc/150?img=1",
+          permissions: userData.permissions,
+        })
+      );
+    },
+    { user, fakeToken }
+  );
 
   // Mock auth endpoints
-  await page.route('**/auth/**', async (route) => {
+  await page.route("**/auth/**", async (route) => {
     const url = route.request().url();
-    if (url.includes('/auth/me') || url.includes('/auth/login')) {
+    if (url.includes("/auth/me") || url.includes("/auth/login")) {
       await route.fulfill({
-        status: 200, contentType: 'application/json',
+        status: 200,
+        contentType: "application/json",
         body: JSON.stringify({
-          message: 'success',
-          data: { id: 1, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role, avatar: 'https://i.pravatar.cc/150?img=1', permissions: user.permissions },
+          message: "success",
+          data: {
+            id: 1,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role,
+            avatar: "https://i.pravatar.cc/150?img=1",
+            permissions: user.permissions,
+          },
         }),
       });
     } else {
@@ -66,225 +86,624 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
   // Mock courses list — only match /courses?... not /courses/:id
   await page.route(/\/courses(\?.*)?$/, async (route) => {
     await route.fulfill({
-      status: 200, contentType: 'application/json',
+      status: 200,
+      contentType: "application/json",
       body: JSON.stringify({
-        message: 'success',
+        message: "success",
         data: {
           courses: [
-            { id: 1, title: 'Introduction to React', description: 'Learn React', category: 'Programming', status: 'published', author: 'John Doe', totalLessons: 12, enrolledUsers: 45, duration: '8 hours', createdAt: '2025-01-15' },
-            { id: 2, title: 'Advanced CSS Techniques', description: 'Master CSS', category: 'Design', status: 'published', author: 'Jane Smith', totalLessons: 8, enrolledUsers: 32, duration: '5 hours', createdAt: '2025-02-01' },
+            {
+              id: 1,
+              title: "Introduction to React",
+              description: "Learn React",
+              category: "Programming",
+              status: "published",
+              author: "John Doe",
+              totalLessons: 12,
+              enrolledUsers: 45,
+              duration: "8 hours",
+              createdAt: "2025-01-15",
+            },
+            {
+              id: 2,
+              title: "Advanced CSS Techniques",
+              description: "Master CSS",
+              category: "Design",
+              status: "published",
+              author: "Jane Smith",
+              totalLessons: 8,
+              enrolledUsers: 32,
+              duration: "5 hours",
+              createdAt: "2025-02-01",
+            },
           ],
-          total: 2, page: 1, limit: 8, totalPages: 1,
+          total: 2,
+          page: 1,
+          limit: 8,
+          totalPages: 1,
         },
       }),
     });
   });
 
   // Mock lessons
-  await page.route('**/courses/**/lessons**', async (route) => {
+  await page.route("**/courses/**/lessons**", async (route) => {
     const url = route.request().url();
     const method = route.request().method();
-    if (method === 'GET') {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: [
-        { id: 1, courseId: 1, title: 'Getting Started', order_number: 1, type: 'text', status: 'published', createdAt: '2025-01-15', updatedAt: '2025-01-15' },
-        { id: 2, courseId: 1, title: 'Components and Props', order_number: 2, type: 'text', status: 'published', createdAt: '2025-01-16', updatedAt: '2025-01-16' },
-        { id: 3, courseId: 1, title: 'State and Lifecycle', order_number: 3, type: 'text', status: 'published', createdAt: '2025-01-17', updatedAt: '2025-01-17' },
-      ] }) });
+    if (method === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          message: "success",
+          data: [
+            {
+              id: 1,
+              courseId: 1,
+              title: "Getting Started",
+              order_number: 1,
+              type: "text",
+              status: "published",
+              createdAt: "2025-01-15",
+              updatedAt: "2025-01-15",
+            },
+            {
+              id: 2,
+              courseId: 1,
+              title: "Components and Props",
+              order_number: 2,
+              type: "text",
+              status: "published",
+              createdAt: "2025-01-16",
+              updatedAt: "2025-01-16",
+            },
+            {
+              id: 3,
+              courseId: 1,
+              title: "State and Lifecycle",
+              order_number: 3,
+              type: "text",
+              status: "published",
+              createdAt: "2025-01-17",
+              updatedAt: "2025-01-17",
+            },
+          ],
+        }),
+      });
       return;
     }
-    if (method === 'POST') {
-      let body = {}; try { body = await route.request().postDataJSON(); } catch {}
+    if (method === "POST") {
+      let body = {};
+      try {
+        body = await route.request().postDataJSON();
+      } catch {}
       const match = url.match(/courses\/(\d+)\/lessons/);
       const courseId = match ? parseInt(match[1]) : 1;
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: { id: Date.now(), courseId, title: body.title || 'New Lesson', order_number: 99, type: 'text', status: 'published', createdAt: '2025-01-15', updatedAt: '2025-01-15' } }) });
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          message: "success",
+          data: {
+            id: Date.now(),
+            courseId,
+            title: body.title || "New Lesson",
+            order_number: 99,
+            type: "text",
+            status: "published",
+            createdAt: "2025-01-15",
+            updatedAt: "2025-01-15",
+          },
+        }),
+      });
       return;
     }
-    if (method === 'PUT') {
-      let body = {}; try { body = await route.request().postDataJSON(); } catch {}
+    if (method === "PUT") {
+      let body = {};
+      try {
+        body = await route.request().postDataJSON();
+      } catch {}
       const idMatch = url.match(/lessons\/(\d+)/);
       const lessonId = idMatch ? parseInt(idMatch[1]) : 0;
-      if (url.includes('/reorder')) {
-        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success' }) });
+      if (url.includes("/reorder")) {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ message: "success" }),
+        });
         return;
       }
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: { id: lessonId, courseId: 1, title: body.title || 'Updated Lesson', order_number: body.order_number || 1, type: body.type || 'text', status: 'published', createdAt: '2025-01-15', updatedAt: '2025-01-15', content: body.content || '' } }) });
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          message: "success",
+          data: {
+            id: lessonId,
+            courseId: 1,
+            title: body.title || "Updated Lesson",
+            order_number: body.order_number || 1,
+            type: body.type || "text",
+            status: "published",
+            createdAt: "2025-01-15",
+            updatedAt: "2025-01-15",
+            content: body.content || "",
+          },
+        }),
+      });
       return;
     }
-    if (method === 'DELETE') {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'Lesson deleted successfully' }) });
+    if (method === "DELETE") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "Lesson deleted successfully" }),
+      });
       return;
     }
     await route.continue();
   });
 
   // Mock lesson blocks
-  await page.route('**/lessons/**/blocks**', async (route) => {
+  await page.route("**/lessons/**/blocks**", async (route) => {
     const url = route.request().url();
-    if (route.request().method() === 'GET') {
+    if (route.request().method() === "GET") {
       const match = url.match(/lessons\/(\d+)\/blocks/);
       const lessonId = match ? parseInt(match[1]) : 0;
       const blocksByLesson = {
-        1: [{ id: 101, lessonId: 1, type: 'paragraph', title: 'Intro', content: '[{"type":"text","text":"Welcome to React!","styles":{}}]', order: 1, status: 'active', createdAt: 1700000000, updatedAt: 1700000000 }],
-        2: [{ id: 201, lessonId: 2, type: 'paragraph', title: 'Components', content: '[{"type":"text","text":"Components are the building blocks.","styles":{}}]', order: 1, status: 'active', createdAt: 1700000000, updatedAt: 1700000000 }],
+        1: [
+          {
+            id: 101,
+            lessonId: 1,
+            type: "paragraph",
+            title: "Intro",
+            content: '[{"type":"text","text":"Welcome to React!","styles":{}}]',
+            order: 1,
+            status: "active",
+            createdAt: 1700000000,
+            updatedAt: 1700000000,
+          },
+        ],
+        2: [
+          {
+            id: 201,
+            lessonId: 2,
+            type: "paragraph",
+            title: "Components",
+            content: '[{"type":"text","text":"Components are the building blocks.","styles":{}}]',
+            order: 1,
+            status: "active",
+            createdAt: 1700000000,
+            updatedAt: 1700000000,
+          },
+        ],
         3: [],
       };
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: blocksByLesson[lessonId] || [] }) });
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "success", data: blocksByLesson[lessonId] || [] }),
+      });
       return;
     }
-    if (route.request().method() === 'POST') {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: { id: Date.now(), lessonId: 0, type: 'paragraph', content: '[]', order: 1, status: 'active' } }) });
+    if (route.request().method() === "POST") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          message: "success",
+          data: {
+            id: Date.now(),
+            lessonId: 0,
+            type: "paragraph",
+            content: "[]",
+            order: 1,
+            status: "active",
+          },
+        }),
+      });
       return;
     }
     await route.continue();
   });
 
   // Mock autosave
-  await page.route('**/lessons/**/autosave**', async (route) => {
-    if (route.request().method() === 'GET') {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: null }) });
+  await page.route("**/lessons/**/autosave**", async (route) => {
+    if (route.request().method() === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "success", data: null }),
+      });
       return;
     }
-    if (route.request().method() === 'POST') {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: { id: Date.now() } }) });
+    if (route.request().method() === "POST") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "success", data: { id: Date.now() } }),
+      });
       return;
     }
     await route.continue();
   });
 
   // Mock contents (deprecated but still referenced)
-  await page.route('**/lessons/**/contents**', async (route) => {
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: [] }) });
+  await page.route("**/lessons/**/contents**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ message: "success", data: [] }),
+    });
   });
 
   // Mock single lesson
   await page.route(/\/lessons\/(\d+)$/, async (route) => {
-    const match = route.request().url().match(/\/lessons\/(\d+)/);
+    const match = route
+      .request()
+      .url()
+      .match(/\/lessons\/(\d+)/);
     const lessonId = match ? parseInt(match[1]) : 0;
-    if (route.request().method() === 'GET') {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: { id: lessonId, courseId: 1, title: 'Lesson ' + lessonId, order_number: 1, type: 'text', status: 'published', content: '', createdAt: '2025-01-15', updatedAt: '2025-01-15' } }) });
+    if (route.request().method() === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          message: "success",
+          data: {
+            id: lessonId,
+            courseId: 1,
+            title: "Lesson " + lessonId,
+            order_number: 1,
+            type: "text",
+            status: "published",
+            content: "",
+            createdAt: "2025-01-15",
+            updatedAt: "2025-01-15",
+          },
+        }),
+      });
       return;
     }
     await route.continue();
   });
 
   // Mock users
-  await page.route('**/users**', async (route) => {
+  await page.route("**/users**", async (route) => {
     const url = route.request().url();
     const method = route.request().method();
-    if (method === 'GET') {
+    if (method === "GET") {
       const singleMatch = url.match(/\/users\/(\d+)(?:\?.*)?$/);
       if (singleMatch) {
         const userId = parseInt(singleMatch[1]);
         const usersById = {
-          1: { id: 1, email: 'admin@meroedu.com', firstName: 'John', lastName: 'Doe', role: 'Administrator', status: 1, avatar: 'https://i.pravatar.cc/150?img=1', phone: '+1 555-0101', bio: 'Platform administrator', permissions: ['*'], created_at: 1700000000 },
-          2: { id: 2, email: 'instructor@meroedu.com', firstName: 'Jane', lastName: 'Smith', role: 'Instructor', status: 1, avatar: 'https://i.pravatar.cc/150?img=5', phone: '+1 555-0102', bio: 'Experienced instructor', permissions: ['dashboard.view', 'courses.view'], created_at: 1701000000 },
+          1: {
+            id: 1,
+            email: "admin@meroedu.com",
+            firstName: "John",
+            lastName: "Doe",
+            role: "Administrator",
+            status: 1,
+            avatar: "https://i.pravatar.cc/150?img=1",
+            phone: "+1 555-0101",
+            bio: "Platform administrator",
+            permissions: ["*"],
+            created_at: 1700000000,
+          },
+          2: {
+            id: 2,
+            email: "instructor@meroedu.com",
+            firstName: "Jane",
+            lastName: "Smith",
+            role: "Instructor",
+            status: 1,
+            avatar: "https://i.pravatar.cc/150?img=5",
+            phone: "+1 555-0102",
+            bio: "Experienced instructor",
+            permissions: ["dashboard.view", "courses.view"],
+            created_at: 1701000000,
+          },
         };
         const u = usersById[userId];
-        if (u) { await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: u }) }); }
-        else { await route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ message: 'User not found' }) }); }
+        if (u) {
+          await route.fulfill({
+            status: 200,
+            contentType: "application/json",
+            body: JSON.stringify({ message: "success", data: u }),
+          });
+        } else {
+          await route.fulfill({
+            status: 404,
+            contentType: "application/json",
+            body: JSON.stringify({ message: "User not found" }),
+          });
+        }
         return;
       }
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: { users: [
-        { id: 1, email: 'admin@meroedu.com', firstName: 'John', lastName: 'Doe', role: 'Administrator', status: 1 },
-        { id: 2, email: 'instructor@meroedu.com', firstName: 'Jane', lastName: 'Smith', role: 'Instructor', status: 1 },
-      ], total: 2, page: 1, totalPages: 1 } }) });
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          message: "success",
+          data: {
+            users: [
+              {
+                id: 1,
+                email: "admin@meroedu.com",
+                firstName: "John",
+                lastName: "Doe",
+                role: "Administrator",
+                status: 1,
+              },
+              {
+                id: 2,
+                email: "instructor@meroedu.com",
+                firstName: "Jane",
+                lastName: "Smith",
+                role: "Instructor",
+                status: 1,
+              },
+            ],
+            total: 2,
+            page: 1,
+            totalPages: 1,
+          },
+        }),
+      });
       return;
     }
-    if (method === 'PUT') {
-      let body = {}; try { body = await route.request().postDataJSON(); } catch {}
+    if (method === "PUT") {
+      let body = {};
+      try {
+        body = await route.request().postDataJSON();
+      } catch {}
       const idMatch = url.match(/\/users\/(\d+)/);
       const userId = idMatch ? parseInt(idMatch[1]) : 0;
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: { id: userId, firstName: body.firstName || 'John', lastName: body.lastName || 'Doe', email: body.email || 'admin@meroedu.com', role: body.role || 'Student', phone: body.phone || '', bio: body.bio || '', avatar: body.avatar || 'https://i.pravatar.cc/150?img=1', status: body.status !== undefined ? body.status : 1, permissions: ['*'], created_at: 1700000000 } }) });
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          message: "success",
+          data: {
+            id: userId,
+            firstName: body.firstName || "John",
+            lastName: body.lastName || "Doe",
+            email: body.email || "admin@meroedu.com",
+            role: body.role || "Student",
+            phone: body.phone || "",
+            bio: body.bio || "",
+            avatar: body.avatar || "https://i.pravatar.cc/150?img=1",
+            status: body.status !== undefined ? body.status : 1,
+            permissions: ["*"],
+            created_at: 1700000000,
+          },
+        }),
+      });
       return;
     }
-    if (method === 'DELETE') {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'User deleted successfully' }) });
+    if (method === "DELETE") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "User deleted successfully" }),
+      });
       return;
     }
     await route.continue();
   });
 
   // Mock teams
-  await page.route('**/teams**', async (route) => {
+  await page.route("**/teams**", async (route) => {
     const url = route.request().url();
     const method = route.request().method();
     const singleMatch = url.match(/\/teams\/(\d+)(?:\?.*)?$/);
-    if (singleMatch && method === 'GET') {
+    if (singleMatch && method === "GET") {
       const teamId = parseInt(singleMatch[1]);
       const teamsById = {
-        1: { id: 1, name: 'Engineering Team', description: 'Core engineering team', color: '#33a163', status: 1, memberCount: 3, created_at: 1700000000 },
-        2: { id: 2, name: 'Design Team', description: 'UI/UX design team', color: '#2185d0', status: 1, memberCount: 2, created_at: 1701000000 },
+        1: {
+          id: 1,
+          name: "Engineering Team",
+          description: "Core engineering team",
+          color: "#33a163",
+          status: 1,
+          memberCount: 3,
+          created_at: 1700000000,
+        },
+        2: {
+          id: 2,
+          name: "Design Team",
+          description: "UI/UX design team",
+          color: "#2185d0",
+          status: 1,
+          memberCount: 2,
+          created_at: 1701000000,
+        },
       };
-      const team = teamsById[teamId] || { id: teamId, name: 'Team ' + teamId, description: 'A test team', color: '#2185d0', status: 1, memberCount: 0, created_at: 1700000000 };
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: team }) });
+      const team = teamsById[teamId] || {
+        id: teamId,
+        name: "Team " + teamId,
+        description: "A test team",
+        color: "#2185d0",
+        status: 1,
+        memberCount: 0,
+        created_at: 1700000000,
+      };
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "success", data: team }),
+      });
       return;
     }
-    if (method === 'GET') {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: [
-        { id: 1, name: 'Engineering Team', description: 'Core engineering team', color: '#33a163', status: 1, memberCount: 3, created_at: 1700000000 },
-        { id: 2, name: 'Design Team', description: 'UI/UX design team', color: '#2185d0', status: 1, memberCount: 2, created_at: 1701000000 },
-      ] }) });
+    if (method === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          message: "success",
+          data: [
+            {
+              id: 1,
+              name: "Engineering Team",
+              description: "Core engineering team",
+              color: "#33a163",
+              status: 1,
+              memberCount: 3,
+              created_at: 1700000000,
+            },
+            {
+              id: 2,
+              name: "Design Team",
+              description: "UI/UX design team",
+              color: "#2185d0",
+              status: 1,
+              memberCount: 2,
+              created_at: 1701000000,
+            },
+          ],
+        }),
+      });
       return;
     }
-    if (method === 'POST') {
-      let body = {}; try { body = await route.request().postDataJSON(); } catch {}
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: { id: Date.now(), name: body.name || 'New Team', description: body.description || '', color: body.color || '#2185d0', status: 1, memberCount: 0, created_at: Math.floor(Date.now() / 1000) } }) });
+    if (method === "POST") {
+      let body = {};
+      try {
+        body = await route.request().postDataJSON();
+      } catch {}
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          message: "success",
+          data: {
+            id: Date.now(),
+            name: body.name || "New Team",
+            description: body.description || "",
+            color: body.color || "#2185d0",
+            status: 1,
+            memberCount: 0,
+            created_at: Math.floor(Date.now() / 1000),
+          },
+        }),
+      });
       return;
     }
-    if (method === 'PUT') {
-      let body = {}; try { body = await route.request().postDataJSON(); } catch {}
+    if (method === "PUT") {
+      let body = {};
+      try {
+        body = await route.request().postDataJSON();
+      } catch {}
       const idMatch = url.match(/\/teams\/(\d+)/);
       const teamId = idMatch ? parseInt(idMatch[1]) : 0;
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: { id: teamId, name: body.name || 'Updated Team', description: body.description || '', color: body.color || '#2185d0', status: 1, memberCount: 0, created_at: Math.floor(Date.now() / 1000) } }) });
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          message: "success",
+          data: {
+            id: teamId,
+            name: body.name || "Updated Team",
+            description: body.description || "",
+            color: body.color || "#2185d0",
+            status: 1,
+            memberCount: 0,
+            created_at: Math.floor(Date.now() / 1000),
+          },
+        }),
+      });
       return;
     }
-    if (method === 'DELETE') {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'Team deleted successfully' }) });
+    if (method === "DELETE") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "Team deleted successfully" }),
+      });
       return;
     }
     await route.continue();
   });
 
-  await page.route('**/teams/**/members**', async (route) => {
+  await page.route("**/teams/**/members**", async (route) => {
     const method = route.request().method();
-    if (method === 'GET') {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: [
-        { userID: 1, userName: 'John Doe', role: 'Administrator', avatar: 'https://i.pravatar.cc/150?img=1' },
-        { userID: 2, userName: 'Jane Smith', role: 'Instructor', avatar: 'https://i.pravatar.cc/150?img=5' },
-      ] }) });
-    } else if (method === 'POST') {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'Member added successfully' }) });
-    } else if (method === 'DELETE') {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'Member removed successfully' }) });
+    if (method === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          message: "success",
+          data: [
+            {
+              userID: 1,
+              userName: "John Doe",
+              role: "Administrator",
+              avatar: "https://i.pravatar.cc/150?img=1",
+            },
+            {
+              userID: 2,
+              userName: "Jane Smith",
+              role: "Instructor",
+              avatar: "https://i.pravatar.cc/150?img=5",
+            },
+          ],
+        }),
+      });
+    } else if (method === "POST") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "Member added successfully" }),
+      });
+    } else if (method === "DELETE") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "Member removed successfully" }),
+      });
     } else {
       await route.continue();
     }
   });
 
-  await page.route('**/teams/**/available-users**', async (route) => {
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: [
-      { id: 1, firstName: 'John', lastName: 'Doe', email: 'admin@meroedu.com' },
-      { id: 2, firstName: 'Jane', lastName: 'Smith', email: 'instructor@meroedu.com' },
-    ] }) });
+  await page.route("**/teams/**/available-users**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        message: "success",
+        data: [
+          { id: 1, firstName: "John", lastName: "Doe", email: "admin@meroedu.com" },
+          { id: 2, firstName: "Jane", lastName: "Smith", email: "instructor@meroedu.com" },
+        ],
+      }),
+    });
   });
 
-  await page.route('**/roles**', async (route) => {
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: [] }) });
+  await page.route("**/roles**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ message: "success", data: [] }),
+    });
   });
 
-  await page.route('**/categories**', async (route) => {
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'success', data: ['Programming', 'Design', 'Data Science'] }) });
+  await page.route("**/categories**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ message: "success", data: ["Programming", "Design", "Data Science"] }),
+    });
   });
 
-  await page.goto('/');
-  await page.waitForLoadState('domcontentloaded');
+  await page.goto("/");
+  await page.waitForLoadState("domcontentloaded");
 }
 
 export async function mockLogout(page) {
   await page.addInitScript(() => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user');
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("auth_user");
   });
-  await page.goto('/login');
-  await page.waitForLoadState('domcontentloaded');
+  await page.goto("/login");
+  await page.waitForLoadState("domcontentloaded");
 }

@@ -1,11 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 import {
   login as authLogin,
   logout as authLogout,
   validateToken,
   getStoredAuth,
   storeAuth,
-} from '@/app/services/authService';
+} from "@/app/services/authService";
 
 // Restore session on load
 const stored = getStoredAuth();
@@ -19,7 +19,7 @@ const initialState = {
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     setLoading: (state, action) => {
@@ -57,7 +57,7 @@ export const loginUser = (email, password) => async (dispatch) => {
     storeAuth(user, token);
     dispatch(setAuth({ user, token }));
   } catch (err) {
-    dispatch(setError(err.message || 'Login failed.'));
+    dispatch(setError(err.message || "Login failed."));
   }
 };
 

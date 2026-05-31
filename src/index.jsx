@@ -1,31 +1,36 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { Provider, useDispatch } from 'react-redux';
-import { setAuthErrorHandler } from '@/app/services/http';
-import store from '@/redux/store';
-import { clearAuth, restoreSession } from '@/redux/slices/authSlice';
-import { ThemeProvider } from '@/app/context/ThemeContext';
-import { ToastProvider } from '@/app/context/ToastContext';
-import AppRoutes from '@/app/Routes';
-import '@/styles/tailwind.css';
-import { Toaster } from 'sonner';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Provider, useDispatch } from "react-redux";
+import { setAuthErrorHandler } from "@/app/services/http";
+import store from "@/redux/store";
+import { clearAuth, restoreSession } from "@/redux/slices/authSlice";
+import { ThemeProvider } from "@/app/context/ThemeContext";
+import { ToastProvider } from "@/app/context/ToastContext";
+import AppRoutes from "@/app/Routes";
+import "@/styles/tailwind.css";
+import { Toaster } from "sonner";
 
 const AuthErrorBridge = ({ children }) => {
   const dispatch = useDispatch();
   React.useEffect(() => {
-    setAuthErrorHandler(() => { dispatch(clearAuth()); window.location.href = '/login'; });
+    setAuthErrorHandler(() => {
+      dispatch(clearAuth());
+      window.location.href = "/login";
+    });
   }, [dispatch]);
   return children;
 };
 
 const AuthInitializer = ({ children }) => {
   const dispatch = useDispatch();
-  React.useEffect(() => { dispatch(restoreSession()); }, [dispatch]);
+  React.useEffect(() => {
+    dispatch(restoreSession());
+  }, [dispatch]);
   return children;
 };
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <ThemeProvider>
       <AuthErrorBridge>

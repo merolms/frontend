@@ -1,7 +1,7 @@
 // Course API Service
 // Handles all API calls related to courses and lessons
 
-import { apiGet, apiPost, apiPut, apiDelete, getApiBase } from '@/app/services/http';
+import { apiGet, apiPost, apiPut, apiDelete, getApiBase } from "@/app/services/http";
 
 // ==================== FIELD MAPPING ====================
 // Backend sends: image_url, author_id, category_id, lesson_count
@@ -9,23 +9,23 @@ import { apiGet, apiPost, apiPut, apiDelete, getApiBase } from '@/app/services/h
 
 const normalizeCourse = (c) => ({
   id: c.id,
-  title: c.title || '',
-  description: c.description || '',
-  imageURL: c.image_url || '',
-  coverImage: c.image_url || '',
-  duration: c.duration ? String(c.duration) : '',
-  status: c.status || 'DRAFT',
+  title: c.title || "",
+  description: c.description || "",
+  imageURL: c.image_url || "",
+  coverImage: c.image_url || "",
+  duration: c.duration ? String(c.duration) : "",
+  status: c.status || "DRAFT",
   // category_id is a numeric FK; preserve as-is for edit forms
   categoryID: c.category_id != null ? Number(c.category_id) : null,
   // category name for display
-  category: c.category?.name || c.categories?.name || '',
+  category: c.category?.name || c.categories?.name || "",
   authorID: c.author_id,
-  author: c.author ? `${c.author.firstName || ''} ${c.author.lastName || ''}`.trim() : '',
+  author: c.author ? `${c.author.firstName || ""} ${c.author.lastName || ""}`.trim() : "",
   tags: c.tags || [],
   totalLessons: c.lesson_count || c.lessonCount || 0,
   enrolledUsers: c.enrolled_users || 0,
-  createdAt: c.created_at ? new Date(c.created_at * 1000).toISOString().split('T')[0] : '',
-  updatedAt: c.updated_at ? new Date(c.updated_at * 1000).toISOString().split('T')[0] : '',
+  createdAt: c.created_at ? new Date(c.created_at * 1000).toISOString().split("T")[0] : "",
+  updatedAt: c.updated_at ? new Date(c.updated_at * 1000).toISOString().split("T")[0] : "",
   lessons: c.lessons || [],
   attachments: c.attachments || [],
 });
@@ -43,13 +43,13 @@ export const fetchCourses = async (params = {}) => {
     const start = (page - 1) * limit;
 
     const queryParams = new URLSearchParams();
-    queryParams.set('start', start);
-    queryParams.set('limit', limit);
+    queryParams.set("start", start);
+    queryParams.set("limit", limit);
 
-    const token = localStorage.getItem('auth_token');
-    const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:9090';
+    const token = localStorage.getItem("auth_token");
+    const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:9090";
     const headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
 
@@ -59,7 +59,7 @@ export const fetchCourses = async (params = {}) => {
       fetch(`${API_BASE}/courses/stat`, { headers }),
     ]);
 
-    if (!listRes.ok) throw new Error('Failed to fetch courses: ' + listRes.status);
+    if (!listRes.ok) throw new Error("Failed to fetch courses: " + listRes.status);
     const body = await listRes.json();
     const envelope = body.data || body;
     const rawCourses = Array.isArray(envelope.data)
@@ -71,7 +71,7 @@ export const fetchCourses = async (params = {}) => {
     let total = rawCourses.length;
     if (statRes.ok) {
       const statBody = await statRes.json();
-      if (statBody.data && typeof statBody.data.count === 'number') {
+      if (statBody.data && typeof statBody.data.count === "number") {
         total = statBody.data.count;
       } else if (envelope.total !== undefined) {
         total = envelope.total;
@@ -90,7 +90,7 @@ export const fetchCourses = async (params = {}) => {
       totalPages,
     };
   } catch (error) {
-    console.error('Error fetching courses:', error);
+    console.error("Error fetching courses:", error);
     throw error;
   }
 };
@@ -103,7 +103,7 @@ export const fetchCourseById = async (id) => {
     const data = await apiGet(`/courses/${id}`);
     return normalizeCourse(data);
   } catch (error) {
-    console.error('Error fetching course:', error);
+    console.error("Error fetching course:", error);
     throw error;
   }
 };
@@ -117,15 +117,15 @@ export const createCourse = async (courseData) => {
     const payload = {
       title: courseData.title,
       description: courseData.description,
-      image_url: courseData.coverImage || courseData.imageURL || '',
+      image_url: courseData.coverImage || courseData.imageURL || "",
       category_id: courseData.category || null,
       author_id: courseData.authorID || null,
-      status: courseData.status || 'DRAFT',
+      status: courseData.status || "DRAFT",
     };
-    const data = await apiPost('/courses', payload);
+    const data = await apiPost("/courses", payload);
     return normalizeCourse(data);
   } catch (error) {
-    console.error('Error creating course:', error);
+    console.error("Error creating course:", error);
     throw error;
   }
 };
@@ -139,15 +139,15 @@ export const updateCourse = async (id, courseData) => {
     const payload = {
       title: courseData.title,
       description: courseData.description,
-      image_url: courseData.coverImage || courseData.imageURL || '',
+      image_url: courseData.coverImage || courseData.imageURL || "",
       category_id: courseData.category || null,
       author_id: courseData.authorID || null,
-      status: courseData.status || 'DRAFT',
+      status: courseData.status || "DRAFT",
     };
     const data = await apiPut(`/courses/${id}`, payload);
     return normalizeCourse(data);
   } catch (error) {
-    console.error('Error updating course:', error);
+    console.error("Error updating course:", error);
     throw error;
   }
 };
@@ -159,7 +159,7 @@ export const deleteCourse = async (id) => {
   try {
     return await apiDelete(`/courses/${id}`);
   } catch (error) {
-    console.error('Error deleting course:', error);
+    console.error("Error deleting course:", error);
     throw error;
   }
 };
@@ -169,10 +169,10 @@ export const deleteCourse = async (id) => {
  */
 export const publishCourse = async (id) => {
   try {
-    const data = await apiPut(`/courses/${id}`, { status: 'Published' });
+    const data = await apiPut(`/courses/${id}`, { status: "Published" });
     return normalizeCourse(data);
   } catch (error) {
-    console.error('Error publishing course:', error);
+    console.error("Error publishing course:", error);
     throw error;
   }
 };
@@ -182,10 +182,10 @@ export const publishCourse = async (id) => {
  */
 export const archiveCourse = async (id) => {
   try {
-    const data = await apiPut(`/courses/${id}`, { status: 'Archived' });
+    const data = await apiPut(`/courses/${id}`, { status: "Archived" });
     return normalizeCourse(data);
   } catch (error) {
-    console.error('Error archiving course:', error);
+    console.error("Error archiving course:", error);
     throw error;
   }
 };
@@ -198,8 +198,8 @@ export const archiveCourse = async (id) => {
 // { id, courseId, title, content, type, status, sort_order, updatedAt, createdAt }
 const normalizeLesson = (l) => {
   // Content may be a plain HTML string or a JSON-stringified object
-  let content = l.content || '';
-  if (typeof content === 'string' && content.startsWith('{')) {
+  let content = l.content || "";
+  if (typeof content === "string" && content.startsWith("{")) {
     try {
       content = JSON.parse(content);
     } catch {
@@ -210,15 +210,19 @@ const normalizeLesson = (l) => {
   return {
     id: l.id,
     courseId: l.courseId || l.course_id,
-    title: l.title || '',
-    duration: l.duration || '',
+    title: l.title || "",
+    duration: l.duration || "",
     content,
-    type: l.type || 'text',
-    status: l.status || 'published',
+    type: l.type || "text",
+    status: l.status || "published",
     sort_order: l.sort_order || l.orderNumber || l.order || 0,
     points: l.points || 0,
-    updatedAt: l.updated_at ? new Date(l.updated_at * 1000).toISOString().split('T')[0] : (l.updatedAt || ''),
-    createdAt: l.created_at ? new Date(l.created_at * 1000).toISOString().split('T')[0] : (l.createdAt || ''),
+    updatedAt: l.updated_at
+      ? new Date(l.updated_at * 1000).toISOString().split("T")[0]
+      : l.updatedAt || "",
+    createdAt: l.created_at
+      ? new Date(l.created_at * 1000).toISOString().split("T")[0]
+      : l.createdAt || "",
     tags: l.tags || [],
   };
 };
@@ -227,10 +231,10 @@ export const fetchLessons = async (courseId) => {
   try {
     const data = await apiGet(`/courses/${courseId}/lessons`);
     // Backend wraps in { message, data }
-    const list = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
+    const list = Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : [];
     return list.map(normalizeLesson);
   } catch (error) {
-    console.error('Error fetching lessons:', error);
+    console.error("Error fetching lessons:", error);
     throw error;
   }
 };
@@ -240,12 +244,12 @@ export const createLesson = async (courseId, lessonData) => {
     const payload = {
       course_id: parseInt(courseId, 10),
       title: lessonData.title,
-      order_number: lessonData.sort_order || 0
+      order_number: lessonData.sort_order || 0,
     };
     const data = await apiPost(`/courses/${courseId}/lessons`, payload);
     return normalizeLesson(data);
   } catch (error) {
-    console.error('Error creating lesson:', error);
+    console.error("Error creating lesson:", error);
     throw error;
   }
 };
@@ -255,13 +259,13 @@ export const updateLesson = async (courseId, lessonId, lessonData) => {
     const payload = {
       course_id: parseInt(courseId, 10),
       title: lessonData.title,
-      content: lessonData.content || '',
-      type: lessonData.type || 'text',
+      content: lessonData.content || "",
+      type: lessonData.type || "text",
     };
     const data = await apiPut(`/lessons/${lessonId}`, payload);
     return normalizeLesson(data);
   } catch (error) {
-    console.error('Error updating lesson:', error);
+    console.error("Error updating lesson:", error);
     throw error;
   }
 };
@@ -270,7 +274,7 @@ export const deleteLesson = async (courseId, lessonId) => {
   try {
     return await apiDelete(`/lessons/${lessonId}`);
   } catch (error) {
-    console.error('Error deleting lesson:', error);
+    console.error("Error deleting lesson:", error);
     throw error;
   }
 };
@@ -281,7 +285,7 @@ export const reorderLessons = async (courseId, lessons) => {
     const data = await apiPut(`/courses/${courseId}/lessons/reorder`, payload);
     return data;
   } catch (error) {
-    console.error('Error reordering lessons:', error);
+    console.error("Error reordering lessons:", error);
     throw error;
   }
 };
@@ -291,63 +295,63 @@ export const reorderLessons = async (courseId, lessons) => {
 let mockCourses = [
   {
     id: 1,
-    title: 'Introduction to React',
-    description: 'Learn the fundamentals of React including components, state, hooks, and building modern web applications.',
-    category: 'Programming',
-    tags: ['react', 'javascript', 'frontend'],
-    status: 'Published',
-    author: 'John Doe',
-    coverImage: 'https://picsum.photos/seed/react/400/250',
+    title: "Introduction to React",
+    description:
+      "Learn the fundamentals of React including components, state, hooks, and building modern web applications.",
+    category: "Programming",
+    tags: ["react", "javascript", "frontend"],
+    status: "Published",
+    author: "John Doe",
+    coverImage: "https://picsum.photos/seed/react/400/250",
     images: [
-      'https://picsum.photos/seed/react1/400/250',
-      'https://picsum.photos/seed/react2/400/250',
-      'https://picsum.photos/seed/react3/400/250',
+      "https://picsum.photos/seed/react1/400/250",
+      "https://picsum.photos/seed/react2/400/250",
+      "https://picsum.photos/seed/react3/400/250",
     ],
     totalLessons: 12,
     enrolledUsers: 45,
-    duration: '8 hours',
-    createdAt: '2025-01-15',
-    updatedAt: '2025-03-20',
+    duration: "8 hours",
+    createdAt: "2025-01-15",
+    updatedAt: "2025-03-20",
   },
   {
     id: 2,
-    title: 'Advanced CSS Techniques',
-    description: 'Master CSS Grid, Flexbox, animations, and modern layout techniques for responsive web design.',
-    category: 'Design',
-    tags: ['css', 'design', 'frontend'],
-    status: 'Published',
-    author: 'Jane Smith',
-    coverImage: 'https://picsum.photos/seed/css/400/250',
-    images: [
-      'https://picsum.photos/seed/css1/400/250',
-      'https://picsum.photos/seed/css2/400/250',
-    ],
+    title: "Advanced CSS Techniques",
+    description:
+      "Master CSS Grid, Flexbox, animations, and modern layout techniques for responsive web design.",
+    category: "Design",
+    tags: ["css", "design", "frontend"],
+    status: "Published",
+    author: "Jane Smith",
+    coverImage: "https://picsum.photos/seed/css/400/250",
+    images: ["https://picsum.photos/seed/css1/400/250", "https://picsum.photos/seed/css2/400/250"],
     totalLessons: 8,
     enrolledUsers: 32,
-    duration: '5 hours',
-    createdAt: '2025-02-01',
-    updatedAt: '2025-03-15',
+    duration: "5 hours",
+    createdAt: "2025-02-01",
+    updatedAt: "2025-03-15",
   },
   {
     id: 3,
-    title: 'Python for Data Science',
-    description: 'Comprehensive introduction to Python for data analysis, visualization, and machine learning.',
-    category: 'Data Science',
-    tags: ['python', 'data', 'machine-learning'],
-    status: 'DRAFT',
-    author: 'Bob Wilson',
-    coverImage: 'https://picsum.photos/seed/python/400/250',
+    title: "Python for Data Science",
+    description:
+      "Comprehensive introduction to Python for data analysis, visualization, and machine learning.",
+    category: "Data Science",
+    tags: ["python", "data", "machine-learning"],
+    status: "DRAFT",
+    author: "Bob Wilson",
+    coverImage: "https://picsum.photos/seed/python/400/250",
     images: [
-      'https://picsum.photos/seed/py1/400/250',
-      'https://picsum.photos/seed/py2/400/250',
-      'https://picsum.photos/seed/py3/400/250',
-      'https://picsum.photos/seed/py4/400/250',
+      "https://picsum.photos/seed/py1/400/250",
+      "https://picsum.photos/seed/py2/400/250",
+      "https://picsum.photos/seed/py3/400/250",
+      "https://picsum.photos/seed/py4/400/250",
     ],
     totalLessons: 20,
     enrolledUsers: 0,
-    duration: '15 hours',
-    createdAt: '2025-03-01',
-    updatedAt: '2025-03-25',
+    duration: "15 hours",
+    createdAt: "2025-03-01",
+    updatedAt: "2025-03-25",
   },
 ];
 
@@ -355,11 +359,11 @@ export { mockCourses };
 
 const mockLessons = {
   1: [
-    { id: 1, title: 'Getting Started with React', duration: '30 mins', order: 1 },
-    { id: 2, title: 'Components and Props', duration: '45 mins', order: 2 },
-    { id: 3, title: 'State and Lifecycle', duration: '40 mins', order: 3 },
-    { id: 4, title: 'Hooks in Depth', duration: '50 mins', order: 4 },
-    { id: 5, title: 'Building a Real App', duration: '60 mins', order: 5 },
+    { id: 1, title: "Getting Started with React", duration: "30 mins", order: 1 },
+    { id: 2, title: "Components and Props", duration: "45 mins", order: 2 },
+    { id: 3, title: "State and Lifecycle", duration: "40 mins", order: 3 },
+    { id: 4, title: "Hooks in Depth", duration: "50 mins", order: 4 },
+    { id: 5, title: "Building a Real App", duration: "60 mins", order: 5 },
   ],
 };
 
@@ -382,11 +386,11 @@ export const mockFetchCourses = async (params = {}) => {
   if (params.category) {
     results = results.filter((c) => c.category === params.category);
   }
-  if (params.sort === 'title') {
+  if (params.sort === "title") {
     results.sort((a, b) => a.title.localeCompare(b.title));
-  } else if (params.sort === 'date') {
+  } else if (params.sort === "date") {
     results.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  } else if (params.sort === 'enrolled') {
+  } else if (params.sort === "enrolled") {
     results.sort((a, b) => b.enrolledUsers - a.enrolledUsers);
   }
 
@@ -407,7 +411,7 @@ export const mockFetchCourses = async (params = {}) => {
 
 export const mockFetchCourseById = (id) => {
   const course = mockCourses.find((c) => c.id === parseInt(id));
-  if (!course) return Promise.reject(new Error('Course not found'));
+  if (!course) return Promise.reject(new Error("Course not found"));
   return Promise.resolve(course);
 };
 
@@ -415,11 +419,11 @@ export const mockCreateCourse = (courseData) => {
   const newCourse = {
     ...courseData,
     id: Date.now(),
-    status: 'DRAFT',
+    status: "DRAFT",
     enrolledUsers: 0,
     totalLessons: 0,
-    createdAt: new Date().toISOString().split('T')[0],
-    updatedAt: new Date().toISOString().split('T')[0],
+    createdAt: new Date().toISOString().split("T")[0],
+    updatedAt: new Date().toISOString().split("T")[0],
   };
   mockCourses.push(newCourse);
   return Promise.resolve(newCourse);
@@ -427,11 +431,11 @@ export const mockCreateCourse = (courseData) => {
 
 export const mockUpdateCourse = (id, courseData) => {
   const index = mockCourses.findIndex((c) => c.id === parseInt(id));
-  if (index === -1) return Promise.reject(new Error('Course not found'));
+  if (index === -1) return Promise.reject(new Error("Course not found"));
   mockCourses[index] = {
     ...mockCourses[index],
     ...courseData,
-    updatedAt: new Date().toISOString().split('T')[0],
+    updatedAt: new Date().toISOString().split("T")[0],
   };
   return Promise.resolve(mockCourses[index]);
 };
@@ -443,17 +447,17 @@ export const mockDeleteCourse = (id) => {
 
 export const mockPublishCourse = (id) => {
   const course = mockCourses.find((c) => c.id === parseInt(id));
-  if (!course) return Promise.reject(new Error('Course not found'));
-  course.status = 'Published';
-  course.updatedAt = new Date().toISOString().split('T')[0];
+  if (!course) return Promise.reject(new Error("Course not found"));
+  course.status = "Published";
+  course.updatedAt = new Date().toISOString().split("T")[0];
   return Promise.resolve(course);
 };
 
 export const mockArchiveCourse = (id) => {
   const course = mockCourses.find((c) => c.id === parseInt(id));
-  if (!course) return Promise.reject(new Error('Course not found'));
-  course.status = 'Archived';
-  course.updatedAt = new Date().toISOString().split('T')[0];
+  if (!course) return Promise.reject(new Error("Course not found"));
+  course.status = "Archived";
+  course.updatedAt = new Date().toISOString().split("T")[0];
   return Promise.resolve(course);
 };
 
@@ -473,9 +477,9 @@ export const mockCreateLesson = (courseId, lessonData) => {
 
 export const mockUpdateLesson = (courseId, lessonId, lessonData) => {
   const lessons = mockLessons[courseId];
-  if (!lessons) return Promise.reject(new Error('Course not found'));
+  if (!lessons) return Promise.reject(new Error("Course not found"));
   const index = lessons.findIndex((l) => l.id === parseInt(lessonId));
-  if (index === -1) return Promise.reject(new Error('Lesson not found'));
+  if (index === -1) return Promise.reject(new Error("Lesson not found"));
   lessons[index] = { ...lessons[index], ...lessonData };
   return Promise.resolve(lessons[index]);
 };
@@ -488,4 +492,4 @@ export const mockDeleteLesson = (courseId, lessonId) => {
   return Promise.resolve();
 };
 
-export const mockCategories = ['Programming', 'Design', 'Data Science', 'DevOps', 'Business'];
+export const mockCategories = ["Programming", "Design", "Data Science", "DevOps", "Business"];

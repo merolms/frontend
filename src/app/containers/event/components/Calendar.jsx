@@ -1,9 +1,22 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { fetchEventsForMonth, formatEventDate } from '@/app/services/eventService';
+import React, { useState, useEffect, useMemo } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { fetchEventsForMonth, formatEventDate } from "@/app/services/eventService";
 
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 const Calendar = ({ onDateClick, onEventClick, selectedDate }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -36,7 +49,11 @@ const Calendar = ({ onDateClick, onEventClick, selectedDate }) => {
 
     // Previous month padding
     for (let i = firstDay - 1; i >= 0; i--) {
-      days.push({ day: daysInPrevMonth - i, isCurrentMonth: false, date: new Date(year, month - 1, daysInPrevMonth - i) });
+      days.push({
+        day: daysInPrevMonth - i,
+        isCurrentMonth: false,
+        date: new Date(year, month - 1, daysInPrevMonth - i),
+      });
     }
     // Current month
     for (let i = 1; i <= daysInMonth; i++) {
@@ -53,13 +70,21 @@ const Calendar = ({ onDateClick, onEventClick, selectedDate }) => {
   const getEventsForDay = (date) => {
     return events.filter((e) => {
       const d = new Date(e.startDate);
-      return d.getFullYear() === date.getFullYear() && d.getMonth() === date.getMonth() && d.getDate() === date.getDate();
+      return (
+        d.getFullYear() === date.getFullYear() &&
+        d.getMonth() === date.getMonth() &&
+        d.getDate() === date.getDate()
+      );
     });
   };
 
   const isToday = (date) => {
     const today = new Date();
-    return date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth() && date.getDate() === today.getDate();
+    return (
+      date.getFullYear() === today.getFullYear() &&
+      date.getMonth() === today.getMonth() &&
+      date.getDate() === today.getDate()
+    );
   };
 
   const isSelected = (date) => {
@@ -72,27 +97,42 @@ const Calendar = ({ onDateClick, onEventClick, selectedDate }) => {
   const goToToday = () => setCurrentDate(new Date());
 
   return (
-    <div className="rounded-xl border border-border bg-bg-surface shadow-sm overflow-hidden">
+    <div className="border-border bg-bg-surface overflow-hidden rounded-xl border shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-bg-surface-hover/50">
+      <div className="border-border bg-bg-surface-hover/50 flex items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-3">
-          <h3 className="text-sm font-semibold text-text-primary">{MONTHS[month]} {year}</h3>
-          <button onClick={goToToday} className="text-[11px] text-primary hover:underline cursor-pointer">Today</button>
+          <h3 className="text-text-primary text-sm font-semibold">
+            {MONTHS[month]} {year}
+          </h3>
+          <button
+            onClick={goToToday}
+            className="text-primary cursor-pointer text-[11px] hover:underline"
+          >
+            Today
+          </button>
         </div>
         <div className="flex items-center gap-1">
-          <button onClick={prevMonth} className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-bg-surface-active text-text-muted cursor-pointer">
+          <button
+            onClick={prevMonth}
+            className="hover:bg-bg-surface-active text-text-muted flex h-7 w-7 cursor-pointer items-center justify-center rounded-md"
+          >
             <ChevronLeft size={14} />
           </button>
-          <button onClick={nextMonth} className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-bg-surface-active text-text-muted cursor-pointer">
+          <button
+            onClick={nextMonth}
+            className="hover:bg-bg-surface-active text-text-muted flex h-7 w-7 cursor-pointer items-center justify-center rounded-md"
+          >
             <ChevronRight size={14} />
           </button>
         </div>
       </div>
 
       {/* Day headers */}
-      <div className="grid grid-cols-7 border-b border-border">
+      <div className="border-border grid grid-cols-7 border-b">
         {DAYS.map((d) => (
-          <div key={d} className="py-2 text-center text-[11px] font-semibold text-text-muted">{d}</div>
+          <div key={d} className="text-text-muted py-2 text-center text-[11px] font-semibold">
+            {d}
+          </div>
         ))}
       </div>
 
@@ -106,14 +146,22 @@ const Calendar = ({ onDateClick, onEventClick, selectedDate }) => {
           return (
             <div
               key={idx}
-              className={`min-h-[80px] border-b border-r border-border p-1.5 cursor-pointer transition-colors ${
-                !dayInfo.isCurrentMonth ? 'bg-bg-surface-hover/30' : ''
-              } ${selected ? 'bg-primary/10' : 'hover:bg-bg-surface-hover'}`}
+              className={`border-border min-h-[80px] cursor-pointer border-r border-b p-1.5 transition-colors ${
+                !dayInfo.isCurrentMonth ? "bg-bg-surface-hover/30" : ""
+              } ${selected ? "bg-primary/10" : "hover:bg-bg-surface-hover"}`}
               onClick={() => onDateClick?.(dayInfo.date)}
             >
-              <div className={`flex items-center justify-center h-6 w-6 rounded-full text-[11px] font-medium mb-1 ${
-                today ? 'bg-primary text-white' : selected ? 'bg-primary/20 text-primary' : dayInfo.isCurrentMonth ? 'text-text-primary' : 'text-text-muted'
-              }`}>
+              <div
+                className={`mb-1 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-medium ${
+                  today
+                    ? "bg-primary text-white"
+                    : selected
+                      ? "bg-primary/20 text-primary"
+                      : dayInfo.isCurrentMonth
+                        ? "text-text-primary"
+                        : "text-text-muted"
+                }`}
+              >
                 {dayInfo.day}
               </div>
               {/* Events */}
@@ -121,15 +169,18 @@ const Calendar = ({ onDateClick, onEventClick, selectedDate }) => {
                 {dayEvents.slice(0, 2).map((event) => (
                   <button
                     key={event.id}
-                    onClick={(e) => { e.stopPropagation(); onEventClick?.(event); }}
-                    className="w-full text-left px-1 py-0.5 rounded text-[9px] font-medium truncate cursor-pointer hover:opacity-80"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEventClick?.(event);
+                    }}
+                    className="w-full cursor-pointer truncate rounded px-1 py-0.5 text-left text-[9px] font-medium hover:opacity-80"
                     style={{ background: `${event.color}20`, color: event.color }}
                   >
                     {event.title}
                   </button>
                 ))}
                 {dayEvents.length > 2 && (
-                  <p className="text-[9px] text-text-muted px-1">+{dayEvents.length - 2} more</p>
+                  <p className="text-text-muted px-1 text-[9px]">+{dayEvents.length - 2} more</p>
                 )}
               </div>
             </div>

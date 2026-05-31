@@ -1,10 +1,10 @@
-import React from 'react';
-import { BookOpen, Clock, List, Pencil, Network, User, Users } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Paper } from '@/components/ui/card';
-import { getStatusLabel, getCategoryColor } from './viewHelpers';
+import React from "react";
+import { BookOpen, Clock, List, Pencil, Network, User, Users } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Paper } from "@/components/ui/card";
+import { getStatusLabel, getCategoryColor } from "./viewHelpers";
 
 const ListView = ({ courses, navigate, loading }) => {
   if (loading) {
@@ -33,41 +33,57 @@ const ListView = ({ courses, navigate, loading }) => {
         return (
           <Paper
             key={course.id}
-            className="p-4 cursor-pointer hover:shadow-md transition-shadow"
+            className="cursor-pointer p-4 transition-shadow hover:shadow-md"
             onClick={() => navigate(`/courses/${course.id}`)}
           >
             <div className="flex items-start justify-between gap-4">
-              <div className="flex gap-3 min-w-0">
+              <div className="flex min-w-0 gap-3">
                 {course.coverImage ? (
-                  <img src={course.coverImage} alt={course.title} className="w-32 h-20 object-cover rounded-md shrink-0" />
+                  <img
+                    src={course.coverImage}
+                    alt={course.title}
+                    className="h-20 w-32 shrink-0 rounded-md object-cover"
+                  />
                 ) : (
-                  <div className="w-32 h-20 rounded-md bg-bg-surface-active flex items-center justify-center shrink-0">
+                  <div className="bg-bg-surface-active flex h-20 w-32 shrink-0 items-center justify-center rounded-md">
                     <BookOpen size={24} className="text-text-muted" />
                   </div>
                 )}
                 <div className="min-w-0 space-y-1">
-                  <h3 className="text-sm font-semibold text-text-primary">{course.title}</h3>
-                  {status && <Badge variant={status.color === 'grey' ? 'gray' : status.color}>{status.text}</Badge>}
-                  <p className="text-xs text-text-muted line-clamp-2">{course.description}</p>
-                  <div className="flex items-center gap-3 text-[11px] text-text-muted">
-                    <Badge variant={getCategoryColor(course.category)} className="text-[10px]">{course.category}</Badge>
-                    <span className="flex items-center gap-1"><User size={10} /> {course.author}</span>
-                    <span className="flex items-center gap-1"><List size={10} /> {course.totalLessons}</span>
-                    <span className="flex items-center gap-1"><Users size={10} /> {course.enrolledUsers}</span>
+                  <h3 className="text-text-primary text-sm font-semibold">{course.title}</h3>
+                  {status && (
+                    <Badge variant={status.color === "grey" ? "gray" : status.color}>
+                      {status.text}
+                    </Badge>
+                  )}
+                  <p className="text-text-muted line-clamp-2 text-xs">{course.description}</p>
+                  <div className="text-text-muted flex items-center gap-3 text-[11px]">
+                    <Badge variant={getCategoryColor(course.category)} className="text-[10px]">
+                      {course.category}
+                    </Badge>
+                    <span className="flex items-center gap-1">
+                      <User size={10} /> {course.author}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <List size={10} /> {course.totalLessons}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Users size={10} /> {course.enrolledUsers}
+                    </span>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-1 shrink-0">
+              <div className="flex shrink-0 items-center gap-1">
                 <Link
                   to={`/courses/${course.id}/builder`}
-                  className="text-[11px] px-2 py-1 rounded border border-border text-text-muted hover:bg-bg-surface-active"
+                  className="border-border text-text-muted hover:bg-bg-surface-active rounded border px-2 py-1 text-[11px]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <Network size={10} /> Builder
                 </Link>
                 <Link
                   to={`/courses/${course.id}/edit`}
-                  className="text-[11px] px-2 py-1 rounded border border-border text-text-muted hover:bg-bg-surface-active"
+                  className="border-border text-text-muted hover:bg-bg-surface-active rounded border px-2 py-1 text-[11px]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <Pencil size={10} /> Edit

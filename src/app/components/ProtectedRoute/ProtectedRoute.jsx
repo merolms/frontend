@@ -1,7 +1,7 @@
-import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { hasPermission } from '@/app/services/authService';
+import React from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { hasPermission } from "@/app/services/authService";
 
 /**
  * Redirects to /login if the user is not authenticated.
@@ -12,13 +12,13 @@ export const ProtectedRoute = ({ children, permissions = [] }) => {
   const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to='/login' state={{ from: location }} replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (permissions.length > 0) {
     const hasAccess = permissions.every((p) => hasPermission(user, p));
     if (!hasAccess) {
-      return <Navigate to='/unauthorized' replace />;
+      return <Navigate to="/unauthorized" replace />;
     }
   }
 

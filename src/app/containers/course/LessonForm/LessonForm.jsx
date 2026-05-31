@@ -1,12 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Save, X } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import React, { useState, useEffect } from "react";
+import { Save, X } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const LessonForm = ({ open, onClose, onSubmit, initialData = null, loading = false }) => {
-  const [formData, setFormData] = useState({ title: '', duration: '', content: '' });
+  const [formData, setFormData] = useState({ title: "", duration: "", content: "" });
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -14,7 +20,7 @@ const LessonForm = ({ open, onClose, onSubmit, initialData = null, loading = fal
       if (initialData) {
         setFormData({ ...initialData });
       } else {
-        setFormData({ title: '', duration: '', content: '' });
+        setFormData({ title: "", duration: "", content: "" });
       }
       setErrors({});
     }
@@ -22,12 +28,14 @@ const LessonForm = ({ open, onClose, onSubmit, initialData = null, loading = fal
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.title.trim()) newErrors.title = 'Lesson title is required';
+    if (!formData.title.trim()) newErrors.title = "Lesson title is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => { if (validate()) onSubmit(formData); };
+  const handleSubmit = () => {
+    if (validate()) onSubmit(formData);
+  };
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: null }));
@@ -40,33 +48,33 @@ const LessonForm = ({ open, onClose, onSubmit, initialData = null, loading = fal
       {open && (
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>{isEditing ? 'Edit Lesson' : 'Create Lesson'}</DialogTitle>
+            <DialogTitle>{isEditing ? "Edit Lesson" : "Create Lesson"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <label className="text-sm font-medium text-text-primary">Lesson Title</label>
+              <label className="text-text-primary text-sm font-medium">Lesson Title</label>
               <Input
                 placeholder="Enter a lesson title"
                 value={formData.title}
-                onChange={(e) => handleChange('title', e.target.value)}
-                className={errors.title ? 'border-error' : ''}
+                onChange={(e) => handleChange("title", e.target.value)}
+                className={errors.title ? "border-error" : ""}
               />
-              {errors.title && <p className="text-xs text-error mt-1">{errors.title}</p>}
+              {errors.title && <p className="text-error mt-1 text-xs">{errors.title}</p>}
             </div>
             <div>
-              <label className="text-sm font-medium text-text-primary">Duration</label>
+              <label className="text-text-primary text-sm font-medium">Duration</label>
               <Input
                 placeholder="e.g., 30 mins, 1 hour"
                 value={formData.duration}
-                onChange={(e) => handleChange('duration', e.target.value)}
+                onChange={(e) => handleChange("duration", e.target.value)}
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-text-primary">Content</label>
+              <label className="text-text-primary text-sm font-medium">Content</label>
               <Textarea
                 placeholder="Lesson content or notes"
                 value={formData.content}
-                onChange={(e) => handleChange('content', e.target.value)}
+                onChange={(e) => handleChange("content", e.target.value)}
                 rows={5}
               />
             </div>
@@ -76,7 +84,7 @@ const LessonForm = ({ open, onClose, onSubmit, initialData = null, loading = fal
               <X size={14} /> Cancel
             </Button>
             <Button onClick={handleSubmit} disabled={loading}>
-              <Save size={14} /> {isEditing ? 'Save Changes' : 'Create Lesson'}
+              <Save size={14} /> {isEditing ? "Save Changes" : "Create Lesson"}
             </Button>
           </DialogFooter>
         </DialogContent>

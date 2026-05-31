@@ -7,6 +7,7 @@
 ## 1. Dashboard / Overview
 
 ### Features
+
 - KPI cards
 - User statistics
 - Course statistics
@@ -17,11 +18,13 @@
 - Responsive dashboard widgets
 
 ### Frontend Pages
+
 ```txt
 /dashboard
 ```
 
 ### AI Agent Tasks
+
 - Generate dashboard layout
 - Create reusable chart cards
 - Create metrics widgets
@@ -32,6 +35,7 @@
 ## 2. Course Management UI
 
 ### Features
+
 - Course listing page
 - Course create form
 - Course edit form
@@ -43,6 +47,7 @@
 - Search/filter/sort/pagination
 
 ### Frontend Pages
+
 ```txt
 /courses
 /courses/create
@@ -52,6 +57,7 @@
 ```
 
 ### Components
+
 - CourseTable
 - CourseForm
 - LessonForm
@@ -60,6 +66,7 @@
 - ArchiveModal
 
 ### AI Agent Tasks
+
 - Generate CRUD pages
 - Generate dynamic forms
 - Generate table hooks
@@ -71,6 +78,7 @@
 ## 3. User Management UI
 
 ### Features
+
 - User list
 - Create user
 - Edit user
@@ -80,6 +88,7 @@
 - Team assignment
 
 ### Pages
+
 ```txt
 /users
 /users/create
@@ -88,6 +97,7 @@
 ```
 
 ### AI Agent Tasks
+
 - Create reusable user forms
 - Build user profile layout
 - Build assignment dialogs
@@ -97,6 +107,7 @@
 ## 4. Team Management UI
 
 ### Features
+
 - Team list
 - Create team
 - Update team
@@ -105,6 +116,7 @@
 - Team detail page
 
 ### Pages
+
 ```txt
 /teams
 /teams/create
@@ -118,6 +130,7 @@
 ## 1. Authentication System
 
 ### Features
+
 - Login page
 - Logout flow
 - Forgot password
@@ -126,6 +139,7 @@
 - Token refresh handling
 
 ### Pages
+
 ```txt
 /login
 /forgot-password
@@ -133,6 +147,7 @@
 ```
 
 ### AI Agent Tasks
+
 - Generate auth flow
 - Generate auth guards
 - Generate token refresh interceptors
@@ -142,6 +157,7 @@
 ## 2. RBAC UI
 
 ### Features
+
 - Role list
 - Create role
 - Edit role
@@ -151,6 +167,7 @@
 - Component-level permission control
 
 ### Pages
+
 ```txt
 /roles
 /roles/create
@@ -158,12 +175,14 @@
 ```
 
 ### Components
+
 - PermissionMatrix
 - RoleAssignmentModal
 - ProtectedComponent
 - PermissionGuard
 
 ### AI Agent Tasks
+
 - Build dynamic permission matrix
 - Generate RBAC route wrappers
 - Generate conditional rendering utilities
@@ -175,17 +194,20 @@
 ## 1. Multi-Tenant Frontend
 
 ### Features
+
 - Tenant switcher
 - Tenant-aware routing
 - Tenant branding
 - Tenant configuration UI
 
 ### Components
+
 - TenantSelector
 - TenantLayout
 - OrganizationSettings
 
 ### AI Agent Tasks
+
 - Inject tenant context globally
 - Generate tenant middleware/hooks
 
@@ -194,6 +216,7 @@
 ## 2. Certificate Management UI
 
 ### Features
+
 - Certificate list
 - Create certificate
 - Edit certificate
@@ -202,6 +225,7 @@
 - Template designer
 
 ### Pages
+
 ```txt
 /certificates
 /certificates/create
@@ -209,11 +233,13 @@
 ```
 
 ### Components
+
 - CertificateBuilder
 - CertificatePreview
 - CertificateTemplateSelector
 
 ### AI Agent Tasks
+
 - Generate drag-drop certificate editor
 - Generate preview rendering
 
@@ -222,6 +248,7 @@
 ## 3. Quiz Management UI
 
 ### Features
+
 - Quiz list
 - Quiz creation
 - Question builder
@@ -231,6 +258,7 @@
 - Quiz analytics
 
 ### Pages
+
 ```txt
 /quizzes
 /quizzes/create
@@ -238,12 +266,14 @@
 ```
 
 ### Components
+
 - QuizBuilder
 - QuestionEditor
 - OptionEditor
 - QuizPreview
 
 ### AI Agent Tasks
+
 - Generate dynamic nested forms
 - Generate quiz schema validation
 - Generate drag-drop question ordering
@@ -255,6 +285,7 @@
 ## 1. Learning Path Management UI
 
 ### Features
+
 - Learning path list
 - Create learning path
 - Update learning path
@@ -264,6 +295,7 @@
 - Progress visualization
 
 ### Pages
+
 ```txt
 /learning-paths
 /learning-paths/create
@@ -271,11 +303,13 @@
 ```
 
 ### Components
+
 - LearningPathBuilder
 - CourseSequenceBoard
 - ProgressTracker
 
 ### AI Agent Tasks
+
 - Generate drag-drop flows
 - Generate visual progress components
 - Generate reorder APIs/hooks
@@ -285,6 +319,7 @@
 ## 2. Enhanced Dashboard
 
 ### Features
+
 - Learning analytics
 - Completion analytics
 - Quiz analytics
@@ -292,6 +327,7 @@
 - Export reports
 
 ### Components
+
 - AnalyticsCharts
 - ExportControls
 - ActivityHeatmaps

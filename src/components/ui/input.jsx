@@ -1,12 +1,12 @@
-import React from 'react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { cn } from "@/lib/utils";
 
-const Input = React.forwardRef(({ className, type = 'text', ...props }, ref) => {
+const Input = React.forwardRef(({ className, type = "text", ...props }, ref) => {
   return (
     <input
       type={type}
       className={cn(
-        'flex h-8 w-full rounded-md border border-border bg-bg-surface px-3 py-1.5 text-xs text-text-primary shadow-sm transition-colors placeholder:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-transparent disabled:cursor-not-allowed disabled:opacity-50',
+        "border-border bg-bg-surface text-text-primary placeholder:text-text-muted focus-visible:ring-primary flex h-8 w-full rounded-md border px-3 py-1.5 text-xs shadow-sm transition-colors focus-visible:border-transparent focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       ref={ref}
@@ -14,6 +14,6 @@ const Input = React.forwardRef(({ className, type = 'text', ...props }, ref) => 
     />
   );
 });
-Input.displayName = 'Input';
+Input.displayName = "Input";
 
 export { Input };

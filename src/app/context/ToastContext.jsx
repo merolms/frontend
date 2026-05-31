@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback } from "react";
 
 const ToastContext = createContext(null);
 
@@ -11,23 +11,28 @@ export const ToastProvider = ({ children }) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const addToast = useCallback((message, type = 'success') => {
-    const id = ++toastId;
-    setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => removeToast(id), 3000);
-  }, [removeToast]);
+  const addToast = useCallback(
+    (message, type = "success") => {
+      const id = ++toastId;
+      setToasts((prev) => [...prev, { id, message, type }]);
+      setTimeout(() => removeToast(id), 3000);
+    },
+    [removeToast]
+  );
 
   return (
     <ToastContext.Provider value={{ addToast }}>
       {children}
-      <div className='toast-container'>
+      <div className="toast-container">
         {toasts.map((toast) => (
           <div key={toast.id} className={`toast toast-${toast.type}`}>
-            <span className='toast-icon'>
-              {toast.type === 'success' ? '✓' : toast.type === 'error' ? '✕' : '⚠'}
+            <span className="toast-icon">
+              {toast.type === "success" ? "✓" : toast.type === "error" ? "✕" : "⚠"}
             </span>
-            <span className='toast-message'>{toast.message}</span>
-            <button className='toast-close' onClick={() => removeToast(toast.id)}>×</button>
+            <span className="toast-message">{toast.message}</span>
+            <button className="toast-close" onClick={() => removeToast(toast.id)}>
+              ×
+            </button>
           </div>
         ))}
       </div>
@@ -37,7 +42,7 @@ export const ToastProvider = ({ children }) => {
 
 export const useToast = () => {
   const ctx = useContext(ToastContext);
-  if (!ctx) throw new Error('useToast must be used within ToastProvider');
+  if (!ctx) throw new Error("useToast must be used within ToastProvider");
   return ctx;
 };
 

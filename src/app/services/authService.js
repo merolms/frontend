@@ -3,7 +3,7 @@
 // All auth calls go through the centralized http client which handles
 // JWT injection and the { message, data } response envelope.
 
-import { apiPost, apiGet, apiPut } from '@/app/services/http';
+import { apiPost, apiGet, apiPut } from "@/app/services/http";
 
 // ==================== STATIC USERS (for role management UI) ====================
 // These are reference data for the role/permission management pages.
@@ -12,81 +12,90 @@ import { apiPost, apiGet, apiPut } from '@/app/services/http';
 const staticUsers = [
   {
     id: 1,
-    email: 'admin@meroedu.com',
-    password: 'admin123',
-    firstName: 'John',
-    lastName: 'Doe',
-    role: 'Administrator',
-    avatar: 'https://i.pravatar.cc/150?img=1',
-    status: 'active',
-    permissions: ['*'],
-    joinedAt: '2024-01-01',
-    lastActive: '2025-03-25',
-    phone: '+1 555-0101',
-    bio: 'Platform administrator with full access.',
+    email: "admin@meroedu.com",
+    password: "admin123",
+    firstName: "John",
+    lastName: "Doe",
+    role: "Administrator",
+    avatar: "https://i.pravatar.cc/150?img=1",
+    status: "active",
+    permissions: ["*"],
+    joinedAt: "2024-01-01",
+    lastActive: "2025-03-25",
+    phone: "+1 555-0101",
+    bio: "Platform administrator with full access.",
     coursesEnrolled: 5,
     coursesCompleted: 3,
-    teams: ['Engineering', 'Product'],
+    teams: ["Engineering", "Product"],
   },
   {
     id: 2,
-    email: 'instructor@meroedu.com',
-    password: 'instructor123',
-    firstName: 'Jane',
-    lastName: 'Smith',
-    role: 'Instructor',
-    avatar: 'https://i.pravatar.cc/150?img=5',
-    status: 'active',
+    email: "instructor@meroedu.com",
+    password: "instructor123",
+    firstName: "Jane",
+    lastName: "Smith",
+    role: "Instructor",
+    avatar: "https://i.pravatar.cc/150?img=5",
+    status: "active",
     permissions: [
-      'dashboard.view',
-      'courses.view', 'courses.create', 'courses.edit',
-      'users.view', 'teams.view', 'reports.view',
+      "dashboard.view",
+      "courses.view",
+      "courses.create",
+      "courses.edit",
+      "users.view",
+      "teams.view",
+      "reports.view",
     ],
-    joinedAt: '2024-02-15',
-    lastActive: '2025-03-24',
-    phone: '+1 555-0102',
-    bio: 'Experienced instructor specializing in web development.',
+    joinedAt: "2024-02-15",
+    lastActive: "2025-03-24",
+    phone: "+1 555-0102",
+    bio: "Experienced instructor specializing in web development.",
     coursesEnrolled: 12,
     coursesCompleted: 8,
-    teams: ['Engineering'],
+    teams: ["Engineering"],
   },
   {
     id: 3,
-    email: 'teamlead@meroedu.com',
-    password: 'teamlead123',
-    firstName: 'Diana',
-    lastName: 'Prince',
-    role: 'Team Lead',
-    avatar: 'https://i.pravatar.cc/150?img=10',
-    status: 'active',
+    email: "teamlead@meroedu.com",
+    password: "teamlead123",
+    firstName: "Diana",
+    lastName: "Prince",
+    role: "Team Lead",
+    avatar: "https://i.pravatar.cc/150?img=10",
+    status: "active",
     permissions: [
-      'dashboard.view', 'courses.view', 'courses.create',
-      'users.view', 'users.edit',
-      'teams.view', 'teams.edit', 'teams.manage_members',
-      'reports.view',
+      "dashboard.view",
+      "courses.view",
+      "courses.create",
+      "users.view",
+      "users.edit",
+      "teams.view",
+      "teams.edit",
+      "teams.manage_members",
+      "reports.view",
     ],
-    joinedAt: '2024-03-01',
-    lastActive: '2025-03-23',
-    phone: '+1 555-0103',
-    bio: 'Team lead managing engineering teams.',
+    joinedAt: "2024-03-01",
+    lastActive: "2025-03-23",
+    phone: "+1 555-0103",
+    bio: "Team lead managing engineering teams.",
     coursesEnrolled: 8,
     coursesCompleted: 6,
-    teams: ['Engineering', 'Design'],
+    teams: ["Engineering", "Design"],
   },
   {
     id: 4,
-    email: 'student@meroedu.com',
-    password: 'student123',
-    firstName: 'Bob',
-    lastName: 'Wilson',
-    role: 'Student',
-    avatar: 'https://i.pravatar.cc/150?img=3',
-    status: 'active',
-    permissions: ['dashboard.view', 'courses.view'],
-    joinedAt: '2024-06-01',
-    lastActive: '2025-03-25',
-    phone: '+1 555-0104',
-    bio: 'Student learning web development.',
+    email: "student@meroedu.com",
+    password: "student123",
+    firstName: "Bob",
+    lastName: "Wilson",
+    role: "Student",
+    avatar: "https://i.pravatar.cc/150?img=3",
+    status: "active",
+    permissions: ["dashboard.view", "courses.view"],
+    joinedAt: "2024-06-01",
+    lastActive: "2025-03-25",
+    phone: "+1 555-0104",
+    bio: "Student learning web development.",
     coursesEnrolled: 3,
     coursesCompleted: 1,
     teams: [],
@@ -97,42 +106,52 @@ const staticUsers = [
 
 const roleDefinitions = [
   {
-    id: 'role_admin',
-    name: 'Administrator',
-    description: 'Full access to all features and settings.',
-    color: 'red',
-    permissions: ['*'],
+    id: "role_admin",
+    name: "Administrator",
+    description: "Full access to all features and settings.",
+    color: "red",
+    permissions: ["*"],
   },
   {
-    id: 'role_instructor',
-    name: 'Instructor',
-    description: 'Can manage courses, view users and teams, and access reports.',
-    color: 'blue',
+    id: "role_instructor",
+    name: "Instructor",
+    description: "Can manage courses, view users and teams, and access reports.",
+    color: "blue",
     permissions: [
-      'dashboard.view',
-      'courses.view', 'courses.create', 'courses.edit', 'courses.delete',
-      'courses.lessons.manage',
-      'users.view', 'teams.view', 'reports.view',
+      "dashboard.view",
+      "courses.view",
+      "courses.create",
+      "courses.edit",
+      "courses.delete",
+      "courses.lessons.manage",
+      "users.view",
+      "teams.view",
+      "reports.view",
     ],
   },
   {
-    id: 'role_team_lead',
-    name: 'Team Lead',
-    description: 'Can manage their team members and view team progress.',
-    color: 'purple',
+    id: "role_team_lead",
+    name: "Team Lead",
+    description: "Can manage their team members and view team progress.",
+    color: "purple",
     permissions: [
-      'dashboard.view', 'courses.view', 'courses.create',
-      'users.view', 'users.edit',
-      'teams.view', 'teams.edit', 'teams.manage_members',
-      'reports.view',
+      "dashboard.view",
+      "courses.view",
+      "courses.create",
+      "users.view",
+      "users.edit",
+      "teams.view",
+      "teams.edit",
+      "teams.manage_members",
+      "reports.view",
     ],
   },
   {
-    id: 'role_student',
-    name: 'Student',
-    description: 'Can view dashboard and enrolled courses.',
-    color: 'teal',
-    permissions: ['dashboard.view', 'courses.view'],
+    id: "role_student",
+    name: "Student",
+    description: "Can view dashboard and enrolled courses.",
+    color: "teal",
+    permissions: ["dashboard.view", "courses.view"],
   },
 ];
 
@@ -140,54 +159,54 @@ const roleDefinitions = [
 
 export const permissionCatalog = {
   dashboard: {
-    label: 'Dashboard',
-    permissions: [{ key: 'dashboard.view', label: 'View Dashboard' }],
+    label: "Dashboard",
+    permissions: [{ key: "dashboard.view", label: "View Dashboard" }],
   },
   courses: {
-    label: 'Courses',
+    label: "Courses",
     permissions: [
-      { key: 'courses.view', label: 'View Courses' },
-      { key: 'courses.create', label: 'Create Courses' },
-      { key: 'courses.edit', label: 'Edit Courses' },
-      { key: 'courses.delete', label: 'Delete Courses' },
-      { key: 'courses.publish', label: 'Publish / Archive Courses' },
-      { key: 'courses.lessons.manage', label: 'Manage Course Lessons' },
+      { key: "courses.view", label: "View Courses" },
+      { key: "courses.create", label: "Create Courses" },
+      { key: "courses.edit", label: "Edit Courses" },
+      { key: "courses.delete", label: "Delete Courses" },
+      { key: "courses.publish", label: "Publish / Archive Courses" },
+      { key: "courses.lessons.manage", label: "Manage Course Lessons" },
     ],
   },
   users: {
-    label: 'Users',
+    label: "Users",
     permissions: [
-      { key: 'users.view', label: 'View Users' },
-      { key: 'users.create', label: 'Create Users' },
-      { key: 'users.edit', label: 'Edit Users' },
-      { key: 'users.delete', label: 'Delete Users' },
-      { key: 'users.assign_roles', label: 'Assign Roles' },
+      { key: "users.view", label: "View Users" },
+      { key: "users.create", label: "Create Users" },
+      { key: "users.edit", label: "Edit Users" },
+      { key: "users.delete", label: "Delete Users" },
+      { key: "users.assign_roles", label: "Assign Roles" },
     ],
   },
   teams: {
-    label: 'Teams',
+    label: "Teams",
     permissions: [
-      { key: 'teams.view', label: 'View Teams' },
-      { key: 'teams.create', label: 'Create Teams' },
-      { key: 'teams.edit', label: 'Edit Teams' },
-      { key: 'teams.delete', label: 'Delete Teams' },
-      { key: 'teams.manage_members', label: 'Manage Team Members' },
+      { key: "teams.view", label: "View Teams" },
+      { key: "teams.create", label: "Create Teams" },
+      { key: "teams.edit", label: "Edit Teams" },
+      { key: "teams.delete", label: "Delete Teams" },
+      { key: "teams.manage_members", label: "Manage Team Members" },
     ],
   },
   roles: {
-    label: 'Roles & Permissions',
+    label: "Roles & Permissions",
     permissions: [
-      { key: 'roles.view', label: 'View Roles' },
-      { key: 'roles.create', label: 'Create Roles' },
-      { key: 'roles.edit', label: 'Edit Roles' },
-      { key: 'roles.delete', label: 'Delete Roles' },
+      { key: "roles.view", label: "View Roles" },
+      { key: "roles.create", label: "Create Roles" },
+      { key: "roles.edit", label: "Edit Roles" },
+      { key: "roles.delete", label: "Delete Roles" },
     ],
   },
   reports: {
-    label: 'Reports',
+    label: "Reports",
     permissions: [
-      { key: 'reports.view', label: 'View Reports' },
-      { key: 'reports.export', label: 'Export Reports' },
+      { key: "reports.view", label: "View Reports" },
+      { key: "reports.export", label: "Export Reports" },
     ],
   },
 };
@@ -203,7 +222,7 @@ export const allPermissions = Object.values(permissionCatalog).flatMap(
  * Backend POST /auth/login returns { token, user }.
  */
 export const login = async (email, password) => {
-  const data = await apiPost('/auth/login', { email, password });
+  const data = await apiPost("/auth/login", { email, password });
   return { user: data.user, token: data.token };
 };
 
@@ -212,7 +231,7 @@ export const login = async (email, password) => {
  * Backend POST /auth/register returns { token, user }.
  */
 export const register = async (userData) => {
-  const data = await apiPost('/auth/register', userData);
+  const data = await apiPost("/auth/register", userData);
   return { user: data.user, token: data.token };
 };
 
@@ -221,21 +240,21 @@ export const register = async (userData) => {
  * Backend GET /auth/me returns the user object.
  */
 export const getProfile = async () => {
-  return await apiGet('/auth/me');
+  return await apiGet("/auth/me");
 };
 
 /**
  * Update the current user's profile.
  */
 export const updateProfile = async (profileData) => {
-  return await apiPut('/auth/profile', profileData);
+  return await apiPut("/auth/profile", profileData);
 };
 
 /**
  * Change the current user's password.
  */
 export const changePassword = async (passwordData) => {
-  return await apiPut('/auth/password', passwordData);
+  return await apiPut("/auth/password", passwordData);
 };
 
 /**
@@ -243,28 +262,28 @@ export const changePassword = async (passwordData) => {
  * Backend GET /auth/me validates the JWT and returns the user.
  */
 export const validateToken = async () => {
-  return await apiGet('/auth/me');
+  return await apiGet("/auth/me");
 };
 
 /**
  * Logout — client-side only (JWT is stateless).
  */
 export const logout = () => {
-  localStorage.removeItem('auth_token');
-  localStorage.removeItem('auth_user');
+  localStorage.removeItem("auth_token");
+  localStorage.removeItem("auth_user");
 };
 
 // ==================== SESSION HELPERS ====================
 
 export const storeAuth = (user, token) => {
-  localStorage.setItem('auth_token', token);
-  localStorage.setItem('auth_user', JSON.stringify(user));
+  localStorage.setItem("auth_token", token);
+  localStorage.setItem("auth_user", JSON.stringify(user));
 };
 
 export const getStoredAuth = () => {
   try {
-    const token = localStorage.getItem('auth_token');
-    const user = JSON.parse(localStorage.getItem('auth_user') || 'null');
+    const token = localStorage.getItem("auth_token");
+    const user = JSON.parse(localStorage.getItem("auth_user") || "null");
     if (token && user) return { token, user };
   } catch {
     // ignore
@@ -280,12 +299,12 @@ const normalizeRolePermissions = (role) => {
     ...role,
     permissions: Array.isArray(role.permissions)
       ? role.permissions
-      : (role.permissions || '').split(',').filter(Boolean),
+      : (role.permissions || "").split(",").filter(Boolean),
   };
 };
 
 export const fetchRoles = async () => {
-  const data = await apiGet('/roles');
+  const data = await apiGet("/roles");
   if (!Array.isArray(data)) return [];
   return data.map(normalizeRolePermissions);
 };
@@ -296,7 +315,7 @@ export const fetchRoleById = async (id) => {
 };
 
 export const createRole = async (roleData) => {
-  return await apiPost('/roles', roleData);
+  return await apiPost("/roles", roleData);
 };
 
 export const updateRole = async (id, roleData) => {
@@ -308,7 +327,7 @@ export const deleteRole = async (id) => {
 };
 
 export const adminResetPassword = async (userId, newPassword) => {
-  return await apiPost('/auth/admin/reset-password', { userId: parseInt(userId, 10), newPassword });
+  return await apiPost("/auth/admin/reset-password", { userId: parseInt(userId, 10), newPassword });
 };
 
 // ==================== ROLE DEFINITIONS (static UI data) ====================
@@ -324,19 +343,19 @@ export const getRoleById = (id) => {
 
 export const forgotPassword = async (email) => {
   await new Promise((r) => setTimeout(r, 500));
-  return { message: 'If an account with that email exists, a reset link has been sent.' };
+  return { message: "If an account with that email exists, a reset link has been sent." };
 };
 
 export const resetPassword = async (_token, _newPassword) => {
   await new Promise((r) => setTimeout(r, 400));
-  return { message: 'Password has been reset successfully.' };
+  return { message: "Password has been reset successfully." };
 };
 
 // ==================== PERMISSION HELPERS ====================
 
 export const hasPermission = (user, permission) => {
   if (!user || !user.permissions) return false;
-  if (user.permissions.includes('*')) return true;
+  if (user.permissions.includes("*")) return true;
   return user.permissions.includes(permission);
 };
 

@@ -2,20 +2,20 @@
 
 A complete semantic color system inspired by modern SaaS products like:
 
-* Vercel
-* Linear
-* Notion
-* Raycast
-* Stripe Dashboard
+- Vercel
+- Linear
+- Notion
+- Raycast
+- Stripe Dashboard
 
 This system is optimized for:
 
-* TailwindCSS
-* React
-* Dashboard UIs
-* Editors (BlockNote / Tiptap)
-* LMS platforms
-* AI applications
+- TailwindCSS
+- React
+- Dashboard UIs
+- Editors (BlockNote / Tiptap)
+- LMS platforms
+- AI applications
 
 ---
 
@@ -23,13 +23,13 @@ This system is optimized for:
 
 ## Core Principles
 
-* Neutral-first UI
-* Minimal saturation
-* Strong typography contrast
-* Soft surfaces instead of harsh black/white
-* Accessible focus states
-* Consistent semantic tokens
-* Dark mode designed first-class
+- Neutral-first UI
+- Minimal saturation
+- Strong typography contrast
+- Soft surfaces instead of harsh black/white
+- Accessible focus states
+- Consistent semantic tokens
+- Dark mode designed first-class
 
 ---
 
@@ -250,25 +250,25 @@ neutral: {
 
 ```css
 :root {
-  --primary: #6366F1;
-  --primary-hover: #4F46E5;
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
 
-  --bg-primary: #F8FAFC;
-  --bg-surface: #FFFFFF;
-  --bg-secondary: #F1F5F9;
+  --bg-primary: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-secondary: #f1f5f9;
 
-  --text-primary: #0F172A;
+  --text-primary: #0f172a;
   --text-secondary: #475569;
-  --text-muted: #94A3B8;
+  --text-muted: #94a3b8;
 
-  --border-primary: #E2E8F0;
-  --border-secondary: #CBD5E1;
+  --border-primary: #e2e8f0;
+  --border-secondary: #cbd5e1;
 
-  --success: #10B981;
-  --warning: #F59E0B;
-  --error: #EF4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
 
-  --focus-ring: #818CF8;
+  --focus-ring: #818cf8;
 }
 ```
 
@@ -278,25 +278,25 @@ neutral: {
 
 ```css
 .dark {
-  --primary: #818CF8;
-  --primary-hover: #6366F1;
+  --primary: #818cf8;
+  --primary-hover: #6366f1;
 
-  --bg-primary: #0A0A0A;
+  --bg-primary: #0a0a0a;
   --bg-surface: #171717;
   --bg-secondary: #111111;
 
-  --text-primary: #FAFAFA;
-  --text-secondary: #A1A1AA;
-  --text-muted: #71717A;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
 
-  --border-primary: #27272A;
-  --border-secondary: #3F3F46;
+  --border-primary: #27272a;
+  --border-secondary: #3f3f46;
 
-  --success: #34D399;
-  --warning: #FBBF24;
-  --error: #F87171;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --error: #f87171;
 
-  --focus-ring: #818CF8;
+  --focus-ring: #818cf8;
 }
 ```
 
@@ -307,15 +307,15 @@ neutral: {
 ## Light
 
 ```css
-box-shadow: 0 1px 2px rgba(15,23,42,0.04);
-box-shadow: 0 4px 12px rgba(15,23,42,0.06);
+box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
 ```
 
 ## Dark
 
 ```css
-box-shadow: 0 1px 2px rgba(0,0,0,0.4);
-box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 ```
 
 ---
@@ -337,11 +337,7 @@ box-shadow: 0 8px 24px rgba(0,0,0,0.5);
 ## Font Stack
 
 ```css
-font-family:
-  Inter,
-  ui-sans-serif,
-  system-ui,
-  sans-serif;
+font-family: Inter, ui-sans-serif, system-ui, sans-serif;
 ```
 
 ---

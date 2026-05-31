@@ -9,6 +9,7 @@
 ## Current State
 
 Today the course module supports:
+
 - Course listing (grid view, search, filter, sort, pagination)
 - Course create / edit (basic form: title, description, category, tags, cover image)
 - Course detail (overview tab, lesson list sidebar)
@@ -16,6 +17,7 @@ Today the course module supports:
 - Publish / archive / delete actions
 
 What's missing from Section 1:
+
 - Drag-and-drop course builder
 - Hierarchical structure (Course > Section > Module > Lesson > Topic)
 - Rich text editor for content
@@ -56,6 +58,7 @@ Course
 ```
 
 Each node has:
+
 - `id`, `title`, `description`, `order`, `status` (draft/published)
 - Sections: `isCollapsed` (UI state)
 - Lessons: `type` (video/text/quiz/assignment), `duration`, `content`, `isLocked`, `unlockCondition`
@@ -134,16 +137,16 @@ MODIFY:
 
 #### Content Types
 
-| Type | Editor | Storage |
-|------|--------|---------|
-| Text / HTML | Rich text editor (TipTap or Slate) | HTML string |
-| Video | URL embed + upload placeholder | URL + metadata |
-| Audio | URL embed + upload placeholder | URL + metadata |
-| PDF | File upload placeholder | URL |
-| Quiz | Link to quiz builder (future) | quizId reference |
-| Assignment | Text editor + file upload placeholder | HTML + file URLs |
-| Interactive HTML | Code editor (Monaco) | HTML/JS string |
-| SCORM / xAPI | Upload placeholder | Package URL |
+| Type             | Editor                                | Storage          |
+| ---------------- | ------------------------------------- | ---------------- |
+| Text / HTML      | Rich text editor (TipTap or Slate)    | HTML string      |
+| Video            | URL embed + upload placeholder        | URL + metadata   |
+| Audio            | URL embed + upload placeholder        | URL + metadata   |
+| PDF              | File upload placeholder               | URL              |
+| Quiz             | Link to quiz builder (future)         | quizId reference |
+| Assignment       | Text editor + file upload placeholder | HTML + file URLs |
+| Interactive HTML | Code editor (Monaco)                  | HTML/JS string   |
+| SCORM / xAPI     | Upload placeholder                    | Package URL      |
 
 #### UI Changes
 
@@ -401,12 +404,12 @@ MODIFY:
 
 ## Implementation Order
 
-| Order | Sub-Phase | Est. Complexity | Key Deliverable |
-|-------|-----------|-----------------|-----------------|
-| 1 | 1.1 Hierarchical Structure | High | Course builder with tree + drag-drop |
-| 2 | 1.2 Rich Editor & Multimedia | High | Content type editors + course viewer |
-| 3 | 1.3 Templates, Clone, Versions, Autosave | Medium | Template picker, clone button, autosave |
-| 4 | 1.4 Conditional Paths & Gamification | Medium | Unlock conditions, progress bars, points |
+| Order | Sub-Phase                                | Est. Complexity | Key Deliverable                          |
+| ----- | ---------------------------------------- | --------------- | ---------------------------------------- |
+| 1     | 1.1 Hierarchical Structure               | High            | Course builder with tree + drag-drop     |
+| 2     | 1.2 Rich Editor & Multimedia             | High            | Content type editors + course viewer     |
+| 3     | 1.3 Templates, Clone, Versions, Autosave | Medium          | Template picker, clone button, autosave  |
+| 4     | 1.4 Conditional Paths & Gamification     | Medium          | Unlock conditions, progress bars, points |
 
 ---
 

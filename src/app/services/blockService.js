@@ -2,7 +2,7 @@
 // Now uses BlockNote JSON format for lesson content.
 // Content is stored as a JSON string of BlockNote block array.
 
-import { apiGet, apiPost, apiPut, apiDelete, apiUpload, API_BASE } from '@/app/services/http';
+import { apiGet, apiPost, apiPut, apiDelete, apiUpload, API_BASE } from "@/app/services/http";
 
 // ─── CONTENT HELPERS ────────────────────────────────────────────
 
@@ -12,23 +12,53 @@ import { apiGet, apiPost, apiPut, apiDelete, apiUpload, API_BASE } from '@/app/s
  */
 export const normalizeContent = (content) => {
   if (!content) return JSON.stringify([]);
-  const paraProps = { textAlignment: 'left', backgroundColor: 'default', textColor: 'default' };
+  const paraProps = { textAlignment: "left", backgroundColor: "default", textColor: "default" };
 
-  if (typeof content === 'string') {
+  if (typeof content === "string") {
     try {
       const parsed = JSON.parse(content);
       if (Array.isArray(parsed)) return content; // already valid block array
       if (parsed && parsed.content) {
         // Legacy format: { content: "...", format: "..." }
-        return JSON.stringify([{ type: 'paragraph', props: paraProps, content: [{ type: 'text', text: typeof parsed.content === 'string' ? parsed.content : JSON.stringify(parsed.content), styles: {} }], children: [] }]);
+        return JSON.stringify([
+          {
+            type: "paragraph",
+            props: paraProps,
+            content: [
+              {
+                type: "text",
+                text:
+                  typeof parsed.content === "string"
+                    ? parsed.content
+                    : JSON.stringify(parsed.content),
+                styles: {},
+              },
+            ],
+            children: [],
+          },
+        ]);
       }
-      if (typeof parsed === 'string') {
-        return JSON.stringify([{ type: 'paragraph', props: paraProps, content: [{ type: 'text', text: parsed, styles: {} }], children: [] }]);
+      if (typeof parsed === "string") {
+        return JSON.stringify([
+          {
+            type: "paragraph",
+            props: paraProps,
+            content: [{ type: "text", text: parsed, styles: {} }],
+            children: [],
+          },
+        ]);
       }
       return JSON.stringify([parsed]);
     } catch {
       // Not valid JSON — treat as plain text
-      return JSON.stringify([{ type: 'paragraph', props: paraProps, content: [{ type: 'text', text: content, styles: {} }], children: [] }]);
+      return JSON.stringify([
+        {
+          type: "paragraph",
+          props: paraProps,
+          content: [{ type: "text", text: content, styles: {} }],
+          children: [],
+        },
+      ]);
     }
   }
   if (Array.isArray(content)) return JSON.stringify(content);
@@ -41,7 +71,7 @@ export const normalizeContent = (content) => {
 export const parseBlocks = (content) => {
   if (!content) return [];
   try {
-    const parsed = typeof content === 'string' ? JSON.parse(content) : content;
+    const parsed = typeof content === "string" ? JSON.parse(content) : content;
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
@@ -58,7 +88,7 @@ export const saveAutosave = async (lessonId, snapshot) => {
   try {
     return await apiPost(`/lessons/${lessonId}/autosave`, { snapshot });
   } catch (error) {
-    console.error('Error saving autosave:', error);
+    console.error("Error saving autosave:", error);
     throw error;
   }
 };
@@ -78,7 +108,7 @@ export const fetchAutosave = async (lessonId) => {
       createdAt: data.createdAt || data.created_at,
     };
   } catch (error) {
-    console.error('Error fetching autosave:', error);
+    console.error("Error fetching autosave:", error);
     throw error;
   }
 };
@@ -92,11 +122,11 @@ export const fetchAutosave = async (lessonId) => {
 export const fetchLessonBlocks = async (lessonId) => {
   try {
     const data = await apiGet(`/lessons/${lessonId}/blocks`);
-    const list = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
+    const list = Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : [];
     list.sort((a, b) => (a.order || 0) - (b.order || 0));
     return list;
   } catch (error) {
-    console.error('Error fetching lesson blocks:', error);
+    console.error("Error fetching lesson blocks:", error);
     throw error;
   }
 };
@@ -109,11 +139,11 @@ export const fetchLessonBlocks = async (lessonId) => {
  */
 export const uploadBlockMedia = async (lessonId, blockId, file) => {
   const formData = new FormData();
-  formData.append('file', file);
-  const safeBlockId = String(blockId).startsWith('temp_') ? 0 : blockId;
+  formData.append("file", file);
+  const safeBlockId = String(blockId).startsWith("temp_") ? 0 : blockId;
   const data = await apiUpload(`/lessons/${lessonId}/blocks/${safeBlockId}/media`, formData);
-  const serverBase = API_BASE.replace(/\/api$/, '');
-  return data?.url ? `${serverBase}${data.url}` : '';
+  const serverBase = API_BASE.replace(/\/api$/, "");
+  return data?.url ? `${serverBase}${data.url}` : "";
 };
 
 // ─── AI CONTENT GENERATION ─────────────────────────────────────
@@ -121,20 +151,20 @@ export const uploadBlockMedia = async (lessonId, blockId, file) => {
 /**
  * Generate AI content for a block.
  */
-export const generateAIContent = async (lessonId, blockType, prompt, context = '') => {
+export const generateAIContent = async (lessonId, blockType, prompt, context = "") => {
   try {
-    const data = await apiPost('/ai/generate', {
+    const data = await apiPost("/ai/generate", {
       lessonId,
       blockType,
       prompt,
       context,
     });
     return {
-      content: data.content || '',
+      content: data.content || "",
       data: data.data || null,
     };
   } catch (error) {
-    console.error('Error generating AI content:', error);
+    console.error("Error generating AI content:", error);
     throw error;
   }
 };
@@ -142,7 +172,7 @@ export const generateAIContent = async (lessonId, blockType, prompt, context = '
 // ─── MOCK DATA (fallback for dev) ──────────────────────────────
 
 export const mockSaveAutosave = async (lessonId, snapshot) => {
-  console.log('[mock] saveAutosave', lessonId, snapshot?.slice(0, 60));
+  console.log("[mock] saveAutosave", lessonId, snapshot?.slice(0, 60));
   return Promise.resolve({ id: Date.now(), lessonId, snapshot });
 };
 

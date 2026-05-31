@@ -1,16 +1,16 @@
-import React from 'react';
-import { LayoutGrid, List, Table as TableIcon, AlignLeft } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { LayoutGrid, List, Table as TableIcon, AlignLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const viewModes = [
-  { value: 'grid', label: 'Grid', icon: LayoutGrid },
-  { value: 'table', label: 'Table', icon: TableIcon },
-  { value: 'list', label: 'List', icon: List },
-  { value: 'compact', label: 'Compact', icon: AlignLeft },
+  { value: "grid", label: "Grid", icon: LayoutGrid },
+  { value: "table", label: "Table", icon: TableIcon },
+  { value: "list", label: "List", icon: List },
+  { value: "compact", label: "Compact", icon: AlignLeft },
 ];
 
 const ViewModeSwitcher = ({ value, onChange }) => (
-  <div className="flex items-center rounded-md border border-border overflow-hidden">
+  <div className="border-border flex items-center overflow-hidden rounded-md border">
     {viewModes.map((m) => {
       const Icon = m.icon;
       return (
@@ -19,10 +19,10 @@ const ViewModeSwitcher = ({ value, onChange }) => (
           title={m.label}
           onClick={() => onChange(m.value)}
           className={cn(
-            'flex h-7 w-7 items-center justify-center transition-colors cursor-pointer',
+            "flex h-7 w-7 cursor-pointer items-center justify-center transition-colors",
             value === m.value
-              ? 'bg-primary text-white'
-              : 'text-text-muted hover:bg-bg-surface-active'
+              ? "bg-primary text-white"
+              : "text-text-muted hover:bg-bg-surface-active"
           )}
         >
           <Icon size={14} />
