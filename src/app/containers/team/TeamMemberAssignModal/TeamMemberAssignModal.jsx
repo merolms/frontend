@@ -13,16 +13,19 @@ const PAGE_SIZE = 10;
 
 const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
   const [members, setMembers] = useState([]);
-  const [allAvailable, setAllAvailable] = useState([]);
+  const [allLoaded, setAllLoaded] = useState([]);
   const [displayedUsers, setDisplayedUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalAvailable, setTotalAvailable] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [busyIds, setBusyIds] = useState(new Set());
   const [error, setError] = useState(null);
   const [userSearch, setUserSearch] = useState('');
+  const [isSearchMode, setIsSearchMode] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
   const [memberIds, setMemberIds] = useState(new Set());
   const { addToast } = useToast();
 
@@ -30,26 +33,32 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
     if (open && team) {
       loadAll();
     } else if (!open) {
-      setMembers([]);
-      setAllAvailable([]);
-      setDisplayedUsers([]);
-      setCurrentPage(1);
-      setTotalPages(1);
-      setTotalAvailable(0);
-      setBusyIds(new Set());
-      setError(null);
-      setUserSearch('');
-      setMemberIds(new Set());
+      resetState();
     }
   }, [open, team]);
 
-  const paginate = useCallback((users, page) => {
+  const resetState = () => {
+    setMembers([]);
+    setAllLoaded([]);
+    setDisplayedUsers([]);
+    setCurrentPage(1);
+    setTotalPages(1);
+    setTotalCount(0);
+    setBusyIds(new Set());
+    setError(null);
+    setUserSearch('');
+    setIsSearchMode(false);
+    setSearchResults([]);
+    setMemberIds(new Set());
+  };
+
+  const applyPagination = useCallback((users, page) => {
     const total = Math.ceil(users.length / PAGE_SIZE) || 1;
     const start = (page - 1) * PAGE_SIZE;
-    const end = start + PAGE_SIZE;
-    setDisplayedUsers(users.slice(start, end));
+    setDisplayedUsers(users.slice(start, PAGE_SIZE * page));
     setCurrentPage(page);
     setTotalPages(total);
+    setTotalCount(users.length);
   }, []);
 
   const loadAll = async () => {
@@ -59,7 +68,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
       setMembers(membersData);
       const mIds = new Set((membersData || []).map((m) => m.userID || m.userId));
       setMemberIds(mIds);
-      await loadAvailableUsers(mIds);
+      await loadInitialUsers(mIds);
     } catch (err) {
       setError('Failed to load team members.');
     } finally {
@@ -67,18 +76,16 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
     }
   };
 
-  const loadAvailableUsers = async (mIds) => {
+  const loadInitialUsers = async (mIds) => {
     try {
-      // Load first page of users
       const result = await fetchUsers({ start: 0, limit: PAGE_SIZE });
-      const firstBatch = Array.isArray(result.users) ? result.users : [];
-      const available = firstBatch.filter((u) => !mIds.has(u.id));
-      setAllAvailable(available);
-      setTotalAvailable(available.length);
-      paginate(available, 1);
+      const batch = Array.isArray(result.users) ? result.users : [];
+      const available = batch.filter((u) => !mIds.has(u.id));
+      setAllLoaded(available);
+      applyPagination(available, 1);
     } catch (err) {
       console.error(err);
-      setAllAvailable([]);
+      setAllLoaded([]);
       setDisplayedUsers([]);
     }
   };
@@ -86,18 +93,16 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
   const loadMoreUsers = async () => {
     setLoadingMore(true);
     try {
-      const start = allAvailable.length;
+      const start = allLoaded.length;
       const result = await fetchUsers({ start, limit: PAGE_SIZE });
-      const newBatch = Array.isArray(result.users) ? result.users : [];
-      if (newBatch.length === 0) return;
-
-      const filtered = newBatch.filter((u) => !memberIds.has(u.id));
-      const updated = [...allAvailable, ...filtered];
-      setAllAvailable(updated);
-      setTotalAvailable(updated.length);
-      // Show the newly loaded page
-      const newPage = Math.ceil(updated.length / PAGE_SIZE);
-      paginate(updated, newPage);
+      const batch = Array.isArray(result.users) ? result.users : [];
+      if (batch.length === 0) return;
+      const filtered = batch.filter((u) => !memberIds.has(u.id));
+      const updated = [...allLoaded, ...filtered];
+      setAllLoaded(updated);
+      // Jump to the page showing the newly loaded users
+      const newPage = Math.max(1, Math.ceil(updated.length / PAGE_SIZE));
+      applyPagination(updated, newPage);
     } catch (err) {
       console.error(err);
     } finally {
@@ -105,33 +110,73 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
     }
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    if (!userSearch.trim()) {
-      paginate(allAvailable, 1);
+    const q = userSearch.trim().toLowerCase();
+    if (!q) {
+      clearSearch();
       return;
     }
-    const q = userSearch.toLowerCase();
-    const filtered = allAvailable.filter((u) =>
-      (u.firstName || '').toLowerCase().includes(q) ||
-      (u.lastName || '').toLowerCase().includes(q) ||
-      (u.email || '').toLowerCase().includes(q)
-    );
-    setTotalAvailable(filtered.length);
-    paginate(filtered, 1);
+
+    setIsSearchMode(true);
+    setSearchLoading(true);
+
+    try {
+      // Search through already loaded users first
+      let results = allLoaded.filter((u) =>
+        (u.firstName || '').toLowerCase().includes(q) ||
+        (u.lastName || '').toLowerCase().includes(q) ||
+        (u.email || '').toLowerCase().includes(q)
+      );
+
+      // If not enough results, fetch more from server
+      if (results.length === 0) {
+        let fetched = allLoaded.length;
+        let keepFetching = true;
+
+        while (keepFetching) {
+          const result = await fetchUsers({ start: fetched, limit: 50 });
+          const batch = Array.isArray(result.users) ? result.users : [];
+          if (batch.length === 0) { keepFetching = false; break; }
+
+          const nonMembers = batch.filter((u) => !memberIds.has(u.id));
+          setAllLoaded((prev) => [...prev, ...nonMembers]);
+          fetched += 50;
+
+          results = results.concat(nonMembers.filter((u) =>
+            (u.firstName || '').toLowerCase().includes(q) ||
+            (u.lastName || '').toLowerCase().includes(q) ||
+            (u.email || '').toLowerCase().includes(q)
+          ));
+
+          if (results.length > 0) { keepFetching = false; }
+        }
+      }
+
+      setSearchResults(results);
+      applyPagination(results, 1);
+    } catch (err) {
+      console.error(err);
+      setSearchResults([]);
+    } finally {
+      setSearchLoading(false);
+    }
   };
 
-  const handleClearSearch = () => {
+  const clearSearch = () => {
     setUserSearch('');
-    paginate(allAvailable, 1);
+    setIsSearchMode(false);
+    setSearchResults([]);
+    applyPagination(allLoaded, 1);
+  };
+
+  const goToPage = (page) => {
+    const source = isSearchMode ? searchResults : allLoaded;
+    applyPagination(source, page);
   };
 
   const markBusy = (id, busy) => {
-    setBusyIds((prev) => {
-      const next = new Set(prev);
-      if (busy) next.add(id); else next.delete(id);
-      return next;
-    });
+    setBusyIds((prev) => { const n = new Set(prev); if (busy) n.add(id); else n.delete(id); return n; });
   };
 
   const handleAddMember = async (user) => {
@@ -142,19 +187,25 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
       setError(null);
       await addMemberToTeam(team.id, user);
       const newMember = {
-        userID: user.id,
-        userId: user.id,
+        userID: user.id, userId: user.id,
         userName: `${user.firstName} ${user.lastName}`.trim(),
-        avatar: user.avatar || '',
-        role: user.role || '',
-        userEmail: user.email || '',
+        avatar: user.avatar || '', role: user.role || '', userEmail: user.email || '',
       };
       setMembers((prev) => [...prev, newMember]);
-      setMemberIds((prev) => new Set([...prev, user.id]));
-      // Remove from available
-      setAllAvailable((prev) => prev.filter((u) => u.id !== user.id));
-      setDisplayedUsers((prev) => prev.filter((u) => u.id !== user.id));
-      setTotalAvailable((prev) => prev - 1);
+      const newMIds = new Set([...memberIds, user.id]);
+      setMemberIds(newMIds);
+
+      // Remove from all loaded
+      setAllLoaded((prev) => prev.filter((u) => u.id !== user.id));
+      setSearchResults((prev) => prev.filter((u) => u.id !== user.id));
+
+      // Re-paginate current view
+      const source = isSearchMode ? searchResults.filter((u) => u.id !== user.id) : allLoaded.filter((u) => u.id !== user.id);
+      // Adjust page if current page is now empty
+      const maxPage = Math.ceil(source.length / PAGE_SIZE) || 1;
+      const page = Math.min(currentPage, maxPage);
+      applyPagination(source, page);
+
       addToast(`${user.firstName} ${user.lastName} added to team`, 'success');
       if (onUpdated) onUpdated();
     } catch (err) {
@@ -194,6 +245,34 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
 
   if (!team) return null;
 
+  const getRoleBadge = (role) => (
+    <Badge variant={getRoleColor(role)} className="text-[10px]">{role || 'N/A'}</Badge>
+  );
+
+  const renderUserRow = (user, onAction, actionIcon, actionClass, actionKey) => {
+    const isBusy = busyIds.has(actionKey);
+    return (
+      <div key={user.id} className="flex items-center justify-between rounded-lg px-3 py-2.5" style={{ background: t('bg-surface'), border: `1px solid ${t('border-primary')}` }}>
+        <div className="flex items-center gap-2.5">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={user.avatar || 'https://i.pravatar.cc/150?img=1'} />
+            <AvatarFallback>{(user.firstName || 'U')[0]}</AvatarFallback>
+          </Avatar>
+          <div>
+            <p className="text-xs font-semibold text-text-primary">{user.firstName} {user.lastName}</p>
+            <p className="text-[11px] text-text-muted">{user.email}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {getRoleBadge(user.role)}
+          <button className={`flex h-7 w-7 items-center justify-center rounded-md ${actionClass} hover:bg-opacity-20 disabled:opacity-50 cursor-pointer`} onClick={() => onAction(user)} disabled={isBusy}>
+            {actionIcon}
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Dialog open={open} onOpenChange={busyIds.size === 0 ? onClose : undefined}>
       <DialogContent className="max-w-lg">
@@ -228,7 +307,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
                     </Avatar>
                     <div>
                       <p className="text-xs font-semibold text-text-primary">{userName}</p>
-                      <Badge variant={getRoleColor(member.role)} className="text-[10px] mt-0.5">{member.role || 'N/A'}</Badge>
+                      {getRoleBadge(member.role)}
                     </div>
                   </div>
                   <button className="flex h-7 w-7 items-center justify-center rounded-md text-error hover:bg-error/10 disabled:opacity-50 cursor-pointer" onClick={() => handleRemoveMember(member)} disabled={isBusy}>
@@ -242,10 +321,10 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
 
         <hr className="border-border" />
 
-        {/* Available Users Header */}
+        {/* Available Users */}
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold text-text-primary flex items-center gap-1">
-            <Plus size={12} style={{ color: t('accent') }} /> Available Users ({totalAvailable})
+            <Plus size={12} style={{ color: t('accent') }} /> Available Users ({totalCount})
           </p>
         </div>
 
@@ -255,82 +334,59 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
             <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
             <Input placeholder="Search users..." value={userSearch} onChange={(e) => setUserSearch(e.target.value)} className="pl-8" />
           </div>
-          <Button type="submit" variant="default" size="sm">Search</Button>
-          {userSearch && <Button type="button" variant="default" size="sm" onClick={handleClearSearch}>Clear</Button>}
+          <Button type="submit" variant="default" size="sm" disabled={searchLoading}>
+            {searchLoading ? <><Loader size={12} className="animate-spin mr-1" /></> : 'Search'}
+          </Button>
+          {isSearchMode && <Button type="button" variant="default" size="sm" onClick={clearSearch}>Clear</Button>}
         </form>
 
         {/* Available Users List */}
         {loading ? (
           <Loader size={14} className="animate-spin text-text-muted mt-2" />
         ) : displayedUsers.length === 0 ? (
-          <p className="text-xs text-text-muted mt-1">No available users found.</p>
+          <p className="text-xs text-text-muted mt-1">
+            {searchLoading ? 'Searching...' : isSearchMode ? `No users found matching "${userSearch}"` : 'No available users found.'}
+          </p>
         ) : (
           <>
             <div className="space-y-1 mt-2 max-h-56 overflow-y-auto">
-              {displayedUsers.map((user) => {
-                const isBusy = busyIds.has(`add-${user.id}`);
-                return (
-                  <div key={user.id} className="flex items-center justify-between rounded-lg px-3 py-2.5" style={{ background: t('bg-surface'), border: `1px solid ${t('border-primary')}` }}>
-                    <div className="flex items-center gap-2.5">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={user.avatar || 'https://i.pravatar.cc/150?img=1'} />
-                        <AvatarFallback>{user.firstName?.[0]}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="text-xs font-semibold text-text-primary">{user.firstName} {user.lastName}</p>
-                        <p className="text-[11px] text-text-muted">{user.email}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant={getRoleColor(user.role)} className="text-[10px]">{user.role}</Badge>
-                      <button className="flex h-7 w-7 items-center justify-center rounded-md text-success hover:bg-success/10 disabled:opacity-50 cursor-pointer" onClick={() => handleAddMember(user)} disabled={isBusy}>
-                        <Plus size={12} />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+              {displayedUsers.map((user) => renderUserRow(
+                user,
+                handleAddMember,
+                <Plus size={12} />,
+                'text-success hover:bg-success/10',
+                `add-${user.id}`
+              ))}
             </div>
 
-            {/* Pagination Controls */}
+            {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex items-center justify-between mt-2">
                 <button
-                  onClick={() => paginate(allAvailable, Math.max(1, currentPage - 1))}
+                  onClick={() => goToPage(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
                   className="flex h-7 items-center gap-1 rounded-md border border-border px-2 text-text-secondary hover:bg-bg-surface-active disabled:opacity-50 disabled:pointer-events-none cursor-pointer text-xs"
                 >
-                  <ChevronLeft size={12} />
-                  <span>Previous</span>
+                  <ChevronLeft size={12} /> <span>Previous</span>
                 </button>
-                <span className="text-[11px] text-text-muted">
-                  Page {currentPage} of {totalPages}
-                </span>
+                <span className="text-[11px] text-text-muted">Page {currentPage} of {totalPages}</span>
                 <button
-                  onClick={() => paginate(allAvailable, Math.min(totalPages, currentPage + 1))}
+                  onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
                   disabled={currentPage === totalPages}
                   className="flex h-7 items-center gap-1 rounded-md border border-border px-2 text-text-secondary hover:bg-bg-surface-active disabled:opacity-50 disabled:pointer-events-none cursor-pointer text-xs"
                 >
-                  <span>Next</span>
-                  <ChevronRight size={12} />
+                  <span>Next</span> <ChevronRight size={12} />
                 </button>
               </div>
             )}
 
-            {/* Load More */}
-            {currentPage === totalPages && displayedUsers.length < totalAvailable && (
+            {/* Load More — only show in non-search mode */}
+            {!isSearchMode && totalPages > 0 && currentPage === totalPages && (
               <div className="flex justify-center mt-2">
                 <Button variant="default" size="sm" onClick={loadMoreUsers} disabled={loadingMore}>
-                  {loadingMore ? (
-                    <><Loader size={12} className="animate-spin mr-1" /> Loading...</>
-                  ) : (
-                    <>Load More Users</>
-                  )}
+                  {loadingMore ? <><Loader size={12} className="animate-spin mr-1" /> Loading...</> : 'Load More Users'}
                 </Button>
               </div>
-            )}
-            {currentPage === totalPages && displayedUsers.length >= totalAvailable && totalAvailable > 0 && (
-              <p className="text-[11px] text-text-muted text-center mt-2">Showing all loaded users. Click "Load More" to fetch additional users from the server.</p>
             )}
           </>
         )}

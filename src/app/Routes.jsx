@@ -1,4 +1,5 @@
 import React from 'react';
+import ProtectedRoute from '@/app/components/ProtectedRoute/ProtectedRoute';
 import Dashboard from '@/app/containers/Dashboard/Dashboard';
 import CourseContainer from '@/app/containers/course/Course';
 import CourseDetail from '@/app/containers/course/CourseDetail/CourseDetail';
@@ -26,7 +27,12 @@ import Unauthorized from '@/app/containers/auth/Unauthorized/Unauthorized';
 import RoleManagement from '@/app/containers/role/RoleManagement/RoleManagement';
 import RoleCreate from '@/app/containers/role/RoleCreate/RoleCreate';
 import RoleEdit from '@/app/containers/role/RoleEdit/RoleEdit';
-import ProtectedRoute from '@/app/components/ProtectedRoute/ProtectedRoute';
+import LearningPathList from '@/app/containers/learningPath/LearningPathList';
+import LearningPathDetail from '@/app/containers/learningPath/LearningPathDetail';
+import LearningPathForm from '@/app/containers/learningPath/LearningPathForm';
+import EventsPage from '@/app/containers/event/EventsPage';
+import EventDetail from '@/app/containers/event/EventDetail';
+import AdminProgressTracking from '@/app/containers/progress/AdminProgressTracking';
 
 // Public routes — no auth needed
 const publicRoutes = [
@@ -60,6 +66,13 @@ const protectedRoutes = [
   { path: '/roles', element: <ProtectedRoute permissions={['roles.view']}><RoleManagement /></ProtectedRoute> },
   { path: '/roles/create', element: <ProtectedRoute permissions={['roles.create']}><RoleCreate /></ProtectedRoute> },
   { path: '/roles/:id/edit', element: <ProtectedRoute permissions={['roles.edit']}><RoleEdit /></ProtectedRoute> },
+  { path: '/learning-paths', element: <ProtectedRoute permissions={['courses.view']}><LearningPathList /></ProtectedRoute> },
+  { path: '/learning-paths/create', element: <ProtectedRoute permissions={['courses.create']}><LearningPathForm /></ProtectedRoute> },
+  { path: '/learning-paths/:id', element: <ProtectedRoute permissions={['courses.view']}><LearningPathDetail /></ProtectedRoute> },
+  { path: '/learning-paths/:id/edit', element: <ProtectedRoute permissions={['courses.edit']}><LearningPathForm /></ProtectedRoute> },
+  { path: '/events', element: <ProtectedRoute permissions={['courses.view']}><EventsPage /></ProtectedRoute> },
+  { path: '/events/:id', element: <ProtectedRoute permissions={['courses.view']}><EventDetail /></ProtectedRoute> },
+  { path: '/progress', element: <ProtectedRoute permissions={['users.view']}><AdminProgressTracking /></ProtectedRoute> },
 ];
 
 const AppRoutes = [...publicRoutes, ...protectedRoutes];

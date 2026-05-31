@@ -1,16 +1,19 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { BookOpen, GraduationCap, Home, LogOut, Settings, Shield, Network, Tags, Users } from 'lucide-react';
+import { BookOpen, GraduationCap, Home, LogOut, Settings, Shield, Network, Tags, Users, CalendarDays, BarChart3 } from 'lucide-react';
 import { logoutUser } from '@/redux/slices/authSlice';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: Home },
   { path: '/courses', label: 'Courses', icon: BookOpen },
+  { path: '/learning-paths', label: 'Learning Paths', icon: GraduationCap },
+  { path: '/events', label: 'Events', icon: CalendarDays },
+  { path: '/progress', label: 'Progress', icon: BarChart3 },
   { path: '/categories', label: 'Categories', icon: Tags },
   { path: '/users', label: 'Users', icon: Users },
   { path: '/teams', label: 'Teams', icon: Network },
-  { path: '/my-learning', label: 'Learning', icon: GraduationCap },
+  { path: '/my-learning', label: 'My Learning', icon: BookOpen },
   { path: '/settings', label: 'Settings', icon: Settings },
   { path: '/roles', label: 'Roles', icon: Shield },
 ];
@@ -32,7 +35,9 @@ export default function SideBar() {
   return (
     <div className="sidebar-wrapper">
       <div className="flex h-14 items-center justify-center border-b" style={{ borderColor: 'var(--border-primary)' }}>
-        <GraduationCap size={24} className="text-primary" />
+        <Link to="/" className="flex items-center justify-center h-10 w-10 rounded-lg group" title="MeroEdu — Dashboard">
+          <GraduationCap size={24} className="text-primary group-hover:text-primary-hover transition-colors" />
+        </Link>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2 py-3">

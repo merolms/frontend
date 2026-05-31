@@ -8,7 +8,7 @@ import { getCategoryColorOptions, getCategoryIconOptions } from '@/app/services/
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const CategoryForm = ({ category = null, onSubmit, onClose, loading = false }) => {
-  const [form, setForm] = useState({ name: '', slug: '', description: '', color: getCategoryColorOptions()[0], icon: 'folder' });
+  const [form, setForm] = useState({ name: '', slug: '', description: '', color: getCategoryColorOptions()[0].value, icon: 'folder' });
   const [errors, setErrors] = useState({});
   const isEditing = !!category;
 
@@ -16,7 +16,7 @@ const CategoryForm = ({ category = null, onSubmit, onClose, loading = false }) =
     if (category) setForm({
       name: category.name || '', slug: category.slug || '',
       description: category.description || '',
-      color: category.color || getCategoryColorOptions()[0],
+      color: category.color || getCategoryColorOptions()[0].value,
       icon: category.icon || 'folder',
     });
   }, [category]);
@@ -73,8 +73,20 @@ const CategoryForm = ({ category = null, onSubmit, onClose, loading = false }) =
           <div>
             <label className="text-xs font-medium text-text-primary">Color</label>
             <Select value={form.color} onValueChange={(v) => handleChange('color', v)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>{colorOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+              <SelectTrigger>
+                <div className="flex items-center gap-2">
+                  <span className="h-3 w-3 rounded-full flex-shrink-0" style={{ background: form.color }} />
+                  <span>{getCategoryColorOptions().find(c => c.value === form.color)?.label || form.color}</span>
+                </div>
+              </SelectTrigger>
+              <SelectContent>{getCategoryColorOptions().map(c => (
+                <SelectItem key={c.value} value={c.value}>
+                  <span className="flex items-center gap-2">
+                    <span className="h-3 w-3 rounded-full flex-shrink-0" style={{ background: c.value }} />
+                    {c.label}
+                  </span>
+                </SelectItem>
+              ))}</SelectContent>
             </Select>
           </div>
           <div>

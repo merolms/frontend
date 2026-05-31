@@ -1,20 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { t } from '@/styles/theme';
 import { AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 
-const TEAM_COLORS = [...new Set([t('accent'), t('secondary'), t('warning'), t('primary'), t('error'), t('success')])];
+export const TEAM_COLORS = [
+  { value: '#6366F1', label: 'Indigo' },
+  { value: '#8B5CF6', label: 'Purple' },
+  { value: '#EC4899', label: 'Pink' },
+  { value: '#F59E0B', label: 'Amber' },
+  { value: '#10B981', label: 'Emerald' },
+  { value: '#06B6D4', label: 'Cyan' },
+  { value: '#EF4444', label: 'Red' },
+  { value: '#3B82F6', label: 'Blue' },
+];
 
 const TeamForm = ({ initialData = null, onSubmit, onCancel, loading = false, submitLabel = 'Save Team' }) => {
-  const [formData, setFormData] = useState({ name: '', description: '', color: TEAM_COLORS[0] });
+  const [formData, setFormData] = useState({ name: '', description: '', color: TEAM_COLORS[0].value });
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (initialData) setFormData({
       name: initialData.name || '', description: initialData.description || '',
-      color: initialData.color || TEAM_COLORS[0],
+      color: initialData.color || TEAM_COLORS[0].value,
       status: initialData.status !== undefined ? initialData.status : 1,
     });
   }, [initialData]);
@@ -31,6 +40,8 @@ const TeamForm = ({ initialData = null, onSubmit, onCancel, loading = false, sub
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: null }));
   };
+
+  const selectedColor = TEAM_COLORS.find(c => c.value === formData.color);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
@@ -51,16 +62,27 @@ const TeamForm = ({ initialData = null, onSubmit, onCancel, loading = false, sub
 
       <div>
         <label className="text-xs font-medium text-text-primary">Color</label>
-        <select
-          className="input-field"
-          value={formData.color}
-          onChange={(e) => handleChange('color', e.target.value)}
-        >
-          {TEAM_COLORS.map((c) => <option key={c} value={c}>{c}</option>)}
-        </select>
-        <div className="flex items-center gap-2 mt-2">
-          <div className="h-6 w-6 rounded" style={{ background: formData.color, border: `1px solid var(--border-primary)` }} />
-          <span className="text-xs text-text-muted font-mono">{formData.color}</span>
+        <Select value={formData.color} onValueChange={(v) => handleChange('color', v)}>
+          <SelectTrigger>
+            <div className="flex items-center gap-2">
+              <span className="h-3 w-3 rounded-full flex-shrink-0" style={{ background: formData.color }} />
+              <span>{selectedColor?.label || formData.color}</span>
+            </div>
+          </SelectTrigger>
+          <SelectContent>
+            {TEAM_COLORS.map(c => (
+              <SelectItem key={c.value} value={c.value}>
+                <span className="flex items-center gap-2">
+                  <span className="h-3 w-3 rounded-full flex-shrink-0" style={{ background: c.value }} />
+                  {c.label}
+                </span>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <div className="flex items-center gap-2 mt-1.5">
+          <div className="h-5 w-5 rounded" style={{ background: formData.color, border: '1px solid var(--border-primary)' }} />
+          <span className="text-[11px] text-text-muted font-mono">{formData.color}</span>
         </div>
       </div>
 

@@ -126,12 +126,14 @@ export const toggleCategoryStatus = async (id) => {
 };
 
 export const getCategoryColorOptions = () => [
-  'var(--accent)',
-  'var(--error)',
-  'var(--success)',
-  'var(--warning)',
-  'var(--secondary)',
-  'var(--text-secondary)',
+  { value: '#6366F1', label: 'Indigo' },
+  { value: '#8B5CF6', label: 'Purple' },
+  { value: '#EC4899', label: 'Pink' },
+  { value: '#F59E0B', label: 'Amber' },
+  { value: '#10B981', label: 'Emerald' },
+  { value: '#06B6D4', label: 'Cyan' },
+  { value: '#EF4444', label: 'Red' },
+  { value: '#3B82F6', label: 'Blue' },
 ];
 export const getCategoryIconOptions = [
   'code', 'paint brush', 'database', 'server', 'briefcase', 'bullhorn',
