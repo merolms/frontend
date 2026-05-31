@@ -1,5 +1,6 @@
+import { AlignLeft, LayoutGrid, List, Table as TableIcon } from "lucide-react";
 import React from "react";
-import { LayoutGrid, List, Table as TableIcon, AlignLeft } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
 const viewModes = [

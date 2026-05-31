@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { AlertCircle, ChevronRight, Loader, Pencil } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Pencil, Loader, ChevronRight, AlertCircle } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
+
+import RoleForm from "@/app/containers/role/RoleForm/RoleForm";
+import { useToast } from "@/app/context/ToastContext";
+import { fetchRoleById, updateRole } from "@/app/services/authService";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
-import RoleForm from "@/app/containers/role/RoleForm/RoleForm";
-import { fetchRoleById, updateRole } from "@/app/services/authService";
-import { useToast } from "@/app/context/ToastContext";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import { t } from "@/styles/theme";
 
 const RoleEdit = () => {

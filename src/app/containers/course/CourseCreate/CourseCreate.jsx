@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { t } from "@/styles/theme";
-import { useNavigate } from "react-router-dom";
+import { Lightbulb, Plus, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Plus, Lightbulb, X } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import { fetchCategories } from "@/app/services/categoryService";
+import { useNavigate } from "react-router-dom";
+
 import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
+import { fetchCategories } from "@/app/services/categoryService";
+import DashboardLayout from "@/components/ui/dashboard-layout";
+import { t } from "@/styles/theme";
 
 const CourseCreate = () => {
   const navigate = useNavigate();

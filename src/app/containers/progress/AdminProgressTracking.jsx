@@ -1,18 +1,22 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import {
-  Search,
-  Users,
-  BookOpen,
-  TrendingUp,
   Award,
-  Filter,
-  ChevronRight,
   BarChart3,
+  BookOpen,
+  ChevronRight,
+  Filter,
+  Search,
+  TrendingUp,
+  Users,
 } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+import { fetchEnrollments } from "@/app/services/enrollmentService";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Input } from "@/components/ui/input";
+import { Pagination } from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -20,9 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Pagination } from "@/components/ui/pagination";
-import { Badge } from "@/components/ui/badge";
-import { fetchEnrollments } from "@/app/services/enrollmentService";
 
 const AdminProgressTracking = () => {
   const navigate = useNavigate();

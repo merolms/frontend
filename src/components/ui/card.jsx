@@ -1,4 +1,5 @@
 import React from "react";
+
 import { cn } from "@/lib/utils";
 
 const Card = React.forwardRef(({ className, ...props }, ref) => (
@@ -49,4 +50,4 @@ const Paper = React.forwardRef(({ className, children, ...props }, ref) => (
 ));
 Paper.displayName = "Paper";
 
-export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Paper };
+export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Paper };

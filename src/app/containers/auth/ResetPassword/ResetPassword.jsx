@@ -1,6 +1,7 @@
+import { AlertCircle, ArrowLeft, Check, Lock } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AlertCircle, ArrowLeft, Check, Lock } from "lucide-react";
+
 import { resetPassword } from "@/app/services/authService";
 
 const ResetPassword = () => {

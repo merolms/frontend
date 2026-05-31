@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
 import { AlertCircle } from "lucide-react";
+import React, { useEffect, useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 export const TEAM_COLORS = [
   { value: "#6366F1", label: "Indigo" },

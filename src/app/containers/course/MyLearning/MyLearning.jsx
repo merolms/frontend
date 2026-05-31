@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import {
-  BookOpen,
-  Clock,
   Award,
-  Play,
-  TrendingUp,
+  BarChart3,
+  BookOpen,
   Calendar,
   CheckCircle,
-  BarChart3,
+  Clock,
   Filter,
+  Play,
+  TrendingUp,
 } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
+import { fetchEnrollments } from "@/app/services/enrollmentService";
 import { Button } from "@/components/ui/button";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import {
   Select,
   SelectContent,
@@ -20,8 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { fetchEnrollments } from "@/app/services/enrollmentService";
-import { useSelector } from "react-redux";
 
 const statusConfig = {
   active: { label: "In Progress", color: "blue", icon: Play },

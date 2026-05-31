@@ -1,19 +1,20 @@
-import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 import {
+  BarChart3,
   BookOpen,
+  CalendarDays,
   GraduationCap,
   Home,
   LogOut,
+  Network,
   Settings,
   Shield,
-  Network,
   Tags,
   Users,
-  CalendarDays,
-  BarChart3,
 } from "lucide-react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
 import { logoutUser } from "@/redux/slices/authSlice";
 
 const navItems = [

@@ -1,9 +1,16 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { BookOpen, Plus, RefreshCw, Search } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
+import { fetchCourses, mockCategories } from "@/app/services/courseService";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Paper } from "@/components/ui/card";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Input } from "@/components/ui/input";
+import { Pagination } from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -11,17 +18,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Pagination } from "@/components/ui/pagination";
-import { Paper } from "@/components/ui/card";
-import { fetchCourses, mockCategories } from "@/app/services/courseService";
-import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
-import ViewModeSwitcher from "./views/ViewModeSwitcher";
-import GridView from "./views/GridView";
-import TableView from "./views/TableView";
-import ListView from "./views/ListView";
+
 import CompactView from "./views/CompactView";
+import GridView from "./views/GridView";
+import ListView from "./views/ListView";
+import TableView from "./views/TableView";
+import ViewModeSwitcher from "./views/ViewModeSwitcher";
 
 const statusOptions = [
   { value: "all", label: "All" },

@@ -1,9 +1,19 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { CalendarDays, ChevronRight, Clock, List, MapPin, Plus, Search, Users } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, CalendarDays, List, Clock, MapPin, Users, ChevronRight } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
+
+import {
+  fetchEvents,
+  formatEventDate,
+  formatEventTime,
+  getEventStatus,
+  getEventTypes,
+} from "@/app/services/eventService";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Input } from "@/components/ui/input";
+import { Pagination } from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -11,15 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Pagination } from "@/components/ui/pagination";
-import {
-  fetchEvents,
-  getEventTypes,
-  formatEventDate,
-  formatEventTime,
-  getEventStatus,
-} from "@/app/services/eventService";
+
 import Calendar from "./components/Calendar";
 import EventForm from "./components/EventForm";
 

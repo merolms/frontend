@@ -3,7 +3,7 @@
 // All auth calls go through the centralized http client which handles
 // JWT injection and the { message, data } response envelope.
 
-import { apiPost, apiGet, apiPut } from "@/app/services/http";
+import { apiGet, apiPost, apiPut } from "@/app/services/http";
 
 // ==================== STATIC USERS (for role management UI) ====================
 // These are reference data for the role/permission management pages.

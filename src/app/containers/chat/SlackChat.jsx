@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
 import { Check, ChevronDown, Hash, Paperclip, Send, Smile, Users, X } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+
 import { chatStore, getUserById, getUsers } from "@/app/store/chatStore";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import DashboardLayout from "@/components/ui/dashboard-layout";
+import { Input } from "@/components/ui/input";
 
 const EMOJI_LIST = ["👍", "❤️", "🔥", "🎉", "😂", "🚀", "👀", "💯", "✅", "🙌"];
 

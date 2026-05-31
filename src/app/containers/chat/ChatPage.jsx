@@ -1,8 +1,19 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
 import { Bot, Plus, Send, Settings, User } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
+import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+
+import {
+  API_PRESETS,
+  AVAILABLE_MODELS,
+  getChatSettings,
+  saveChatSettings,
+  sendMessage,
+  testConnection,
+} from "@/app/services/chatService";
 import { Button } from "@/components/ui/button";
+import { Paper } from "@/components/ui/card";
+import DashboardLayout from "@/components/ui/dashboard-layout";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -12,16 +23,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Paper } from "@/components/ui/card";
-import {
-  sendMessage,
-  getChatSettings,
-  saveChatSettings,
-  AVAILABLE_MODELS,
-  API_PRESETS,
-  testConnection,
-} from "@/app/services/chatService";
 
 const ChatPage = () => {
   const user = useSelector((s) => s.auth.user);

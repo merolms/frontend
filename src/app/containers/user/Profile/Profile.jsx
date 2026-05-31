@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { GraduationCap, Loader, Settings } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
-import { Settings, GraduationCap, Loader } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Paper } from "@/components/ui/card";
+import { Link, useNavigate } from "react-router-dom";
+
 import { getProfile } from "@/app/services/authService";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Paper } from "@/components/ui/card";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 
 const Profile = () => {
   const navigate = useNavigate();

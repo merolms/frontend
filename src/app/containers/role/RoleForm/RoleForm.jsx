@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { t } from "@/styles/theme";
 import { AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
+import React, { useEffect, useState } from "react";
+
+import { permissionCatalog } from "@/app/services/authService";
 import {
   Accordion,
+  AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  AccordionContent,
 } from "@/components/ui/accordion";
-import { permissionCatalog } from "@/app/services/authService";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { t } from "@/styles/theme";
 
 const ROLE_COLORS = [
   "#EF4444",

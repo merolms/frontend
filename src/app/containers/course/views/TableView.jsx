@@ -1,9 +1,10 @@
+import { BookOpen, ChevronRight, List, Network, Pencil, User, Users } from "lucide-react";
 import React from "react";
-import { BookOpen, ChevronRight, List, Network, User, Users, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Table,
   TableBody,
@@ -12,7 +13,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getStatusLabel, getCategoryColor } from "./viewHelpers";
+
+import { getCategoryColor, getStatusLabel } from "./viewHelpers";
 
 const TableView = ({ courses, navigate, loading }) => {
   if (loading) {

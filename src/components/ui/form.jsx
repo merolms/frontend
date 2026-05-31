@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 
 const Input = React.forwardRef(({ className, type, ...props }, ref) => (
@@ -124,4 +125,4 @@ const Avatar = React.forwardRef(({ className, src, alt, fallback, ...props }, re
 ));
 Avatar.displayName = "Avatar";
 
-export { Input, Textarea, Label, Select, Badge, Separator, Progress, Avatar };
+export { Avatar, Badge, Input, Label, Progress, Select, Separator, Textarea };

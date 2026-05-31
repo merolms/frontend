@@ -1,32 +1,33 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
 import {
   AlertCircle,
   BookOpen,
+  ChevronRight,
   Clock,
   Eye,
   List,
+  Loader,
+  Network,
   Pencil,
   Plus,
-  Network,
   Trash2,
-  ChevronRight,
-  Loader,
 } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Paper } from "@/components/ui/card";
-import LessonForm from "@/app/containers/course/LessonForm/LessonForm";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+
+import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
+import LessonForm from "@/app/containers/course/LessonForm/LessonForm";
 import {
+  createLesson,
+  deleteLesson as apiDeleteLesson,
   fetchCourseById,
   fetchLessons,
-  createLesson,
   updateLesson,
-  deleteLesson as apiDeleteLesson,
 } from "@/app/services/courseService";
-import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Paper } from "@/components/ui/card";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import { t } from "@/styles/theme";
 
 const CourseLessons = () => {

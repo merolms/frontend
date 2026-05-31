@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { ArrowLeft, CalendarDays, Clock, Edit, MapPin, Tag, Trash2, Users } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, CalendarDays, Clock, MapPin, Users, Trash2, Edit, Tag } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+
 import {
-  fetchEventById,
   deleteEvent,
-  getEventStatus,
+  fetchEventById,
   formatEventDate,
   formatEventTime,
+  getEventStatus,
 } from "@/app/services/eventService";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import DashboardLayout from "@/components/ui/dashboard-layout";
+
 import EventForm from "./components/EventForm";
 
 const typeLabels = {

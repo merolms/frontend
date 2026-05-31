@@ -1,44 +1,45 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { t } from "@/styles/theme";
-import { useNavigate, useParams, Link } from "react-router-dom";
-import { useSelector } from "react-redux";
 import {
   AlertCircle,
   Archive,
   BookOpen,
   Check,
+  ChevronRight,
   Clock,
   Eye,
-  ChevronRight,
+  Folder,
   List,
+  Loader,
+  Network,
   Pencil,
   Plus,
-  Network,
   Star,
   Trash2,
   User,
-  Folder,
-  Loader,
 } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Paper } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import React, { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
+
+import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
 import {
+  ArchiveModal,
+  DeleteModal,
+  PublishModal,
+} from "@/app/containers/course/CourseActions/CourseActions";
+import {
+  archiveCourse,
+  deleteCourse,
   fetchCourseById,
   fetchLessons,
   publishCourse,
-  archiveCourse,
-  deleteCourse,
 } from "@/app/services/courseService";
-import {
-  PublishModal,
-  ArchiveModal,
-  DeleteModal,
-} from "@/app/containers/course/CourseActions/CourseActions";
-import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
-import { isEnrolled, enrollInCourse, dropCourse } from "@/app/services/enrollmentService";
+import { dropCourse, enrollInCourse, isEnrolled } from "@/app/services/enrollmentService";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Paper } from "@/components/ui/card";
+import DashboardLayout from "@/components/ui/dashboard-layout";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { t } from "@/styles/theme";
 
 const CourseDetail = () => {
   const navigate = useNavigate();

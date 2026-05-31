@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+import { AlertCircle, ChevronRight, Loader, Pencil, Plus, Trash2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { AlertCircle, Pencil, Plus, Trash2, Loader, ChevronRight } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Paper } from "@/components/ui/card";
-import TeamMemberAssignModal from "@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal";
+
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
-import { fetchTeamById, fetchTeamMembers, deleteTeam } from "@/app/services/teamService";
+import TeamMemberAssignModal from "@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal";
 import { useToast } from "@/app/context/ToastContext";
+import { deleteTeam, fetchTeamById, fetchTeamMembers } from "@/app/services/teamService";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Paper } from "@/components/ui/card";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import { t } from "@/styles/theme";
 
 const TeamDetail = () => {

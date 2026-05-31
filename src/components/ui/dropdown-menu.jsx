@@ -1,6 +1,7 @@
-import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { Check, ChevronRight, Circle } from "lucide-react";
+import * as React from "react";
+
 import { cn } from "@/lib/utils";
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
@@ -66,14 +67,14 @@ DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
 
 export {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuRadioGroup,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuGroup,
-  DropdownMenuPortal,
   DropdownMenuSub,
-  DropdownMenuRadioGroup,
+  DropdownMenuTrigger,
 };

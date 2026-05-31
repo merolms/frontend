@@ -1,9 +1,18 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { AlertCircle, Pencil, Plus, Search, Trash2 } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
+import { useToast } from "@/app/context/ToastContext";
+import { fetchRoles } from "@/app/services/authService";
+import { deleteUser, fetchUsers } from "@/app/services/userService";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Paper } from "@/components/ui/card";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Input } from "@/components/ui/input";
+import { Pagination } from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -11,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -19,15 +29,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Paper } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Pagination } from "@/components/ui/pagination";
-import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
-import { fetchUsers, deleteUser } from "@/app/services/userService";
-import { fetchRoles } from "@/app/services/authService";
-import { useToast } from "@/app/context/ToastContext";
 
 const statusOptions = [
   { value: "all", label: "All Status" },

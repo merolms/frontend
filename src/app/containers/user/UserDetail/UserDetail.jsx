@@ -1,23 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
 import {
   AlertCircle,
   Calendar,
+  ChevronRight,
+  Loader,
   Mail,
   Pencil,
   Phone,
   Trash2,
-  Loader,
-  ChevronRight,
 } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Paper } from "@/components/ui/card";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
-import { fetchUserById, deleteUser } from "@/app/services/userService";
 import { useToast } from "@/app/context/ToastContext";
+import { deleteUser, fetchUserById } from "@/app/services/userService";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Paper } from "@/components/ui/card";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 
 const getRoleColor = (role) => {
   switch (role) {

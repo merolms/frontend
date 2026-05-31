@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from "react";
 import { ImageIcon, Save, Trash2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+
+import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
+import { fetchCategories } from "@/app/services/categoryService";
 import { Button } from "@/components/ui/button";
+import { Paper } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -10,9 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Paper } from "@/components/ui/card";
-import { fetchCategories } from "@/app/services/categoryService";
-import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
+import { Textarea } from "@/components/ui/textarea";
 
 const tagOptions = [
   "javascript",

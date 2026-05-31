@@ -1,9 +1,11 @@
+import { BookOpen, List, Network, Pencil, Users } from "lucide-react";
 import React from "react";
-import { BookOpen, List, Pencil, Network, Users } from "lucide-react";
 import { Link } from "react-router-dom";
+
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getStatusLabel, getCategoryColor } from "./viewHelpers";
+
+import { getCategoryColor, getStatusLabel } from "./viewHelpers";
 
 const CompactView = ({ courses, navigate, loading }) => {
   if (loading) {

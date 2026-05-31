@@ -1,11 +1,13 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
 import "@blocknote/core/fonts/inter.css";
-import { useCreateBlockNote } from "@blocknote/react";
-import { BlockNoteView } from "@blocknote/shadcn";
 import "@blocknote/shadcn/style.css";
 
-import { t } from "@/styles/theme";
+import { useCreateBlockNote } from "@blocknote/react";
+import { BlockNoteView } from "@blocknote/shadcn";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+
 import { uploadBlockMedia } from "@/app/services/blockService";
+import { t } from "@/styles/theme";
+
 import { ArrowConversionExtension } from "./extensions/ArrowConversionExtension";
 
 const PARA_PROPS = {

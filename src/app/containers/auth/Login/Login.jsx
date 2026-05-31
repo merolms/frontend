@@ -1,7 +1,8 @@
+import { AlertCircle, GraduationCap, Lock, Mail } from "lucide-react";
 import React, { useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { GraduationCap, AlertCircle, Lock, Mail } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
 import { loginUser } from "@/redux/slices/authSlice";
 
 const demoAccounts = [

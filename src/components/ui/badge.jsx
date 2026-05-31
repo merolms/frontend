@@ -1,6 +1,7 @@
-import React from "react";
-import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
+import React from "react";
+
+import { cn } from "@/lib/utils";
 
 const Badge = React.forwardRef(
   ({ className, variant = "default", children, onClose, ...props }, ref) => {

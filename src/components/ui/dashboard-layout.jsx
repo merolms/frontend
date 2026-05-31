@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Bell, Check, CheckCheck, LogOut } from "lucide-react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+
 import SideBar from "@/app/containers/SideBar/SideBar";
-import { Bell, LogOut, Check, CheckCheck } from "lucide-react";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
-import { logoutUser } from "@/redux/slices/authSlice";
 import {
   fetchNotifications,
-  markAsRead,
-  markAllAsRead,
   getTimeAgo,
+  markAllAsRead,
+  markAsRead,
 } from "@/app/services/notificationService";
+import { logoutUser } from "@/redux/slices/authSlice";
 
 const typeColors = {
   enrollment: "#22C55E",

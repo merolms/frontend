@@ -1,4 +1,5 @@
 import React, { createContext, useContext } from "react";
+
 import { cn } from "@/lib/utils";
 
 const TabsContext = createContext(null);
@@ -56,4 +57,4 @@ const TabsContent = React.forwardRef(({ className, value, children, ...props }, 
 });
 TabsContent.displayName = "TabsContent";
 
-export { Tabs, TabsList, TabsTrigger, TabsContent };
+export { Tabs, TabsContent, TabsList, TabsTrigger };

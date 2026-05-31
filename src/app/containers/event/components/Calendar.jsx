@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+
 import { fetchEventsForMonth, formatEventDate } from "@/app/services/eventService";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

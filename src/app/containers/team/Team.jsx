@@ -1,9 +1,17 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { AlertCircle, Plus, Search, Users } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
+import React, { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+
+import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
+import TeamMemberAssignModal from "@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal";
+import { deleteTeam, fetchTeamMembers, fetchTeams } from "@/app/services/teamService";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Paper } from "@/components/ui/card";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Input } from "@/components/ui/input";
+import { Pagination } from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -11,15 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Paper } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Pagination } from "@/components/ui/pagination";
 import { t } from "@/styles/theme";
-import TeamMemberAssignModal from "@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal";
-import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
-import { fetchTeams, fetchTeamMembers, deleteTeam } from "@/app/services/teamService";
 
 const statusOptions = [
   { value: "all", label: "All" },

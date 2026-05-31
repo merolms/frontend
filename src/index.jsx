@@ -1,15 +1,17 @@
+import "@/styles/tailwind.css";
+
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider, useDispatch } from "react-redux";
-import { setAuthErrorHandler } from "@/app/services/http";
-import store from "@/redux/store";
-import { clearAuth, restoreSession } from "@/redux/slices/authSlice";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Toaster } from "sonner";
+
 import { ThemeProvider } from "@/app/context/ThemeContext";
 import { ToastProvider } from "@/app/context/ToastContext";
 import AppRoutes from "@/app/Routes";
-import "@/styles/tailwind.css";
-import { Toaster } from "sonner";
+import { setAuthErrorHandler } from "@/app/services/http";
+import { clearAuth, restoreSession } from "@/redux/slices/authSlice";
+import store from "@/redux/store";
 
 const AuthErrorBridge = ({ children }) => {
   const dispatch = useDispatch();

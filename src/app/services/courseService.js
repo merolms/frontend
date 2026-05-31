@@ -1,7 +1,7 @@
 // Course API Service
 // Handles all API calls related to courses and lessons
 
-import { apiGet, apiPost, apiPut, apiDelete, getApiBase } from "@/app/services/http";
+import { apiDelete, apiGet, apiPost, apiPut, getApiBase } from "@/app/services/http";
 
 // ==================== FIELD MAPPING ====================
 // Backend sends: image_url, author_id, category_id, lesson_count

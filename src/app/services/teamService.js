@@ -2,8 +2,7 @@
 // Handles all API calls related to teams and team members
 // Backend response envelope: { message: "success", data: ... }
 
-import { apiGet, apiPost, apiPut, apiDelete } from "@/app/services/http";
-
+import { apiDelete, apiGet, apiPost, apiPut } from "@/app/services/http";
 import { t } from "@/styles/theme";
 
 // ==================== TEAMS ====================

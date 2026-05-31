@@ -1,8 +1,10 @@
-import React, { useState } from "react";
 import { Pencil, Plus, Save, X } from "lucide-react";
+import React, { useState } from "react";
+
+import { getCategoryColorOptions, getCategoryIconOptions } from "@/app/services/categoryService";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -10,8 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getCategoryColorOptions, getCategoryIconOptions } from "@/app/services/categoryService";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 const CategoryForm = ({ category = null, onSubmit, onClose, loading = false }) => {
   const [form, setForm] = useState({

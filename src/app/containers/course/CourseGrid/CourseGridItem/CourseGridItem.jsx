@@ -1,5 +1,5 @@
-import React from "react";
 import { BookOpen, Calendar, Users } from "lucide-react";
+import React from "react";
 
 const GridItem = (props) => {
   const course = props.course;

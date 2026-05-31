@@ -1,4 +1,5 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useCallback, useRef, useState } from "react";
+
 import { t } from "@/styles/theme";
 
 const LessonPanel = ({

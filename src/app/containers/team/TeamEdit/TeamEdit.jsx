@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { AlertCircle, ChevronRight, Loader, Pencil } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Pencil, Loader, ChevronRight, AlertCircle } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
+
+import TeamForm from "@/app/containers/team/TeamForm/TeamForm";
+import { useToast } from "@/app/context/ToastContext";
+import { fetchTeamById, updateTeam } from "@/app/services/teamService";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
-import TeamForm from "@/app/containers/team/TeamForm/TeamForm";
-import { fetchTeamById, updateTeam } from "@/app/services/teamService";
-import { useToast } from "@/app/context/ToastContext";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import { t } from "@/styles/theme";
 
 const TeamEdit = () => {

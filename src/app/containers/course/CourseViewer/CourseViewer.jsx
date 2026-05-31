@@ -1,15 +1,17 @@
-import { useState, useEffect, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight, BookOpen, Check, Loader, ChevronRight } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { fetchCourseById, fetchLessons } from "@/app/services/courseService";
-import { fetchAutosave } from "@/app/services/blockService";
-import { t } from "@/styles/theme";
-import { useTheme as useThemeContext } from "@/app/context/ThemeContext";
-import { useCreateBlockNote, BlockNoteViewRaw as BlockNoteView } from "@blocknote/react";
 import "@blocknote/react/style.css";
+
+import { BlockNoteViewRaw as BlockNoteView, useCreateBlockNote } from "@blocknote/react";
+import { ArrowLeft, ArrowRight, BookOpen, Check, ChevronRight, Loader } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
+import { useTheme as useThemeContext } from "@/app/context/ThemeContext";
+import { fetchAutosave } from "@/app/services/blockService";
+import { fetchCourseById, fetchLessons } from "@/app/services/courseService";
+import { Button } from "@/components/ui/button";
+import DashboardLayout from "@/components/ui/dashboard-layout";
+import { Skeleton } from "@/components/ui/skeleton";
+import { t } from "@/styles/theme";
 
 const PARA_PROPS = { textAlignment: "left", backgroundColor: "default", textColor: "default" };
 

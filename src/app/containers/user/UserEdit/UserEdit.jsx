@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { t } from "@/styles/theme";
+import { AlertCircle, ChevronRight, Loader, Pencil } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Pencil, Loader, ChevronRight, AlertCircle } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
+
+import { useToast } from "@/app/context/ToastContext";
+import { fetchRoles } from "@/app/services/authService";
+import { fetchUserById, updateUser } from "@/app/services/userService";
 import { Button } from "@/components/ui/button";
+import { Paper } from "@/components/ui/card";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -12,10 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Paper } from "@/components/ui/card";
-import { fetchUserById, updateUser } from "@/app/services/userService";
-import { fetchRoles } from "@/app/services/authService";
-import { useToast } from "@/app/context/ToastContext";
+import { t } from "@/styles/theme";
 
 const UserEdit = () => {
   const navigate = useNavigate();

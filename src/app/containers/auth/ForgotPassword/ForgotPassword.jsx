@@ -1,6 +1,7 @@
+import { AlertCircle, ArrowLeft, Check, Mail } from "lucide-react";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { AlertCircle, ArrowLeft, Check, Mail } from "lucide-react";
+
 import { forgotPassword } from "@/app/services/authService";
 
 const ForgotPassword = () => {

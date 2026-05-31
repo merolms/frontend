@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, BookOpen, Edit3, ChevronRight } from "lucide-react";
+import "@blocknote/react/style.css";
+
+import { BlockNoteViewRaw as BlockNoteView, useCreateBlockNote } from "@blocknote/react";
+import { ArrowLeft, ArrowRight, BookOpen, ChevronRight, Edit3 } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+
+import SideBar from "@/app/containers/SideBar/SideBar";
+import { useTheme as useThemeContext } from "@/app/context/ThemeContext";
+import { fetchAutosave, fetchLessonBlocks } from "@/app/services/blockService";
 import { fetchCourseById, fetchLessons } from "@/app/services/courseService";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Paper } from "@/components/ui/card";
-import { fetchAutosave, fetchLessonBlocks } from "@/app/services/blockService";
+import { Skeleton } from "@/components/ui/skeleton";
 import { t } from "@/styles/theme";
-import { useTheme as useThemeContext } from "@/app/context/ThemeContext";
-import "@blocknote/react/style.css";
-import { BlockNoteViewRaw as BlockNoteView, useCreateBlockNote } from "@blocknote/react";
-import SideBar from "@/app/containers/SideBar/SideBar";
 
 const PARA_PROPS = { textAlignment: "left", backgroundColor: "default", textColor: "default" };
 

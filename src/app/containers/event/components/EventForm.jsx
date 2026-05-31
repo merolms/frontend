@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { X, Save, Plus } from "lucide-react";
+import { Plus, Save, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
+
+import { getEventColors, getEventTypes } from "@/app/services/eventService";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { getEventTypes, getEventColors } from "@/app/services/eventService";
 
 const EventForm = ({ event = null, onSubmit, onClose, loading = false }) => {
   const [form, setForm] = useState({

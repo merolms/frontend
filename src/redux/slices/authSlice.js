@@ -1,10 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+
 import {
+  getStoredAuth,
   login as authLogin,
   logout as authLogout,
-  validateToken,
-  getStoredAuth,
   storeAuth,
+  validateToken,
 } from "@/app/services/authService";
 
 // Restore session on load

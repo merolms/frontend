@@ -1,10 +1,13 @@
+import { ChevronRight } from "lucide-react";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 import { useTheme } from "@/app/context/ThemeContext";
-import { ChevronRight } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Paper } from "@/components/ui/card";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -13,9 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Paper } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Settings = () => {
   const navigate = useNavigate();

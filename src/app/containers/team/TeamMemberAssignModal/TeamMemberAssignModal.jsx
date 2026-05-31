@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useCallback } from "react";
 import {
   AlertCircle,
   Check,
@@ -9,18 +8,20 @@ import {
   Plus,
   Search,
 } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+
+import { useToast } from "@/app/context/ToastContext";
 import {
+  addMemberToTeam,
   fetchTeamMembers,
   fetchUsers,
-  addMemberToTeam,
   removeMemberFromTeam,
 } from "@/app/services/teamService";
-import { useToast } from "@/app/context/ToastContext";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { t } from "@/styles/theme";
 
 const PAGE_SIZE = 10;

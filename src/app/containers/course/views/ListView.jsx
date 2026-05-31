@@ -1,10 +1,12 @@
+import { BookOpen, Clock, List, Network, Pencil, User, Users } from "lucide-react";
 import React from "react";
-import { BookOpen, Clock, List, Pencil, Network, User, Users } from "lucide-react";
 import { Link } from "react-router-dom";
+
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Paper } from "@/components/ui/card";
-import { getStatusLabel, getCategoryColor } from "./viewHelpers";
+import { Skeleton } from "@/components/ui/skeleton";
+
+import { getCategoryColor, getStatusLabel } from "./viewHelpers";
 
 const ListView = ({ courses, navigate, loading }) => {
   if (loading) {

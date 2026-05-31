@@ -1,6 +1,7 @@
-import React from "react";
-import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import React from "react";
+
+import { cn } from "@/lib/utils";
 
 const Pagination = ({ total, value, onChange, className }) => {
   if (total <= 1) return null;

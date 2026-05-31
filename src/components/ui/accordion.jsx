@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState } from "react";
-import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
+import React, { createContext, useContext, useState } from "react";
+
+import { cn } from "@/lib/utils";
 
 const AccordionContext = createContext(null);
 const AccordionItemContext = createContext(null);
@@ -93,4 +94,4 @@ const AccordionContent = React.forwardRef(({ className, children, ...props }, re
 });
 AccordionContent.displayName = "AccordionContent";
 
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger };

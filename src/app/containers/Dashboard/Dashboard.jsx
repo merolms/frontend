@@ -1,24 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import {
-  BookOpen,
-  Users,
-  Network,
-  ChartLine,
-  Clock,
   Bolt,
-  UserPlus,
-  Upload,
-  ChartBar,
-  Folder,
+  BookOpen,
   CalendarDays,
-  MapPin,
+  ChartBar,
+  ChartLine,
   ChevronRight,
+  Clock,
+  Folder,
+  MapPin,
+  Network,
+  Upload,
+  UserPlus,
+  Users,
 } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
 import { fetchDashboardStats } from "@/app/services/dashboardService";
 import { fetchUpcomingEvents, formatEventDate, formatEventTime } from "@/app/services/eventService";
+import { Button } from "@/components/ui/button";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 
 const statConfig = [
   {

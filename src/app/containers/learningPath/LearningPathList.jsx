@@ -1,19 +1,24 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   BookOpen,
+  ChevronRight,
+  Clock,
+  Layers,
   Plus,
   Search,
-  Clock,
-  Users,
-  Star,
-  ChevronRight,
-  Layers,
   Sparkles,
+  Star,
+  Users,
 } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+import { fetchLearningPaths, getLearningPathCategories } from "@/app/services/learningPathService";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Paper } from "@/components/ui/card";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Input } from "@/components/ui/input";
+import { Pagination } from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -21,10 +26,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Pagination } from "@/components/ui/pagination";
-import { Paper } from "@/components/ui/card";
-import { fetchLearningPaths, getLearningPathCategories } from "@/app/services/learningPathService";
 
 const difficultyColors = {
   Beginner: "green",

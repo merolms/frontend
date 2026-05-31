@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Check, Plus, Users, Loader } from "lucide-react";
+import { Check, Loader, Plus, Users } from "lucide-react";
+import React, { useEffect, useState } from "react";
+
 import { fetchTeams } from "@/app/services/teamService";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { t } from "@/styles/theme";
 
 const TeamAssignmentModal = ({ open, onClose, user, onUpdated }) => {

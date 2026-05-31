@@ -1,21 +1,29 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
-  Plus,
-  Trash2,
-  GripVertical,
+  BookOpen,
   ChevronDown,
   ChevronUp,
-  Sparkles,
-  BookOpen,
   Clock,
+  GripVertical,
+  Plus,
+  Sparkles,
+  Trash2,
 } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
+import { fetchCourses } from "@/app/services/courseService";
+import {
+  createLearningPath,
+  fetchLearningPathById,
+  updateLearningPath,
+} from "@/app/services/learningPathService";
+import { getLearningPathCategories } from "@/app/services/learningPathService";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
+import DashboardLayout from "@/components/ui/dashboard-layout";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -23,13 +31,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  createLearningPath,
-  updateLearningPath,
-  fetchLearningPathById,
-} from "@/app/services/learningPathService";
-import { fetchCourses } from "@/app/services/courseService";
-import { getLearningPathCategories } from "@/app/services/learningPathService";
 
 const colorOptions = [
   { value: "#6366F1", label: "Indigo" },

@@ -1,25 +1,26 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
   BookOpen,
-  Clock,
-  Users,
-  Star,
   Check,
-  Circle,
-  Play,
   ChevronRight,
-  Layers,
-  Trash2,
+  Circle,
+  Clock,
   Edit,
   Eye,
+  Layers,
+  Play,
+  Star,
+  Trash2,
+  Users,
 } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { fetchLearningPathById, deleteLearningPath } from "@/app/services/learningPathService";
+import React, { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+
 import { useToast } from "@/app/context/ToastContext";
+import { deleteLearningPath, fetchLearningPathById } from "@/app/services/learningPathService";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 
 const difficultyColors = {
   Beginner: "green",

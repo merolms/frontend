@@ -1,6 +1,6 @@
+import { ArrowLeft, Ban, Home } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Ban, Home } from "lucide-react";
 
 const Unauthorized = () => {
   const navigate = useNavigate();

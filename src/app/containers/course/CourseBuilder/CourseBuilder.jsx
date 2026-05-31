@@ -1,19 +1,21 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { t } from "@/styles/theme";
-import { useTheme as useThemeContext } from "@/app/context/ThemeContext";
+
 import SideBar from "@/app/containers/SideBar/SideBar";
-import LessonPanel from "./components/LessonPanel";
-import BlockNoteEditor from "./components/BlockNoteEditor/BlockNoteEditor";
+import { useTheme as useThemeContext } from "@/app/context/ThemeContext";
+import { fetchAutosave, fetchLessonBlocks, saveAutosave } from "@/app/services/blockService";
 import {
+  createLesson,
+  deleteLesson,
   fetchCourseById,
   fetchLessons,
-  createLesson,
-  updateLesson,
-  deleteLesson,
   reorderLessons,
+  updateLesson,
 } from "@/app/services/courseService";
-import { saveAutosave, fetchAutosave, fetchLessonBlocks } from "@/app/services/blockService";
+import { t } from "@/styles/theme";
+
+import BlockNoteEditor from "./components/BlockNoteEditor/BlockNoteEditor";
+import LessonPanel from "./components/LessonPanel";
 
 // ─── BLOCKS → BlockNote DOC CONVERTER ───────────────────────────
 // Converts blocks from GET /lessons/{id}/blocks API into BlockNote
@@ -168,7 +170,7 @@ const CourseBuilder = () => {
 
   useEffect(() => {
     loadData();
-  }, [id]); // eslint-disable-line
+  }, [id]);
 
   const loadData = async () => {
     try {

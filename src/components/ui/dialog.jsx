@@ -1,6 +1,7 @@
-import React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
+import React from "react";
+
 import { cn } from "@/lib/utils";
 
 const Dialog = DialogPrimitive.Root;
@@ -85,14 +86,14 @@ const Modal = ({ open, onClose, title, children, className }) => (
 
 export {
   Dialog,
-  DialogTrigger,
-  DialogPortal,
-  DialogOverlay,
   DialogClose,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
   Modal,
 };

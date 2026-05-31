@@ -107,7 +107,7 @@ export const apiUpload = async (path, formData) => {
 };
 
 // Expose request for custom calls
-export { request, API_BASE, ApiError };
+export { API_BASE, ApiError, request };
 
 // Expose API_BASE for services that construct query strings
 export const getApiBase = () => API_BASE;

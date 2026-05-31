@@ -1,9 +1,23 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { AlertCircle, Folder, Pencil, Plus, Search, Trash2 } from "lucide-react";
-import DashboardLayout from "@/components/ui/dashboard-layout";
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
+import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
+import { useToast } from "@/app/context/ToastContext";
+import {
+  createCategory,
+  deleteCategory,
+  fetchCategoriesWithPagination,
+  toggleCategoryStatus,
+  updateCategory,
+} from "@/app/services/categoryService";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Paper } from "@/components/ui/card";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Input } from "@/components/ui/input";
+import { Pagination } from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -11,24 +25,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Paper } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Pagination } from "@/components/ui/pagination";
-import {
-  fetchCategoriesWithPagination,
-  deleteCategory,
-  toggleCategoryStatus,
-  createCategory,
-  updateCategory,
-} from "@/app/services/categoryService";
-import CategoryForm from "../components/CategoryForm";
-import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
-import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
-import { useToast } from "@/app/context/ToastContext";
 import { t } from "@/styles/theme";
 
-export { fetchCategoriesWithPagination, deleteCategory, toggleCategoryStatus };
+import CategoryForm from "../components/CategoryForm";
+
+export { deleteCategory, fetchCategoriesWithPagination, toggleCategoryStatus };
 
 const statusOptions = [
   { value: "all", label: "All Status" },
