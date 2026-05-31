@@ -4,6 +4,7 @@ import gitignore from "eslint-config-flat-gitignore";
 import pluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 import pluginReact from "eslint-plugin-react";
 import pluginSimpleImportSort from "eslint-plugin-simple-import-sort";
+import unusedImports from "eslint-plugin-unused-imports";
 import globals from "globals";
 
 export default defineConfig([
@@ -39,6 +40,7 @@ export default defineConfig([
     },
     plugins: {
       "simple-import-sort": pluginSimpleImportSort,
+      "unused-imports": unusedImports,
     },
     rules: {
       "simple-import-sort/imports": "error",
@@ -49,6 +51,7 @@ export default defineConfig([
 
       // Don't require React import in JSX files
       "react/jsx-uses-react": "off",
+      "unused-imports/no-unused-imports": "error",
     },
   },
 

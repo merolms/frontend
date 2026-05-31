@@ -1,14 +1,5 @@
-import {
-  Award,
-  BarChart3,
-  BookOpen,
-  ChevronRight,
-  Filter,
-  Search,
-  TrendingUp,
-  Users,
-} from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import { Award, BarChart3, Search, TrendingUp, Users } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { fetchEnrollments } from "@/app/services/enrollmentService";

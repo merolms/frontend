@@ -10,7 +10,6 @@ import { fetchAutosave } from "@/app/services/blockService";
 import { fetchCourseById, fetchLessons } from "@/app/services/courseService";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
-import { Skeleton } from "@/components/ui/skeleton";
 import { t } from "@/styles/theme";
 
 const PARA_PROPS = { textAlignment: "left", backgroundColor: "default", textColor: "default" };

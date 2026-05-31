@@ -1,6 +1,6 @@
 import { AlertCircle, Plus, Search, Users } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import TeamMemberAssignModal from "@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal";

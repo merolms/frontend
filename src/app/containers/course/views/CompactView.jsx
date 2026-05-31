@@ -1,5 +1,4 @@
-import { BookOpen, List, Network, Pencil, Users } from "lucide-react";
-import React from "react";
+import { BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Badge } from "@/components/ui/badge";

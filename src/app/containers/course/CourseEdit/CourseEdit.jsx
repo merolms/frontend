@@ -1,5 +1,5 @@
 import { AlertCircle, Lightbulb, Loader, Network, Pencil, Plus, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 

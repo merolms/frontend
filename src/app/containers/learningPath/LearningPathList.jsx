@@ -1,15 +1,5 @@
-import {
-  BookOpen,
-  ChevronRight,
-  Clock,
-  Layers,
-  Plus,
-  Search,
-  Sparkles,
-  Star,
-  Users,
-} from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import { ChevronRight, Clock, Layers, Plus, Search, Sparkles, Star, Users } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { fetchLearningPaths, getLearningPathCategories } from "@/app/services/learningPathService";

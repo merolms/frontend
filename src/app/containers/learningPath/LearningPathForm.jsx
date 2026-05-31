@@ -1,14 +1,4 @@
-import {
-  ArrowLeft,
-  BookOpen,
-  ChevronDown,
-  ChevronUp,
-  Clock,
-  GripVertical,
-  Plus,
-  Sparkles,
-  Trash2,
-} from "lucide-react";
+import { BookOpen, ChevronDown, ChevronUp, Clock, Plus, Sparkles, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -19,7 +9,6 @@ import {
   updateLearningPath,
 } from "@/app/services/learningPathService";
 import { getLearningPathCategories } from "@/app/services/learningPathService";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";

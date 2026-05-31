@@ -1,9 +1,7 @@
 import {
-  AlertCircle,
   BookOpen,
   ChevronRight,
   Clock,
-  Eye,
   List,
   Loader,
   Network,
@@ -11,8 +9,8 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";

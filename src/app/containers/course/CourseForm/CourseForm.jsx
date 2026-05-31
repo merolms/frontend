@@ -1,5 +1,5 @@
 import { ImageIcon, Save, Trash2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
 import { fetchCategories } from "@/app/services/categoryService";

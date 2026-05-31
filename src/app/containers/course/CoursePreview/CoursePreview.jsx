@@ -2,8 +2,8 @@ import "@blocknote/react/style.css";
 
 import { BlockNoteViewRaw as BlockNoteView, useCreateBlockNote } from "@blocknote/react";
 import { ArrowLeft, ArrowRight, BookOpen, ChevronRight, Edit3 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import SideBar from "@/app/containers/SideBar/SideBar";
 import { useTheme as useThemeContext } from "@/app/context/ThemeContext";

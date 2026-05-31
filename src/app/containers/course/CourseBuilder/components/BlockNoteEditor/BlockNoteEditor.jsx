@@ -3,7 +3,7 @@ import "@blocknote/shadcn/style.css";
 
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/shadcn";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { uploadBlockMedia } from "@/app/services/blockService";
 import { t } from "@/styles/theme";

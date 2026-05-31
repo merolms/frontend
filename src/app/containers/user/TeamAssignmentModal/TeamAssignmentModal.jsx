@@ -1,5 +1,5 @@
 import { Check, Loader, Plus, Users } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { fetchTeams } from "@/app/services/teamService";
 import { Badge } from "@/components/ui/badge";

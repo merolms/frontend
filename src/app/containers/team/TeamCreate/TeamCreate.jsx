@@ -1,11 +1,10 @@
 import { ChevronRight, Users } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import TeamForm from "@/app/containers/team/TeamForm/TeamForm";
 import { useToast } from "@/app/context/ToastContext";
 import { createTeam } from "@/app/services/teamService";
-import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 

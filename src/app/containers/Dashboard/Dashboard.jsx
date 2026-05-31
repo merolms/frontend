@@ -7,18 +7,16 @@ import {
   ChevronRight,
   Clock,
   Folder,
-  MapPin,
   Network,
   Upload,
   UserPlus,
   Users,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { fetchDashboardStats } from "@/app/services/dashboardService";
 import { fetchUpcomingEvents, formatEventDate, formatEventTime } from "@/app/services/eventService";
-import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 
 const statConfig = [

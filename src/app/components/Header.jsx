@@ -1,5 +1,4 @@
 import { MenuIcon } from "lucide-react";
-import React from "react";
 
 function Header(props) {
   return (

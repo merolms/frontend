@@ -1,5 +1,5 @@
 import { AlertCircle } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { permissionCatalog } from "@/app/services/authService";
 import {
@@ -13,7 +13,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { t } from "@/styles/theme";
 
 const ROLE_COLORS = [
   "#EF4444",

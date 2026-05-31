@@ -1,5 +1,4 @@
-import { AlertCircle, Archive, Check, Trash2, X } from "lucide-react";
-import React from "react";
+import { Archive, Check, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {

@@ -1,5 +1,5 @@
 import { Plus, Save, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { getEventColors, getEventTypes } from "@/app/services/eventService";
 import { Button } from "@/components/ui/button";

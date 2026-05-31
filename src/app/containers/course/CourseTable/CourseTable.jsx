@@ -1,5 +1,3 @@
-import React from "react";
-
 function CourseTable(props) {
   return (
     <table className="w-full text-sm">

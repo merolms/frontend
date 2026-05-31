@@ -1,5 +1,5 @@
-import { ArrowLeft, CalendarDays, Clock, Edit, MapPin, Tag, Trash2, Users } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import { CalendarDays, Clock, Edit, MapPin, Tag, Trash2, Users } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {

@@ -1,5 +1,5 @@
-import { AlertCircle, Check, Eye, Pencil, Plus, Search, Shield, Star, Trash2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { AlertCircle, Check, Pencil, Plus, Search, Shield, Star, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
@@ -13,7 +13,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
-import { t } from "@/styles/theme";
 
 const RoleManagement = () => {
   const navigate = useNavigate();

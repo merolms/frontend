@@ -1,5 +1,5 @@
-import { CalendarDays, ChevronRight, Clock, List, MapPin, Plus, Search, Users } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import { CalendarDays, Clock, List, MapPin, Plus, Search, Users } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {

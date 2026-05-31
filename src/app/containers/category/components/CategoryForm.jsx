@@ -1,4 +1,4 @@
-import { Pencil, Plus, Save, X } from "lucide-react";
+import { Plus, Save, X } from "lucide-react";
 import React, { useState } from "react";
 
 import { getCategoryColorOptions, getCategoryIconOptions } from "@/app/services/categoryService";

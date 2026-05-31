@@ -2,7 +2,7 @@
 // Now uses BlockNote JSON format for lesson content.
 // Content is stored as a JSON string of BlockNote block array.
 
-import { API_BASE, apiDelete, apiGet, apiPost, apiPut, apiUpload } from "@/app/services/http";
+import { API_BASE, apiGet, apiPost, apiUpload } from "@/app/services/http";
 
 // ─── CONTENT HELPERS ────────────────────────────────────────────
 

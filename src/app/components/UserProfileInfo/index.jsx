@@ -1,5 +1,3 @@
-import React from "react";
-
 const UserProfileInfo = ({ image, primaryText, secondaryText }) => {
   return (
     <div className="user-profile-container">

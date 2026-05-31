@@ -1,5 +1,5 @@
-import { Bell, Check, CheckCheck, LogOut } from "lucide-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Bell, Check, CheckCheck } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 

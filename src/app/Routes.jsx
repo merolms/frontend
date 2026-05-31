@@ -1,5 +1,3 @@
-import React from "react";
-
 import ProtectedRoute from "@/app/components/ProtectedRoute/ProtectedRoute";
 import ForgotPassword from "@/app/containers/auth/ForgotPassword/ForgotPassword";
 import Login from "@/app/containers/auth/Login/Login";
@@ -12,7 +10,6 @@ import CourseCreate from "@/app/containers/course/CourseCreate/CourseCreate";
 import CourseDetail from "@/app/containers/course/CourseDetail/CourseDetail";
 import CourseEdit from "@/app/containers/course/CourseEdit/CourseEdit";
 import CoursePreview from "@/app/containers/course/CoursePreview/CoursePreview";
-import CourseViewer from "@/app/containers/course/CourseViewer/CourseViewer";
 import MyLearning from "@/app/containers/course/MyLearning/MyLearning";
 import Dashboard from "@/app/containers/Dashboard/Dashboard";
 import EventDetail from "@/app/containers/event/EventDetail";

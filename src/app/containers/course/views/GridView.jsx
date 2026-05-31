@@ -1,11 +1,9 @@
-import { BookOpen, Clock, List, Star, User } from "lucide-react";
-import React from "react";
+import { BookOpen, Clock, List, User } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { t } from "@/styles/theme";
 
-import { getCategoryColor, getStatusLabel } from "./viewHelpers";
+import { getStatusLabel } from "./viewHelpers";
 
 const CourseCard = ({ course, navigate }) => {
   const status = getStatusLabel(course.status);

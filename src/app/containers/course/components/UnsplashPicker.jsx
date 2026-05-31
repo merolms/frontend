@@ -1,11 +1,10 @@
 import { Check, ImageIcon, Loader, Search, X } from "lucide-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { searchUnsplash } from "@/app/services/unsplashService";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { t } from "@/styles/theme";
 
 const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = "" }) => {
   const [query, setQuery] = useState(initialQuery || "education");

@@ -1,7 +1,7 @@
 import { GraduationCap, Loader, Settings } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { getProfile } from "@/app/services/authService";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

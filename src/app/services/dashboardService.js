@@ -1,5 +1,4 @@
 // Dashboard API Service
-import { apiGet } from "@/app/services/http";
 
 export const fetchDashboardStats = async () => {
   try {

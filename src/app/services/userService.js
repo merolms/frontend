@@ -3,7 +3,7 @@
 // Backend response envelope: { message: "success", data: ... }
 // The http client (apiGet/apiPost/etc.) automatically unwraps to return data directly.
 
-import { apiDelete, apiGet, apiPost, apiPut } from "@/app/services/http";
+import { apiDelete, apiGet, apiPut } from "@/app/services/http";
 
 // ==================== USERS ====================
 // GET /users?start=0&limit=10  → returns UserResponse[] (array in data)

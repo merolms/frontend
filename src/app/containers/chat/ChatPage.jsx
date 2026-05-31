@@ -1,5 +1,5 @@
-import { Bot, Plus, Send, Settings, User } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import { Bot, Send, Settings, User } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 import {

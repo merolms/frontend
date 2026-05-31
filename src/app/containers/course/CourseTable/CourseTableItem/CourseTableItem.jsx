@@ -1,5 +1,3 @@
-import React from "react";
-
 const CourseTableItem = (props) => {
   const course = props.course;
   return (

@@ -1,5 +1,3 @@
-import React from "react";
-
 const StatCard = ({ title, value, icon, color, trend, trendUp }) => (
   <div className="stat-card">
     <div className="flex items-center justify-between">

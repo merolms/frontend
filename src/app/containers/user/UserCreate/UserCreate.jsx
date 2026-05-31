@@ -1,5 +1,5 @@
 import { ChevronRight, UserPlus } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useToast } from "@/app/context/ToastContext";

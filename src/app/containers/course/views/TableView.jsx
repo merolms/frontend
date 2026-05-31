@@ -1,5 +1,3 @@
-import { BookOpen, ChevronRight, List, Network, Pencil, User, Users } from "lucide-react";
-import React from "react";
 import { Link } from "react-router-dom";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

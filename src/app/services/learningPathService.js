@@ -1,7 +1,5 @@
 // Learning Path Mock Data Service
 
-import { t } from "@/styles/theme";
-
 let mockLearningPaths = [
   {
     id: 1,

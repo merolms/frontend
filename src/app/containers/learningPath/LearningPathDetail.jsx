@@ -3,7 +3,6 @@ import {
   BookOpen,
   Check,
   ChevronRight,
-  Circle,
   Clock,
   Edit,
   Eye,
@@ -13,8 +12,8 @@ import {
   Trash2,
   Users,
 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { useToast } from "@/app/context/ToastContext";
 import { deleteLearningPath, fetchLearningPathById } from "@/app/services/learningPathService";
