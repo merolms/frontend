@@ -1,44 +1,80 @@
-import js from '@eslint/js';
-import react from 'eslint-plugin-react';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
+import js from "@eslint/js";
+import globals from "globals";
+import react from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
 
 export default [
-  js.configs.recommended,
   {
-    files: ['**/*.{js,jsx}'],
-    plugins: {
-      react,
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
-    },
+    ignores: [
+      "dist/**",
+      "build/**",
+      "node_modules/**",
+      "coverage/**",
+      "e2e/**",
+    ],
+  },
+
+  js.configs.recommended,
+
+  {
+    files: ["**/*.{js,jsx}"],
+
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: {
-        browser: true,
-        es6: true,
-      },
+      ecmaVersion: "latest",
+      sourceType: "module",
+
       parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
         ecmaFeatures: {
           jsx: true,
         },
       },
-    },
-    settings: {
-      react: {
-        version: 'detect',
+
+      globals: {
+        ...globals.browser,
+        ...globals.node,
       },
     },
+
+    plugins: {
+      react,
+      "react-hooks": reactHooks,
+      "react-refresh": reactRefresh,
+    },
+
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+
     rules: {
-      'react/react-in-jsx-scope': 'off',
-      'react-refresh/only-export-components': [
-        'warn',
+      // React
+      ...react.configs.recommended.rules,
+
+      // React Hooks
+      ...reactHooks.configs.recommended.rules,
+
+      // Vite Fast Refresh
+      "react-refresh/only-export-components": [
+        "warn",
         { allowConstantExport: true },
       ],
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
+
+      // React 17+
+      "react/react-in-jsx-scope": "off",
+      "react/jsx-uses-react": "off",
+
+      // General
+      "no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
+
+      "no-console": "warn",
     },
   },
 ];
