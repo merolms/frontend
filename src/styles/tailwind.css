@@ -365,3 +365,8 @@
   background: rgba(239, 68, 68, 0.12);
   color: #dc2626;
 }
+
+.bn-editor {
+  padding: 20px 0px;
+  margin: 5px;
+}

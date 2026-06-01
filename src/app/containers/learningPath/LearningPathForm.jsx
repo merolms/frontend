@@ -1,4 +1,4 @@
-import { BookOpen, ChevronDown, ChevronUp, Clock, Plus, Sparkles, Trash2 } from "lucide-react";
+import { BookOpen, ChevronDown, ChevronUp, Clock, Plus, Sparkles, Trash2, X, AlertCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -51,6 +51,7 @@ const LearningPathForm = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [apiError, setApiError] = useState(null);
   const [courseSearch, setCourseSearch] = useState("");
   const [availableCourses, setAvailableCourses] = useState([]);
   const [showCoursePicker, setShowCoursePicker] = useState(false);
@@ -152,6 +153,7 @@ const LearningPathForm = () => {
     e.preventDefault();
     if (!validate()) return;
     setSaving(true);
+    setApiError(null);
     try {
       if (isEdit) {
         await updateLearningPath(id, form);
@@ -160,7 +162,7 @@ const LearningPathForm = () => {
       }
       navigate("/learning-paths");
     } catch (err) {
-      console.error(err);
+      setApiError(err.message || "An unexpected error occurred.");
     } finally {
       setSaving(false);
     }
@@ -196,6 +198,17 @@ const LearningPathForm = () => {
       }
     >
       <form onSubmit={handleSubmit} className="max-w-4xl">
+        {/* API error banner */}
+        {apiError && (
+          <div className="mb-4 flex items-center justify-between rounded-lg border border-error/30 bg-error/10 p-3">
+            <p className="text-error flex items-center gap-2 text-sm">
+              <AlertCircle size={14} /> {apiError}
+            </p>
+            <button type="button" onClick={() => setApiError(null)} className="text-error/60 hover:text-error">
+              <X size={14} />
+            </button>
+          </div>
+        )}
         {/* Basic Info */}
         <Paper className="mb-4 p-5">
           <div className="mb-4 flex items-center gap-2">
