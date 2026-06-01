@@ -15,7 +15,9 @@ test.describe("Authentication", () => {
 
   test("demo account quick-fill works", async ({ page }) => {
     await page.goto("/login");
-    await page.click(".auth-demo-item:has(.auth-demo-role.admin)");
+    // The Login component renders buttons with role labels inside a container with "Demo Accounts" text
+    const demoButtons = page.locator("button").filter({ hasText: "Admin" });
+    await demoButtons.first().click();
     await expect(page.locator('input[type="email"]')).toHaveValue("admin@meroedu.com");
     await expect(page.locator('input[type="password"]')).toHaveValue("admin123");
   });
@@ -44,9 +46,12 @@ test.describe("Authentication", () => {
   test("logout redirects to login", async ({ page }) => {
     await mockLogin(page, DEMO_USERS.admin);
     await expect(page).toHaveURL("/");
-    await mockLogout(page);
+    // Find and click the logout button in the sidebar (has LogOut icon with title "Sign Out")
+    const logoutBtn = page.locator("button[title=\"Sign Out\"]");
+    await expect(logoutBtn).toBeVisible();
+    await logoutBtn.click();
     await expect(page).toHaveURL("/login");
-    await expect(page.locator(".auth-page")).toBeVisible();
+    await expect(page.locator("h1").filter({ hasText: "MeroEdu" })).toBeVisible();
   });
 
   test("unauthenticated user is redirected to login", async ({ page }) => {

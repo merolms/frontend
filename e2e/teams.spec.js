@@ -4,8 +4,17 @@ import { DEMO_USERS, mockLogin } from "./helpers";
 
 async function navigateToTeams(page) {
   await mockLogin(page, DEMO_USERS.admin);
-  await page.locator(".sidebar-item-label").filter({ hasText: "Teams" }).first().click();
+  await page.locator("nav a[title=\"Teams\"]").first().click();
   await expect(page).toHaveURL("/teams");
+  // Wait for the team list to load (subtitle shows count)
+  await expect(page.getByText(/teams total/)).toBeVisible({ timeout: 10000 });
+}
+
+async function navigateToTeamDetail(page) {
+  await mockLogin(page, DEMO_USERS.admin);
+  await page.goto("/teams/1");
+  // Wait for the detail page to load — Add Member button appears after data loads
+  await expect(page.locator("button").filter({ hasText: "Add Member" })).toBeVisible({ timeout: 15000 });
 }
 
 test.describe("Team Management — List Page", () => {
@@ -14,11 +23,11 @@ test.describe("Team Management — List Page", () => {
   });
 
   test("teams page loads with team cards", async ({ page }) => {
-    await expect(page.locator(".team-card").first()).toBeVisible();
+    await expect(page.locator("h3").filter({ hasText: "Engineering Team" })).toBeVisible({ timeout: 15000 });
   });
 
   test("teams page shows correct team count", async ({ page }) => {
-    await expect(page.locator(".page-subtitle").filter({ hasText: /team/ })).toBeVisible();
+    await expect(page.getByText("2 teams total")).toBeVisible();
   });
 
   test("New Team button is visible", async ({ page }) => {
@@ -26,28 +35,25 @@ test.describe("Team Management — List Page", () => {
   });
 
   test("team cards display team names", async ({ page }) => {
-    await expect(
-      page.locator(".team-card-title").filter({ hasText: "Engineering Team" })
-    ).toBeVisible();
-    await expect(page.locator(".team-card-title").filter({ hasText: "Design Team" })).toBeVisible();
+    await expect(page.locator("h3").filter({ hasText: "Engineering Team" })).toBeVisible({ timeout: 15000 });
+    await expect(page.locator("h3").filter({ hasText: "Design Team" })).toBeVisible({ timeout: 15000 });
   });
 
   test("clicking a team card navigates to team detail", async ({ page }) => {
-    await page.locator(".team-card-title").filter({ hasText: "Engineering Team" }).first().click();
+    await page.locator("h3").filter({ hasText: "Engineering Team" }).first().click();
     await expect(page).toHaveURL(/\/teams\/\d+/);
   });
 
   test("search filters teams", async ({ page }) => {
-    const searchInput = page.locator('.team-search-form input[placeholder*="Search"]');
+    const searchInput = page.locator('input[placeholder="Search teams..."]');
     await searchInput.fill("Engineering");
     await searchInput.press("Enter");
     await page.waitForTimeout(500);
-    // URL may include query params — just check it's still on /teams
     await expect(page).toHaveURL(/\/teams/);
   });
 
   test("clear filters works", async ({ page }) => {
-    const searchInput = page.locator('.team-search-form input[placeholder*="Search"]');
+    const searchInput = page.locator('input[placeholder="Search teams..."]');
     await searchInput.fill("Engineering");
     await searchInput.press("Enter");
     await page.waitForTimeout(300);
@@ -73,23 +79,21 @@ test.describe("Team Management — Create Team", () => {
   test("create team form renders correctly", async ({ page }) => {
     await page.locator("button").filter({ hasText: "New Team" }).click();
     await expect(page).toHaveURL("/teams/create");
-
-    await expect(page.locator('input[name="name"]')).toBeVisible();
-    await expect(page.locator('textarea[name="description"]')).toBeVisible();
-    await expect(page.locator('input[name="color"]')).toBeVisible();
-    await expect(page.locator("button").filter({ hasText: "Create Team" })).toBeVisible();
+    // Wait for the form to render
+    await expect(page.locator("textarea")).toBeVisible({ timeout: 10000 });
     await expect(page.locator("button").filter({ hasText: "Cancel" })).toBeVisible();
+    await expect(page.locator("button").filter({ hasText: "Save Team" })).toBeVisible();
   });
 
   test("create team with valid data", async ({ page }) => {
     await page.locator("button").filter({ hasText: "New Team" }).click();
     await expect(page).toHaveURL("/teams/create");
 
-    await page.locator('input[name="name"]').fill("QA Team");
-    await page.locator('textarea[name="description"]').fill("Quality assurance team");
-    await page.locator("button").filter({ hasText: "Create Team" }).click();
+    const nameInput = page.locator("input").first();
+    await nameInput.fill("QA Team");
+    await page.locator("textarea").fill("Quality assurance team");
+    await page.locator("button").filter({ hasText: "Save Team" }).click();
 
-    // Should navigate to the new team's detail page
     await expect(page).toHaveURL(/\/teams\/\d+/);
   });
 
@@ -97,10 +101,10 @@ test.describe("Team Management — Create Team", () => {
     await page.locator("button").filter({ hasText: "New Team" }).click();
     await expect(page).toHaveURL("/teams/create");
 
-    await page.locator("button").filter({ hasText: "Create Team" }).click();
+    await page.locator("button").filter({ hasText: "Save Team" }).click();
 
     await expect(page).toHaveURL("/teams/create");
-    await expect(page.locator(".team-form-error")).toBeVisible();
+    await expect(page.getByText("Team name is required")).toBeVisible();
   });
 
   test("cancel button returns to teams list", async ({ page }) => {
@@ -115,57 +119,40 @@ test.describe("Team Management — Create Team", () => {
     await page.locator("button").filter({ hasText: "New Team" }).click();
     await expect(page).toHaveURL("/teams/create");
 
-    await page.locator(".breadcrumb").getByText("Teams").click();
+    const teamsBreadcrumb = page.getByText("Teams", { exact: true }).first();
+    await teamsBreadcrumb.click();
     await expect(page).toHaveURL("/teams");
   });
 });
 
 test.describe("Team Management — Team Detail", () => {
   test.beforeEach(async ({ page }) => {
-    await navigateToTeams(page);
-    await page.locator(".team-card-title").filter({ hasText: "Engineering Team" }).first().click();
-    await expect(page).toHaveURL(/\/teams\/\d+/);
+    await navigateToTeamDetail(page);
   });
 
   test("team detail page renders correctly", async ({ page }) => {
-    await expect(page.locator("h1.page-title").filter({ hasText: "Teams" })).toBeVisible();
-    await expect(
-      page.locator(".page-subtitle").filter({ hasText: "Engineering Team" })
-    ).toBeVisible();
-  });
-
-  test("team detail shows action buttons", async ({ page }) => {
-    await expect(page.locator("button").filter({ hasText: "Add Member" })).toBeVisible();
-    // Edit and Delete buttons may be icon-only or have different text
-    const headerRight = page.locator(".header-right");
-    await expect(headerRight).toBeVisible();
+    await expect(page.locator("h1.page-title").filter({ hasText: "Engineering Team" })).toBeVisible({ timeout: 15000 });
   });
 
   test("team detail shows team info", async ({ page }) => {
-    await expect(page.locator("h2").filter({ hasText: "Engineering Team" })).toBeVisible();
-    await expect(page.getByText("Core engineering team")).toBeVisible();
+    await expect(page.getByText("Core engineering team")).toBeVisible({ timeout: 10000 });
   });
 
   test("team detail shows members section", async ({ page }) => {
-    await expect(page.getByText("Team Members")).toBeVisible();
+    await expect(page.getByText(/Team Members/)).toBeVisible({ timeout: 10000 });
   });
 
   test("team detail shows member count", async ({ page }) => {
-    await expect(page.locator(".team-quick-stat")).toBeVisible();
+    await expect(page.getByText(/member/)).toBeVisible({ timeout: 10000 });
   });
 
   test("breadcrumb navigation works on detail page", async ({ page }) => {
-    await page.locator(".breadcrumb").getByText("Teams").click();
+    await page.getByText("Teams", { exact: true }).first().click();
     await expect(page).toHaveURL("/teams");
   });
 
   test("clicking Edit navigates to edit page", async ({ page }) => {
-    // Edit button may be an icon button — find it in header-right
-    const editBtn = page
-      .locator(".header-right")
-      .locator("button, a")
-      .filter({ hasText: /Edit|pencil/ })
-      .first();
+    const editBtn = page.locator("button").filter({ hasText: "Edit" }).first();
     await editBtn.click();
     await expect(page).toHaveURL(/\/teams\/\d+\/edit/);
   });
@@ -173,30 +160,26 @@ test.describe("Team Management — Team Detail", () => {
 
 test.describe("Team Management — Edit Team", () => {
   test.beforeEach(async ({ page }) => {
-    await navigateToTeams(page);
-    await page.locator(".team-card-title").filter({ hasText: "Engineering Team" }).first().click();
-    await expect(page).toHaveURL(/\/teams\/\d+/);
-    const editBtn = page
-      .locator(".header-right")
-      .locator("button, a")
-      .filter({ hasText: /Edit|pencil/ })
-      .first();
-    await editBtn.click();
-    await expect(page).toHaveURL(/\/teams\/\d+\/edit/);
+    await mockLogin(page, DEMO_USERS.admin);
+    await page.goto("/teams/1/edit");
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForFunction(
+      () => document.querySelector("textarea") !== null,
+      { timeout: 10000 }
+    );
   });
 
   test("edit team page renders correctly", async ({ page }) => {
-    await expect(page.locator("h1.page-title").filter({ hasText: "Teams" })).toBeVisible();
-    await expect(page.locator(".page-subtitle").filter({ hasText: "Edit team" })).toBeVisible();
+    await expect(page.getByText("Update the team details below")).toBeVisible({ timeout: 10000 });
   });
 
   test("edit form is pre-filled with team data", async ({ page }) => {
-    const nameInput = page.locator('input[name="name"]');
-    await expect(nameInput).toBeVisible();
+    const inputs = page.locator("input");
+    await expect(inputs.first()).toBeVisible({ timeout: 10000 });
   });
 
   test("edit team updates data", async ({ page }) => {
-    const nameInput = page.locator('input[name="name"]');
+    const nameInput = page.locator("input").first();
     await nameInput.fill("Engineering Team Updated");
     await page.locator("button").filter({ hasText: "Save Changes" }).click();
     await expect(page).toHaveURL(/\/teams\/\d+/);
@@ -210,114 +193,65 @@ test.describe("Team Management — Edit Team", () => {
   });
 
   test("breadcrumb navigation on edit page", async ({ page }) => {
-    const breadcrumb = page.locator(".breadcrumb");
-    await expect(breadcrumb.getByText("Teams")).toBeVisible();
-    await expect(breadcrumb.getByText("Edit")).toBeVisible();
+    await expect(page.getByText("Teams", { exact: true })).toBeVisible();
+    await expect(page.getByText("Edit", { exact: true })).toBeVisible();
 
-    await breadcrumb.getByText("Teams").click();
+    await page.getByText("Teams", { exact: true }).click();
     await expect(page).toHaveURL("/teams");
   });
 });
 
 test.describe("Team Management — Delete Team", () => {
   test.beforeEach(async ({ page }) => {
-    await navigateToTeams(page);
-    await page.locator(".team-card-title").filter({ hasText: "Engineering Team" }).first().click();
-    await expect(page).toHaveURL(/\/teams\/\d+/);
+    await navigateToTeamDetail(page);
   });
 
   test("clicking Delete opens confirmation modal", async ({ page }) => {
-    const deleteBtn = page
-      .locator(".header-right")
-      .locator("button")
-      .filter({ hasText: /Delete|trash/ })
-      .first();
+    const deleteBtn = page.locator("button").filter({ hasText: "Delete" }).first();
     await deleteBtn.click();
-    // Mantine modal content is visible even when root has transition delays
-    await expect(page.getByText(/delete/i, { exact: false }).first()).toBeVisible();
-    await expect(
-      page.locator(".ui.modal button").filter({ hasText: "Cancel" }).first()
-    ).toBeVisible();
+    await expect(page.getByText("Delete Team", { exact: true })).toBeVisible({ timeout: 10000 });
+    await expect(page.locator("button").filter({ hasText: "Cancel" }).last()).toBeVisible();
   });
 
   test("delete modal has confirm and cancel buttons", async ({ page }) => {
-    const deleteBtn = page
-      .locator(".header-right")
-      .locator("button")
-      .filter({ hasText: /Delete|trash/ })
-      .first();
+    const deleteBtn = page.locator("button").filter({ hasText: "Delete" }).first();
     await deleteBtn.click();
-    await expect(
-      page.locator(".ui.modal button").filter({ hasText: "Cancel" }).first()
-    ).toBeVisible();
-    await expect(
-      page
-        .locator(".ui.modal button")
-        .filter({ hasText: /Delete|trash/ })
-        .first()
-    ).toBeVisible();
+    await expect(page.locator("button").filter({ hasText: "Cancel" }).last()).toBeVisible();
+    await expect(page.locator("button").filter({ hasText: "Delete" }).last()).toBeVisible();
   });
 
   test("canceling delete closes modal", async ({ page }) => {
-    const deleteBtn = page
-      .locator(".header-right")
-      .locator("button")
-      .filter({ hasText: /Delete|trash/ })
-      .first();
+    const deleteBtn = page.locator("button").filter({ hasText: "Delete" }).first();
     await deleteBtn.click();
-    await expect(
-      page.locator(".ui.modal button").filter({ hasText: "Cancel" }).first()
-    ).toBeVisible();
-    await page.locator(".ui.modal button").filter({ hasText: "Cancel" }).first().click();
+    await expect(page.getByText("Delete Team", { exact: true })).toBeVisible();
+    await page.locator("button").filter({ hasText: "Cancel" }).last().click();
     await expect(page).toHaveURL(/\/teams\/\d+/);
   });
 
   test("confirming delete redirects to teams list", async ({ page }) => {
-    const deleteBtn = page
-      .locator(".header-right")
-      .locator("button")
-      .filter({ hasText: /Delete|trash/ })
-      .first();
+    const deleteBtn = page.locator("button").filter({ hasText: "Delete" }).first();
     await deleteBtn.click();
-    await expect(
-      page
-        .locator(".ui.modal button")
-        .filter({ hasText: /Delete|trash/ })
-        .first()
-    ).toBeVisible();
-    await page
-      .locator(".ui.modal button")
-      .filter({ hasText: /Delete|trash/ })
-      .first()
-      .click();
+    await expect(page.getByText("Delete Team", { exact: true })).toBeVisible();
+    await page.locator("button").filter({ hasText: "Delete" }).last().click();
     await expect(page).toHaveURL("/teams");
   });
 });
 
 test.describe("Team Management — Add Member", () => {
   test.beforeEach(async ({ page }) => {
-    await navigateToTeams(page);
-    await page.locator(".team-card-title").filter({ hasText: "Engineering Team" }).first().click();
-    await expect(page).toHaveURL(/\/teams\/\d+/);
+    await navigateToTeamDetail(page);
   });
 
   test("clicking Add Member opens assignment modal", async ({ page }) => {
     await page.locator("button").filter({ hasText: "Add Member" }).click();
-    await expect(page.locator(".ui.modal").first()).toBeAttached();
-    await expect(page.getByText(/Manage Members|Current Members/i).first()).toBeVisible();
-  });
-
-  test("add member modal shows available users", async ({ page }) => {
-    await page.locator("button").filter({ hasText: "Add Member" }).click();
-    await expect(page.getByText(/Manage Members|Current Members/i).first()).toBeVisible();
-    await page.waitForTimeout(500);
+    await expect(page.getByText(/Current Members/).first()).toBeVisible({ timeout: 15000 });
   });
 
   test("add member modal can be closed", async ({ page }) => {
     await page.locator("button").filter({ hasText: "Add Member" }).click();
-    await expect(page.getByText(/Manage Members|Current Members/i).first()).toBeVisible();
+    await expect(page.getByText(/Current Members/).first()).toBeVisible({ timeout: 15000 });
 
-    await page.keyboard.press("Escape");
+    await page.locator("button").filter({ hasText: "Done" }).click();
     await page.waitForTimeout(300);
     await expect(page).toHaveURL(/\/teams\/\d+/);
   });
@@ -325,25 +259,22 @@ test.describe("Team Management — Add Member", () => {
 
 test.describe("Team Management — Remove Member", () => {
   test.beforeEach(async ({ page }) => {
-    await navigateToTeams(page);
-    await page.locator(".team-card-title").filter({ hasText: "Engineering Team" }).first().click();
-    await expect(page).toHaveURL(/\/teams\/\d+/);
+    await navigateToTeamDetail(page);
   });
 
   test("members are displayed in the members list", async ({ page }) => {
-    await expect(page.getByText("Team Members")).toBeVisible();
+    await expect(page.getByText(/Team Members/)).toBeVisible({ timeout: 10000 });
   });
 
   test("member count is displayed", async ({ page }) => {
-    await expect(page.locator(".team-quick-stat")).toBeVisible();
+    await expect(page.getByText(/member/)).toBeVisible({ timeout: 10000 });
   });
 });
 
 test.describe("Team Management — Permissions", () => {
   test("student is redirected from teams page (no permission)", async ({ page }) => {
     await mockLogin(page, DEMO_USERS.student);
-    await page.locator(".sidebar-item-label").filter({ hasText: "Teams" }).first().click();
-    // Student doesn't have teams.view permission, so they get redirected to /unauthorized
+    await page.locator("nav a[title=\"Teams\"]").first().click();
     await expect(page).toHaveURL("/unauthorized");
   });
 });

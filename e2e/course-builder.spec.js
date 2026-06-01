@@ -12,7 +12,7 @@ test.describe("Course Builder", () => {
 
   test("builder page loads without crash", async ({ page }) => {
     await expect(page).toHaveURL(/\/courses\/1\/builder/);
-    // Page should not have crashed — either sidebar or main content visible
+    // Page should not have crashed — sidebar should be visible
     const sidebar = page.locator(".sidebar-wrapper");
     await expect(sidebar).toBeVisible();
   });

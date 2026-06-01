@@ -54,11 +54,11 @@ const LearningPathForm = () => {
   const [courseSearch, setCourseSearch] = useState("");
   const [availableCourses, setAvailableCourses] = useState([]);
   const [showCoursePicker, setShowCoursePicker] = useState(false);
-
-  const categories = getLearningPathCategories().filter((c) => c !== "All Categories");
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     loadCourses();
+    loadCategories();
     if (isEdit) loadPath();
   }, [id]);
 
@@ -71,11 +71,26 @@ const LearningPathForm = () => {
     }
   };
 
+  const loadCategories = async () => {
+    try {
+      const cats = await getLearningPathCategories();
+      setCategories(cats.filter((c) => c !== "All Categories"));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const loadPath = async () => {
     try {
       setLoading(true);
       const data = await fetchLearningPathById(id);
       if (data) {
+        const rawCourses = data.courses || [];
+        // Normalize: ensure every course has `id` (API returns courseId on join records)
+        const normalized = rawCourses.map((c) => ({
+          ...c,
+          id: c.id || c.courseId,
+        }));
         setForm({
           title: data.title,
           description: data.description,
@@ -83,7 +98,7 @@ const LearningPathForm = () => {
           difficulty: data.difficulty || "Beginner",
           estimatedDuration: data.estimatedDuration || "",
           color: data.color || "#6366F1",
-          courses: data.courses || [],
+          courses: normalized,
         });
       }
     } catch (err) {

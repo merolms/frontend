@@ -15,6 +15,7 @@ import {
 import { t } from "@/styles/theme";
 
 import BlockNoteEditor from "./components/BlockNoteEditor/BlockNoteEditor";
+// import TipTapEditor from "./components/TipTapEditor/TipTapEditor";
 import LessonPanel from "./components/LessonPanel";
 
 // ─── BLOCKS → BlockNote DOC CONVERTER ───────────────────────────
@@ -442,7 +443,7 @@ const CourseBuilder = () => {
   }
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex", minHeight: "100vh" }}>
       <SideBar />
 
       <div
@@ -681,6 +682,7 @@ const CourseBuilder = () => {
                   onStatsChange={handleStatsChange}
                   theme={theme}
                 />
+                {/* <TipTapEditor/> */}
               </div>
             </div>
           </main>

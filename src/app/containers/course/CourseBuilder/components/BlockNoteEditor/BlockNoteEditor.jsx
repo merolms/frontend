@@ -9,6 +9,7 @@ import { uploadBlockMedia } from "@/app/services/blockService";
 import { t } from "@/styles/theme";
 
 import { ArrowConversionExtension } from "./extensions/ArrowConversionExtension";
+import { YoutubeNode } from "./extensions/YoutubeExtension";
 
 const PARA_PROPS = {
   textAlignment: "left",
@@ -84,6 +85,23 @@ const resolveTheme = () => {
   return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
 };
 
+// ─── Helpers ───────────────────────────────────────────────────────
+
+const getYoutubeVideoId = (url) => {
+  if (!url) return null;
+  if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
+  const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return match && match[2].length === 11 ? match[2] : null;
+};
+
+const isValidYoutubeUrl = (url) => {
+  if (!url) return false;
+  return getYoutubeVideoId(url) !== null;
+};
+
+// ─── BlockNoteEditor ───────────────────────────────────────────────
+
 const BlockNoteEditorComponent = ({
   lessonId,
   content,
@@ -99,20 +117,34 @@ const BlockNoteEditorComponent = ({
   const [ready, setReady] = useState(false);
   const [pasteError, setPasteError] = useState(false);
   const loadedContent = useRef(null);
+  const [showYoutubeDialog, setShowYoutubeDialog] = useState(false);
 
   const uploadFile = useCallback(
     async (file) => uploadBlockMedia(lessonId, `temp_${Date.now()}`, file),
     [lessonId]
   );
 
-  const editor = useCreateBlockNote({
-    uploadFile,
-    _tiptapOptions: {
-      extensions: [ArrowConversionExtension],
+  const editor = useCreateBlockNote(
+    {
+      uploadFile,
+      _tiptapOptions: {
+        extensions: [
+          ArrowConversionExtension,
+          YoutubeNode.configure({
+            addPasteHandler: true,
+            allowFullscreen: true,
+            autoplay: false,
+            controls: true,
+            width: 640,
+            height: 360,
+          }),
+        ],
+      },
     },
-  });
+    []
+  );
 
-  // Keep effectiveTheme in sync with <html data-theme> changes
+  // Keep effectiveTheme in sync
   useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = () => setEffectiveTheme(resolveTheme());
@@ -132,10 +164,9 @@ const BlockNoteEditorComponent = ({
     if (editor) setReady(true);
   }, [editor]);
 
-  // BlockNoteView onChange — fires on every document change
   const handleChange = useCallback(() => {
     if (isSyncing.current) return;
-    if (pasteError) return; // skip processing during paste error recovery
+    if (pasteError) return;
     try {
       const doc = editor.document;
       const wc = countWords(doc);
@@ -149,8 +180,6 @@ const BlockNoteEditorComponent = ({
     }
   }, [editor, onChange, onStatsChange, contentRef, pasteError]);
 
-  // Sync content from parent into the editor.
-  // Runs when: lesson changes, editor mounts, parent content prop changes.
   useEffect(() => {
     if (!editor || !ready) return;
     const raw = contentRef.current || content || "";
@@ -173,9 +202,6 @@ const BlockNoteEditorComponent = ({
     isSyncing.current = false;
   }, [lessonId, editor, ready, content]);
 
-  // Catch paste errors from BlockNote's internal pasteHTML handler.
-  // When pasting external HTML, BlockNote can throw "Invalid array length"
-  // inside its serializeBlocks/blocksToFullHTML chain.
   useEffect(() => {
     const onError = (event) => {
       if (
@@ -185,7 +211,6 @@ const BlockNoteEditorComponent = ({
         console.warn("Caught paste error, suppressing re-throw");
         event.preventDefault();
         setPasteError(true);
-        // Reset paste error flag after a tick so user can continue editing
         setTimeout(() => setPasteError(false), 100);
       }
     };
@@ -193,7 +218,6 @@ const BlockNoteEditorComponent = ({
     return () => window.removeEventListener("error", onError);
   }, []);
 
-  // Ctrl+S / Cmd+S to save
   useEffect(() => {
     const handler = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "s") {
@@ -205,11 +229,73 @@ const BlockNoteEditorComponent = ({
     return () => window.removeEventListener("keydown", handler);
   }, [onSave]);
 
+  // ─── YouTube insertion ──────────────────────────────────────────
+  const handleInsertYoutube = useCallback(
+    (url) => {
+      if (!editor?._tiptapEditor) return;
+      const videoId = getYoutubeVideoId(url);
+      if (!videoId) return;
+      const normalizedSrc = `https://www.youtube.com/watch?v=${videoId}`;
+      const tiptapEditor = editor._tiptapEditor;
+
+      // Focus the editor first
+      tiptapEditor.commands.focus();
+
+      // Use the youtube command if available
+      if (tiptapEditor.commands.setYoutubeVideo) {
+        tiptapEditor.commands.setYoutubeVideo({ src: normalizedSrc });
+      }
+    },
+    [editor]
+  );
+
   if (!editor) return null;
 
   return (
     <div>
+      {/* Custom toolbar with YouTube button */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "4px",
+          padding: "4px 8px",
+          borderBottom: `1px solid ${t("border-primary")}`,
+          background: t("surface-secondary"),
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => setShowYoutubeDialog(true)}
+          title="Insert YouTube Video"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "28px",
+            height: "28px",
+            borderRadius: "4px",
+            border: "none",
+            background: "transparent",
+            cursor: "pointer",
+            color: "#EF4444",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = t("surface-hover"))}
+          onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+          </svg>
+        </button>
+        <div style={{ width: "1px", height: "20px", background: t("border-primary") }} />
+        <span style={{ fontSize: "11px", color: t("text-muted"), marginLeft: "4px" }}>
+          Paste YouTube URL or use the button to embed a video
+        </span>
+      </div>
+
       <BlockNoteView editor={editor} theme={effectiveTheme} onChange={handleChange} />
+
+      {/* Status bar */}
       <div
         className="bn-statusbar"
         style={{
@@ -222,61 +308,112 @@ const BlockNoteEditorComponent = ({
           justifyContent: "space-between",
           gap: "12px",
           fontSize: "12px",
-          backdropFilter: "blur(10px)",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <span style={{ color: t("text-primary"), fontWeight: 600 }}>
             {words.toLocaleString()} {words === 1 ? "word" : "words"}
           </span>
-
           <span style={{ opacity: 0.4 }}>•</span>
-
           <span>~{Math.max(1, Math.ceil(words / 200))} min read</span>
         </div>
+      </div>
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            color: t("text-muted"),
-            whiteSpace: "nowrap",
+      {/* YouTube URL Dialog */}
+      {showYoutubeDialog && (
+        <YoutubeUrlDialog
+          onInsert={(url) => {
+            handleInsertYoutube(url);
+            setShowYoutubeDialog(false);
           }}
-        >
-          <span>Type</span>
+          onClose={() => setShowYoutubeDialog(false)}
+        />
+      )}
+    </div>
+  );
+};
 
-          <kbd
-            style={{
-              background: t("surface-primary"),
-              border: `1px solid ${t("border-secondary")}`,
-              borderRadius: "5px",
-              padding: "1px 5px",
-              fontSize: "11px",
-              color: t("text-primary"),
-            }}
+// ─── YouTube URL Dialog ────────────────────────────────────────────
+
+function YoutubeUrlDialog({ onInsert, onClose }) {
+  const [url, setUrl] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = () => {
+    const trimmed = url.trim();
+    if (!trimmed) {
+      setError("Please enter a YouTube URL");
+      return;
+    }
+    if (!isValidYoutubeUrl(trimmed)) {
+      setError("Invalid YouTube URL or video ID");
+      return;
+    }
+    onInsert(trimmed);
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        className="bg-bg-surface border-border mx-4 w-full max-w-md rounded-xl border p-6 shadow-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-4 flex items-center gap-2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#EF4444">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+          </svg>
+          <h3 className="text-text-primary text-base font-semibold">Insert YouTube Video</h3>
+        </div>
+
+        <div className="space-y-3">
+          <div>
+            <label className="text-text-primary text-xs font-medium">YouTube URL or Video ID</label>
+            <input
+              autoFocus
+              type="text"
+              placeholder="https://www.youtube.com/watch?v=... or video ID"
+              value={url}
+              onChange={(e) => {
+                setUrl(e.target.value);
+                setError("");
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSubmit();
+                if (e.key === "Escape") onClose();
+              }}
+              className={`border-border bg-bg-surface text-text-primary mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary ${error ? "border-red-500" : ""}`}
+            />
+            {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+          </div>
+          <p className="text-text-muted text-xs">
+            Paste a YouTube URL (youtube.com/watch?v=..., youtu.be/...) or just the 11-character video ID.
+          </p>
+        </div>
+
+        <div className="mt-4 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="border-border text-text-secondary hover:bg-bg-surface-hover rounded-md border px-3 py-1.5 text-sm"
           >
-            /
-          </kbd>
-
-          <span>•</span>
-
-          <kbd
-            style={{
-              background: t("surface-primary"),
-              border: `1px solid ${t("border-secondary")}`,
-              borderRadius: "5px",
-              padding: "1px 5px",
-              fontSize: "11px",
-              color: t("text-primary"),
-            }}
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="bg-primary hover:bg-primary-hover rounded-md px-3 py-1.5 text-sm text-white"
           >
-            ⌘S
-          </kbd>
+            Insert Video
+          </button>
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default BlockNoteEditorComponent;

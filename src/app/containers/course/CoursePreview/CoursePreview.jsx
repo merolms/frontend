@@ -1,6 +1,7 @@
 import "@blocknote/react/style.css";
 
 import { BlockNoteViewRaw as BlockNoteView, useCreateBlockNote } from "@blocknote/react";
+import { YoutubeNode } from "../CourseBuilder/components/BlockNoteEditor/extensions/YoutubeExtension";
 import { ArrowLeft, ArrowRight, BookOpen, ChevronRight, Edit3 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -255,9 +256,20 @@ const CoursePreview = () => {
     [id, lessonId, lessons, selectedLesson, navigate, loadLessonContent]
   );
 
-  // Create read-only editor at top level (hooks must be called unconditionally)
+  // Create read-only editor with YouTube support
   const editor = useCreateBlockNote({
-    _tiptapOptions: { editable: false },
+    _tiptapOptions: {
+      editable: false,
+      extensions: [
+        YoutubeNode.configure({
+          addPasteHandler: false,
+          allowFullscreen: true,
+          controls: true,
+          width: 640,
+          height: 360,
+        }),
+      ],
+    },
   });
 
   // Sync content into the editor when selected lesson changes

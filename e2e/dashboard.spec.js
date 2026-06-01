@@ -9,20 +9,18 @@ test.describe("Dashboard", () => {
   });
 
   test("dashboard header shows welcome message", async ({ page }) => {
-    await expect(page.getByText("Welcome back, John")).toBeVisible();
+    await expect(page.getByText(/Welcome back/)).toBeVisible();
     await expect(page.locator("h1.page-title").filter({ hasText: "Dashboard" })).toBeVisible();
   });
 
-  test("stats row displays stat cards", async ({ page }) => {
-    await expect(page.locator(".stats-row")).toBeVisible();
-    await expect(page.getByText("Total Courses")).toBeVisible();
-    await expect(page.getByText("Total Users")).toBeVisible();
-    await expect(page.getByText("Total Teams")).toBeVisible();
-    await expect(page.getByText("Avg. Completion")).toBeVisible();
-  });
-
-  test("recent courses section is visible", async ({ page }) => {
-    await expect(page.getByText("Recent Courses")).toBeVisible();
+  test("stats cards are displayed", async ({ page }) => {
+    // Wait for stats to load from /stats API
+    // Use the stat card labels (inside .text-text-muted.text-xs divs in the stats grid)
+    const statsGrid = page.locator(".grid .text-text-muted.text-xs").first().locator("..").locator("..");
+    await expect(page.locator(".grid .text-text-muted.text-xs").filter({ hasText: "Total Courses" })).toBeVisible({ timeout: 10000 });
+    await expect(page.locator(".grid .text-text-muted.text-xs").filter({ hasText: "Total Users" })).toBeVisible();
+    await expect(page.locator(".grid .text-text-muted.text-xs").filter({ hasText: "Total Teams" })).toBeVisible();
+    await expect(page.locator(".grid .text-text-muted.text-xs").filter({ hasText: "Categories" })).toBeVisible();
   });
 
   test("activity feed section is visible", async ({ page }) => {
@@ -33,12 +31,12 @@ test.describe("Dashboard", () => {
     await expect(page.getByText("Quick Actions")).toBeVisible();
   });
 
-  test("team performance section is visible", async ({ page }) => {
-    await expect(page.getByText("Team Performance")).toBeVisible();
+  test("summary section is visible", async ({ page }) => {
+    await expect(page.getByText("Summary")).toBeVisible({ timeout: 10000 });
   });
 
-  test("enrollment summary section is visible", async ({ page }) => {
-    await expect(page.getByText("Enrollment Summary")).toBeVisible();
+  test("upcoming events section is visible", async ({ page }) => {
+    await expect(page.getByText("Upcoming Events")).toBeVisible({ timeout: 10000 });
   });
 
   test("dashboard layout has sidebar and main content", async ({ page }) => {

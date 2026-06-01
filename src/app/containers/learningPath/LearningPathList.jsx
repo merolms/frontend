@@ -2,7 +2,10 @@ import { ChevronRight, Clock, Layers, Plus, Search, Sparkles, Star, Users } from
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { fetchLearningPaths, getLearningPathCategories } from "@/app/services/learningPathService";
+import {
+  fetchLearningPaths,
+  getLearningPathCategories,
+} from "@/app/services/learningPathService";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
@@ -72,20 +75,20 @@ const LearningPathCard = ({ path, navigate }) => {
         </div>
         {/* Course strip */}
         <div className="flex items-center gap-1.5 overflow-hidden">
-          {path.courses.slice(0, 4).map((course, idx) => (
+          {(path.courses ?? []).slice(0, 4).map((course, idx) => (
             <div key={course.id} className="flex flex-shrink-0 items-center gap-1.5">
               <div className="bg-bg-surface border-border flex h-7 w-7 items-center justify-center rounded-md border shadow-sm">
                 <span className="text-text-secondary text-[10px] font-bold">{idx + 1}</span>
               </div>
-              {idx < Math.min(path.courses.length, 4) - 1 && (
+              {idx < Math.min(path.courses?.length ?? 0, 4) - 1 && (
                 <ChevronRight size={10} className="text-text-muted flex-shrink-0" />
               )}
             </div>
           ))}
-          {path.courses.length > 4 && (
+          {(path.courses?.length ?? 0) > 4 && (
             <div className="bg-bg-surface-active border-border flex h-7 w-7 items-center justify-center rounded-md border">
               <span className="text-text-muted text-[10px] font-bold">
-                +{path.courses.length - 4}
+                +{(path.courses?.length ?? 0) - 4}
               </span>
             </div>
           )}
@@ -125,22 +128,25 @@ const LearningPathList = () => {
   const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+  const [categories, setCategories] = useState(["All Categories"]);
 
   const page = parseInt(searchParams.get("page")) || 1;
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category") || "";
   const [searchInput, setSearchInput] = useState(search);
 
-  const categories = getLearningPathCategories();
-
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await fetchLearningPaths({ search, category, page, limit: 6 });
+      const [data, cats] = await Promise.all([
+        fetchLearningPaths({ search, category, page, limit: 6 }),
+        getLearningPathCategories(),
+      ]);
       setPaths(data.paths);
       setTotalPages(data.totalPages);
       setTotal(data.total);
+      setCategories(cats);
     } catch (err) {
       setError("Failed to load learning paths.");
     } finally {
