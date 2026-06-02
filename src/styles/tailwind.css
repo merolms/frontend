@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-@source "../node_modules/@blocknote/shadcn";
 
 /* ═══════════════════════════════════════════════════════════
    TAILWIND CSS v4.3 — CUSTOM LMS THEME
@@ -44,68 +43,96 @@
    ═══════════════════════════════════════════════════════════ */
 
 @layer base {
-  :root,
+  :root {
+
+    /* Z-Index */
+    --z-behind: -10;
+    --z-background: -1;
+    --z-base: 0;
+    --z-content: 1;
+    --z-elevated: 5;
+    --z-sticky: 10;
+    --z-sticky-header: 15;
+    --z-interactive: 20;
+    --z-drag-overlay: 30;
+    --z-nav: 50;
+    --z-nav-menu: 51;
+    --z-dropdown: 100;
+    --z-popover: 250;
+    --z-overlay: 120;
+    --z-editor-toolbar: 130;
+    --z-editor-bubble: 135;
+    --z-tooltip: 250;
+    --z-modal-backdrop: 200;
+    --z-modal: 210;
+    --z-modal-content: 220;
+    --z-toast: 300;
+    --z-notification: 310;
+    --z-critical: 400;
+    --z-max: 9999;
+  }
   [data-theme="light"] {
     --primary: #6366f1;
     --primary-hover: #4f46e5;
     --primary-light: rgba(99, 102, 241, 0.12);
-    --secondary: #8b5cf6;
+    --secondary: oklch(0.97 0 0);
     --accent: #06b6d4;
-    --success: #22c55e;
-    --warning: #f59e0b;
-    --error: #ef4444;
+    --success: oklch(0.6 0.118 150);
+    --warning: oklch(0.769 0.188 70.08);
+    --error: oklch(0.577 0.245 27.325);
 
-    --bg-primary: #f8fafc;
-    --bg-secondary: #f1f5f9;
-    --bg-surface: #ffffff;
-    --bg-surface-hover: #f8fafc;
-    --bg-surface-active: #eef2f7;
+    --bg-primary: oklch(1 0 0);
+    --bg-secondary: oklch(0.97 0 0);
+    --bg-surface: oklch(1 0 0);
+    --bg-surface-hover: oklch(0.97 0 0);
+    --bg-surface-active: oklch(0.94 0 0);
 
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-muted: #94a3b8;
-    --text-inverse: #ffffff;
+    --text-primary: oklch(0.145 0 0);
+    --text-secondary: oklch(0.45 0 0);
+    --text-muted: oklch(0.556 0 0);
+    --text-inverse: oklch(1 0 0);
 
-    --border-primary: #e2e8f0;
-    --border-secondary: #cbd5e1;
-    --border-hover: #94a3b8;
-    --border-input: #dce3ec;
+    --border-primary: oklch(0.922 0 0);
+    --border-secondary: oklch(0.88 0 0);
+    --border-hover: oklch(0.708 0 0);
+    --border-input: oklch(0.922 0 0);
 
-    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
-    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
-    --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(15, 23, 42, 0.06);
+    --shadow-sm: 0 1px 2px oklch(0.145 0 0 / 0.04);
+    --shadow-md: 0 4px 12px oklch(0.145 0 0 / 0.06), 0 2px 4px oklch(0.145 0 0 / 0.04);
+    --shadow-lg: 0 12px 32px oklch(0.145 0 0 / 0.08), 0 4px 12px oklch(0.145 0 0 / 0.06);
   }
 
   [data-theme="dark"] {
     --primary: #818cf8;
     --primary-hover: #6366f1;
     --primary-light: rgba(129, 140, 248, 0.14);
-    --secondary: #a78bfa;
+    --secondary: oklch(0.22 0 0);
     --accent: #22d3ee;
-    --success: #4ade80;
-    --warning: #fbbf24;
-    --error: #f87171;
+    --success: oklch(0.696 0.17 162.48);
+    --warning: oklch(0.769 0.188 70.08);
+    --error: oklch(0.704 0.191 22.216);
 
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-surface: #1e293b;
-    --bg-surface-hover: #334155;
-    --bg-surface-active: #475569;
+    --bg-primary: #000000;
+    --bg-secondary: oklch(0.12 0 0);
+    --bg-surface: oklch(0.12 0 0);
+    --bg-surface-hover: oklch(0.18 0 0);
+    --bg-surface-active: oklch(0.24 0 0);
 
-    --text-primary: #f1f5f9;
-    --text-secondary: #cbd5e1;
-    --text-muted: #64748b;
-    --text-inverse: #0f172a;
+    --text-primary: oklch(0.985 0 0);
+    --text-secondary: oklch(0.82 0 0);
+    --text-muted: oklch(0.65 0 0);
+    --text-inverse: #000000;
 
-    --border-primary: #334155;
-    --border-secondary: #475569;
-    --border-hover: #64748b;
-    --border-input: #334155;
+    --border-primary: oklch(1 0 0 / 0.12);
+    --border-secondary: oklch(1 0 0 / 0.18);
+    --border-hover: oklch(0.556 0 0);
+    --border-input: oklch(1 0 0 / 0.18);
 
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.4);
+    --shadow-md: 0 4px 12px oklch(0 0 0 / 0.5), 0 2px 4px oklch(0 0 0 / 0.4);
+    --shadow-lg: 0 12px 32px oklch(0 0 0 / 0.6), 0 4px 12px oklch(0 0 0 / 0.5);
   }
+  
 
   * {
     box-sizing: border-box;
@@ -130,13 +157,13 @@
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-image: radial-gradient(circle, rgb(203, 213, 225) 1px, transparent 1px);
+    background-image: radial-gradient(circle, oklch(0.85 0 0) 1px, transparent 1px);
     background-size: 24px 24px;
     background-position: 0% 0%;
   }
 
   [data-theme="dark"] body {
-    background-image: radial-gradient(circle, rgb(71, 85, 105) 1px, transparent 1px);
+    background-image: radial-gradient(circle, oklch(1 0 0 / 0.08) 1px, transparent 1px);
     background-size: 24px 24px;
     background-position: 0% 0%;
   }
@@ -265,7 +292,7 @@
 
 @utility btn-primary {
   background: var(--primary);
-  color: white;
+  color: var(--text-inverse);
   padding: 6px 14px;
   border-radius: var(--radius-sm);
   font-size: 13px;
@@ -310,7 +337,7 @@
   transition: background 0.15s;
 }
 .btn-danger:hover {
-  background: rgba(239, 68, 68, 0.1);
+  background: oklch(0.577 0.245 27.325 / 0.1);
 }
 
 @utility input-field {
@@ -350,23 +377,47 @@
 }
 
 @utility badge-green {
-  background: rgba(34, 197, 94, 0.12);
-  color: #15803d;
+  background: oklch(0.6 0.118 150 / 0.12);
+  color: oklch(0.45 0.12 150);
 }
 @utility badge-blue {
-  background: rgba(99, 102, 241, 0.12);
-  color: #4338ca;
+  background: oklch(0.55 0.2 264 / 0.12);
+  color: oklch(0.4 0.2 264);
 }
 @utility badge-orange {
-  background: rgba(245, 158, 11, 0.12);
-  color: #b45309;
+  background: oklch(0.769 0.188 70.08 / 0.12);
+  color: oklch(0.5 0.15 70);
 }
 @utility badge-red {
-  background: rgba(239, 68, 68, 0.12);
-  color: #dc2626;
+  background: oklch(0.577 0.245 27.325 / 0.12);
+  color: oklch(0.45 0.2 27);
 }
 
 .bn-editor {
   padding: 20px 0px;
   margin: 5px;
+}
+
+.bn-suggestion-menu {
+  background-color: #f3f4f6; /* Light gray background */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+/* Customize the individual item */
+.bn-suggestion-menu-item {
+  color: #374151;
+}
+
+/* Customize the hover or selected state */
+.bn-suggestion-menu-item[aria-selected="true"],
+.bn-suggestion-menu-item:hover {
+  background-color: #3b82f6; /* Blue background */
+  color: #ffffff;
+}
+
+/* Customize item labels/headers */
+.bn-suggestion-menu-item-label {
+  font-weight: 600;
 }

@@ -15,6 +15,7 @@ import {
 import { t } from "@/styles/theme";
 
 import BlockNoteEditor from "./components/BlockNoteEditor/BlockNoteEditor";
+import MeroEduEditor from "@/editor/Editor";
 // import TipTapEditor from "./components/TipTapEditor/TipTapEditor";
 import LessonPanel from "./components/LessonPanel";
 
@@ -256,6 +257,7 @@ const CourseBuilder = () => {
   const handleSave = async () => {
     if (!selectedLesson) return;
     try {
+      console.log("Saving content:", contentRef.current);
       setSaving(true);
       setError(null);
       clearTimeout(autosaveTimer.current);
@@ -536,7 +538,7 @@ const CourseBuilder = () => {
             >
               <EyeIcon /> Preview
             </TopBarButton>
-            <TopBarButton onClick={handleSave} disabled={saving} variant="primary">
+            <TopBarButton onClick={handleSave} disabled={saving} variant="secondary">
               {saving ? <Spinner /> : <SaveIcon />} Save
             </TopBarButton>
           </div>
@@ -632,12 +634,12 @@ const CourseBuilder = () => {
                 background: t("bg-surface"),
                 borderRadius: t("radius-lg"),
                 boxShadow: t("shadow-md"),
-                padding: "48px 56px",
                 display: "flex",
                 flexDirection: "column",
                 flexShrink: 0,
               }}
             >
+              
               <div
                 style={{
                   marginBottom: 32,
@@ -669,21 +671,7 @@ const CourseBuilder = () => {
                   {selectedLesson?.title || "Untitled Lesson"}
                 </h1>
               </div>
-
-              {/* BlockNote editor */}
-              <div style={{ flex: 1 }}>
-                <BlockNoteEditor
-                  key={selectedLesson?.id}
-                  lessonId={selectedLesson?.id}
-                  content={content}
-                  contentRef={contentRef}
-                  onChange={handleContentChange}
-                  onSave={handleSave}
-                  onStatsChange={handleStatsChange}
-                  theme={theme}
-                />
-                {/* <TipTapEditor/> */}
-              </div>
+              <MeroEduEditor onSave={handleSave} editable={true} />
             </div>
           </main>
         </div>

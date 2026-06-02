@@ -293,7 +293,7 @@ const BlockNoteEditorComponent = ({
         </span>
       </div>
 
-      <BlockNoteView editor={editor} theme={effectiveTheme} onChange={handleChange} />
+      <BlockNoteView editor={editor} theme={theme} onChange={handleChange} />
 
       {/* Status bar */}
       <div

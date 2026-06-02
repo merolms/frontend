@@ -1,0 +1,101 @@
+    All API calls go through the service layer. Here's the complete list:
+    
+    
+    
+    Frontend API Endpoints (all on http://localhost:9090)
+    
+    Auth (authService.js)
+    | Method | Endpoint                   | Function                      |
+    |--------|----------------------------|-------------------------------|
+    | POST   | /auth/login                | login()                       |
+    | POST   | /auth/register             | register(), createUser()      |
+    | GET    | /auth/me                   | getProfile(), validateToken() |
+    | PUT    | /auth/profile              | updateProfile()               |
+    | PUT    | /auth/password             | changePassword()              |
+    | POST   | /auth/admin/reset-password | adminResetPassword()          |
+    
+    Roles (authService.js)
+    | Method | Endpoint   | Function        |
+    |--------|------------|-----------------|
+    | GET    | /roles     | fetchRoles()    |
+    | GET    | /roles/:id | fetchRoleById() |
+    | POST   | /roles     | createRole()    |
+    | PUT    | /roles/:id | updateRole()    |
+    | DELETE | /roles/:id | deleteRole()    |
+    
+    Users (userService.js)
+    | Method | Endpoint             | Function               |
+    |--------|----------------------|------------------------|
+    | GET    | /users?start=&limit= | fetchUsers()           |
+    | GET    | /users/:id           | fetchUserById()        |
+    | PUT    | /users/:id           | updateUser()           |
+    | DELETE | /users/:id           | deleteUser()           |
+    | GET    | /users/stat          | (called in fetchUsers) |
+    
+    Teams (teamService.js)
+    | Method | Endpoint                     | Function                         |
+    |--------|------------------------------|----------------------------------|
+    | GET    | /teams?start=&limit=         | fetchTeams()                     |
+    | GET    | /teams/:id                   | fetchTeamById()                  |
+    | POST   | /teams                       | createTeam()                     |
+    | PUT    | /teams/:id                   | updateTeam()                     |
+    | DELETE | /teams/:id                   | deleteTeam()                     |
+    | GET    | /teams/stat                  | (called in fetchTeams)           |
+    | GET    | /teams/:id/members           | fetchTeamMembers()               |
+    | POST   | /teams/:id/members           | addMemberToTeam()                |
+    | DELETE | /teams/:id/members/:userId   | removeMemberFromTeam()           |
+    | GET    | /teams/:id/available-users   | getAvailableUsers()              |
+    | GET    | /users?start=&limit=&search= | fetchUsers() (for member picker) |
+    
+    Categories (categoryService.js)
+    | Method | Endpoint                  | Function                                           |
+    |--------|---------------------------|----------------------------------------------------|
+    | GET    | /categories?start=&limit= | fetchCategories(), fetchCategoriesWithPagination() |
+    | GET    | /categories/:id           | fetchCategoryById()                                |
+    | POST   | /categories               | createCategory()                                   |
+    | PUT    | /categories/:id           | updateCategory()                                   |
+    | DELETE | /categories/:id           | deleteCategory()                                   |
+    
+    Courses (courseService.js)
+    | Method | Endpoint                     | Function                                         |
+    |--------|------------------------------|--------------------------------------------------|
+    | GET    | /courses?start=&limit=       | fetchCourses()                                   |
+    | GET    | /courses/stat                | (called in fetchCourses)                         |
+    | GET    | /courses/:id                 | fetchCourseById()                                |
+    | POST   | /courses                     | createCourse()                                   |
+    | PUT    | /courses/:id                 | updateCourse(), publishCourse(), archiveCourse() |
+    | DELETE | /courses/:id                 | deleteCourse()                                   |
+    | GET    | /courses/:id/lessons         | fetchLessons()                                   |
+    | POST   | /courses/:id/lessons         | createLesson()                                   |
+    | PUT    | /lessons/:id                 | updateLesson()                                   |
+    | DELETE | /lessons/:id                 | deleteLesson()                                   |
+    | PUT    | /courses/:id/lessons/reorder | reorderLessons()                                 |
+    
+    Lessons / Blocks (blockService.js)
+    | Method | Endpoint                           | Function            |
+    |--------|------------------------------------|---------------------|
+    | POST   | /lessons/:id/autosave              | saveAutosave()      |
+    | GET    | /lessons/:id/autosave              | fetchAutosave()     |
+    | GET    | /lessons/:id/blocks                | fetchLessonBlocks() |
+    | POST   | /lessons/:id/blocks/:blockId/media | uploadBlockMedia()  |
+    | POST   | /ai/generate                       | generateAIContent() |
+    
+    Learning Paths (learningPathService.js)
+    | Method | Endpoint                                               | Function                     |
+    |--------|--------------------------------------------------------|------------------------------|
+    | GET    | /learning-paths?page=&limit=&search=&category=&status= | fetchLearningPaths()         |
+    | GET    | /learning-paths/:id                                    | fetchLearningPathById()      |
+    | POST   | /learning-paths                                        | createLearningPath()         |
+    | PUT    | /learning-paths/:id                                    | updateLearningPath()         |
+    | DELETE | /learning-paths/:id                                    | deleteLearningPath()         |
+    | GET    | /learning-paths/categories                             | getLearningPathCategories()  |
+    | GET    | /learning-paths/stat                                   | fetchLearningPathStat()      |
+    | PUT    | /learning-paths/:id/reorder                            | reorderLearningPathCourses() |
+    | POST   | /learning-paths/:id/enroll                             | enrollInLearningPath()       |
+    | GET    | /learning-paths/:id/progress                           | fetchLearningPathProgress()  |
+    
+    Events (eventService.js) — all mock, no backend calls
+    - fetchEvents(), fetchEventById(), fetchEventsForMonth(), fetchUpcomingEvents()
+    - createEvent(), updateEvent(), deleteEvent()
+    
+    Total: 47 unique endpoints across 8 service files. Events are the only module still fully mock.
