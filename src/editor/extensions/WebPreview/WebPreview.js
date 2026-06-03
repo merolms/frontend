@@ -1,10 +1,10 @@
-import { mergeAttributes, Node } from '@tiptap/core'
-import { ReactNodeViewRenderer } from '@tiptap/react'
-import WebPreviewComponent from './WebPreviewComponent'
+import { mergeAttributes, Node } from "@tiptap/core";
+import { ReactNodeViewRenderer } from "@tiptap/react";
+import WebPreviewComponent from "./WebPreviewComponent";
 
 export default Node.create({
-  name: 'blockWebPreview',
-  group: 'block',
+  name: "blockWebPreview",
+  group: "block",
   draggable: true,
   atom: true,
   addAttributes() {
@@ -17,13 +17,19 @@ export default Node.create({
       favicon: { default: null },
       og_type: { default: null },
       og_url: { default: null },
-      alignment: { default: 'left' },
+      alignment: { default: "left" },
       showButton: { default: true },
-      buttonLabel: { default: '' },
+      buttonLabel: { default: "" },
       openInPopup: { default: false },
-    }
+    };
   },
-  parseHTML() { return [{ tag: 'block-web-preview' }] },
-  renderHTML({ HTMLAttributes }) { return ['block-web-preview', mergeAttributes(HTMLAttributes)] },
-  addNodeView() { return ReactNodeViewRenderer(WebPreviewComponent) },
-})
+  parseHTML() {
+    return [{ tag: "block-web-preview" }];
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ["block-web-preview", mergeAttributes(HTMLAttributes)];
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(WebPreviewComponent);
+  },
+});

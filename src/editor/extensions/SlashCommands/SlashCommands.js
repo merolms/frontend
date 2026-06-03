@@ -1,42 +1,42 @@
-import { Extension } from '@tiptap/core'
-import Suggestion from '@tiptap/suggestion'
-import { ReactRenderer } from '@tiptap/react'
-import tippy from 'tippy.js'
-import { filterCommands } from './slashCommandsConfig'
-import SlashCommandsList from './SlashCommandsList'
-import { PluginKey } from '@tiptap/pm/state'
-import { Z_INDEX } from '../../../lib/z-index'
+import { Extension } from "@tiptap/core";
+import Suggestion from "@tiptap/suggestion";
+import { ReactRenderer } from "@tiptap/react";
+import tippy from "tippy.js";
+import { filterCommands } from "./slashCommandsConfig";
+import SlashCommandsList from "./SlashCommandsList";
+import { PluginKey } from "@tiptap/pm/state";
+import { Z_INDEX } from "../../../lib/z-index";
 
-const slashCommandsPluginKey = new PluginKey('slashCommands')
+const slashCommandsPluginKey = new PluginKey("slashCommands");
 
 export const SlashCommands = Extension.create({
-  name: 'slashCommands',
+  name: "slashCommands",
 
   addOptions() {
-    return { currentPlan: 'free' }
+    return { currentPlan: "free" };
   },
 
   addProseMirrorPlugins() {
-    const currentPlan = this.options.currentPlan
+    const currentPlan = this.options.currentPlan;
 
     return [
       Suggestion({
         editor: this.editor,
-        char: '/',
+        char: "/",
         startOfLine: false,
         pluginKey: slashCommandsPluginKey,
         command: ({ editor, range, props }) => {
-          editor.chain().focus().deleteRange(range).run()
-          props.command(editor)
+          editor.chain().focus().deleteRange(range).run();
+          props.command(editor);
         },
         allow: ({ state, range }) => {
-          const $from = state.doc.resolve(range.from)
-          return $from.parent.type.name !== 'codeBlock'
+          const $from = state.doc.resolve(range.from);
+          return $from.parent.type.name !== "codeBlock";
         },
         items: ({ query }) => filterCommands(query),
         render: () => {
-          let component = null
-          let popup = null
+          let component = null;
+          let popup = null;
 
           return {
             onStart: (props) => {
@@ -48,23 +48,23 @@ export const SlashCommands = Extension.create({
                   currentPlan,
                 },
                 editor: props.editor,
-              })
+              });
 
-              if (!props.clientRect) return
+              if (!props.clientRect) return;
 
-              popup = tippy('body', {
+              popup = tippy("body", {
                 getReferenceClientRect: props.clientRect,
                 appendTo: () => document.body,
                 content: component.element,
                 showOnCreate: true,
                 interactive: true,
-                trigger: 'manual',
-                placement: 'bottom-start',
-                animation: 'shift-away',
-                maxWidth: 'none',
-                theme: 'slash-commands',
+                trigger: "manual",
+                placement: "bottom-start",
+                animation: "shift-away",
+                maxWidth: "none",
+                theme: "slash-commands",
                 zIndex: Z_INDEX.EDITOR_BUBBLE,
-              })
+              });
             },
 
             onUpdate: (props) => {
@@ -73,28 +73,28 @@ export const SlashCommands = Extension.create({
                 command: (item) => props.command(item),
                 editor: props.editor,
                 currentPlan,
-              })
-              if (!props.clientRect) return
-              popup?.[0]?.setProps({ getReferenceClientRect: props.clientRect })
+              });
+              if (!props.clientRect) return;
+              popup?.[0]?.setProps({ getReferenceClientRect: props.clientRect });
             },
 
             onKeyDown: (props) => {
-              if (props.event.key === 'Escape') {
-                popup?.[0]?.hide()
-                return true
+              if (props.event.key === "Escape") {
+                popup?.[0]?.hide();
+                return true;
               }
-              return component?.ref?.onKeyDown(props.event) ?? false
+              return component?.ref?.onKeyDown(props.event) ?? false;
             },
 
             onExit: () => {
-              popup?.[0]?.destroy()
-              component?.destroy()
+              popup?.[0]?.destroy();
+              component?.destroy();
             },
-          }
+          };
         },
       }),
-    ]
+    ];
   },
-})
+});
 
-export default SlashCommands
+export default SlashCommands;

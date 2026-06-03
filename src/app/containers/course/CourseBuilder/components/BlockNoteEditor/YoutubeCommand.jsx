@@ -13,7 +13,8 @@ import { t } from "@/styles/theme";
 
 const isValidYoutubeUrl = (url) => {
   if (!url) return false;
-  const pattern = /^(https?:\/\/)?(www\.|m\.)?(youtube\.com\/(watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})([^#\&\?]*)*$/;
+  const pattern =
+    /^(https?:\/\/)?(www\.|m\.)?(youtube\.com\/(watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})([^#\&\?]*)*$/;
   return pattern.test(url);
 };
 
@@ -84,8 +85,9 @@ export function YoutubeCommand({ editor, onClose }) {
             className={error ? "border-red-500" : ""}
           />
           {error && <p className="text-xs text-red-500">{error}</p>}
-          <p className="text-xs text-muted-foreground">
-            Paste a YouTube URL (youtube.com/watch?v=..., youtu.be/...) or just the 11-character video ID.
+          <p className="text-muted-foreground text-xs">
+            Paste a YouTube URL (youtube.com/watch?v=..., youtu.be/...) or just the 11-character
+            video ID.
           </p>
         </div>
         <DialogFooter>
@@ -116,9 +118,7 @@ export function YoutubeToolbarButton({ editor }) {
       >
         <Youtube size={16} className="text-red-500" />
       </Button>
-      {showDialog && (
-        <YoutubeCommand editor={editor} onClose={() => setShowDialog(false)} />
-      )}
+      {showDialog && <YoutubeCommand editor={editor} onClose={() => setShowDialog(false)} />}
     </>
   );
 }

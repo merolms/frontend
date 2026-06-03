@@ -173,7 +173,10 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
 
   // Mock single course
   await page.route(/\/courses\/(\d+)$/, async (route) => {
-    const match = route.request().url().match(/\/courses\/(\d+)/);
+    const match = route
+      .request()
+      .url()
+      .match(/\/courses\/(\d+)/);
     const courseId = match ? parseInt(match[1]) : 1;
     if (route.request().method() === "GET") {
       await route.fulfill({
@@ -593,15 +596,33 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
           body: JSON.stringify({
             message: "success",
             data: [
-              { userID: 1, userName: "John Doe", role: "Administrator", avatar: "https://i.pravatar.cc/150?img=1" },
-              { userID: 2, userName: "Jane Smith", role: "Instructor", avatar: "https://i.pravatar.cc/150?img=5" },
+              {
+                userID: 1,
+                userName: "John Doe",
+                role: "Administrator",
+                avatar: "https://i.pravatar.cc/150?img=1",
+              },
+              {
+                userID: 2,
+                userName: "Jane Smith",
+                role: "Instructor",
+                avatar: "https://i.pravatar.cc/150?img=5",
+              },
             ],
           }),
         });
       } else if (method === "POST") {
-        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ message: "Member added successfully" }) });
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ message: "Member added successfully" }),
+        });
       } else if (method === "DELETE") {
-        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ message: "Member removed successfully" }) });
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ message: "Member removed successfully" }),
+        });
       } else {
         await route.continue();
       }
@@ -629,10 +650,34 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
     if (singleMatch && method === "GET") {
       const teamId = parseInt(singleMatch[1]);
       const teamsById = {
-        1: { id: 1, name: "Engineering Team", description: "Core engineering team", color: "#33a163", status: 1, memberCount: 3, created_at: 1700000000 },
-        2: { id: 2, name: "Design Team", description: "UI/UX design team", color: "#2185d0", status: 1, memberCount: 2, created_at: 1701000000 },
+        1: {
+          id: 1,
+          name: "Engineering Team",
+          description: "Core engineering team",
+          color: "#33a163",
+          status: 1,
+          memberCount: 3,
+          created_at: 1700000000,
+        },
+        2: {
+          id: 2,
+          name: "Design Team",
+          description: "UI/UX design team",
+          color: "#2185d0",
+          status: 1,
+          memberCount: 2,
+          created_at: 1701000000,
+        },
       };
-      const team = teamsById[teamId] || { id: teamId, name: "Team " + teamId, description: "A test team", color: "#2185d0", status: 1, memberCount: 0, created_at: 170000000 };
+      const team = teamsById[teamId] || {
+        id: teamId,
+        name: "Team " + teamId,
+        description: "A test team",
+        color: "#2185d0",
+        status: 1,
+        memberCount: 0,
+        created_at: 170000000,
+      };
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -649,8 +694,24 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
         body: JSON.stringify({
           message: "success",
           data: [
-            { id: 1, name: "Engineering Team", description: "Core engineering team", color: "#33a163", status: 1, memberCount: 3, created_at: 1700000000 },
-            { id: 2, name: "Design Team", description: "UI/UX design team", color: "#2185d0", status: 1, memberCount: 2, created_at: 1701000000 },
+            {
+              id: 1,
+              name: "Engineering Team",
+              description: "Core engineering team",
+              color: "#33a163",
+              status: 1,
+              memberCount: 3,
+              created_at: 1700000000,
+            },
+            {
+              id: 2,
+              name: "Design Team",
+              description: "UI/UX design team",
+              color: "#2185d0",
+              status: 1,
+              memberCount: 2,
+              created_at: 1701000000,
+            },
           ],
         }),
       });
@@ -660,13 +721,23 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
     // Handle /teams (POST create)
     if (method === "POST") {
       let body = {};
-      try { body = await route.request().postDataJSON(); } catch {}
+      try {
+        body = await route.request().postDataJSON();
+      } catch {}
       await route.fulfill({
         status: 200,
         contentType: "application/json",
         body: JSON.stringify({
           message: "success",
-          data: { id: Date.now(), name: body.name || "New Team", description: body.description || "", color: body.color || "#2185d0", status: 1, memberCount: 0, created_at: Math.floor(Date.now() / 1000) },
+          data: {
+            id: Date.now(),
+            name: body.name || "New Team",
+            description: body.description || "",
+            color: body.color || "#2185d0",
+            status: 1,
+            memberCount: 0,
+            created_at: Math.floor(Date.now() / 1000),
+          },
         }),
       });
       return;
@@ -675,7 +746,9 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
     // Handle /teams/:id (PUT update)
     if (method === "PUT") {
       let body = {};
-      try { body = await route.request().postDataJSON(); } catch {}
+      try {
+        body = await route.request().postDataJSON();
+      } catch {}
       const idMatch = url.match(/\/teams\/(\d+)/);
       const teamId = idMatch ? parseInt(idMatch[1]) : 0;
       await route.fulfill({
@@ -683,7 +756,15 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
         contentType: "application/json",
         body: JSON.stringify({
           message: "success",
-          data: { id: teamId, name: body.name || "Updated Team", description: body.description || "", color: body.color || "#2185d0", status: 1, memberCount: 0, created_at: Math.floor(Date.now() / 1000) },
+          data: {
+            id: teamId,
+            name: body.name || "Updated Team",
+            description: body.description || "",
+            color: body.color || "#2185d0",
+            status: 1,
+            memberCount: 0,
+            created_at: Math.floor(Date.now() / 1000),
+          },
         }),
       });
       return;
@@ -727,7 +808,10 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify({ message: "success", data: ["Programming", "Data Science", "Design", "DevOps", "Business"] }),
+        body: JSON.stringify({
+          message: "success",
+          data: ["Programming", "Data Science", "Design", "DevOps", "Business"],
+        }),
       });
       return;
     }
@@ -768,9 +852,36 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
             authorId: 1,
             authorName: "John Doe",
             courses: [
-              { id: 1, courseId: 1, title: "HTML & CSS Fundamentals", description: "Build responsive websites", duration: "4 weeks", order: 1, lessons: 24, coverImage: "https://picsum.photos/seed/html/400/250" },
-              { id: 2, courseId: 2, title: "JavaScript Essentials", description: "Master JavaScript", duration: "6 weeks", order: 2, lessons: 36, coverImage: "https://picsum.photos/seed/js/400/250" },
-              { id: 3, courseId: 3, title: "React Mastery", description: "Build modern UIs with React", duration: "8 weeks", order: 3, lessons: 48, coverImage: "https://picsum.photos/seed/react/400/250" },
+              {
+                id: 1,
+                courseId: 1,
+                title: "HTML & CSS Fundamentals",
+                description: "Build responsive websites",
+                duration: "4 weeks",
+                order: 1,
+                lessons: 24,
+                coverImage: "https://picsum.photos/seed/html/400/250",
+              },
+              {
+                id: 2,
+                courseId: 2,
+                title: "JavaScript Essentials",
+                description: "Master JavaScript",
+                duration: "6 weeks",
+                order: 2,
+                lessons: 36,
+                coverImage: "https://picsum.photos/seed/js/400/250",
+              },
+              {
+                id: 3,
+                courseId: 3,
+                title: "React Mastery",
+                description: "Build modern UIs with React",
+                duration: "8 weeks",
+                order: 3,
+                lessons: 48,
+                coverImage: "https://picsum.photos/seed/react/400/250",
+              },
             ],
             createdAt: 1705276800,
             updatedAt: 1710432000,
@@ -858,7 +969,14 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
         contentType: "application/json",
         body: JSON.stringify({
           message: "Learning path created successfully",
-          data: { id: Date.now(), title: "New Learning Path", status: "draft", totalCourses: 0, enrolledCount: 0, rating: 0 },
+          data: {
+            id: Date.now(),
+            title: "New Learning Path",
+            status: "draft",
+            totalCourses: 0,
+            enrolledCount: 0,
+            rating: 0,
+          },
         }),
       });
       return;
@@ -871,7 +989,10 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
         contentType: "application/json",
         body: JSON.stringify({
           message: "Learning path updated successfully",
-          data: { id: parseInt(url.match(/\/learning-paths\/(\d+)/)?.[1] || "1"), title: "Updated Path" },
+          data: {
+            id: parseInt(url.match(/\/learning-paths\/(\d+)/)?.[1] || "1"),
+            title: "Updated Path",
+          },
         }),
       });
       return;

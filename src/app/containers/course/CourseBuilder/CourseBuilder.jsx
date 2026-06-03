@@ -15,6 +15,7 @@ import {
 import { t } from "@/styles/theme";
 
 import BlockNoteEditor from "./components/BlockNoteEditor/BlockNoteEditor";
+import { TipTapEditor } from "@/editor/TipTapEditor";
 import MeroEduEditor from "@/editor/Editor";
 // import TipTapEditor from "./components/TipTapEditor/TipTapEditor";
 import LessonPanel from "./components/LessonPanel";
@@ -303,20 +304,16 @@ const CourseBuilder = () => {
     }
   }, [selectedLesson]);
 
-  const scheduleAutosave = useCallback(() => {
-    clearTimeout(autosaveTimer.current);
-    autosaveTimer.current = setTimeout(doAutosave, 3000);
-  }, [doAutosave]);
-
   useEffect(() => () => clearTimeout(autosaveTimer.current), []);
 
   // Track whether user has changed content since last autosave
   const handleContentChange = useCallback(
     (json) => {
+      console.log("Content changed:", json);
       contentRef.current = json;
-      scheduleAutosave();
+      doAutosave();
     },
-    [scheduleAutosave]
+    [doAutosave]
   );
   const handleStatsChange = useCallback(({ words: w }) => setWords(w), []);
 
@@ -639,7 +636,6 @@ const CourseBuilder = () => {
                 flexShrink: 0,
               }}
             >
-              
               <div
                 style={{
                   marginBottom: 32,
@@ -671,7 +667,14 @@ const CourseBuilder = () => {
                   {selectedLesson?.title || "Untitled Lesson"}
                 </h1>
               </div>
-              <MeroEduEditor onSave={handleSave} editable={true} />
+              {/* <TipTapEditor onSave={handleSave} editable={true} /> */}
+              <MeroEduEditor
+                key={selectedLesson?.id} // remount editor when lesson changes to reset state
+                initialContent={content}
+                theme={theme}
+                onContentChange={handleContentChange}
+                onStatsChange={handleStatsChange}
+              />
             </div>
           </main>
         </div>

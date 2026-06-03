@@ -47,7 +47,7 @@ test.describe("Authentication", () => {
     await mockLogin(page, DEMO_USERS.admin);
     await expect(page).toHaveURL("/");
     // Find and click the logout button in the sidebar (has LogOut icon with title "Sign Out")
-    const logoutBtn = page.locator("button[title=\"Sign Out\"]");
+    const logoutBtn = page.locator('button[title="Sign Out"]');
     await expect(logoutBtn).toBeVisible();
     await logoutBtn.click();
     await expect(page).toHaveURL("/login");

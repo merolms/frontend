@@ -1,1 +1,1 @@
-export { default } from '../CalloutComponent'
+export { default } from "../CalloutComponent";

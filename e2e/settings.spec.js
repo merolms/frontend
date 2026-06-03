@@ -4,7 +4,7 @@ import { DEMO_USERS, mockLogin } from "./helpers";
 
 async function navigateToSettings(page) {
   await mockLogin(page, DEMO_USERS.admin);
-  await page.locator("nav a[title=\"Settings\"]").first().click();
+  await page.locator('nav a[title="Settings"]').first().click();
   await expect(page).toHaveURL("/settings");
 }
 
@@ -12,7 +12,10 @@ async function navigateToSettings(page) {
 function getTab(page, name) {
   // The TabsList is a div with class containing "flex items-center gap-1 rounded-lg border"
   // Tab buttons are direct children. We need to avoid the breadcrumb "Profile" button.
-  return page.locator(".border-border.flex.items-center.gap-1 button").filter({ hasText: name }).first();
+  return page
+    .locator(".border-border.flex.items-center.gap-1 button")
+    .filter({ hasText: name })
+    .first();
 }
 
 test.describe("Settings Page — Layout & Navigation", () => {
@@ -114,7 +117,10 @@ test.describe("Settings Page — Appearance Tab", () => {
   });
 
   test("theme can be changed to light from appearance tab", async ({ page }) => {
-    const themeBtn = page.locator("button").filter({ hasText: /^(Light|Dark|System)$/ }).first();
+    const themeBtn = page
+      .locator("button")
+      .filter({ hasText: /^(Light|Dark|System)$/ })
+      .first();
     await themeBtn.click();
     await page.getByRole("option", { name: "Light" }).click();
 
@@ -123,7 +129,10 @@ test.describe("Settings Page — Appearance Tab", () => {
   });
 
   test("theme can be changed to dark from appearance tab", async ({ page }) => {
-    const themeBtn = page.locator("button").filter({ hasText: /^(Light|Dark|System)$/ }).first();
+    const themeBtn = page
+      .locator("button")
+      .filter({ hasText: /^(Light|Dark|System)$/ })
+      .first();
     await themeBtn.click();
     await page.getByRole("option", { name: "Dark" }).click();
 
@@ -160,13 +169,13 @@ test.describe("Settings Page — Tab Switching", () => {
 test.describe("Settings Page — Access Control", () => {
   test("instructor can access settings page", async ({ page }) => {
     await mockLogin(page, DEMO_USERS.instructor);
-    await page.locator("nav a[title=\"Settings\"]").first().click();
+    await page.locator('nav a[title="Settings"]').first().click();
     await expect(page).toHaveURL("/settings");
   });
 
   test("student can access settings page", async ({ page }) => {
     await mockLogin(page, DEMO_USERS.student);
-    await page.locator("nav a[title=\"Settings\"]").first().click();
+    await page.locator('nav a[title="Settings"]').first().click();
     await expect(page).toHaveURL("/settings");
   });
 });

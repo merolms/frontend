@@ -5,9 +5,12 @@ import { DEMO_USERS, mockLogin } from "./helpers";
 async function navigateToProfile(page) {
   await mockLogin(page, DEMO_USERS.admin);
   // Profile is accessed via the user avatar button in the top bar (DashboardLayout header)
-  const avatarBtn = page.locator(".dashboard-main button").filter({
-    has: page.locator("img, div").filter({ hasText: /[A-Z]/ }),
-  }).first();
+  const avatarBtn = page
+    .locator(".dashboard-main button")
+    .filter({
+      has: page.locator("img, div").filter({ hasText: /[A-Z]/ }),
+    })
+    .first();
   // Also try the sidebar profile button
   const sidebarProfileBtn = page.locator(".sidebar-wrapper button").first();
   await sidebarProfileBtn.click();
@@ -31,7 +34,9 @@ test.describe("Profile Page", () => {
 
   test("profile has avatar", async ({ page }) => {
     // shadcn Avatar component renders img or a fallback div
-    await expect(page.locator(".sidebar-wrapper img, .sidebar-wrapper .rounded-full").first()).toBeVisible();
+    await expect(
+      page.locator(".sidebar-wrapper img, .sidebar-wrapper .rounded-full").first()
+    ).toBeVisible();
   });
 
   test("profile has settings button", async ({ page }) => {

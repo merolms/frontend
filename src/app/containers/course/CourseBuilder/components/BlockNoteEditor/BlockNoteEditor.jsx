@@ -386,12 +386,13 @@ function YoutubeUrlDialog({ onInsert, onClose }) {
                 if (e.key === "Enter") handleSubmit();
                 if (e.key === "Escape") onClose();
               }}
-              className={`border-border bg-bg-surface text-text-primary mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary ${error ? "border-red-500" : ""}`}
+              className={`border-border bg-bg-surface text-text-primary focus:ring-primary mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring-2 ${error ? "border-red-500" : ""}`}
             />
             {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
           </div>
           <p className="text-text-muted text-xs">
-            Paste a YouTube URL (youtube.com/watch?v=..., youtu.be/...) or just the 11-character video ID.
+            Paste a YouTube URL (youtube.com/watch?v=..., youtu.be/...) or just the 11-character
+            video ID.
           </p>
         </div>
 

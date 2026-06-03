@@ -16,11 +16,23 @@ test.describe("Dashboard", () => {
   test("stats cards are displayed", async ({ page }) => {
     // Wait for stats to load from /stats API
     // Use the stat card labels (inside .text-text-muted.text-xs divs in the stats grid)
-    const statsGrid = page.locator(".grid .text-text-muted.text-xs").first().locator("..").locator("..");
-    await expect(page.locator(".grid .text-text-muted.text-xs").filter({ hasText: "Total Courses" })).toBeVisible({ timeout: 10000 });
-    await expect(page.locator(".grid .text-text-muted.text-xs").filter({ hasText: "Total Users" })).toBeVisible();
-    await expect(page.locator(".grid .text-text-muted.text-xs").filter({ hasText: "Total Teams" })).toBeVisible();
-    await expect(page.locator(".grid .text-text-muted.text-xs").filter({ hasText: "Categories" })).toBeVisible();
+    const statsGrid = page
+      .locator(".grid .text-text-muted.text-xs")
+      .first()
+      .locator("..")
+      .locator("..");
+    await expect(
+      page.locator(".grid .text-text-muted.text-xs").filter({ hasText: "Total Courses" })
+    ).toBeVisible({ timeout: 10000 });
+    await expect(
+      page.locator(".grid .text-text-muted.text-xs").filter({ hasText: "Total Users" })
+    ).toBeVisible();
+    await expect(
+      page.locator(".grid .text-text-muted.text-xs").filter({ hasText: "Total Teams" })
+    ).toBeVisible();
+    await expect(
+      page.locator(".grid .text-text-muted.text-xs").filter({ hasText: "Categories" })
+    ).toBeVisible();
   });
 
   test("activity feed section is visible", async ({ page }) => {

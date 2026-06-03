@@ -1,5 +1,5 @@
-import React from 'react'
-import * as TooltipPrimitive from '@radix-ui/react-tooltip'
+import React from "react";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 
 export default function ToolTip({ content, children }) {
   return (
@@ -8,7 +8,7 @@ export default function ToolTip({ content, children }) {
         <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
         <TooltipPrimitive.Portal>
           <TooltipPrimitive.Content
-            className="bg-neutral-900 text-white text-xs px-2 py-1 rounded-md shadow-md z-50"
+            className="z-50 rounded-md bg-neutral-900 px-2 py-1 text-xs text-white shadow-md"
             sideOffset={5}
           >
             {content}
@@ -17,5 +17,5 @@ export default function ToolTip({ content, children }) {
         </TooltipPrimitive.Portal>
       </TooltipPrimitive.Root>
     </TooltipPrimitive.Provider>
-  )
+  );
 }

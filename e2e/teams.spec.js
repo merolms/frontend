@@ -4,7 +4,7 @@ import { DEMO_USERS, mockLogin } from "./helpers";
 
 async function navigateToTeams(page) {
   await mockLogin(page, DEMO_USERS.admin);
-  await page.locator("nav a[title=\"Teams\"]").first().click();
+  await page.locator('nav a[title="Teams"]').first().click();
   await expect(page).toHaveURL("/teams");
   // Wait for the team list to load (subtitle shows count)
   await expect(page.getByText(/teams total/)).toBeVisible({ timeout: 10000 });
@@ -14,7 +14,9 @@ async function navigateToTeamDetail(page) {
   await mockLogin(page, DEMO_USERS.admin);
   await page.goto("/teams/1");
   // Wait for the detail page to load — Add Member button appears after data loads
-  await expect(page.locator("button").filter({ hasText: "Add Member" })).toBeVisible({ timeout: 15000 });
+  await expect(page.locator("button").filter({ hasText: "Add Member" })).toBeVisible({
+    timeout: 15000,
+  });
 }
 
 test.describe("Team Management — List Page", () => {
@@ -23,7 +25,9 @@ test.describe("Team Management — List Page", () => {
   });
 
   test("teams page loads with team cards", async ({ page }) => {
-    await expect(page.locator("h3").filter({ hasText: "Engineering Team" })).toBeVisible({ timeout: 15000 });
+    await expect(page.locator("h3").filter({ hasText: "Engineering Team" })).toBeVisible({
+      timeout: 15000,
+    });
   });
 
   test("teams page shows correct team count", async ({ page }) => {
@@ -35,8 +39,12 @@ test.describe("Team Management — List Page", () => {
   });
 
   test("team cards display team names", async ({ page }) => {
-    await expect(page.locator("h3").filter({ hasText: "Engineering Team" })).toBeVisible({ timeout: 15000 });
-    await expect(page.locator("h3").filter({ hasText: "Design Team" })).toBeVisible({ timeout: 15000 });
+    await expect(page.locator("h3").filter({ hasText: "Engineering Team" })).toBeVisible({
+      timeout: 15000,
+    });
+    await expect(page.locator("h3").filter({ hasText: "Design Team" })).toBeVisible({
+      timeout: 15000,
+    });
   });
 
   test("clicking a team card navigates to team detail", async ({ page }) => {
@@ -131,7 +139,9 @@ test.describe("Team Management — Team Detail", () => {
   });
 
   test("team detail page renders correctly", async ({ page }) => {
-    await expect(page.locator("h1.page-title").filter({ hasText: "Engineering Team" })).toBeVisible({ timeout: 15000 });
+    await expect(page.locator("h1.page-title").filter({ hasText: "Engineering Team" })).toBeVisible(
+      { timeout: 15000 }
+    );
   });
 
   test("team detail shows team info", async ({ page }) => {
@@ -163,10 +173,9 @@ test.describe("Team Management — Edit Team", () => {
     await mockLogin(page, DEMO_USERS.admin);
     await page.goto("/teams/1/edit");
     await page.waitForLoadState("domcontentloaded");
-    await page.waitForFunction(
-      () => document.querySelector("textarea") !== null,
-      { timeout: 10000 }
-    );
+    await page.waitForFunction(() => document.querySelector("textarea") !== null, {
+      timeout: 10000,
+    });
   });
 
   test("edit team page renders correctly", async ({ page }) => {
@@ -274,7 +283,7 @@ test.describe("Team Management — Remove Member", () => {
 test.describe("Team Management — Permissions", () => {
   test("student is redirected from teams page (no permission)", async ({ page }) => {
     await mockLogin(page, DEMO_USERS.student);
-    await page.locator("nav a[title=\"Teams\"]").first().click();
+    await page.locator('nav a[title="Teams"]').first().click();
     await expect(page).toHaveURL("/unauthorized");
   });
 });

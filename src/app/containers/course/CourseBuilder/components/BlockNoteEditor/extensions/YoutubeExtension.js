@@ -5,7 +5,8 @@ import { mergeAttributes } from "@tiptap/core";
 
 const isValidYoutubeUrl = (url) => {
   if (!url) return false;
-  const pattern = /^(https?:\/\/)?(www\.|m\.)?(youtube\.com\/(watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})([^#\&\?]*)*$/;
+  const pattern =
+    /^(https?:\/\/)?(www\.|m\.)?(youtube\.com\/(watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})([^#\&\?]*)*$/;
   return pattern.test(url);
 };
 
@@ -138,10 +139,7 @@ export const YoutubeNode = Node.create({
 
     return [
       "div",
-      mergeAttributes(
-        { "data-youtube-video": "" },
-        this.options.HTMLAttributes,
-      ),
+      mergeAttributes({ "data-youtube-video": "" }, this.options.HTMLAttributes),
       [
         "iframe",
         mergeAttributes(HTMLAttributes, {
@@ -150,7 +148,8 @@ export const YoutubeNode = Node.create({
           height: HTMLAttributes.height || this.options.height,
           frameborder: "0",
           allowfullscreen: "true",
-          allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
+          allow:
+            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
         }),
       ],
     ];

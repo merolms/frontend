@@ -1,1 +1,3 @@
-export default function PlanBadge() { return null }
+export default function PlanBadge() {
+  return null;
+}

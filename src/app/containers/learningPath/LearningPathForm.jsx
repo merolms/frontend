@@ -1,4 +1,14 @@
-import { BookOpen, ChevronDown, ChevronUp, Clock, Plus, Sparkles, Trash2, X, AlertCircle } from "lucide-react";
+import {
+  BookOpen,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Plus,
+  Sparkles,
+  Trash2,
+  X,
+  AlertCircle,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -200,11 +210,15 @@ const LearningPathForm = () => {
       <form onSubmit={handleSubmit} className="max-w-4xl">
         {/* API error banner */}
         {apiError && (
-          <div className="mb-4 flex items-center justify-between rounded-lg border border-error/30 bg-error/10 p-3">
+          <div className="border-error/30 bg-error/10 mb-4 flex items-center justify-between rounded-lg border p-3">
             <p className="text-error flex items-center gap-2 text-sm">
               <AlertCircle size={14} /> {apiError}
             </p>
-            <button type="button" onClick={() => setApiError(null)} className="text-error/60 hover:text-error">
+            <button
+              type="button"
+              onClick={() => setApiError(null)}
+              className="text-error/60 hover:text-error"
+            >
               <X size={14} />
             </button>
           </div>

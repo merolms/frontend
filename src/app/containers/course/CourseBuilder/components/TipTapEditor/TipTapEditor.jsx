@@ -1,13 +1,13 @@
-import './styles.scss'
+import "./styles.scss";
 
-import { TextStyleKit } from '@tiptap/extension-text-style'
-import { EditorContent, useEditor } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import React from 'react'
+import { TextStyleKit } from "@tiptap/extension-text-style";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import React from "react";
 
-import { MenuBar } from './MenuBar.jsx'
+import { MenuBar } from "./MenuBar.jsx";
 
-const extensions = [TextStyleKit, StarterKit]
+const extensions = [TextStyleKit, StarterKit];
 
 export default () => {
   const editor = useEditor({
@@ -42,12 +42,12 @@ export default () => {
   — Mom
 </blockquote>
 `,
-  })
+  });
 
   return (
     <>
       <MenuBar editor={editor} />
       <EditorContent editor={editor} />
     </>
-  )
-}
+  );
+};

@@ -2,10 +2,7 @@ import { ChevronRight, Clock, Layers, Plus, Search, Sparkles, Star, Users } from
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import {
-  fetchLearningPaths,
-  getLearningPathCategories,
-} from "@/app/services/learningPathService";
+import { fetchLearningPaths, getLearningPathCategories } from "@/app/services/learningPathService";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";

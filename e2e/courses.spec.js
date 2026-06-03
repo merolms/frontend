@@ -5,7 +5,7 @@ import { DEMO_USERS, mockLogin } from "./helpers";
 test.describe("Courses Page", () => {
   test.beforeEach(async ({ page }) => {
     await mockLogin(page, DEMO_USERS.admin);
-    await page.locator("nav a[title=\"Courses\"]").first().click();
+    await page.locator('nav a[title="Courses"]').first().click();
     await expect(page).toHaveURL("/courses");
   });
 
@@ -16,7 +16,7 @@ test.describe("Courses Page", () => {
 
   test("filter controls are visible", async ({ page }) => {
     // The course page has a search input within a Paper component
-    await expect(page.locator("input[placeholder=\"Search courses...\"]")).toBeVisible();
+    await expect(page.locator('input[placeholder="Search courses..."]')).toBeVisible();
   });
 
   test("course content is displayed", async ({ page }) => {
@@ -29,7 +29,7 @@ test.describe("Courses Page", () => {
 test.describe("Courses Page - Student", () => {
   test("student can access courses page", async ({ page }) => {
     await mockLogin(page, DEMO_USERS.student);
-    await page.locator("nav a[title=\"Courses\"]").first().click();
+    await page.locator('nav a[title="Courses"]').first().click();
     await expect(page).toHaveURL("/courses");
   });
 });
