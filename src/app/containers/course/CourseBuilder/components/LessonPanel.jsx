@@ -96,7 +96,7 @@ const LessonPanel = ({
 
   return (
     <aside
-      className="flex flex-col overflow-hidden"
+      className="flex flex-col overflow-hidden border-r-1 border-sky-300"
       style={{
         width,
         flexShrink: 0,
