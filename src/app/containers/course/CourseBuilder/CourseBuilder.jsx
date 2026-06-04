@@ -19,6 +19,7 @@ import { TipTapEditor } from "@/editor/TipTapEditor";
 import MeroEduEditor from "@/editor/Editor";
 // import TipTapEditor from "./components/TipTapEditor/TipTapEditor";
 import LessonPanel from "./components/LessonPanel";
+import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 
 // ─── BLOCKS → BlockNote DOC CONVERTER ───────────────────────────
 // Converts blocks from GET /lessons/{id}/blocks API into BlockNote
@@ -424,7 +425,7 @@ const CourseBuilder = () => {
         <SideBar />
         <div
           style={{
-            marginLeft: 70,
+            marginLeft: 0,
             flex: 1,
             display: "flex",
             alignItems: "center",
@@ -447,7 +448,7 @@ const CourseBuilder = () => {
 
       <div
         style={{
-          marginLeft: 70,
+          marginLeft: 0,
           flex: 1,
           display: "flex",
           flexDirection: "column",
@@ -538,6 +539,7 @@ const CourseBuilder = () => {
             <TopBarButton onClick={handleSave} disabled={saving} variant="secondary">
               {saving ? <Spinner /> : <SaveIcon />} Save
             </TopBarButton>
+            <ThemeSwitcher />
           </div>
         </header>
 

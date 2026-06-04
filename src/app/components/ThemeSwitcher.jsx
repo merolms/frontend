@@ -16,9 +16,6 @@ export default function ThemeSwitcher() {
         justifyContent: 'space-between' 
       }}
     >
-      <span className="text-[10px] font-bold uppercase text-text-muted" style={{ flexShrink: 0 }}>
-        {currentMode}
-      </span>
       <div className="flex gap-1">
         <button 
           onClick={() => changeMode("light")} 

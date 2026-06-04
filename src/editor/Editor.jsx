@@ -129,6 +129,7 @@ function MeroEduEditor({ initialContent, onSave, onContentChange, editable = tru
     extensions,
     content: DEFAULT_CONTENT,
     immediatelyRender: false,
+    autofocus: "start",
     onCreate: () => {
       setTimeout(() => setEditorReady(true), 0);
     },

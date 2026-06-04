@@ -307,7 +307,7 @@ const CoursePreview = () => {
       <div style={{ display: "flex" }}>
         <div
           style={{
-            marginLeft: 70,
+            marginLeft: 0,
             flex: 1,
             display: "flex",
             alignItems: "center",
@@ -341,7 +341,7 @@ const CoursePreview = () => {
       <SideBar />
       <div
         style={{
-          marginLeft: 70,
+          marginLeft: 0,
           flex: 1,
           display: "flex",
           flexDirection: "column",
