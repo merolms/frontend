@@ -43,7 +43,7 @@
   --editor-content-border: rgba(229, 231, 235, 0.4);
   --editor-code-bg: #0d0d0d;
   --editor-code-text: #ffffff;
-  --editor-table-border: rgba(139, 139, 139, 0.4);
+  --editor-table-border: rgba(71, 7, 7, 0.4);
   --editor-table-header: rgba(217, 217, 217, 0.4);
   --editor-table-selected: rgba(139, 139, 139, 0.2);
 
@@ -1647,8 +1647,6 @@
   box-shadow: none !important;
 }
 
-
-
 .tiptap {
   :first-child {
     margin-top: 0;
@@ -1664,7 +1662,6 @@
 
     td,
     th {
-      border: 1px solid var(--gray-3);
       box-sizing: border-box;
       min-width: 1em;
       padding: 6px 8px;
@@ -1684,7 +1681,7 @@
 
     .selectedCell:after {
       background: var(--gray-2);
-      content: '';
+      content: "";
       left: 0;
       right: 0;
       top: 0;

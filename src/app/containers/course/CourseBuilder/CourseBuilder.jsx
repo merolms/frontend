@@ -20,6 +20,7 @@ import MeroEduEditor from "@/editor/Editor";
 // import TipTapEditor from "./components/TipTapEditor/TipTapEditor";
 import LessonPanel from "./components/LessonPanel";
 import ThemeSwitcher from "@/app/components/ThemeSwitcher";
+import { TruckElectricIcon } from "lucide-react";
 
 // ─── BLOCKS → BlockNote DOC CONVERTER ───────────────────────────
 // Converts blocks from GET /lessons/{id}/blocks API into BlockNote
@@ -164,6 +165,7 @@ const CourseBuilder = () => {
   const [content, setContent] = useState("");
   const [panelWidth, setPanelWidth] = useState(300);
   const [isResizing, setIsResizing] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const resizeStart = useRef({ x: 0, width: 0 });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -171,7 +173,6 @@ const CourseBuilder = () => {
   const [addingLesson, setAddingLesson] = useState(false);
   const [error, setError] = useState(null);
   const [words, setWords] = useState(0);
-
   useEffect(() => {
     loadData();
   }, [id]);
@@ -337,8 +338,8 @@ const CourseBuilder = () => {
     (e) => {
       e.preventDefault();
       setIsResizing(true);
+      setIsDragging(TruckElectricIcon);
       resizeStart.current = { x: e.clientX, width: panelWidth };
-
       const handleMove = (ev) => {
         const dx = ev.clientX - resizeStart.current.x;
         const next = Math.max(160, Math.min(480, resizeStart.current.width + dx));
@@ -349,6 +350,7 @@ const CourseBuilder = () => {
         setIsResizing(false);
         window.removeEventListener("mousemove", handleMove);
         window.removeEventListener("mouseup", handleUp);
+        setIsDragging(false);
       };
 
       window.addEventListener("mousemove", handleMove);
@@ -589,6 +591,7 @@ const CourseBuilder = () => {
             adding={addingLesson}
             width={panelWidth}
             onReorder={handleReorderLessons}
+            isDragging={isDragging}
           />
 
           {/* Resize handle */}

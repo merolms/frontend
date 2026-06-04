@@ -12,6 +12,7 @@ const LessonPanel = ({
   onReorder,
   adding = false,
   width = 300,
+  isDragging = false,
 }) => {
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState("");
@@ -96,7 +97,7 @@ const LessonPanel = ({
 
   return (
     <aside
-      className="flex flex-col overflow-hidden border-r-1 border-sky-300"
+      className={`flex flex-col overflow-hidden ${isDragging ? "border-r-4 border-sky-300 " : "border-r-1 border-sky-100"}`}
       style={{
         width,
         flexShrink: 0,
