@@ -1,4 +1,4 @@
-import { Bell, Check, CheckCheck } from "lucide-react";
+import { Bell, Check, CheckCheck, Moon, Sun, Monitor, ChevronDown } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ import {
   markAsRead,
 } from "@/app/services/notificationService";
 import { logoutUser } from "@/redux/slices/authSlice";
+import { useTheme } from "@/app/context/ThemeContext";
 
 const typeColors = {
   enrollment: "#22C55E",
@@ -102,7 +103,7 @@ export default function DashboardLayout({ children, title, subtitle }) {
       <SideBar />
       <div className="dashboard-main">
         {/* Top bar */}
-        <div className="border-border bg-bg-surface/90 sticky top-0 z-10 flex h-20 items-center justify-between border-b px-6 backdrop-blur-sm">
+        <div className="border-border bg-bg-surface sticky top-0 z-10 flex h-20 items-center justify-between border-b px-6">
           {/* Left: page title */}
           <div>
             <h1 className="page-title">{pageTitle}</h1>
@@ -132,7 +133,7 @@ export default function DashboardLayout({ children, title, subtitle }) {
                   className="border-border bg-bg-surface absolute top-full right-0 z-50 mt-2 w-80 overflow-hidden rounded-xl border shadow-lg"
                 >
                   {/* Header */}
-                  <div className="border-border bg-bg-surface-hover/50 flex items-center justify-between border-b px-4 py-3">
+                  <div className="border-border bg-bg-surface-hover flex items-center justify-between border-b px-4 py-3">
                     <h3 className="text-text-primary text-sm font-semibold">Notifications</h3>
                     {unreadCount > 0 && (
                       <button
@@ -199,7 +200,7 @@ export default function DashboardLayout({ children, title, subtitle }) {
 
                   {/* Footer */}
                   {notifications.length > 0 && (
-                    <div className="border-border bg-bg-surface-hover/50 border-t px-4 py-2.5 text-center">
+                    <div className="border-border bg-bg-surface-hover border-t px-4 py-2.5 text-center">
                       <button
                         className="text-primary cursor-pointer text-xs hover:underline"
                         onClick={() => setShowDropdown(false)}

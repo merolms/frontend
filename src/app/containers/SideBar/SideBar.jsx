@@ -49,10 +49,7 @@ export default function SideBar() {
 
   return (
     <div className="sidebar-wrapper">
-      <div
-        className="flex h-14 items-center justify-center border-b"
-        style={{ borderColor: "var(--border-primary)" }}
-      >
+      <div className="sidebar-logo">
         <Link
           to="/"
           className="group flex h-10 w-10 items-center justify-center rounded-lg"
@@ -75,7 +72,7 @@ export default function SideBar() {
                 key={item.path}
                 to={item.path}
                 title={item.label}
-                className={`group mx-auto flex h-10 w-10 items-center justify-center rounded-lg transition-colors ${active ? "bg-primary text-white" : "text-text-muted hover:bg-bg-surface-hover hover:text-text-primary"}`}
+                className={active ? "sidebar-nav-item-active" : "sidebar-nav-item"}
               >
                 <Icon size={18} />
               </Link>
@@ -89,7 +86,7 @@ export default function SideBar() {
           <>
             <button
               onClick={() => navigate("/profile")}
-              className="hover:bg-bg-surface-hover flex w-full items-center gap-2 rounded-lg p-2 transition-colors"
+              className="sidebar-user-btn"
               title={`${user.firstName} ${user.lastName}`}
             >
               {user.avatar ? (
@@ -107,19 +104,7 @@ export default function SideBar() {
                 </div>
               )}
             </button>
-            <button
-              onClick={handleLogout}
-              title="Sign Out"
-              className="text-text-muted mx-auto mt-1 flex h-10 w-10 items-center justify-center rounded-lg transition-colors"
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(239,68,68,0.1)";
-                e.currentTarget.style.color = "var(--error)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "var(--text-muted)";
-              }}
-            >
+            <button onClick={handleLogout} title="Sign Out" className="sidebar-signout-btn">
               <LogOut size={16} />
             </button>
           </>

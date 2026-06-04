@@ -1,5 +1,5 @@
 import { NodeViewWrapper } from "@tiptap/react";
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Play,
   Plus,
@@ -23,63 +23,8 @@ import {
 import { useEditorProvider } from "../../../contexts/EditorContext";
 import { PLAYGROUND_LANGUAGES, getLanguageById } from "./languages";
 import { v4 as uuidv4 } from "uuid";
-import CodeMirror from "@uiw/react-codemirror";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
-const cmStyles = { fontSize: "14px", fontFamily: "'JetBrains Mono', 'Fira Code', monospace" };
-const cmClassName = [
-  "[&_.cm-editor]:!bg-[#1a1b26]",
-  "[&_.cm-gutters]:!bg-[#1a1b26]",
-  "[&_.cm-gutters]:!border-r-transparent",
-  "[&_.cm-activeLineGutter]:!bg-[#24283b]",
-  "[&_.cm-activeLine]:!bg-[#24283b]",
-  "[&_.cm-editor]:!outline-none",
-  "[&_.cm-focused]:!outline-none",
-  "[&_.cm-scroller]:!overflow-auto",
-  "[&_.cm-line]:!px-4",
-].join(" ");
-
-async function getLangExtension(codemirrorLang) {
-  switch (codemirrorLang) {
-    case "python": {
-      const { python } = await import("@codemirror/lang-python");
-      return python();
-    }
-    case "javascript": {
-      const { javascript } = await import("@codemirror/lang-javascript");
-      return javascript();
-    }
-    case "java": {
-      const { java } = await import("@codemirror/lang-java");
-      return java();
-    }
-    case "cpp": {
-      const { cpp } = await import("@codemirror/lang-cpp");
-      return cpp();
-    }
-    case "rust": {
-      const { rust } = await import("@codemirror/lang-rust");
-      return rust();
-    }
-    case "go": {
-      const { go } = await import("@codemirror/lang-go");
-      return go();
-    }
-    case "php": {
-      const { php } = await import("@codemirror/lang-php");
-      return php();
-    }
-    case "sql": {
-      const { sql } = await import("@codemirror/lang-sql");
-      return sql();
-    }
-    default: {
-      const { javascript } = await import("@codemirror/lang-javascript");
-      return javascript();
-    }
-  }
-}
 
 function CodePlaygroundComponent(props) {
   const editorState = useEditorProvider();
@@ -92,18 +37,11 @@ function CodePlaygroundComponent(props) {
   const [testCases, setTestCases] = useState(props.node.attrs.testCases || []);
   const [hints, setHints] = useState(props.node.attrs.hints || []);
   const [activeTab, setActiveTab] = useState("code");
-  const [langExtensions, setLangExtensions] = useState([]);
-  const [theme, setTheme] = useState(null);
   const [copied, setCopied] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [hintIndex, setHintIndex] = useState(0);
 
   const currentLang = getLanguageById(languageId) || PLAYGROUND_LANGUAGES[0];
-
-  useEffect(() => {
-    getLangExtension(currentLang.codemirrorLang).then((ext) => setLangExtensions([ext]));
-    import("@uiw/codemirror-theme-tokyo-night").then((m) => setTheme(() => m.tokyoNight));
-  }, [currentLang.codemirrorLang]);
 
   const saveAttrs = useCallback(
     (updates) => {
@@ -214,15 +152,9 @@ function CodePlaygroundComponent(props) {
           )}
 
           {/* Editor */}
-          <CodeMirror
-            value={code}
-            onChange={(val) => setCode(val)}
-            extensions={langExtensions}
-            theme={theme || undefined}
-            style={cmStyles}
-            className={cmClassName}
-            basicSetup={{ lineNumbers: true, foldGutter: false }}
-          />
+          <pre className="overflow-auto p-4 font-mono text-sm whitespace-pre-wrap text-white/80">
+            {code}
+          </pre>
 
           {/* Notice */}
           <div className="flex items-center gap-2 border-t border-white/5 bg-[#16161e] px-4 py-3 text-xs text-white/30">
@@ -354,17 +286,15 @@ function CodePlaygroundComponent(props) {
 
         {/* Tab content */}
         {activeTab === "code" && (
-          <CodeMirror
+          <textarea
             value={code}
-            onChange={(val) => {
-              setCode(val);
-              saveAttrs({ starterCode: val });
+            onChange={(e) => {
+              setCode(e.target.value);
+              saveAttrs({ starterCode: e.target.value });
             }}
-            extensions={langExtensions}
-            theme={theme || undefined}
-            style={cmStyles}
-            className={cmClassName}
-            basicSetup={{ lineNumbers: true, foldGutter: true }}
+            rows={16}
+            spellCheck={false}
+            className="w-full resize-none bg-[#1a1b26] p-4 font-mono text-sm text-white/80 outline-none"
           />
         )}
 

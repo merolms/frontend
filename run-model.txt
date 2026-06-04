@@ -1,0 +1,1 @@
+llama-server -hf midorin-Linux/gpt-oss-20b-Coding-Distill-GGUF --host 0.0.0.0 --port 1234 -c 64000 --no-mmproj --swa-full --ctx-checkpoints 64 --kv-unified

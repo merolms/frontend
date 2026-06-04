@@ -163,7 +163,7 @@ const LearningPathDetail = () => {
         </div>
 
         {/* Progress bar */}
-        <div className="bg-bg-surface-hover/50 border-border border-t px-6 py-3">
+        <div className="bg-bg-surface-hover border-border border-t px-6 py-3">
           <div className="text-text-muted mb-2 flex items-center justify-between text-xs">
             <span>Learning Journey Progress</span>
             <span>{path.totalCourses} steps</span>
@@ -185,7 +185,7 @@ const LearningPathDetail = () => {
         {/* Step sidebar */}
         <div className="col-span-2">
           <div className="border-border bg-bg-surface overflow-hidden rounded-xl border shadow-sm">
-            <div className="border-border bg-bg-surface-hover/50 border-b px-4 py-3">
+            <div className="border-border bg-bg-surface-hover border-b px-4 py-3">
               <h3 className="text-text-primary text-sm font-semibold">Course Steps</h3>
             </div>
             <div className="max-h-[500px] space-y-1 overflow-y-auto p-2">

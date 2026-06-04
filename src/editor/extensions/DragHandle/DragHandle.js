@@ -120,9 +120,10 @@ function createDragHandlePlugin() {
         draggedBlockPos = nodePos;
         event.dataTransfer.effectAllowed = "move";
         event.dataTransfer.setData("text/plain", "");
+        const editorContent = view.dom.closest(".editor-content-inner");
+        const editorWidth = editorContent ? editorContent.offsetWidth : view.dom.offsetWidth;
         const dragImage = hoveredBlock.cloneNode(true);
-        dragImage.style.cssText =
-          "position:absolute;top:-9999px;opacity:0.8;background:white;padding:8px;border-radius:4px;max-width:300px;";
+        dragImage.style.cssText = `position:absolute;top:-9999px;opacity:0.85;background:var(--editor-content-bg);padding:12px 16px;border-radius:6px;width:${editorWidth}px;max-width:${editorWidth}px;box-sizing:border-box;overflow:hidden;`;
         document.body.appendChild(dragImage);
         event.dataTransfer.setDragImage(dragImage, 20, 20);
         setTimeout(() => dragImage.remove(), 0);

@@ -406,7 +406,7 @@ const LearningPathForm = () => {
               {form.courses.map((course, idx) => (
                 <div
                   key={course.id}
-                  className="border-border bg-bg-surface-hover/50 flex items-center gap-3 rounded-lg border p-3"
+                  className="border-border bg-bg-surface-hover flex items-center gap-3 rounded-lg border p-3"
                   style={{ borderLeft: `3px solid ${form.color}` }}
                 >
                   {/* Step number */}

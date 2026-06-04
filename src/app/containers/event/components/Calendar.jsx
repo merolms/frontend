@@ -100,7 +100,7 @@ const Calendar = ({ onDateClick, onEventClick, selectedDate }) => {
   return (
     <div className="border-border bg-bg-surface overflow-hidden rounded-xl border shadow-sm">
       {/* Header */}
-      <div className="border-border bg-bg-surface-hover/50 flex items-center justify-between border-b px-4 py-3">
+      <div className="border-border bg-bg-surface-hover flex items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-3">
           <h3 className="text-text-primary text-sm font-semibold">
             {MONTHS[month]} {year}

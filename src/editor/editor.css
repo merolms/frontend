@@ -8,9 +8,9 @@
  :root {
   --editor-bg: rgb(241, 245, 249);
   --editor-bg-dot: rgba(203, 213, 225, 1);
-  --editor-surface: rgb(108, 18, 18);
-  --editor-surface-hover: #001c37;
-  --editor-surface-active: #f3f4f6;
+  --editor-surface: #ffffff;
+  --editor-surface-hover: #f3f4f6;
+  --editor-surface-active: #e5e7eb;
   --editor-overlay: rgba(255, 255, 255, 0.9);
 
   --editor-text: #4b5563;
@@ -31,13 +31,13 @@
   --editor-warning: #f59e0b;
   --editor-warning-light: #fef3c7;
 
-  --editor-drag-bg: white;
+  --editor-drag-bg: #ffffff;
   --editor-drag-hover: #f3f4f6;
   --editor-drag-active: #e5e7eb;
 
-  --editor-tooltip-bg: rgba(255, 255, 255, 0.95);
-  --editor-tooltip-text: #4b5563;
-  --editor-tooltip-shadow: rgba(0, 0, 0, 0.08);
+  --editor-tooltip-bg: #1f2937;
+  --editor-tooltip-text: #f9fafb;
+  --editor-tooltip-shadow: rgba(0, 0, 0, 0.4);
 
   --editor-content-bg: white;
   --editor-content-border: rgba(229, 231, 235, 0.4);
@@ -51,6 +51,48 @@
 
   --editor-shadow-color: rgba(209, 213, 219, 0.25);
   --editor-shadow-strong: rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] {
+  --editor-bg: rgb(30, 41, 59);
+  --editor-bg-dot: rgba(71, 85, 105, 1);
+  --editor-surface: rgb(51, 65, 85);
+  --editor-surface-hover: rgb(71, 85, 105);
+  --editor-surface-active: rgb(51, 65, 85);
+
+  --editor-text: #cbd5e1;
+  --editor-text-heading: #f1f5f9;
+  --editor-text-muted: #94a3b8;
+  --editor-text-faint: #64748b;
+  --editor-text-inverse: #1e293b;
+
+  --editor-border: rgb(51, 65, 85);
+  --editor-border-subtle: rgba(71, 85, 105, 0.4);
+  --editor-border-ghost: rgba(71, 85, 105, 0.25);
+
+  --editor-accent: #60a5fa;
+  --editor-accent-hover: #3b82f6;
+  --editor-accent-light: rgba(96, 165, 250, 0.12);
+  --editor-danger: #f87171;
+  --editor-danger-light: rgba(248, 113, 113, 0.15);
+  --editor-warning: #fbbf24;
+  --editor-warning-light: rgba(251, 191, 36, 0.15);
+
+  --editor-drag-bg: #334155;
+  --editor-drag-hover: #475569;
+  --editor-drag-active: #64748b;
+
+  --editor-tooltip-bg: #1e2937;
+  --editor-tooltip-text: #f1f5f9;
+  --editor-tooltip-shadow: rgba(0, 0, 0, 0.5);
+
+  --editor-content-bg: rgb(15, 23, 42);
+  --editor-content-border: rgba(51, 65, 85, 0.5);
+
+  --editor-placeholder: #64748b;
+
+  --editor-shadow-color: rgba(0, 0, 0, 0.3);
+  --editor-shadow-strong: rgba(0, 0, 0, 0.4);
 }
 
 /* ─── Flipcard 3D ─── */
@@ -143,42 +185,53 @@
 /* ─── Drag Handle ─── */
 .editor-drag-handle {
   position: fixed;
-  height: 26px;
+  height: 28px;
   border-radius: 6px;
   display: flex;
   align-items: center;
   gap: 2px;
   background: var(--editor-drag-bg);
+  border: 1px solid var(--editor-border);
   opacity: 0;
   visibility: hidden;
   transition:
     opacity 150ms,
-    visibility 150ms,
-    padding 150ms;
-  z-index: var(--z-editor-toolbar);
+    visibility 150ms;
+  z-index: 10000;
   pointer-events: none;
   user-select: none;
   overflow: hidden;
-  padding: 0;
+  padding: 0 2px;
   box-shadow: 0 2px 8px var(--editor-shadow-color);
+  margin-right: 30px;
+  background-color: aliceblue;
 }
 .editor-drag-handle.visible {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
 }
-.editor-drag-handle:hover {
-  padding: 0 1px 0 0;
+.editor-drag-handle.is-dragging {
+  opacity: 0.6;
+}
+
+/* ─── Dragged block ─── */
+.editor-content-inner .ProseMirror > *.is-dragging {
+  background: var(--editor-accent-light);
+  border-radius: 6px;
+  outline: 2px solid var(--editor-accent);
+  outline-offset: -2px;
+  opacity: 0.7;
 }
 
 .editor-drag-handle .drag-grip {
-  width: 22px;
-  height: 26px;
+  width: 24px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: grab;
-  color: var(--editor-text-faint);
+  color: var(--editor-text-muted);
   transition:
     background 150ms,
     color 150ms;
@@ -198,10 +251,10 @@
 
 .editor-drag-handle .action-btn {
   width: 0;
-  height: 26px;
+  height: 28px;
   padding: 0;
   border: none;
-  background: var(--editor-drag-bg);
+  background: transparent;
   color: var(--editor-text-muted);
   cursor: pointer;
   display: flex;
@@ -218,9 +271,10 @@
   overflow: visible;
   flex-shrink: 0;
   position: relative;
+  border-radius: 4px;
 }
 .editor-drag-handle:hover .action-btn {
-  width: 28px;
+  width: 26px;
   opacity: 1;
   visibility: visible;
 }
@@ -239,7 +293,7 @@
   color: var(--editor-warning);
 }
 .editor-drag-handle .clear-btn:active {
-  background: rgba(251, 191, 36, 0.25);
+  background: var(--editor-warning-light);
   color: var(--editor-warning);
 }
 .editor-drag-handle .delete-btn:hover {
@@ -247,7 +301,7 @@
   color: var(--editor-danger);
 }
 .editor-drag-handle .delete-btn:active {
-  background: rgba(248, 113, 113, 0.25);
+  background: var(--editor-danger-light);
   color: var(--editor-danger);
 }
 
@@ -271,7 +325,7 @@
     0 10px 15px -3px var(--editor-tooltip-shadow),
     0 4px 6px -4px var(--editor-tooltip-shadow);
   outline: 1px solid var(--editor-border-subtle);
-  z-index: var(--z-tooltip);
+  z-index: 10001;
   transform: translateX(-50%);
 }
 .editor-drag-handle .action-btn:hover .tooltip-text {
@@ -287,7 +341,7 @@
   border-radius: 1px;
   opacity: 0;
   visibility: hidden;
-  z-index: var(--z-drag-overlay);
+  z-index: 9999;
   pointer-events: none;
   transition: opacity 100ms;
 }
@@ -353,6 +407,7 @@
   position: relative;
   padding: 5px 9px;
   z-index: 1;
+  background-color: aliceblue;
 }
 
 .tippy-box[data-animation="shift-away"][data-state="hidden"] {
@@ -372,11 +427,13 @@
 }
 
 .tippy-box[data-theme~="slash-commands"] {
-  background: transparent;
-  border: none;
-  box-shadow: none;
+  background: var(--editor-surface) !important;
+  border: 1px solid var(--editor-border) !important;
+  box-shadow: 0 4px 16px var(--editor-shadow-strong) !important;
   padding: 0;
+  border-radius: 8px;
 }
+
 .tippy-box[data-theme~="slash-commands"] > .tippy-content {
   padding: 0;
 }
@@ -386,14 +443,11 @@
 
 /* ─── Slash Commands ─── */
 .slash-commands-menu {
-  background: var(--editor-surface);
-  border: 1px solid var(--editor-border);
-  border-radius: 8px;
-  box-shadow: 0 4px 16px var(--editor-shadow-strong);
   max-height: 320px;
   overflow-y: auto;
   width: 280px;
   padding: 6px;
+  background: var(--editor-surface-hover);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 .slash-commands-menu::-webkit-scrollbar {
@@ -1466,12 +1520,14 @@
 .editor-content-inner {
   min-width: 100vh;
   margin: 0 auto;
-  background: var(--editor-content-bg);
+  /* background: var(--editor-content-bg); */
   border-radius: 10px;
+  opacity: 2;
   box-shadow:
     0 4px 6px -1px var(--editor-shadow-color),
     0 2px 4px -2px var(--editor-shadow-color);
-  outline: 1px solid var(--editor-content-border);
+  /* outline: 1px solid var(--editor-content-border); */
+  padding: 20px;
   min-height: 600px;
 }
 .editor-content-inner .ProseMirror {

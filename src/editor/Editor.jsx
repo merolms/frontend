@@ -152,19 +152,19 @@ function MeroEduEditor({ initialContent, onSave, onContentChange, editable = tru
           console.error("❌ Failed to parse Tiptap JSON content string:", error);
         }
       }
-      
+
       try {
-      editor.commands.setContent(parsedContent, {
-        emitUpdate: false, 
-        errorOnInvalidContent: true, 
-      });
-    } catch (error) {
-      console.error("❌ Failed to load content into Tiptap editor:", error);
-      editor.commands.setContent("", {
-        emitUpdate: false, 
-        errorOnInvalidContent: true, 
-      });
-    }
+        editor.commands.setContent(parsedContent, {
+          emitUpdate: false,
+          errorOnInvalidContent: true,
+        });
+      } catch (error) {
+        console.error("❌ Failed to load content into Tiptap editor:", error);
+        editor.commands.setContent("", {
+          emitUpdate: false,
+          errorOnInvalidContent: true,
+        });
+      }
 
       // 3. Prevent this block from executing ever again
       hasLoadedRef.current = true;

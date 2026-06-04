@@ -223,7 +223,7 @@ const AdminProgressTracking = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-border bg-bg-surface-hover/50 border-b">
+              <tr className="border-border bg-bg-surface-hover border-b">
                 <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">Learner</th>
                 <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">Course</th>
                 <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">Status</th>

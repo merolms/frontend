@@ -62,7 +62,7 @@ const LearningPathCard = ({ path, navigate }) => {
       </div>
 
       {/* Course preview strip */}
-      <div className="border-border bg-bg-surface-hover/50 border-t px-5 py-3">
+      <div className="border-border bg-bg-surface-hover border-t px-5 py-3">
         <div className="mb-2 flex items-center gap-1">
           <span className="text-text-secondary text-[11px] font-semibold">
             {path.totalCourses} Courses
