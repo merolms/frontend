@@ -10,3 +10,4 @@ test-results/
 playwright-report/
 e2e_test_results.log
 archive/
+unused_code/

@@ -180,7 +180,7 @@ function MeroEduEditor({ initialContent, onSave, onContentChange, editable = tru
         </div>
       </div>
       <div className="editor-content-area">
-        <div className="editor-content-inner">
+        <div className="editor-content-inner activity-editor-content-wrapper">
           <EditorContent editor={editor} dark={"false"} />
         </div>
       </div>

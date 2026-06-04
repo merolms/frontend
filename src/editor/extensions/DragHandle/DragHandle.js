@@ -237,7 +237,7 @@ function createDragHandlePlugin() {
     function positionHandle(block) {
       if (!dragHandle) return;
       const rect = block.getBoundingClientRect();
-      dragHandle.style.left = `${rect.left - 28}px`;
+      dragHandle.style.left = `${rect.left - 50}px`;
       dragHandle.style.top = `${rect.top + 4}px`;
     }
 

@@ -36,7 +36,7 @@ const TabsTrigger = React.forwardRef(({ className, value, ...props }, ref) => {
       onClick={() => ctx.setValue(value)}
       className={cn(
         "flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
-        ctx.value === value ? "bg-primary text-white" : "text-text-muted hover:text-text-primary",
+        ctx.value === value ? "bg-primary text-primary-foreground" : "text-text-muted hover:text-text-primary",
         className
       )}
       {...props}

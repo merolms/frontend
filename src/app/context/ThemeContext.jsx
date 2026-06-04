@@ -4,8 +4,10 @@ const THEME_KEY = "meroedu_theme";
 
 const ThemeContext = createContext();
 
-const getSystemTheme = () =>
-  window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+const getSystemTheme = () => {
+  if (typeof window === "undefined") return "system";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+};
 
 const getStoredTheme = () => {
   try {

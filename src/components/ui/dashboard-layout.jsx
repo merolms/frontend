@@ -12,6 +12,7 @@ import {
 } from "@/app/services/notificationService";
 import { logoutUser } from "@/redux/slices/authSlice";
 import { useTheme } from "@/app/context/ThemeContext";
+import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 
 const typeColors = {
   enrollment: "#22C55E",
@@ -235,6 +236,7 @@ export default function DashboardLayout({ children, title, subtitle }) {
                 )}
               </button>
             )}
+            <ThemeSwitcher />
           </div>
         </div>
 
