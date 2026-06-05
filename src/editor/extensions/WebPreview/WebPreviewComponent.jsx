@@ -3,7 +3,7 @@ import { AlignCenter, AlignLeft, AlignRight, Edit2, Save, Trash, X } from "lucid
 import { useEffect, useRef, useState } from "react";
 
 import Modal from "../../../components/ui/Modal";
-import { useEditorProvider } from "../../../contexts/EditorContext";
+import { useEditorProvider } from "@/contexts/EditorContext";
 
 const ALIGNMENTS = [
   { value: "left", label: <AlignLeft size={16} /> },

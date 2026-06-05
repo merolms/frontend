@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import { useEditorProvider } from "../../../contexts/EditorContext";
+import { useEditorProvider } from "@/contexts/EditorContext";
 import { cn } from "../../../lib/utils";
 
 const FlipcardExtension = (props) => {

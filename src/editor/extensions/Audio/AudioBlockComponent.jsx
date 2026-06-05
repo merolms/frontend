@@ -1,8 +1,9 @@
 import { NodeViewWrapper } from "@tiptap/react";
-import { AlertCircle, Headphones, Loader2, Upload } from "lucide-react";
+import { AlertCircle, Headphones, Loader2, RefreshCcw, Upload } from "lucide-react";
 import React from "react";
 
-import { useEditorProvider } from "../../../contexts/EditorContext";
+import { useEditorProvider } from "@/contexts/EditorContext";
+import { uploadEditorMedia } from "@/editor/utils/mediaUpload";
 
 function AudioBlockComponent(props) {
   const editorState = useEditorProvider();
@@ -11,23 +12,44 @@ function AudioBlockComponent(props) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
   const [isDragging, setIsDragging] = React.useState(false);
+  const [pendingFile, setPendingFile] = React.useState(null);
 
   const dataUrl = props.node.attrs.dataUrl;
+  const fileUrl = props.node.attrs.fileUrl;
   const fileName = props.node.attrs.fileName;
+  const audioUrl = fileUrl || dataUrl;
 
-  const handleFileRead = (file) => {
+  const uploadFile = async (file) => {
     setIsLoading(true);
     setError(null);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      props.updateAttributes({ dataUrl: e.target.result, fileName: file.name });
+    try {
+      const { url, fileName: uploadedFileName } = await uploadEditorMedia(
+        file,
+        editorState.lessonId,
+        props.node.attrs.blockObject?.id || props.node.attrs.id
+      );
+      props.updateAttributes({
+        fileUrl: url,
+        fileName: uploadedFileName || file.name,
+      });
+      setPendingFile(null);
+    } catch (err) {
+      setError(err.message || "Failed to upload audio");
+      setPendingFile(file);
+    } finally {
       setIsLoading(false);
-    };
-    reader.onerror = () => {
-      setError("Failed to read audio file");
-      setIsLoading(false);
-    };
-    reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFileRead = (file) => {
+    setPendingFile(file);
+    uploadFile(file);
+  };
+
+  const handleRetry = () => {
+    if (pendingFile) {
+      uploadFile(pendingFile);
+    }
   };
 
   const handleFileChange = (event) => {
@@ -43,21 +65,21 @@ function AudioBlockComponent(props) {
     e.preventDefault();
     setIsDragging(false);
   };
-  const handleDrop = (e) => {
+  const handleDrop = async (e) => {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
     if (file && ["audio/mpeg", "audio/wav", "audio/ogg", "audio/mp3"].includes(file.type)) {
-      handleFileRead(file);
+      await handleFileRead(file);
     }
   };
 
-  if (!isEditable && !dataUrl) return null;
+  if (!isEditable && !audioUrl) return null;
 
-  if (!isEditable && dataUrl) {
+  if (!isEditable && audioUrl) {
     return (
       <NodeViewWrapper className="block-audio w-full">
-        <audio src={dataUrl} controls className="w-full" />
+        <audio src={audioUrl} controls className="w-full" />
       </NodeViewWrapper>
     );
   }
@@ -72,13 +94,13 @@ function AudioBlockComponent(props) {
           </span>
         </div>
 
-        {dataUrl ? (
+        {audioUrl ? (
           <div>
-            <audio src={dataUrl} controls className="w-full" />
+            <audio src={audioUrl} controls className="w-full" />
             {fileName && <p className="mt-2 text-xs text-neutral-500">{fileName}</p>}
             {isEditable && (
               <button
-                onClick={() => props.updateAttributes({ dataUrl: null, fileName: null })}
+                onClick={() => props.updateAttributes({ fileUrl: null, dataUrl: null, fileName: null })}
                 className="mt-2 text-xs text-red-500 hover:text-red-700"
               >
                 Remove audio
@@ -121,9 +143,18 @@ function AudioBlockComponent(props) {
         )}
 
         {error && (
-          <div className="mt-3 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-500">
+          <div className="mt-3 flex items-center gap-3 rounded-lg bg-red-50 p-3 text-sm text-red-500">
             <AlertCircle size={16} />
-            {error}
+            <span className="flex-1">{error}</span>
+            <button
+              type="button"
+              onClick={handleRetry}
+              disabled={isLoading}
+              className="flex items-center gap-1 rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-200 disabled:opacity-50"
+            >
+              <RefreshCcw size={12} />
+              Retry
+            </button>
           </div>
         )}
       </div>

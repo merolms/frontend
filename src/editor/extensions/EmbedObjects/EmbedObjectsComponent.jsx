@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
-import { useEditorProvider } from "../../../contexts/EditorContext";
+import { useEditorProvider } from "@/contexts/EditorContext";
 import { cn } from "../../../lib/utils";
 
 const SCRIPT_BASED_EMBEDS = {

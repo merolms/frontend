@@ -7,14 +7,16 @@ import {
   Expand,
   Image,
   Loader2,
+  RefreshCcw,
   Upload,
 } from "lucide-react";
 import { Resizable } from "re-resizable";
 import React from "react";
 
 import Modal from "../../../components/ui/Modal";
-import { useEditorProvider } from "../../../contexts/EditorContext";
+import { useEditorProvider } from "@/contexts/EditorContext";
 import { constructAcceptValue } from "../../../lib/constants";
+import { uploadEditorMedia } from "@/editor/utils/mediaUpload";
 
 const SUPPORTED_FILES = constructAcceptValue(["jpg", "png", "webp", "gif"]);
 
@@ -26,6 +28,7 @@ function ImageBlockComponent(props) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isDragging, setIsDragging] = React.useState(false);
   const [error, setError] = React.useState(null);
+  const [pendingFile, setPendingFile] = React.useState(null);
   const [imageSize, setImageSize] = React.useState({
     width: props.node.attrs.size ? props.node.attrs.size.width : 300,
   });
@@ -33,33 +36,49 @@ function ImageBlockComponent(props) {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const dataUrl = props.node.attrs.dataUrl || null;
+  const fileUrl = props.node.attrs.fileUrl || null;
   const unsplashUrl = props.node.attrs.unsplash_url || null;
-  const imageUrl = dataUrl || unsplashUrl;
+  const imageUrl = fileUrl || dataUrl || unsplashUrl;
 
-  const handleFileRead = (file) => {
+  const uploadFile = async (file) => {
     setIsLoading(true);
     setError(null);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target.result;
+    try {
+      const { url, fileName: uploadedFileName } = await uploadEditorMedia(
+        file,
+        editorState.lessonId,
+        props.node.attrs.blockObject?.id || props.node.attrs.id
+      );
       props.updateAttributes({
-        dataUrl: result,
-        fileName: file.name,
+        fileUrl: url,
+        dataUrl: null,
+        fileName: uploadedFileName || file.name,
         size: imageSize,
         alignment: alignment,
       });
+      setPendingFile(null);
+    } catch (err) {
+      setError(err.message || "Failed to upload image");
+      setPendingFile(file);
+    } finally {
       setIsLoading(false);
-    };
-    reader.onerror = () => {
-      setError("Failed to read file");
-      setIsLoading(false);
-    };
-    reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRetry = () => {
+    if (pendingFile) {
+      uploadFile(pendingFile);
+    }
   };
 
   const handleImageChange = (event) => {
     const file = event.target.files?.[0];
     if (file) handleFileRead(file);
+  };
+
+  const handleFileRead = (file) => {
+    setPendingFile(file);
+    uploadFile(file);
   };
 
   const handleDragEnter = (e) => {
@@ -208,11 +227,19 @@ function ImageBlockComponent(props) {
             </div>
           )}
 
-          {/* Error display */}
           {error && (
-            <div className="mt-3 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm font-medium text-red-500">
+            <div className="mt-3 flex items-center gap-3 rounded-lg bg-red-50 p-3 text-sm text-red-500">
               <AlertCircle size={16} />
-              {error}
+              <span className="flex-1">{error}</span>
+              <button
+                type="button"
+                onClick={handleRetry}
+                disabled={isLoading}
+                className="flex items-center gap-1 rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-200 disabled:opacity-50"
+              >
+                <RefreshCcw size={12} />
+                Retry
+              </button>
             </div>
           )}
 

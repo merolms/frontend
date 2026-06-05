@@ -4,7 +4,7 @@ import React from "react";
 import ReactConfetti from "react-confetti";
 import { v4 as uuidv4 } from "uuid";
 
-import { useEditorProvider } from "../../../contexts/EditorContext";
+import { useEditorProvider } from "@/contexts/EditorContext";
 import { cn } from "../../../lib/utils";
 
 function QuizBlockComponent(props) {

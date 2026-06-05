@@ -192,6 +192,7 @@ const CoursePreview = () => {
                   initialContent={selectedLesson._content.content}
                   editable={false}
                   showToolbar={false}
+                  lessonId={selectedLesson?.id}
                 />
               </div>
             ) : (

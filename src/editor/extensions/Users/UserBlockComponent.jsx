@@ -1,7 +1,7 @@
 import { NodeViewWrapper } from "@tiptap/react";
 import { User } from "lucide-react";
 
-import { useEditorProvider } from "../../../contexts/EditorContext";
+import { useEditorProvider } from "@/contexts/EditorContext";
 
 function UserBlockComponent(props) {
   const editorState = useEditorProvider();

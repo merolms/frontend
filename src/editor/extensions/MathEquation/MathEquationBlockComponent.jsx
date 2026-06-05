@@ -5,7 +5,7 @@ import { BookOpen, ChevronDown, ExternalLink, Lightbulb, Save, Sigma } from "luc
 import React from "react";
 import { BlockMath } from "react-katex";
 
-import { useEditorProvider } from "../../../contexts/EditorContext";
+import { useEditorProvider } from "@/contexts/EditorContext";
 
 const mathTemplates = [
   { name: "Fraction", latex: "\\frac{a}{b}", description: "Simple fraction" },

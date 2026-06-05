@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
-import { useEditorProvider } from "../../../contexts/EditorContext";
+import { useEditorProvider } from "@/contexts/EditorContext";
 
 const ButtonsExtension = (props) => {
   const [emoji, setEmoji] = useState(props.node.attrs.emoji);

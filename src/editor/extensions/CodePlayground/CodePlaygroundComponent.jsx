@@ -16,7 +16,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { v4 as uuidv4 } from "uuid";
 
-import { useEditorProvider } from "../../../contexts/EditorContext";
+import { useEditorProvider } from "@/contexts/EditorContext";
 import { getLanguageById, PLAYGROUND_LANGUAGES } from "./languages";
 
 function CodePlaygroundComponent(props) {

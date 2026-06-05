@@ -679,6 +679,7 @@ const CourseBuilder = () => {
                 theme={theme}
                 onContentChange={handleContentChange}
                 onStatsChange={handleStatsChange}
+                lessonId={selectedLesson?.id}
               />
             </div>
           </main>

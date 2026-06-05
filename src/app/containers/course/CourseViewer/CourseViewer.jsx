@@ -304,7 +304,7 @@ const CourseViewer = () => {
 
         {activeContent ? (
           <div style={{ flex: 1 }}>
-            <MeroEduEditor initialContent={activeContent} editable={false} showToolbar={false} />
+            <MeroEduEditor initialContent={activeContent} editable={false} showToolbar={false} lessonId={activeLesson?.id} />
           </div>
         ) : (
           <div

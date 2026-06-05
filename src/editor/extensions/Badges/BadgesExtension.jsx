@@ -4,7 +4,7 @@ const Picker = lazy(() => import("@emoji-mart/react"));
 import { ChevronDown, ChevronRight, Palette } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
-import { useEditorProvider } from "../../../contexts/EditorContext";
+import { useEditorProvider } from "@/contexts/EditorContext";
 
 const BadgesExtension = (props) => {
   const [color, setColor] = useState(props.node.attrs.color);

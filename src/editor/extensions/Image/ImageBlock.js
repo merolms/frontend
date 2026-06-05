@@ -14,6 +14,7 @@ export default Node.create({
       size: { default: { width: 300 } },
       alignment: { default: "center" },
       dataUrl: { default: null },
+      fileUrl: { default: null },
       fileName: { default: null },
       unsplash_url: { default: null },
       unsplash_photographer_name: { default: null },

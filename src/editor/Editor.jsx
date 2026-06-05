@@ -55,6 +55,7 @@ function MeroEduEditor({
   onContentChange,
   editable = true,
   showToolbar = true,
+  lessonId = null,
 }) {
   const [editorReady, setEditorReady] = React.useState(false);
 
@@ -187,7 +188,7 @@ function MeroEduEditor({
   }, [editor, initialContent]);
 
   return (
-    <EditorProvider isEditable={editable}>
+    <EditorProvider isEditable={editable} lessonId={lessonId}>
       <Toaster position="top-right" />
       {showToolbar && (
         <div className="editor-topbar">

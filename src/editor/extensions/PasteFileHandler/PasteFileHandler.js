@@ -1,6 +1,8 @@
 import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 
+import { uploadEditorMedia } from "@/editor/utils/mediaUpload";
+
 const MIME_TYPE_MAP = {
   "image/jpeg": "blockImage",
   "image/png": "blockImage",
@@ -17,6 +19,29 @@ const PasteFileHandler = Extension.create({
   addProseMirrorPlugins() {
     const editor = this.editor;
 
+    const uploadAndReplace = async (file, blockType, nodePos) => {
+      try {
+        const lessonId = editor.storage?.lessonId || editor.options?.editorProps?.lessonId;
+        if (!lessonId) return;
+
+        const { url } = await uploadEditorMedia(file, lessonId, "temp_upload");
+
+        const remoteAttr =
+          blockType === "blockPDF" ? { pdfUrl: url } : { fileUrl: url, dataUrl: null };
+
+        editor
+          .chain()
+          .focus()
+          .updateAttributesAt(nodePos, {
+            fileName: file.name,
+            ...remoteAttr,
+          })
+          .run();
+      } catch (err) {
+        console.error("Background upload failed for pasted file:", err);
+      }
+    };
+
     const handleFiles = (files, pos) => {
       let handled = false;
 
@@ -29,6 +54,7 @@ const PasteFileHandler = Extension.create({
         reader.onload = (e) => {
           const dataUrl = e.target.result;
           const insertPos = pos !== undefined ? pos : editor.state.selection.anchor;
+
           editor
             .chain()
             .focus()
@@ -37,6 +63,13 @@ const PasteFileHandler = Extension.create({
               attrs: { dataUrl, fileName: file.name },
             })
             .run();
+
+          const resolvedPos = editor.state.selection.anchor;
+          const $pos = editor.state.doc.resolve(resolvedPos);
+          const nodeAtPos = $pos.nodeAfter;
+          if (nodeAtPos && nodeAtPos.type.name === blockType) {
+            uploadAndReplace(file, blockType, resolvedPos);
+          }
         };
         reader.readAsDataURL(file);
       }

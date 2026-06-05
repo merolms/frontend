@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-import { useEditorProvider } from "../../../contexts/EditorContext";
+import { useEditorProvider } from "@/contexts/EditorContext";
 
 const ScenariosExtension = (props) => {
   const [title, setTitle] = useState(props.node.attrs.title);

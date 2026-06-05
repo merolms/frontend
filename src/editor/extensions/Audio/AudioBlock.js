@@ -11,6 +11,7 @@ export default Node.create({
   addAttributes() {
     return {
       dataUrl: { default: null },
+      fileUrl: { default: null },
       fileName: { default: null },
       blockObject: { default: null },
     };
