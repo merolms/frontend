@@ -4,28 +4,28 @@
 import { apiDelete, apiGet, apiPost, apiPut } from "@/app/services/http";
 
 // ==================== FIELD MAPPING ====================
-// Backend sends: image_url, author_id, category_id, lesson_count
+// Backend now sends camelCase: imageUrl, authorId, categoryId, lessonCount
 // Frontend uses: coverImage, authorId, categoryId, lessonCount
 
 const normalizeCourse = (c) => ({
   id: c.id,
   title: c.title || "",
   description: c.description || "",
-  imageURL: c.image_url || "",
-  coverImage: c.image_url || "",
+  imageURL: c.imageUrl || "",
+  coverImage: c.imageUrl || "",
   duration: c.duration ? String(c.duration) : "",
   status: c.status || "DRAFT",
-  // category_id is a numeric FK; preserve as-is for edit forms
-  categoryID: c.category_id != null ? Number(c.category_id) : null,
+  // categoryId is a numeric FK; preserve as-is for edit forms
+  categoryID: c.categoryId != null ? Number(c.categoryId) : null,
   // category name for display
   category: c.category?.name || c.categories?.name || "",
-  authorID: c.author_id,
+  authorID: c.authorId,
   author: c.author ? `${c.author.firstName || ""} ${c.author.lastName || ""}`.trim() : "",
   tags: c.tags || [],
-  totalLessons: c.lesson_count || c.lessonCount || 0,
-  enrolledUsers: c.enrolled_users || 0,
-  createdAt: c.created_at ? new Date(c.created_at * 1000).toISOString().split("T")[0] : "",
-  updatedAt: c.updated_at ? new Date(c.updated_at * 1000).toISOString().split("T")[0] : "",
+  totalLessons: c.lessonCount || 0,
+  enrolledUsers: c.enrolledUsers || 0,
+  createdAt: c.createdAt ? new Date(c.createdAt * 1000).toISOString().split("T")[0] : "",
+  updatedAt: c.updatedAt ? new Date(c.updatedAt * 1000).toISOString().split("T")[0] : "",
   lessons: c.lessons || [],
   attachments: c.attachments || [],
 });
@@ -117,9 +117,9 @@ export const createCourse = async (courseData) => {
     const payload = {
       title: courseData.title,
       description: courseData.description,
-      image_url: courseData.coverImage || courseData.imageURL || "",
-      category_id: courseData.category || null,
-      author_id: courseData.authorID || null,
+      imageUrl: courseData.coverImage || courseData.imageURL || "",
+      categoryId: courseData.category || null,
+      authorId: courseData.authorID || null,
       status: courseData.status || "DRAFT",
     };
     const data = await apiPost("/courses", payload);
@@ -135,13 +135,12 @@ export const createCourse = async (courseData) => {
  */
 export const updateCourse = async (id, courseData) => {
   try {
-    // Only send category_id if it's a valid number; otherwise null
     const payload = {
       title: courseData.title,
       description: courseData.description,
-      image_url: courseData.coverImage || courseData.imageURL || "",
-      category_id: courseData.category || null,
-      author_id: courseData.authorID || null,
+      imageUrl: courseData.coverImage || courseData.imageURL || "",
+      categoryId: courseData.category || null,
+      authorId: courseData.authorID || null,
       status: courseData.status || "DRAFT",
     };
     const data = await apiPut(`/courses/${id}`, payload);
@@ -195,7 +194,7 @@ export const archiveCourse = async (id) => {
 // ─── LESSONS ─────────────────────────────────────────────────
 
 // Backend API shape for lessons from GET /courses/:id/lessons
-// { id, courseId, title, content, type, status, sort_order, updatedAt, createdAt }
+// { id, courseId, title, content, type, status, orderNumber, updatedAt, createdAt }
 const normalizeLesson = (l) => {
   // Content may be a plain HTML string or a JSON-stringified object
   let content = l.content || "";
@@ -209,20 +208,20 @@ const normalizeLesson = (l) => {
 
   return {
     id: l.id,
-    courseId: l.courseId || l.course_id,
+    courseId: l.courseId,
     title: l.title || "",
     duration: l.duration || "",
     content,
     type: l.type || "text",
     status: l.status || "published",
-    sort_order: l.sort_order || l.orderNumber || l.order || 0,
+    sort_order: l.orderNumber || l.order || 0,
     points: l.points || 0,
-    updatedAt: l.updated_at
-      ? new Date(l.updated_at * 1000).toISOString().split("T")[0]
-      : l.updatedAt || "",
-    createdAt: l.created_at
-      ? new Date(l.created_at * 1000).toISOString().split("T")[0]
-      : l.createdAt || "",
+    updatedAt: l.updatedAt
+      ? new Date(l.updatedAt * 1000).toISOString().split("T")[0]
+      : "",
+    createdAt: l.createdAt
+      ? new Date(l.createdAt * 1000).toISOString().split("T")[0]
+      : "",
     tags: l.tags || [],
   };
 };
@@ -242,9 +241,9 @@ export const fetchLessons = async (courseId) => {
 export const createLesson = async (courseId, lessonData) => {
   try {
     const payload = {
-      course_id: parseInt(courseId, 10),
+      courseId: parseInt(courseId, 10),
       title: lessonData.title,
-      order_number: lessonData.sort_order || 0,
+      orderNumber: lessonData.sort_order || 0,
     };
     const data = await apiPost(`/courses/${courseId}/lessons`, payload);
     return normalizeLesson(data);
@@ -257,7 +256,7 @@ export const createLesson = async (courseId, lessonData) => {
 export const updateLesson = async (courseId, lessonId, lessonData) => {
   try {
     const payload = {
-      course_id: parseInt(courseId, 10),
+      courseId: parseInt(courseId, 10),
       title: lessonData.title,
       content: lessonData.content || "",
       type: lessonData.type || "text",
@@ -281,7 +280,7 @@ export const deleteLesson = async (courseId, lessonId) => {
 
 export const reorderLessons = async (courseId, lessons) => {
   try {
-    const payload = lessons.map((l, i) => ({ id: l.id, order_number: i + 1 }));
+    const payload = lessons.map((l, i) => ({ id: l.id, orderNumber: i + 1 }));
     const data = await apiPut(`/courses/${courseId}/lessons/reorder`, payload);
     return data;
   } catch (error) {

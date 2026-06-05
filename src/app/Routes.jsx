@@ -10,6 +10,7 @@ import CourseCreate from "@/app/containers/course/CourseCreate/CourseCreate";
 import CourseDetail from "@/app/containers/course/CourseDetail/CourseDetail";
 import CourseEdit from "@/app/containers/course/CourseEdit/CourseEdit";
 import CoursePreview from "@/app/containers/course/CoursePreview/CoursePreview";
+import CourseViewer from "@/app/containers/course/CourseViewer/CourseViewer";
 import MyLearning from "@/app/containers/course/MyLearning/MyLearning";
 import Dashboard from "@/app/containers/Dashboard/Dashboard";
 import EventDetail from "@/app/containers/event/EventDetail";
@@ -17,6 +18,7 @@ import EventsPage from "@/app/containers/event/EventsPage";
 import LearningPathDetail from "@/app/containers/learningPath/LearningPathDetail";
 import LearningPathForm from "@/app/containers/learningPath/LearningPathForm";
 import LearningPathList from "@/app/containers/learningPath/LearningPathList";
+import LearningPathProgress from "@/app/containers/learningPath/LearningPathProgress";
 import AdminProgressTracking from "@/app/containers/progress/AdminProgressTracking";
 import RoleCreate from "@/app/containers/role/RoleCreate/RoleCreate";
 import RoleEdit from "@/app/containers/role/RoleEdit/RoleEdit";
@@ -92,6 +94,14 @@ const protectedRoutes = [
     ),
   },
   {
+    path: "/courses/:id/learn",
+    element: (
+      <ProtectedRoute permissions={["courses.view"]}>
+        <CourseViewer />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: "/courses/:id/edit",
     element: (
       <ProtectedRoute permissions={["courses.edit"]}>
@@ -112,6 +122,14 @@ const protectedRoutes = [
     element: (
       <ProtectedRoute>
         <MyLearning />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/my-learning/:learningPathId",
+    element: (
+      <ProtectedRoute>
+        <LearningPathProgress />
       </ProtectedRoute>
     ),
   },

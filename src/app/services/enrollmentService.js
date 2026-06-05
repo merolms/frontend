@@ -1,5 +1,47 @@
 // Enrollment Service
-// Manages user enrollments in courses. Replace API calls with real backend later.
+// Manages user enrollments in courses via real backend API.
+
+import { apiGet, apiPost } from "@/app/services/http";
+
+// ==================== REAL API CALLS ====================
+
+export const enrollInCourseAPI = async (courseId) => {
+  try {
+    return await apiPost(`/courses/${courseId}/enroll`, {});
+  } catch (error) {
+    console.error("Error enrolling in course:", error);
+    throw error;
+  }
+};
+
+export const getEnrollmentStatus = async (courseId) => {
+  try {
+    return await apiGet(`/courses/${courseId}/enrollment`);
+  } catch (error) {
+    console.error("Error fetching enrollment:", error);
+    return null;
+  }
+};
+
+export const getCourseProgress = async (courseId) => {
+  try {
+    return await apiGet(`/courses/${courseId}/progress`);
+  } catch (error) {
+    console.error("Error fetching progress:", error);
+    return null;
+  }
+};
+
+export const markLessonCompleteAPI = async (lessonId, timeSpentSeconds = 0) => {
+  try {
+    return await apiPost(`/lessons/${lessonId}/complete`, { timeSpentSeconds });
+  } catch (error) {
+    console.error("Error marking lesson complete:", error);
+    throw error;
+  }
+};
+
+// ==================== MOCK DATA (fallback for dev) ====================
 
 const ENROLLMENT_KEY = "meroedu_enrollments";
 

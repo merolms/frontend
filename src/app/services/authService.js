@@ -222,8 +222,13 @@ export const allPermissions = Object.values(permissionCatalog).flatMap(
  * Backend POST /auth/login returns { token, user }.
  */
 export const login = async (email, password) => {
-  const data = await apiPost("/auth/login", { email, password });
-  return { user: data.user, token: data.token };
+  try {
+    const data = await apiPost("/auth/login", { email, password });
+    return { user: data.user, token: data.token };
+  } catch (error) {
+    console.error("Error logging in:", error);
+    throw error;
+  }
 };
 
 /**
@@ -231,8 +236,13 @@ export const login = async (email, password) => {
  * Backend POST /auth/register returns { token, user }.
  */
 export const register = async (userData) => {
-  const data = await apiPost("/auth/register", userData);
-  return { user: data.user, token: data.token };
+  try {
+    const data = await apiPost("/auth/register", userData);
+    return { user: data.user, token: data.token };
+  } catch (error) {
+    console.error("Error registering:", error);
+    throw error;
+  }
 };
 
 /**
@@ -240,21 +250,36 @@ export const register = async (userData) => {
  * Backend GET /auth/me returns the user object.
  */
 export const getProfile = async () => {
-  return await apiGet("/auth/me");
+  try {
+    return await apiGet("/auth/me");
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    throw error;
+  }
 };
 
 /**
  * Update the current user's profile.
  */
 export const updateProfile = async (profileData) => {
-  return await apiPut("/auth/profile", profileData);
+  try {
+    return await apiPut("/auth/profile", profileData);
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    throw error;
+  }
 };
 
 /**
  * Change the current user's password.
  */
 export const changePassword = async (passwordData) => {
-  return await apiPut("/auth/password", passwordData);
+  try {
+    return await apiPut("/auth/password", passwordData);
+  } catch (error) {
+    console.error("Error changing password:", error);
+    throw error;
+  }
 };
 
 /**
@@ -262,7 +287,12 @@ export const changePassword = async (passwordData) => {
  * Backend GET /auth/me validates the JWT and returns the user.
  */
 export const validateToken = async () => {
-  return await apiGet("/auth/me");
+  try {
+    return await apiGet("/auth/me");
+  } catch (error) {
+    console.error("Error validating token:", error);
+    throw error;
+  }
 };
 
 /**
@@ -304,30 +334,60 @@ const normalizeRolePermissions = (role) => {
 };
 
 export const fetchRoles = async () => {
-  const data = await apiGet("/roles");
-  if (!Array.isArray(data)) return [];
-  return data.map(normalizeRolePermissions);
+  try {
+    const data = await apiGet("/roles");
+    if (!Array.isArray(data)) return [];
+    return data.map(normalizeRolePermissions);
+  } catch (error) {
+    console.error("Error fetching roles:", error);
+    throw error;
+  }
 };
 
 export const fetchRoleById = async (id) => {
-  const data = await apiGet(`/roles/${id}`);
-  return normalizeRolePermissions(data);
+  try {
+    const data = await apiGet(`/roles/${id}`);
+    return normalizeRolePermissions(data);
+  } catch (error) {
+    console.error("Error fetching role:", error);
+    throw error;
+  }
 };
 
 export const createRole = async (roleData) => {
-  return await apiPost("/roles", roleData);
+  try {
+    return await apiPost("/roles", roleData);
+  } catch (error) {
+    console.error("Error creating role:", error);
+    throw error;
+  }
 };
 
 export const updateRole = async (id, roleData) => {
-  return await apiPut(`/roles/${id}`, roleData);
+  try {
+    return await apiPut(`/roles/${id}`, roleData);
+  } catch (error) {
+    console.error("Error updating role:", error);
+    throw error;
+  }
 };
 
 export const deleteRole = async (id) => {
-  return await apiDelete(`/roles/${id}`);
+  try {
+    return await apiDelete(`/roles/${id}`);
+  } catch (error) {
+    console.error("Error deleting role:", error);
+    throw error;
+  }
 };
 
 export const adminResetPassword = async (userId, newPassword) => {
-  return await apiPost("/auth/admin/reset-password", { userId: parseInt(userId, 10), newPassword });
+  try {
+    return await apiPost("/auth/admin/reset-password", { userId: parseInt(userId, 10), newPassword });
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    throw error;
+  }
 };
 
 // ==================== ROLE DEFINITIONS (static UI data) ====================

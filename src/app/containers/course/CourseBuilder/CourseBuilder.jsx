@@ -14,8 +14,8 @@ import {
 } from "@/app/services/courseService";
 import { t } from "@/styles/theme";
 
-import BlockNoteEditor from "./components/BlockNoteEditor/BlockNoteEditor";
-import { TipTapEditor } from "@/editor/TipTapEditor";
+// import BlockNoteEditor from "./components/BlockNoteEditor/BlockNoteEditor";
+// import { TipTapEditor } from "@/editor/TipTapEditor";
 import MeroEduEditor from "@/editor/Editor";
 // import TipTapEditor from "./components/TipTapEditor/TipTapEditor";
 import LessonPanel from "./components/LessonPanel";

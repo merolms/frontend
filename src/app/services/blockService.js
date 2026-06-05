@@ -2,7 +2,7 @@
 // Now uses BlockNote JSON format for lesson content.
 // Content is stored as a JSON string of BlockNote block array.
 
-import { API_BASE, apiGet, apiPost, apiUpload } from "@/app/services/http";
+import { API_BASE, apiGet, apiPost, apiPut, apiDelete, apiUpload } from "@/app/services/http";
 
 // ─── CONTENT HELPERS ────────────────────────────────────────────
 
@@ -131,6 +131,90 @@ export const fetchLessonBlocks = async (lessonId) => {
   }
 };
 
+/**
+ * Create a new block in a lesson.
+ */
+export const createBlock = async (lessonId, blockData) => {
+  try {
+    return await apiPost(`/lessons/${lessonId}/blocks`, blockData);
+  } catch (error) {
+    console.error("Error creating block:", error);
+    throw error;
+  }
+};
+
+/**
+ * Fetch a single block by ID.
+ */
+export const fetchBlockById = async (blockId) => {
+  try {
+    return await apiGet(`/blocks/${blockId}`);
+  } catch (error) {
+    console.error("Error fetching block:", error);
+    throw error;
+  }
+};
+
+/**
+ * Update a block.
+ */
+export const updateBlock = async (blockId, blockData) => {
+  try {
+    return await apiPut(`/blocks/${blockId}`, blockData);
+  } catch (error) {
+    console.error("Error updating block:", error);
+    throw error;
+  }
+};
+
+/**
+ * Delete a block.
+ */
+export const deleteBlock = async (blockId) => {
+  try {
+    return await apiDelete(`/blocks/${blockId}`);
+  } catch (error) {
+    console.error("Error deleting block:", error);
+    throw error;
+  }
+};
+
+/**
+ * Reorder blocks within a lesson.
+ */
+export const reorderBlocks = async (lessonId, blockIds) => {
+  try {
+    return await apiPut(`/lessons/${lessonId}/blocks/reorder`, { blockIds });
+  } catch (error) {
+    console.error("Error reordering blocks:", error);
+    throw error;
+  }
+};
+
+/**
+ * Fetch version history for a block.
+ */
+export const fetchBlockVersions = async (blockId) => {
+  try {
+    return await apiGet(`/blocks/${blockId}/versions`);
+  } catch (error) {
+    console.error("Error fetching block versions:", error);
+    throw error;
+  }
+};
+
+/**
+ * Restore a block to a previous version.
+ */
+export const restoreBlockVersion = async (blockId, versionId) => {
+  try {
+    return await apiPost(`/blocks/${blockId}/restore`, { versionId });
+  } catch (error) {
+    console.error("Error restoring block version:", error);
+    throw error;
+  }
+};
+
 // ─── MEDIA UPLOAD ──────────────────────────────────────────────
 
 /**
@@ -138,12 +222,17 @@ export const fetchLessonBlocks = async (lessonId) => {
  * Returns the full URL to the uploaded file.
  */
 export const uploadBlockMedia = async (lessonId, blockId, file) => {
-  const formData = new FormData();
-  formData.append("file", file);
-  const safeBlockId = String(blockId).startsWith("temp_") ? 0 : blockId;
-  const data = await apiUpload(`/lessons/${lessonId}/blocks/${safeBlockId}/media`, formData);
-  const serverBase = API_BASE.replace(/\/api$/, "");
-  return data?.url ? `${serverBase}${data.url}` : "";
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    const safeBlockId = String(blockId).startsWith("temp_") ? 0 : blockId;
+    const data = await apiUpload(`/lessons/${lessonId}/blocks/${safeBlockId}/media`, formData);
+    const serverBase = API_BASE.replace(/\/api$/, "");
+    return data?.url ? `${serverBase}${data.url}` : "";
+  } catch (error) {
+    console.error("Error uploading block media:", error);
+    throw error;
+  }
 };
 
 // ─── AI CONTENT GENERATION ─────────────────────────────────────

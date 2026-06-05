@@ -62,7 +62,11 @@ async function request(path, options = {}) {
   }
 
   if (!response.ok) {
-    throw new ApiError(body.message || "Request failed", response.status, body.data);
+    throw new ApiError(
+      body.message || body.errorMessage || "Request failed",
+      response.status,
+      body.data
+    );
   }
 
   // Backend returns { message: "success", data: {...} }
@@ -101,7 +105,11 @@ export const apiUpload = async (path, formData) => {
     if (onAuthError) onAuthError(body.message, response.status);
   }
   if (!response.ok) {
-    throw new ApiError(body.message || "Request failed", response.status, body.data);
+    throw new ApiError(
+      body.message || body.errorMessage || "Request failed",
+      response.status,
+      body.data
+    );
   }
   return body.data;
 };

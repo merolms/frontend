@@ -49,7 +49,7 @@ const DEFAULT_CONTENT = {
   content: [{ type: "paragraph", content: [{ type: "text", text: "Hi there" }] }],
 };
 
-function MeroEduEditor({ initialContent, onSave, onContentChange, editable = true }) {
+function MeroEduEditor({ initialContent, onSave, onContentChange, editable = true, showToolbar = true }) {
   const [editorReady, setEditorReady] = React.useState(false);
 
   const extensions = React.useMemo(
@@ -139,9 +139,17 @@ function MeroEduEditor({ initialContent, onSave, onContentChange, editable = tru
     },
   });
   const hasLoadedRef = useRef(false);
+  const prevContentRef = useRef(null);
 
   useEffect(() => {
     if (!editor || !initialContent) return;
+
+    // Reset loaded flag when content actually changes
+    const contentKey = typeof initialContent === "string" ? initialContent : JSON.stringify(initialContent);
+    if (contentKey !== prevContentRef.current) {
+      prevContentRef.current = contentKey;
+      hasLoadedRef.current = false;
+    }
 
     if (!hasLoadedRef.current) {
       let parsedContent = initialContent;
@@ -167,7 +175,6 @@ function MeroEduEditor({ initialContent, onSave, onContentChange, editable = tru
         });
       }
 
-      // 3. Prevent this block from executing ever again
       hasLoadedRef.current = true;
     }
   }, [editor, initialContent]);
@@ -175,11 +182,13 @@ function MeroEduEditor({ initialContent, onSave, onContentChange, editable = tru
   return (
     <EditorProvider isEditable={editable}>
       <Toaster position="top-right" />
-      <div className="editor-topbar">
-        <div className="editor-toolbar-center">
-          <ToolbarButtons editor={editor} />
+      {showToolbar && (
+        <div className="editor-topbar">
+          <div className="editor-toolbar-center">
+            <ToolbarButtons editor={editor} />
+          </div>
         </div>
-      </div>
+      )}
       <div className="editor-content-area">
         <div className="editor-content-inner activity-editor-content-wrapper">
           <EditorContent editor={editor} dark={"false"} />

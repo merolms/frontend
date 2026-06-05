@@ -69,7 +69,7 @@ const CourseCard = ({ course, navigate }) => {
   );
 };
 
-const GridView = ({ courses, navigate, loading }) => {
+const GridView = ({ courses, navigate, loading, onRefresh }) => {
   if (loading) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -83,6 +83,22 @@ const GridView = ({ courses, navigate, loading }) => {
             </div>
           </div>
         ))}
+      </div>
+    );
+  }
+
+  if (!courses || courses.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <BookOpen size={48} className="text-text-muted mb-3" />
+        <p className="text-text-primary text-sm font-medium">No courses yet</p>
+        <p className="text-text-muted mt-1 text-xs">Create your first course to get started.</p>
+        <button
+          onClick={() => navigate?.("/courses/create")}
+          className="bg-primary hover:bg-primary-hover mt-4 rounded-md px-4 py-2 text-sm text-white"
+        >
+          Create Course
+        </button>
       </div>
     );
   }
