@@ -27,7 +27,7 @@ export const PublishModal = ({ open, onConfirm, onCancel, courseTitle, loading =
             <Button variant="default" onClick={onCancel} disabled={loading}>
               Cancel
             </Button>
-            <Button variant="green" onClick={onConfirm} disabled={loading}>
+            <Button variant="primary" onClick={onConfirm} disabled={loading}>
               <Check size={14} /> Publish
             </Button>
           </DialogFooter>
@@ -54,7 +54,7 @@ export const ArchiveModal = ({ open, onConfirm, onCancel, courseTitle, loading =
             <Button variant="default" onClick={onCancel} disabled={loading}>
               Cancel
             </Button>
-            <Button variant="orange" onClick={onConfirm} disabled={loading}>
+            <Button variant="primary" onClick={onConfirm} disabled={loading}>
               <Archive size={14} /> Archive
             </Button>
           </DialogFooter>

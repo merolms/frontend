@@ -46,7 +46,7 @@ import PasteFileHandler from "./extensions/PasteFileHandler/PasteFileHandler";
 
 const DEFAULT_CONTENT = {
   type: "doc",
-  content: [{ type: "paragraph", content: [{ type: "text", text: "Hi there" }] }],
+  content: [{ type: "paragraph", content: [{ type: "text", text: " " }] }],
 };
 
 function MeroEduEditor({

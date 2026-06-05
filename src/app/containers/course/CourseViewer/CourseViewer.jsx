@@ -267,7 +267,6 @@ const CourseViewer = () => {
           flex: 1,
           display: "flex",
           flexDirection: "column",
-          maxWidth: 900,
           width: "100%",
           margin: "0 auto",
           padding: "32px 40px",

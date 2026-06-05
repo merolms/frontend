@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import SideBar from "@/app/containers/SideBar/SideBar";
-import { useTheme as useThemeContext } from "@/app/context/ThemeContext";
 import { fetchAutosave, fetchLessonBlocks } from "@/app/services/blockService";
 import { fetchCourseById, fetchLessons } from "@/app/services/courseService";
 import { Button } from "@/components/ui/button";
@@ -29,6 +28,7 @@ const CoursePreview = () => {
       const autosave = await fetchAutosave(lesson.id);
       if (autosave?.snapshot) {
         const snap = JSON.parse(autosave.snapshot);
+
         return Array.isArray(snap)
           ? snap
           : snap.content
@@ -39,6 +39,7 @@ const CoursePreview = () => {
       }
     } catch {
       /* ignore */
+      console.error("Failed to load autosave for lesson", lesson.id);
     }
     try {
       const blocks = await fetchLessonBlocks(lesson.id);
@@ -64,6 +65,7 @@ const CoursePreview = () => {
             ? sorted.find((x) => String(x.id) === String(lessonId)) || sorted[0]
             : sorted[0];
           const content = await loadLessonContent(target);
+          console.log("Loaded content for lesson", target.id, content);
           setSelectedLesson({ ...target, _content: content });
         }
       } catch (err) {
@@ -132,7 +134,6 @@ const CoursePreview = () => {
       </Button>
     </div>
   );
-
   return (
     <div style={{ display: "flex", height: "100vh" }}>
       <SideBar />
@@ -149,7 +150,6 @@ const CoursePreview = () => {
               flex: 1,
               display: "flex",
               flexDirection: "column",
-              maxWidth: 900,
               width: "100%",
               margin: "0 auto",
               padding: "32px 40px",
@@ -187,10 +187,10 @@ const CoursePreview = () => {
               </h2>
             </div>
 
-            {selectedLesson?._content && selectedLesson._content.length > 0 ? (
-              <div style={{ flex: 1 }}>
+            {selectedLesson?._content ? (
+              <div style={{ flex: 1, marginLeft: "-35px" }}>
                 <MeroEduEditor
-                  initialContent={selectedLesson._content}
+                  initialContent={selectedLesson._content.content}
                   editable={false}
                   showToolbar={false}
                 />
