@@ -1,7 +1,8 @@
-import { useEditorProvider } from "../../../contexts/EditorContext";
+import { CheckCircle, Info, Lightbulb, Warning, X, XCircle } from "@phosphor-icons/react";
 import { NodeViewContent, NodeViewWrapper } from "@tiptap/react";
-import { Info, Warning, Lightbulb, CheckCircle, XCircle, X } from "@phosphor-icons/react";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+import { useEditorProvider } from "../../../contexts/EditorContext";
 
 const CALLOUT_TYPES = {
   info: {

@@ -13,6 +13,9 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { fetchEnrollments } from "@/app/services/enrollmentService";
+import EmptyState from "@/components/common/EmptyState";
+import LoadingState from "@/components/common/LoadingState";
+import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import {
@@ -23,9 +26,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getStatusColor, getStatusLabel } from "@/utils";
-import ProgressBar from "@/components/ProgressBar/ProgressBar";
-import EmptyState from "@/components/common/EmptyState";
-import LoadingState from "@/components/common/LoadingState";
 
 const MyLearning = () => {
   const navigate = useNavigate();

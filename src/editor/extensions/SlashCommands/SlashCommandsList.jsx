@@ -1,11 +1,5 @@
-import React, {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useState,
-  useRef,
-  useCallback,
-} from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
+
 import { categoryLabels, groupCommandsByCategory } from "./slashCommandsConfig";
 
 const SlashCommandsList = forwardRef(({ items, command, currentPlan = "free" }, ref) => {

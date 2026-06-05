@@ -1,18 +1,19 @@
 import { NodeViewWrapper } from "@tiptap/react";
-import React, { useState, useRef, useEffect } from "react";
 import {
-  RotateCw,
-  Edit,
-  AlignLeft,
   AlignCenter,
+  AlignLeft,
   AlignRight,
-  Palette,
+  Edit,
   Maximize2,
   Minimize2,
+  Palette,
+  RotateCw,
   Square,
 } from "lucide-react";
-import { cn } from "../../../lib/utils";
+import { useEffect, useRef, useState } from "react";
+
 import { useEditorProvider } from "../../../contexts/EditorContext";
+import { cn } from "../../../lib/utils";
 
 const FlipcardExtension = (props) => {
   const [isFlipped, setIsFlipped] = useState(false);

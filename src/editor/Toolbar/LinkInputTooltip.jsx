@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
 import { CheckIcon, Cross2Icon } from "@radix-ui/react-icons";
+import { useEffect, useState } from "react";
 
 function LinkInputTooltip({ onSave, onCancel, currentUrl }) {
   const [url, setUrl] = useState(currentUrl || "");

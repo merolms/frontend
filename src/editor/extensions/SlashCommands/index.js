@@ -1,9 +1,9 @@
-export { SlashCommands, default } from "./SlashCommands";
+export { default, SlashCommands } from "./SlashCommands";
 export {
-  slashCommands,
-  filterCommands,
-  groupCommandsByCategory,
   categoryLabels,
   categoryOrder,
+  filterCommands,
+  groupCommandsByCategory,
+  slashCommands,
 } from "./slashCommandsConfig";
 export { default as SlashCommandsList } from "./SlashCommandsList";

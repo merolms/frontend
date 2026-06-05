@@ -1,5 +1,3 @@
-import React from "react";
-
 /**
  * ProgressBar — styled horizontal progress bar.
  *

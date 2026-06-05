@@ -1,8 +1,10 @@
-import { NodeViewWrapper } from "@tiptap/react";
-import React, { lazy, Suspense } from "react";
 import "katex/dist/katex.min.css";
+
+import { NodeViewWrapper } from "@tiptap/react";
+import { BookOpen, ChevronDown, ExternalLink, Lightbulb, Save, Sigma } from "lucide-react";
+import React from "react";
 import { BlockMath } from "react-katex";
-import { Save, Sigma, ExternalLink, ChevronDown, BookOpen, Lightbulb } from "lucide-react";
+
 import { useEditorProvider } from "../../../contexts/EditorContext";
 
 const mathTemplates = [

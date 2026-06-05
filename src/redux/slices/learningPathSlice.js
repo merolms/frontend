@@ -1,13 +1,14 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
 import {
-  fetchLearningPaths,
-  fetchLearningPathById,
   createLearningPath,
-  updateLearningPath,
   deleteLearningPath,
   enrollInLearningPath,
+  fetchLearningPathById,
   fetchLearningPathProgress,
+  fetchLearningPaths,
   fetchLearningPathStat,
+  updateLearningPath,
 } from "@/app/services/learningPathService";
 
 // ==================== ASYNC THUNKS ====================

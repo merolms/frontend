@@ -1,5 +1,5 @@
 import ProtectedRoute from "@/app/components/ProtectedRoute/ProtectedRoute";
-import RoleGuard from "@/components/auth/RoleGuard";
+import AdminDashboard from "@/app/containers/admin/Dashboard";
 import ForgotPassword from "@/app/containers/auth/ForgotPassword/ForgotPassword";
 import Login from "@/app/containers/auth/Login/Login";
 import ResetPassword from "@/app/containers/auth/ResetPassword/ResetPassword";
@@ -16,6 +16,7 @@ import MyLearning from "@/app/containers/course/MyLearning/MyLearning";
 import Dashboard from "@/app/containers/Dashboard/Dashboard";
 import EventDetail from "@/app/containers/event/EventDetail";
 import EventsPage from "@/app/containers/event/EventsPage";
+import InstructorDashboard from "@/app/containers/instructor/Dashboard";
 import LearningPathDetail from "@/app/containers/learningPath/LearningPathDetail";
 import LearningPathForm from "@/app/containers/learningPath/LearningPathForm";
 import LearningPathList from "@/app/containers/learningPath/LearningPathList";
@@ -34,9 +35,7 @@ import UserContainer from "@/app/containers/user/User";
 import UserCreate from "@/app/containers/user/UserCreate/UserCreate";
 import UserDetail from "@/app/containers/user/UserDetail/UserDetail";
 import UserEdit from "@/app/containers/user/UserEdit/UserEdit";
-import AdminDashboard from "@/app/containers/admin/Dashboard";
-import InstructorDashboard from "@/app/containers/instructor/Dashboard";
-import LearnerDashboard from "@/app/containers/learner/Dashboard";
+import RoleGuard from "@/components/auth/RoleGuard";
 
 const adminOnly = (element, path) => ({
   path,

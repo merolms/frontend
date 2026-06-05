@@ -1,8 +1,8 @@
-import { Plus, Save, X } from "lucide-react";
 import React, { useState } from "react";
 
 import { getCategoryColorOptions, getCategoryIconOptions } from "@/app/services/categoryService";
-import { Button } from "@/components/ui/button";
+import FormActions from "@/components/forms/FormActions";
+import FormField from "@/components/forms/FormField";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
@@ -78,35 +78,29 @@ const CategoryForm = ({ category = null, onSubmit, onClose, loading = false }) =
           <DialogTitle>{isEditing ? "Edit Category" : "Create Category"}</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
-          <div>
-            <label className="text-text-primary text-xs font-medium">Name</label>
+          <FormField label="Name" error={errors.name} required>
             <Input
               placeholder="e.g., Web Development"
               value={form.name}
               onChange={handleNameChange}
             />
-            {errors.name && <p className="text-error mt-0.5 text-[11px]">{errors.name}</p>}
-          </div>
-          <div>
-            <label className="text-text-primary text-xs font-medium">Slug</label>
+          </FormField>
+          <FormField label="Slug" error={errors.slug} required>
             <Input
               placeholder="e.g., web-development"
               value={form.slug}
               onChange={(e) => handleChange("slug", e.target.value)}
             />
-            {errors.slug && <p className="text-error mt-0.5 text-[11px]">{errors.slug}</p>}
-          </div>
-          <div>
-            <label className="text-text-primary text-xs font-medium">Description</label>
+          </FormField>
+          <FormField label="Description">
             <Textarea
               placeholder="What kind of courses belong in this category?"
               value={form.description}
               onChange={(e) => handleChange("description", e.target.value)}
               rows={3}
             />
-          </div>
-          <div>
-            <label className="text-text-primary text-xs font-medium">Color</label>
+          </FormField>
+          <FormField label="Color">
             <Select value={form.color} onValueChange={(v) => handleChange("color", v)}>
               <SelectTrigger>
                 <div className="flex items-center gap-2">
@@ -134,9 +128,8 @@ const CategoryForm = ({ category = null, onSubmit, onClose, loading = false }) =
                 ))}
               </SelectContent>
             </Select>
-          </div>
-          <div>
-            <label className="text-text-primary text-xs font-medium">Icon</label>
+          </FormField>
+          <FormField label="Icon">
             <Select value={form.icon} onValueChange={(v) => handleChange("icon", v)}>
               <SelectTrigger>
                 <SelectValue />
@@ -149,17 +142,14 @@ const CategoryForm = ({ category = null, onSubmit, onClose, loading = false }) =
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </FormField>
         </div>
-        <div className="mt-4 flex justify-end gap-2">
-          <Button variant="default" onClick={onClose} disabled={loading}>
-            <X size={14} /> Cancel
-          </Button>
-          <Button onClick={handleSubmit} disabled={loading}>
-            {isEditing ? <Save size={14} /> : <Plus size={14} />}{" "}
-            {isEditing ? "Save Changes" : "Create Category"}
-          </Button>
-        </div>
+        <FormActions
+          onCancel={onClose}
+          loading={loading}
+          submitLabel={isEditing ? "Save Changes" : "Create Category"}
+          showCancel
+        />
       </DialogContent>
     </Dialog>
   );

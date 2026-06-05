@@ -1,15 +1,16 @@
-import { Bell, Check, CheckCheck, ChevronDown } from "lucide-react";
+import { Bell, Check, CheckCheck } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import RoleBasedSidebar from "@/components/layouts/RoleBasedSidebar";
 import {
   fetchNotifications,
   getTimeAgo,
   markAllAsRead,
   markAsRead,
 } from "@/app/services/notificationService";
+import RoleBasedSidebar from "@/components/layouts/RoleBasedSidebar";
+import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 
 const typeColors = {
   enrollment: "#22C55E",
@@ -210,9 +211,11 @@ export default function DashboardLayout({ children, title, subtitle }) {
                 </div>
               )}
             </div>
-          </div>
-        </div>
+                              <ThemeSwitcher />
 
+          </div>
+
+        </div>
         {/* Content */}
         <div className="dashboard-content">{children}</div>
       </div>

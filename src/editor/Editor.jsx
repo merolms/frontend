@@ -1,48 +1,48 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Youtube from "@tiptap/extension-youtube";
+import "./editor.css";
+
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import { Color } from "@tiptap/extension-color";
+import Highlight from "@tiptap/extension-highlight";
+import ListItem from "@tiptap/extension-list-item";
 import { Table } from "@tiptap/extension-table";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
 import TableRow from "@tiptap/extension-table-row";
-import { Color } from "@tiptap/extension-color";
-import ListItem from "@tiptap/extension-list-item";
-import { TextStyleKit } from "@tiptap/extension-text-style";
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import TextAlign from "@tiptap/extension-text-align";
-import Highlight from "@tiptap/extension-highlight";
-
+import { TextStyleKit } from "@tiptap/extension-text-style";
+import Youtube from "@tiptap/extension-youtube";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import React, { useEffect, useRef, useState } from "react";
 import { Toaster } from "react-hot-toast";
-import "./editor.css";
+
 import { EditorProvider } from "../contexts/EditorContext";
-import { ToolbarButtons } from "./Toolbar/ToolbarButtons";
 import { getLinkExtension } from "./EditorConf";
 import { lowlight } from "./editorLowlight";
-
+import AISelectionHighlight from "./extensions/AISelectionHighlight/AISelectionHighlight";
+import AIStreamingMark from "./extensions/AIStreaming/AIStreamingMark";
+import AudioBlock from "./extensions/Audio/AudioBlock";
+import Badges from "./extensions/Badges/Badges";
+import Buttons from "./extensions/Buttons/Buttons";
 import Callout from "./extensions/Callout/Callout";
 import InfoCallout from "./extensions/Callout/Info/InfoCallout";
 import WarningCallout from "./extensions/Callout/Warning/WarningCallout";
-import ImageBlock from "./extensions/Image/ImageBlock";
-import VideoBlock from "./extensions/Video/VideoBlock";
-import AudioBlock from "./extensions/Audio/AudioBlock";
-import PDFBlock from "./extensions/PDF/PDFBlock";
-import MathEquationBlock from "./extensions/MathEquation/MathEquationBlock";
-import QuizBlock from "./extensions/Quiz/QuizBlock";
-import EmbedObjects from "./extensions/EmbedObjects/EmbedObjects";
-import WebPreview from "./extensions/WebPreview/WebPreview";
-import Flipcard from "./extensions/Flipcard/Flipcard";
-import Scenarios from "./extensions/Scenarios/Scenarios";
-import Badges from "./extensions/Badges/Badges";
-import Buttons from "./extensions/Buttons/Buttons";
-import UserBlock from "./extensions/Users/UserBlock";
-import MagicBlock from "./extensions/MagicBlocks/MagicBlock";
 import CodePlayground from "./extensions/CodePlayground/CodePlayground";
-import AISelectionHighlight from "./extensions/AISelectionHighlight/AISelectionHighlight";
-import AIStreamingMark from "./extensions/AIStreaming/AIStreamingMark";
 import DragHandle from "./extensions/DragHandle/DragHandle";
-import { SlashCommands } from "./extensions/SlashCommands";
+import EmbedObjects from "./extensions/EmbedObjects/EmbedObjects";
+import Flipcard from "./extensions/Flipcard/Flipcard";
+import ImageBlock from "./extensions/Image/ImageBlock";
+import MagicBlock from "./extensions/MagicBlocks/MagicBlock";
+import MathEquationBlock from "./extensions/MathEquation/MathEquationBlock";
 import PasteFileHandler from "./extensions/PasteFileHandler/PasteFileHandler";
+import PDFBlock from "./extensions/PDF/PDFBlock";
+import QuizBlock from "./extensions/Quiz/QuizBlock";
+import Scenarios from "./extensions/Scenarios/Scenarios";
+import { SlashCommands } from "./extensions/SlashCommands";
+import UserBlock from "./extensions/Users/UserBlock";
+import VideoBlock from "./extensions/Video/VideoBlock";
+import WebPreview from "./extensions/WebPreview/WebPreview";
+import { ToolbarButtons } from "./Toolbar/ToolbarButtons";
 
 const DEFAULT_CONTENT = {
   type: "doc",

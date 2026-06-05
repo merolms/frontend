@@ -1,41 +1,36 @@
 "use client";
-import { EditorProvider } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Underline from "@tiptap/extension-underline";
+import "./editor.css";
+
+import CharacterCount from "@tiptap/extension-character-count";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { Color } from "@tiptap/extension-color";
-import ListItem from "@tiptap/extension-list-item";
-import { TextStyleKit } from "@tiptap/extension-text-style";
-import TextAlign from "@tiptap/extension-text-align";
 import Document from "@tiptap/extension-document";
+import Heading from "@tiptap/extension-heading";
+import Highlight from "@tiptap/extension-highlight";
+import Image from "@tiptap/extension-image";
+import Link from "@tiptap/extension-link";
+import ListItem from "@tiptap/extension-list-item";
 import Paragraph from "@tiptap/extension-paragraph";
+import Placeholder from "@tiptap/extension-placeholder";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import Text from "@tiptap/extension-text";
-import Placeholder from "@tiptap/extension-placeholder";
-import Highlight from "@tiptap/extension-highlight";
-import Image from "@tiptap/extension-image";
-import { ResizableImage } from "./extensions/ResizeImage/resizable-image";
-import React, { useState, useEffect, useRef } from "react";
-
-import "./editor.css";
-
-import Link from "@tiptap/extension-link";
-
-import Heading from "@tiptap/extension-heading";
-
-import CharacterCount from "@tiptap/extension-character-count";
-
+import TextAlign from "@tiptap/extension-text-align";
+import { TextStyleKit } from "@tiptap/extension-text-style";
+import Underline from "@tiptap/extension-underline";
+import { EditorProvider } from "@tiptap/react";
 import { ReactNodeViewRenderer } from "@tiptap/react";
-import CodeBlockComponent from "./extensions/CodeBlockComponent";
-
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { createLowlight, all } from "lowlight";
+import StarterKit from "@tiptap/starter-kit";
+import css from "highlight.js/lib/languages/css";
 import javascript from "highlight.js/lib/languages/javascript";
+import python from "highlight.js/lib/languages/python";
 import typescript from "highlight.js/lib/languages/typescript";
 import html from "highlight.js/lib/languages/xml";
-import css from "highlight.js/lib/languages/css";
-import python from "highlight.js/lib/languages/python";
+import { all, createLowlight } from "lowlight";
+import { useEffect, useRef, useState } from "react";
 
+import CodeBlockComponent from "./extensions/CodeBlockComponent";
+import { ResizableImage } from "./extensions/ResizeImage/resizable-image";
 import { SlashCommand } from "./extensions/SlashCommandList";
 
 // Create a lowlight instance

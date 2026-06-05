@@ -1,6 +1,7 @@
-import React from "react";
 import { NodeViewWrapper } from "@tiptap/react";
-import { Upload, Loader2, AlertCircle, Video } from "lucide-react";
+import { AlertCircle, Loader2, Upload, Video } from "lucide-react";
+import React from "react";
+
 import { useEditorProvider } from "../../../contexts/EditorContext";
 
 function VideoBlockComponent(props) {

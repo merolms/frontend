@@ -1,14 +1,15 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
 import {
-  fetchLessonBlocks,
   createBlock,
-  updateBlock,
   deleteBlock,
+  fetchAutosave,
+  fetchLessonBlocks,
+  generateAIContent,
   reorderBlocks,
   saveAutosave,
-  fetchAutosave,
+  updateBlock,
   uploadBlockMedia,
-  generateAIContent,
 } from "@/app/services/blockService";
 
 // ==================== ASYNC THUNKS ====================

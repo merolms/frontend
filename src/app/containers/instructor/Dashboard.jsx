@@ -1,14 +1,14 @@
+import { BookOpen, Plus, TrendingUp, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Plus, Users, TrendingUp, Loader } from "lucide-react";
 
 import { fetchCourses } from "@/app/services/courseService";
 import { fetchDashboardStats } from "@/app/services/dashboardService";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import EmptyState from "@/components/common/EmptyState";
-import LoadingState from "@/components/common/LoadingState";
 import Can from "@/components/auth/Can";
+import LoadingState from "@/components/common/LoadingState";
+import StatCard from "@/components/common/StatCard";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 
 /**
  * InstructorDashboard — Main dashboard for Instructor role.
@@ -112,68 +112,50 @@ const InstructorDashboard = () => {
 
       {loading ? (
         <LoadingState count={3} height="h-32" />
-      ) : courses.length === 0 ? (
-        <EmptyState
-          icon={<BookOpen size={48} />}
-          title="No courses yet"
-          description="Create your first course to get started."
-          action={
-            <Can permission="courses.create">
+      ) : (
+        <>
+          {/* Stats */}
+          <div className="mb-6 grid grid-cols-4 gap-4">
+            <StatCard
+              title="Total Courses"
+              value={courses.length}
+              icon={BookOpen}
+              color="primary"
+            />
+            <StatCard
+              title="Published"
+              value={publishedCourses.length}
+              icon={TrendingUp}
+              color="success"
+            />
+            <StatCard title="Drafts" value={draftCourses.length} icon={BookOpen} color="warning" />
+            <StatCard title="Students" value={stats?.totalUsers || 0} icon={Users} color="accent" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h4 className="text-text-primary truncate text-sm font-semibold">{course.title}</h4>
+            <p className="text-text-muted text-[11px]">
+              {course.category} • {course.totalLessons} lessons
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span
+              className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${course.status === "Published" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}
+            >
+              {course.status}
+            </span>
+            <Can permission="courses.edit">
               <button
-                onClick={() => navigate("/courses/create")}
-                className="bg-primary hover:bg-primary-hover rounded-md px-4 py-2 text-sm text-white"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/courses/${course.id}/edit`);
+                }}
+                className="text-text-muted hover:text-primary text-xs"
               >
-                Create Course
+                Edit
               </button>
             </Can>
-          }
-        />
-      ) : (
-        <div className="grid grid-cols-1 gap-4">
-          {courses.slice(0, 5).map((course) => (
-            <div
-              key={course.id}
-              className="border-border bg-bg-surface flex cursor-pointer items-center gap-4 rounded-xl border p-4 shadow-sm transition-all hover:shadow-md"
-              onClick={() => navigate(`/courses/${course.id}`)}
-            >
-              {course.coverImage ? (
-                <img
-                  src={course.coverImage}
-                  alt={course.title}
-                  className="h-16 w-24 flex-shrink-0 rounded-lg object-cover"
-                />
-              ) : (
-                <div className="bg-bg-surface-active flex h-16 w-24 flex-shrink-0 items-center justify-center rounded-lg">
-                  <BookOpen size={20} className="text-text-muted" />
-                </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <h4 className="text-text-primary truncate text-sm font-semibold">{course.title}</h4>
-                <p className="text-text-muted text-[11px]">
-                  {course.category} • {course.totalLessons} lessons
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${course.status === "Published" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}
-                >
-                  {course.status}
-                </span>
-                <Can permission="courses.edit">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/courses/${course.id}/edit`);
-                    }}
-                    className="text-text-muted hover:text-primary text-xs"
-                  >
-                    Edit
-                  </button>
-                </Can>
-              </div>
-            </div>
-          ))}
-        </div>
+          </div>
+        </>
       )}
     </DashboardLayout>
   );

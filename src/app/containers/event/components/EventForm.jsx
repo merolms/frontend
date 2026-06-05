@@ -1,8 +1,8 @@
-import { Plus, Save, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { getEventColors, getEventTypes } from "@/app/services/eventService";
-import { Button } from "@/components/ui/button";
+import FormActions from "@/components/forms/FormActions";
+import FormField from "@/components/forms/FormField";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
@@ -89,33 +89,28 @@ const EventForm = ({ event = null, onSubmit, onClose, loading = false }) => {
           <DialogTitle>{isEdit ? "Edit Event" : "Create Event"}</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-3">
           {errors.submit && <p className="text-error text-xs">{errors.submit}</p>}
 
-          <div>
-            <label className="text-text-primary text-xs font-medium">Title *</label>
+          <FormField label="Title" error={errors.title} required>
             <Input
               placeholder="e.g., React Workshop"
               value={form.title}
               onChange={(e) => handleChange("title", e.target.value)}
-              className={errors.title ? "border-error" : ""}
             />
-            {errors.title && <p className="text-error mt-0.5 text-[11px]">{errors.title}</p>}
-          </div>
+          </FormField>
 
-          <div>
-            <label className="text-text-primary text-xs font-medium">Description</label>
+          <FormField label="Description">
             <textarea
               placeholder="Describe the event..."
               className="border-border bg-bg-surface text-text-primary mt-1 min-h-[60px] w-full resize-y rounded-md border px-3 py-2 text-sm outline-none"
               value={form.description}
               onChange={(e) => handleChange("description", e.target.value)}
             />
-          </div>
+          </FormField>
 
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-text-primary text-xs font-medium">Type</label>
+            <FormField label="Type">
               <Select value={form.type} onValueChange={(v) => handleChange("type", v)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -128,9 +123,8 @@ const EventForm = ({ event = null, onSubmit, onClose, loading = false }) => {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-            <div>
-              <label className="text-text-primary text-xs font-medium">Color</label>
+            </FormField>
+            <FormField label="Color">
               <Select value={form.color} onValueChange={(v) => handleChange("color", v)}>
                 <SelectTrigger>
                   <div className="flex items-center gap-2">
@@ -155,84 +149,66 @@ const EventForm = ({ event = null, onSubmit, onClose, loading = false }) => {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </FormField>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-text-primary text-xs font-medium">Start *</label>
+            <FormField label="Start" error={errors.startDate} required>
               <Input
                 type="datetime-local"
                 value={form.startDate}
                 onChange={(e) => handleChange("startDate", e.target.value)}
-                className={errors.startDate ? "border-error" : ""}
               />
-              {errors.startDate && (
-                <p className="text-error mt-0.5 text-[11px]">{errors.startDate}</p>
-              )}
-            </div>
-            <div>
-              <label className="text-text-primary text-xs font-medium">End *</label>
+            </FormField>
+            <FormField label="End" error={errors.endDate} required>
               <Input
                 type="datetime-local"
                 value={form.endDate}
                 onChange={(e) => handleChange("endDate", e.target.value)}
-                className={errors.endDate ? "border-error" : ""}
               />
-              {errors.endDate && <p className="text-error mt-0.5 text-[11px]">{errors.endDate}</p>}
-            </div>
+            </FormField>
           </div>
 
-          <div>
-            <label className="text-text-primary text-xs font-medium">Location *</label>
+          <FormField label="Location" error={errors.location} required>
             <Input
               placeholder="e.g., Virtual — Zoom"
               value={form.location}
               onChange={(e) => handleChange("location", e.target.value)}
-              className={errors.location ? "border-error" : ""}
             />
-            {errors.location && <p className="text-error mt-0.5 text-[11px]">{errors.location}</p>}
-          </div>
+          </FormField>
 
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-text-primary text-xs font-medium">Instructor</label>
+            <FormField label="Instructor">
               <Input
                 placeholder="e.g., Jane Smith"
                 value={form.instructor}
                 onChange={(e) => handleChange("instructor", e.target.value)}
               />
-            </div>
-            <div>
-              <label className="text-text-primary text-xs font-medium">Max Attendees</label>
+            </FormField>
+            <FormField label="Max Attendees">
               <Input
                 type="number"
                 min={1}
                 value={form.maxAttendees}
                 onChange={(e) => handleChange("maxAttendees", e.target.value)}
               />
-            </div>
+            </FormField>
           </div>
 
-          <div>
-            <label className="text-text-primary text-xs font-medium">Tags</label>
+          <FormField label="Tags">
             <Input
               placeholder="Comma-separated: react, javascript, workshop"
               value={form.tags}
               onChange={(e) => handleChange("tags", e.target.value)}
             />
-          </div>
-        </div>
+          </FormField>
 
-        <div className="border-border mt-4 flex justify-end gap-2 border-t pt-3">
-          <Button variant="default" onClick={onClose} disabled={loading}>
-            <X size={14} /> Cancel
-          </Button>
-          <Button onClick={handleSubmit} disabled={loading}>
-            {isEdit ? <Save size={14} /> : <Plus size={14} />}{" "}
-            {isEdit ? "Save Changes" : "Create Event"}
-          </Button>
-        </div>
+          <FormActions
+            onCancel={onClose}
+            loading={loading}
+            submitLabel={isEdit ? "Save Changes" : "Create Event"}
+          />
+        </form>
       </DialogContent>
     </Dialog>
   );

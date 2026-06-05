@@ -8,8 +8,6 @@ import {
   Shield,
   Tags,
   Users,
-  Layers,
-  Presentation,
 } from "lucide-react";
 
 /**

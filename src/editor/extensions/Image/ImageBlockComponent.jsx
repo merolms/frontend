@@ -1,19 +1,20 @@
 import { NodeViewWrapper } from "@tiptap/react";
-import React, { useEffect } from "react";
-import { Resizable } from "re-resizable";
 import {
-  Image,
-  AlignLeft,
+  AlertCircle,
   AlignCenter,
+  AlignLeft,
   AlignRight,
   Expand,
-  Upload,
+  Image,
   Loader2,
-  AlertCircle,
+  Upload,
 } from "lucide-react";
+import { Resizable } from "re-resizable";
+import React from "react";
+
+import Modal from "../../../components/ui/Modal";
 import { useEditorProvider } from "../../../contexts/EditorContext";
 import { constructAcceptValue } from "../../../lib/constants";
-import Modal from "../../../components/ui/Modal";
 
 const SUPPORTED_FILES = constructAcceptValue(["jpg", "png", "webp", "gif"]);
 

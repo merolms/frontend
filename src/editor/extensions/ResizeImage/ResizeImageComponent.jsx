@@ -1,19 +1,21 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
-import { NodeViewWrapper } from "@tiptap/react";
-import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
+
+import { NodeViewWrapper } from "@tiptap/react";
 import {
+  AlignCenterVertical,
   AlignEndVertical,
   AlignStartVertical,
-  AlignCenterVertical,
   ExternalLink,
   Settings,
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ResizableBox } from "react-resizable";
+
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Slider } from "@/components/ui/slider";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export const ResizableImageComponent = (props) => {
   const MAX_INITIAL_WIDTH = 600;
@@ -219,7 +221,7 @@ export const ResizableImageComponent = (props) => {
               <div className="flex items-center gap-2 text-nowrap">
                 {editedTitle && <p>{editedTitle}</p>}
                 {editedUrl && (
-                  <a href={editedUrl} target="_blank">
+                  <a href={editedUrl} target="_blank" rel="noreferrer">
                     <ExternalLink className="h-4 w-4 flex-none" />
                   </a>
                 )}

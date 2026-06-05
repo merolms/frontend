@@ -1,16 +1,17 @@
 import { NodeViewWrapper } from "@tiptap/react";
-import React, { useState } from "react";
 import {
-  RotateCcw,
   ArrowRight,
   CheckCircle,
   GitBranch,
-  RefreshCcw,
-  Plus,
-  Trash2,
-  Save,
   Play,
+  Plus,
+  RefreshCcw,
+  RotateCcw,
+  Save,
+  Trash2,
 } from "lucide-react";
+import { useState } from "react";
+
 import { useEditorProvider } from "../../../contexts/EditorContext";
 
 const ScenariosExtension = (props) => {

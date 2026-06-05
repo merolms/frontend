@@ -1,6 +1,8 @@
+import { TruckElectricIcon } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 import SideBar from "@/app/containers/SideBar/SideBar";
 import { useTheme as useThemeContext } from "@/app/context/ThemeContext";
 import { fetchAutosave, fetchLessonBlocks, saveAutosave } from "@/app/services/blockService";
@@ -12,15 +14,13 @@ import {
   reorderLessons,
   updateLesson,
 } from "@/app/services/courseService";
-import { t } from "@/styles/theme";
-
 // import BlockNoteEditor from "./components/BlockNoteEditor/BlockNoteEditor";
 // import { TipTapEditor } from "@/editor/TipTapEditor";
 import MeroEduEditor from "@/editor/Editor";
+import { t } from "@/styles/theme";
+
 // import TipTapEditor from "./components/TipTapEditor/TipTapEditor";
 import LessonPanel from "./components/LessonPanel";
-import ThemeSwitcher from "@/app/components/ThemeSwitcher";
-import { TruckElectricIcon } from "lucide-react";
 
 // ─── BLOCKS → BlockNote DOC CONVERTER ───────────────────────────
 // Converts blocks from GET /lessons/{id}/blocks API into BlockNote

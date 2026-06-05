@@ -1,7 +1,7 @@
-import { AlertCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { Button } from "@/components/ui/button";
+import FormActions from "@/components/forms/FormActions";
+import FormField from "@/components/forms/FormField";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -63,30 +63,26 @@ const TeamForm = ({
     <form onSubmit={handleSubmit} className="space-y-3">
       {Object.keys(errors).length > 0 && (
         <div className="text-error flex items-center gap-2 text-xs">
-          <AlertCircle size={12} /> Please fix the errors below.
+          <span className="text-error">⚠</span> Please fix the errors below.
         </div>
       )}
-      <div>
-        <label className="text-text-primary text-xs font-medium">Team Name</label>
+      <FormField label="Team Name" error={errors.name} required>
         <Input
           placeholder="Engineering Team"
           value={formData.name}
           onChange={(e) => handleChange("name", e.target.value)}
         />
-        {errors.name && <p className="text-error mt-0.5 text-[11px]">{errors.name}</p>}
-      </div>
-      <div>
-        <label className="text-text-primary text-xs font-medium">Description</label>
+      </FormField>
+      <FormField label="Description">
         <Textarea
           placeholder="What is this team about?"
           value={formData.description}
           onChange={(e) => handleChange("description", e.target.value)}
           rows={3}
         />
-      </div>
+      </FormField>
 
-      <div>
-        <label className="text-text-primary text-xs font-medium">Color</label>
+      <FormField label="Color">
         <Select value={formData.color} onValueChange={(v) => handleChange("color", v)}>
           <SelectTrigger>
             <div className="flex items-center gap-2">
@@ -118,18 +114,9 @@ const TeamForm = ({
           />
           <span className="text-text-muted font-mono text-[11px]">{formData.color}</span>
         </div>
-      </div>
+      </FormField>
 
-      <div className="flex justify-end gap-2 pt-2">
-        {onCancel && (
-          <Button type="button" variant="default" onClick={onCancel} disabled={loading}>
-            Cancel
-          </Button>
-        )}
-        <Button type="submit" disabled={loading}>
-          {submitLabel}
-        </Button>
-      </div>
+      <FormActions onCancel={onCancel} loading={loading} submitLabel={submitLabel} />
     </form>
   );
 };

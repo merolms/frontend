@@ -1,5 +1,6 @@
 import { mergeAttributes, Node } from "@tiptap/core";
 import { ReactNodeViewRenderer } from "@tiptap/react";
+
 import ButtonsExtension from "./ButtonsExtension";
 
 export default Node.create({

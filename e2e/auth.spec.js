@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { DEMO_USERS, mockLogin, mockLogout } from "./helpers";
+import { DEMO_USERS, mockLogin } from "./helpers";
 
 test.describe("Authentication", () => {
   test("login page renders correctly", async ({ page }) => {

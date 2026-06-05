@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
+import { NodeViewContent, NodeViewWrapper } from "@tiptap/react";
+import DOMPurify from "dompurify";
 import { Check, Copy, Eye, EyeOff } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { marked } from "marked";
+import { useEffect, useState } from "react";
+
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -10,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import DOMPurify from "dompurify";
 
 const CodeBlockComponent = ({ node, updateAttributes, extension }) => {
   const [copied, setCopied] = useState(false);

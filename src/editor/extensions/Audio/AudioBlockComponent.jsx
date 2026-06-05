@@ -1,6 +1,7 @@
-import React from "react";
 import { NodeViewWrapper } from "@tiptap/react";
-import { Upload, Loader2, AlertCircle, Headphones } from "lucide-react";
+import { AlertCircle, Headphones, Loader2, Upload } from "lucide-react";
+import React from "react";
+
 import { useEditorProvider } from "../../../contexts/EditorContext";
 
 function AudioBlockComponent(props) {

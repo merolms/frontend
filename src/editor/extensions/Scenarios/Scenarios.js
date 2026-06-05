@@ -1,5 +1,6 @@
 import { mergeAttributes, Node } from "@tiptap/core";
 import { ReactNodeViewRenderer } from "@tiptap/react";
+
 import ScenariosExtension from "./ScenariosExtension";
 
 export default Node.create({

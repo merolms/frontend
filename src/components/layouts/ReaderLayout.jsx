@@ -1,6 +1,6 @@
-import React from "react";
 import { Check, ChevronRight } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+
 import { t } from "@/styles/theme";
 
 /**

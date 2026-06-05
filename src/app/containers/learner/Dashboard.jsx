@@ -1,13 +1,13 @@
+import { BookOpen, CheckCircle, Clock, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, CheckCircle, Clock, TrendingUp, Loader } from "lucide-react";
 
 import { fetchEnrollments } from "@/app/services/enrollmentService";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import ProgressBar from "@/components/ProgressBar/ProgressBar";
-import EmptyState from "@/components/common/EmptyState";
 import LoadingState from "@/components/common/LoadingState";
+import StatCard from "@/components/common/StatCard";
+import ProgressBar from "@/components/ProgressBar/ProgressBar";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 
 /**
  * LearnerDashboard — Main dashboard for Student role.
@@ -102,59 +102,43 @@ const LearnerDashboard = () => {
 
       {loading ? (
         <LoadingState count={3} height="h-32" />
-      ) : activeEnrollments.length === 0 ? (
-        <EmptyState
-          icon={<BookOpen size={48} />}
-          title="No courses in progress"
-          description="Browse courses to start learning."
-          action={
-            <button
-              onClick={() => navigate("/courses")}
-              className="bg-primary hover:bg-primary-hover rounded-md px-4 py-2 text-sm text-white"
-            >
-              Browse Courses
-            </button>
-          }
-        />
       ) : (
-        <div className="grid grid-cols-1 gap-4">
-          {activeEnrollments.slice(0, 3).map((enrollment) => (
-            <div
-              key={enrollment.id}
-              className="border-border bg-bg-surface flex cursor-pointer items-center gap-4 rounded-xl border p-4 shadow-sm transition-all hover:shadow-md"
-              onClick={() => navigate(`/courses/${enrollment.courseId}/learn`)}
-            >
-              {enrollment.coverImage ? (
-                <img
-                  src={enrollment.coverImage}
-                  alt={enrollment.courseTitle}
-                  className="h-16 w-24 flex-shrink-0 rounded-lg object-cover"
-                />
-              ) : (
-                <div className="bg-bg-surface-active flex h-16 w-24 flex-shrink-0 items-center justify-center rounded-lg">
-                  <BookOpen size={20} className="text-text-muted" />
-                </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <h4 className="text-text-primary truncate text-sm font-semibold">
-                  {enrollment.courseTitle}
-                </h4>
-                <p className="text-text-muted text-[11px]">{enrollment.category}</p>
-                <div className="mt-2">
-                  <div className="mb-1 flex items-center justify-between">
-                    <span className="text-text-muted text-[11px]">
-                      {enrollment.progress || 0}% complete
-                    </span>
-                  </div>
-                  <ProgressBar progress={enrollment.progress || 0} size="sm" />
-                </div>
+        <>
+          {/* Stats */}
+          <div className="mb-6 grid grid-cols-4 gap-4">
+            <StatCard title="Enrolled" value={enrollments.length} icon={BookOpen} color="primary" />
+            <StatCard
+              title="In Progress"
+              value={activeEnrollments.length}
+              icon={TrendingUp}
+              color="accent"
+            />
+            <StatCard
+              title="Completed"
+              value={completedEnrollments.length}
+              icon={CheckCircle}
+              color="success"
+            />
+            <StatCard title="Avg Progress" value={`${avgProgress}%`} icon={Clock} color="warning" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h4 className="text-text-primary truncate text-sm font-semibold">
+              {enrollment.courseTitle}
+            </h4>
+            <p className="text-text-muted text-[11px]">{enrollment.category}</p>
+            <div className="mt-2">
+              <div className="mb-1 flex items-center justify-between">
+                <span className="text-text-muted text-[11px]">
+                  {enrollment.progress || 0}% complete
+                </span>
               </div>
-              <button className="bg-primary hover:bg-primary-hover flex-shrink-0 rounded-md px-3 py-1.5 text-xs text-white">
-                Continue →
-              </button>
+              <ProgressBar progress={enrollment.progress || 0} size="sm" />
             </div>
-          ))}
-        </div>
+          </div>
+          <button className="bg-primary hover:bg-primary-hover flex-shrink-0 rounded-md px-3 py-1.5 text-xs text-white">
+            Continue →
+          </button>
+        </>
       )}
     </DashboardLayout>
   );

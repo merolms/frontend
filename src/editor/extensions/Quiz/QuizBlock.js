@@ -1,5 +1,6 @@
 import { mergeAttributes, Node } from "@tiptap/core";
 import { ReactNodeViewRenderer } from "@tiptap/react";
+
 import QuizBlockComponent from "./QuizBlockComponent";
 
 export default Node.create({

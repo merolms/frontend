@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
 import { NodeViewWrapper } from "@tiptap/react";
-import { Edit2, Save, X, AlignLeft, AlignCenter, AlignRight, Trash } from "lucide-react";
-import { useEditorProvider } from "../../../contexts/EditorContext";
+import { AlignCenter, AlignLeft, AlignRight, Edit2, Save, Trash, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+
 import Modal from "../../../components/ui/Modal";
+import { useEditorProvider } from "../../../contexts/EditorContext";
 
 const ALIGNMENTS = [
   { value: "left", label: <AlignLeft size={16} /> },

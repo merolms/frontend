@@ -1,10 +1,11 @@
+import { BarChart3, BookOpen, TrendingUp, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Users, TrendingUp, BarChart3, Loader } from "lucide-react";
 
 import { fetchDashboardStats } from "@/app/services/dashboardService";
-import DashboardLayout from "@/components/ui/dashboard-layout";
 import LoadingState from "@/components/common/LoadingState";
+import StatCard from "@/components/common/StatCard";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 
 /**
  * AdminDashboard — Main dashboard for Administrator role.
@@ -39,52 +40,30 @@ const AdminDashboard = () => {
         <>
           {/* Stats */}
           <div className="mb-6 grid grid-cols-4 gap-4">
-            <div className="border-border bg-bg-surface rounded-xl border p-4 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
-                  <BookOpen size={18} className="text-primary" />
-                </div>
-                <div>
-                  <p className="text-text-primary text-2xl font-bold">{stats?.totalCourses || 0}</p>
-                  <p className="text-text-muted text-[11px]">Total Courses</p>
-                </div>
-              </div>
-            </div>
-            <div className="border-border bg-bg-surface rounded-xl border p-4 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="bg-success/10 flex h-10 w-10 items-center justify-center rounded-lg">
-                  <Users size={18} className="text-success" />
-                </div>
-                <div>
-                  <p className="text-text-primary text-2xl font-bold">{stats?.totalUsers || 0}</p>
-                  <p className="text-text-muted text-[11px]">Total Users</p>
-                </div>
-              </div>
-            </div>
-            <div className="border-border bg-bg-surface rounded-xl border p-4 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="bg-accent/10 flex h-10 w-10 items-center justify-center rounded-lg">
-                  <TrendingUp size={18} className="text-accent" />
-                </div>
-                <div>
-                  <p className="text-text-primary text-2xl font-bold">{stats?.totalTeams || 0}</p>
-                  <p className="text-text-muted text-[11px]">Teams</p>
-                </div>
-              </div>
-            </div>
-            <div className="border-border bg-bg-surface rounded-xl border p-4 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="bg-warning/10 flex h-10 w-10 items-center justify-center rounded-lg">
-                  <BarChart3 size={18} className="text-warning" />
-                </div>
-                <div>
-                  <p className="text-text-primary text-2xl font-bold">
-                    {stats?.totalCategories || 0}
-                  </p>
-                  <p className="text-text-muted text-[11px]">Categories</p>
-                </div>
-              </div>
-            </div>
+            <StatCard
+              title="Total Courses"
+              value={stats?.totalCourses || 0}
+              icon={BookOpen}
+              color="primary"
+            />
+            <StatCard
+              title="Total Users"
+              value={stats?.totalUsers || 0}
+              icon={Users}
+              color="success"
+            />
+            <StatCard
+              title="Teams"
+              value={stats?.totalTeams || 0}
+              icon={TrendingUp}
+              color="accent"
+            />
+            <StatCard
+              title="Categories"
+              value={stats?.totalCategories || 0}
+              icon={BarChart3}
+              color="warning"
+            />
           </div>
 
           {/* Quick Actions */}

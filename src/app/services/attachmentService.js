@@ -2,7 +2,7 @@
 // Handles file uploads and downloads for course attachments
 // Backend: POST /attachments (multipart), GET /attachments/download?file=<uuid>
 
-import { apiUpload, apiGet } from "@/app/services/http";
+import { apiGet, apiUpload } from "@/app/services/http";
 
 // ==================== UPLOAD ====================
 // POST /attachments

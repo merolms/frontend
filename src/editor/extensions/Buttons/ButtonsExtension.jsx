@@ -1,16 +1,17 @@
 import { NodeViewContent, NodeViewWrapper } from "@tiptap/react";
-import React, { useState, useRef, useEffect, lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 const Picker = lazy(() => import("@emoji-mart/react"));
 import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
   ArrowRight,
   ChevronDown,
   Link,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
   Palette,
 } from "lucide-react";
 import { twMerge } from "tailwind-merge";
+
 import { useEditorProvider } from "../../../contexts/EditorContext";
 
 const ButtonsExtension = (props) => {

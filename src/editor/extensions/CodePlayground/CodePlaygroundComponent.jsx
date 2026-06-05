@@ -1,30 +1,23 @@
 import { NodeViewWrapper } from "@tiptap/react";
-import React, { useState, useCallback } from "react";
 import {
-  Play,
-  Plus,
-  Trash2,
-  CheckCircle2,
-  XCircle,
-  Loader2,
-  ChevronDown,
-  ChevronRight,
-  Terminal,
-  RotateCcw,
-  Lightbulb,
-  Code2,
-  FlaskConical,
-  FileText,
-  Copy,
   ClipboardCheck,
-  Eye,
-  Settings2,
+  Code2,
+  Copy,
+  FileText,
+  FlaskConical,
+  Lightbulb,
+  Plus,
+  RotateCcw,
+  Terminal,
+  Trash2,
 } from "lucide-react";
-import { useEditorProvider } from "../../../contexts/EditorContext";
-import { PLAYGROUND_LANGUAGES, getLanguageById } from "./languages";
-import { v4 as uuidv4 } from "uuid";
+import { useCallback, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { v4 as uuidv4 } from "uuid";
+
+import { useEditorProvider } from "../../../contexts/EditorContext";
+import { getLanguageById, PLAYGROUND_LANGUAGES } from "./languages";
 
 function CodePlaygroundComponent(props) {
   const editorState = useEditorProvider();

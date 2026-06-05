@@ -1,17 +1,7 @@
-import React from "react";
-import { DividerVerticalIcon } from "@radix-ui/react-icons";
-import { Alert } from "@/components/ui/alert";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-
 import {
-  ArrowCounterClockwise,
-  ArrowClockwise,
   ArrowsClockwise,
-  BracketsCurly,
   CaretDown,
   CheckCircle,
-  Code,
   Columns,
   ColumnsPlusRight,
   Cube,
@@ -32,45 +22,30 @@ import {
   Sigma,
   Table,
   Tag,
-  TextAlignCenter,
-  TextAlignJustify,
-  TextAlignLeft,
-  TextAlignRight,
-  TextB,
-  TextItalic,
-  TextStrikethrough,
-  User,
   VideoCamera,
   Warning,
   XCircle,
 } from "@phosphor-icons/react";
 import {
-  Bold,
-  CodeXml,
-  Italic,
-  MessageSquareQuote,
-  List,
-  Minus,
-  Strikethrough,
-  Undo2,
-  Redo2,
-  Heading1,
-  Heading2,
-  Heading3,
-  ListOrdered,
-  SeparatorHorizontal,
-  Underline as UnderlineIcon,
-  Code as CodeIcon,
-  ListTodo,
-  AlignLeft,
   AlignCenter,
-  AlignRight,
   AlignJustify,
+  AlignLeft,
+  AlignRight,
   Baseline,
-  Highlighter,
-  Link2,
+  Bold,
   Eraser,
+  Highlighter,
+  Italic,
+  Redo2,
+  Strikethrough,
+  Underline as UnderlineIcon,
+  Undo2,
 } from "lucide-react";
+import React from "react";
+
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 import ToolTip from "../../components/ui/Tooltip";

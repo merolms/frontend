@@ -1,6 +1,7 @@
-import React from "react";
 import { NodeViewWrapper } from "@tiptap/react";
-import { Upload, Loader2, AlertCircle, FileText } from "lucide-react";
+import { AlertCircle, FileText, Loader2, Upload } from "lucide-react";
+import React from "react";
+
 import { useEditorProvider } from "../../../contexts/EditorContext";
 
 function PDFBlockComponent(props) {

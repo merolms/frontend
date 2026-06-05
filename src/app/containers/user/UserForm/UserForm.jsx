@@ -1,8 +1,8 @@
-import { AlertCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { fetchRoles } from "@/app/services/authService";
-import { Button } from "@/components/ui/button";
+import FormActions from "@/components/forms/FormActions";
+import FormField from "@/components/forms/FormField";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -76,33 +76,28 @@ const UserForm = ({
     <form onSubmit={handleSubmit} className="space-y-3">
       {Object.keys(errors).length > 0 && (
         <div className="text-error flex items-center gap-2 text-sm">
-          <AlertCircle size={14} /> Please fix the errors below.
+          <span className="text-error">⚠</span> Please fix the errors below.
         </div>
       )}
       <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="text-text-primary text-xs font-medium">First Name</label>
+        <FormField label="First Name" error={errors.firstName} required>
           <Input
             placeholder="John"
             value={formData.firstName}
             onChange={(e) => handleChange("firstName", e.target.value)}
             className={errors.firstName ? "border-error" : ""}
           />
-          {errors.firstName && <p className="text-error mt-0.5 text-[11px]">{errors.firstName}</p>}
-        </div>
-        <div>
-          <label className="text-text-primary text-xs font-medium">Last Name</label>
+        </FormField>
+        <FormField label="Last Name" error={errors.lastName} required>
           <Input
             placeholder="Doe"
             value={formData.lastName}
             onChange={(e) => handleChange("lastName", e.target.value)}
             className={errors.lastName ? "border-error" : ""}
           />
-          {errors.lastName && <p className="text-error mt-0.5 text-[11px]">{errors.lastName}</p>}
-        </div>
+        </FormField>
       </div>
-      <div>
-        <label className="text-text-primary text-xs font-medium">Email</label>
+      <FormField label="Email" error={errors.email} required>
         <Input
           type="email"
           placeholder="john@example.com"
@@ -110,10 +105,8 @@ const UserForm = ({
           onChange={(e) => handleChange("email", e.target.value)}
           className={errors.email ? "border-error" : ""}
         />
-        {errors.email && <p className="text-error mt-0.5 text-[11px]">{errors.email}</p>}
-      </div>
-      <div>
-        <label className="text-text-primary text-xs font-medium">Role</label>
+      </FormField>
+      <FormField label="Role" error={errors.role} required>
         <Select value={formData.role} onValueChange={(v) => handleChange("role", v)}>
           <SelectTrigger>
             <SelectValue placeholder="Select a role" />
@@ -126,34 +119,22 @@ const UserForm = ({
             ))}
           </SelectContent>
         </Select>
-        {errors.role && <p className="text-error mt-0.5 text-[11px]">{errors.role}</p>}
-      </div>
-      <div>
-        <label className="text-text-primary text-xs font-medium">Phone</label>
+      </FormField>
+      <FormField label="Phone">
         <Input
           placeholder="+1 555-0100"
           value={formData.phone}
           onChange={(e) => handleChange("phone", e.target.value)}
         />
-      </div>
-      <div>
-        <label className="text-text-primary text-xs font-medium">Bio</label>
+      </FormField>
+      <FormField label="Bio">
         <Input
           placeholder="Short bio..."
           value={formData.bio}
           onChange={(e) => handleChange("bio", e.target.value)}
         />
-      </div>
-      <div className="flex justify-end gap-2 pt-2">
-        {onCancel && (
-          <Button type="button" variant="default" onClick={onCancel} disabled={loading}>
-            Cancel
-          </Button>
-        )}
-        <Button type="submit" disabled={loading}>
-          {submitLabel}
-        </Button>
-      </div>
+      </FormField>
+      <FormActions onCancel={onCancel} loading={loading} submitLabel={submitLabel} />
     </form>
   );
 };

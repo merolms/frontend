@@ -1,5 +1,3 @@
-import React from "react";
-
 /**
  * EmptyState — reusable empty state with icon, message, and optional action.
  *

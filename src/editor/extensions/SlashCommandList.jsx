@@ -1,14 +1,15 @@
 import { Extension } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
+import { Bold, Heading1 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import tippy from "tippy.js";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bold, Heading1 } from "lucide-react";
-import React, { useState, useEffect, useCallback } from "react";
-import tippy from "tippy.js";
 
 const SlashCommandList = ({ items, onSelect, onClose }) => {
   const [open, setOpen] = useState(true);

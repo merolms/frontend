@@ -2,9 +2,9 @@ import { GraduationCap, LogOut, Settings } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
+import RoleBadge from "@/components/common/RoleBadge";
 import { logoutUser } from "@/redux/slices/authSlice";
 import { getUserNavItems } from "@/utils/navConfig";
-import RoleBadge from "@/components/common/RoleBadge";
 
 /**
  * RoleBasedSidebar — Icon-only sidebar with hover tooltips.

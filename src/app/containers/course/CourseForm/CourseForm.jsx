@@ -1,4 +1,3 @@
-import { ImageIcon, Save, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
@@ -14,6 +13,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import FormField from "@/components/forms/FormField";
+import FormActions from "@/components/forms/FormActions";
 
 const tagOptions = [
   "javascript",
@@ -91,31 +92,24 @@ const CourseForm = ({
         </Paper>
       )}
 
-      <div>
-        <label className="text-text-primary text-sm font-medium">Course Title</label>
+      <FormField label="Course Title" error={errors.title} required>
         <Input
           placeholder="e.g., Advanced React Patterns"
           value={formData.title}
           onChange={(e) => handleChange("title", e.target.value)}
-          className={errors.title ? "border-error" : ""}
         />
-        {errors.title && <p className="text-error mt-1 text-xs">{errors.title}</p>}
-      </div>
+      </FormField>
 
-      <div>
-        <label className="text-text-primary text-sm font-medium">Description</label>
+      <FormField label="Description" error={errors.description} required>
         <Textarea
           placeholder="What will students learn?"
           value={formData.description}
           onChange={(e) => handleChange("description", e.target.value)}
-          className={errors.description ? "border-error" : ""}
           rows={4}
         />
-        {errors.description && <p className="text-error mt-1 text-xs">{errors.description}</p>}
-      </div>
+      </FormField>
 
-      <div>
-        <label className="text-text-primary text-sm font-medium">Category</label>
+      <FormField label="Category" error={errors.category} required>
         <Select value={formData.category} onValueChange={(v) => handleChange("category", v)}>
           <SelectTrigger>
             <SelectValue placeholder="Select a category" />
@@ -128,11 +122,9 @@ const CourseForm = ({
             ))}
           </SelectContent>
         </Select>
-        {errors.category && <p className="text-error mt-1 text-xs">{errors.category}</p>}
-      </div>
+      </FormField>
 
-      <div>
-        <label className="text-text-primary text-sm font-medium">Tags</label>
+      <FormField label="Tags">
         <Select value={formData.tags} onValueChange={(v) => handleChange("tags", v)}>
           <SelectTrigger>
             <SelectValue placeholder="Add tags to help discovery" />
@@ -145,10 +137,9 @@ const CourseForm = ({
             ))}
           </SelectContent>
         </Select>
-      </div>
+      </FormField>
 
-      <div>
-        <label className="text-text-primary text-sm font-medium">Cover Image</label>
+      <FormField label="Cover Image">
         <div className="flex items-center gap-2">
           <Input
             placeholder="https://example.com/cover.jpg"
@@ -179,7 +170,7 @@ const CourseForm = ({
             </Button>
           </div>
         )}
-      </div>
+      </FormField>
 
       <UnsplashPicker
         open={unsplashOpen}
@@ -191,16 +182,7 @@ const CourseForm = ({
         initialQuery={formData.title || "education"}
       />
 
-      <div className="flex justify-end gap-2 pt-2">
-        {onCancel && (
-          <Button type="button" variant="default" onClick={onCancel} disabled={loading}>
-            Cancel
-          </Button>
-        )}
-        <Button type="submit" disabled={loading}>
-          <Save size={14} /> {submitLabel}
-        </Button>
-      </div>
+      <FormActions onCancel={onCancel} loading={loading} submitLabel={submitLabel} />
     </form>
   );
 };

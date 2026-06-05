@@ -5,15 +5,15 @@ import {
   CodeSquare,
   Cuboid,
   FileText,
-  Globe,
   GitBranch,
-  Headphones,
+  Globe,
   Heading1,
   Heading2,
   Heading3,
   Heading4,
   Heading5,
   Heading6,
+  Headphones,
   ImagePlus,
   List,
   ListOrdered,
@@ -26,8 +26,8 @@ import {
   User,
   Video,
 } from "lucide-react";
-import React from "react";
-import { searchMatchesAny, normalizeForSearch } from "../../../lib/search/normalize";
+
+import { normalizeForSearch, searchMatchesAny } from "../../../lib/search/normalize";
 
 export const categoryLabels = {
   text: "Text",

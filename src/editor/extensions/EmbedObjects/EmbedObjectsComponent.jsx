@@ -1,16 +1,17 @@
 import { NodeViewWrapper } from "@tiptap/react";
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import DOMPurify from "dompurify";
 import {
-  Link as LinkIcon,
-  GripVertical,
-  GripHorizontal,
   AlignCenter,
   Code,
-  X,
   ExternalLink,
+  GripHorizontal,
+  GripVertical,
+  Link as LinkIcon,
+  X,
 } from "lucide-react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+
 import { useEditorProvider } from "../../../contexts/EditorContext";
-import DOMPurify from "dompurify";
 import { cn } from "../../../lib/utils";
 
 const SCRIPT_BASED_EMBEDS = {

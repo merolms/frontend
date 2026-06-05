@@ -1,5 +1,6 @@
 import { mergeAttributes, Node } from "@tiptap/core";
 import { ReactNodeViewRenderer } from "@tiptap/react";
+
 import WebPreviewComponent from "./WebPreviewComponent";
 
 export default Node.create({

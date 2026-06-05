@@ -1,6 +1,5 @@
-import React from "react";
 import { NodeViewWrapper } from "@tiptap/react";
-import { Sparkles, Lock } from "lucide-react";
+import { Lock, Sparkles } from "lucide-react";
 
 function MagicBlockComponent() {
   return (

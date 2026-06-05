@@ -1,6 +1,6 @@
-import React from "react";
+import { Monitor, Moon, Sun } from "lucide-react";
+
 import { useTheme } from "@/app/context/ThemeContext";
-import { Sun, Moon, Monitor } from "lucide-react";
 
 export default function ThemeSwitcher() {
   const { mode, changeMode } = useTheme();

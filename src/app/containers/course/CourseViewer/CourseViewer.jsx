@@ -1,22 +1,20 @@
 import { ArrowLeft, ArrowRight, BookOpen, Loader } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { useTheme as useThemeContext } from "@/app/context/ThemeContext";
 import { useToast } from "@/app/context/ToastContext";
 import { fetchAutosave } from "@/app/services/blockService";
 import { fetchCourseById, fetchLessons } from "@/app/services/courseService";
 import {
   enrollInCourseAPI,
-  getEnrollmentStatus,
   getCourseProgress,
+  getEnrollmentStatus,
   markLessonCompleteAPI,
 } from "@/app/services/enrollmentService";
+import { ReaderLayout } from "@/components/layouts/ReaderLayout";
 import MeroEduEditor from "@/editor/Editor";
 import { t } from "@/styles/theme";
-
-import { ReaderLayout } from "@/components/layouts/ReaderLayout";
 
 const CourseViewer = () => {
   const navigate = useNavigate();

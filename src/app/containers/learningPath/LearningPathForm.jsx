@@ -1,4 +1,5 @@
 import {
+  AlertCircle,
   BookOpen,
   ChevronDown,
   ChevronUp,
@@ -7,7 +8,6 @@ import {
   Sparkles,
   Trash2,
   X,
-  AlertCircle,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";

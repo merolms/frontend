@@ -1,9 +1,10 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
 import {
-  fetchEnrollments,
   enrollInCourse,
-  markLessonComplete,
+  fetchEnrollments,
   isEnrolled,
+  markLessonComplete,
 } from "@/app/services/enrollmentService";
 
 // ==================== ASYNC THUNKS ====================

@@ -1,10 +1,11 @@
 import { NodeViewWrapper } from "@tiptap/react";
-import { v4 as uuidv4 } from "uuid";
-import { cn } from "../../../lib/utils";
-import React from "react";
 import { BadgeHelp, Check, Minus, Plus, RefreshCcw } from "lucide-react";
+import React from "react";
 import ReactConfetti from "react-confetti";
+import { v4 as uuidv4 } from "uuid";
+
 import { useEditorProvider } from "../../../contexts/EditorContext";
+import { cn } from "../../../lib/utils";
 
 function QuizBlockComponent(props) {
   const [questions, setQuestions] = React.useState(props.node.attrs.questions);

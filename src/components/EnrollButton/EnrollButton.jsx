@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import { CheckCircle, Loader2, Play } from "lucide-react";
+import { useState } from "react";
 
 /**
  * EnrollButton — shows enrollment state and handles enroll/continue/completed actions.

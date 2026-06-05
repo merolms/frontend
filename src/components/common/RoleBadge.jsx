@@ -1,5 +1,4 @@
-import React from "react";
-import { getRoleLabel, getRoleColor } from "@/utils/roles";
+import { getRoleColor, getRoleLabel } from "@/utils/roles";
 
 /**
  * RoleBadge — Displays a user's role as a colored badge.

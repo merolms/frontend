@@ -1,14 +1,14 @@
-import { AlertCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { permissionCatalog } from "@/app/services/authService";
+import FormActions from "@/components/forms/FormActions";
+import FormField from "@/components/forms/FormField";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -110,37 +110,28 @@ const RoleForm = ({
     <form onSubmit={handleSubmit} className="space-y-3">
       {Object.keys(errors).length > 0 && (
         <div className="text-error flex items-center gap-2 text-sm">
-          <AlertCircle size={14} /> Please fix the errors below.
+          <span className="text-error">⚠</span> Please fix the errors below.
         </div>
       )}
 
-      <div>
-        <label className="text-text-primary text-xs font-medium">Role Name</label>
+      <FormField label="Role Name" error={errors.name} required>
         <Input
           placeholder="e.g., Content Manager"
           value={formData.name}
           onChange={(e) => handleChange("name", e.target.value)}
-          className={errors.name ? "border-error" : ""}
         />
-        {errors.name && <p className="text-error mt-0.5 text-[11px]">{errors.name}</p>}
-      </div>
+      </FormField>
 
-      <div>
-        <label className="text-text-primary text-xs font-medium">Description</label>
+      <FormField label="Description" error={errors.description} required>
         <Textarea
           placeholder="What can this role do?"
           value={formData.description}
           onChange={(e) => handleChange("description", e.target.value)}
-          className={errors.description ? "border-error" : ""}
           rows={3}
         />
-        {errors.description && (
-          <p className="text-error mt-0.5 text-[11px]">{errors.description}</p>
-        )}
-      </div>
+      </FormField>
 
-      <div>
-        <label className="text-text-primary mb-1 block text-xs font-medium">Color</label>
+      <FormField label="Color">
         <div className="flex flex-wrap items-center gap-1.5">
           {ROLE_COLORS.map((color) => (
             <button
@@ -158,9 +149,14 @@ const RoleForm = ({
             />
           ))}
         </div>
-      </div>
+      </FormField>
 
-      <div>
+      <FormField
+        label="Permissions"
+        error={errors.permissions}
+        required
+        className="border-border rounded-lg border p-3"
+      >
         <div className="mb-2 flex items-center justify-between">
           <label className="text-text-primary text-xs font-semibold">
             Permissions{" "}
@@ -230,18 +226,9 @@ const RoleForm = ({
             );
           })}
         </Accordion>
-      </div>
+      </FormField>
 
-      <div className="flex justify-end gap-2 pt-2">
-        {onCancel && (
-          <Button type="button" variant="default" onClick={onCancel} disabled={loading}>
-            Cancel
-          </Button>
-        )}
-        <Button type="submit" disabled={loading}>
-          {submitLabel}
-        </Button>
-      </div>
+      <FormActions onCancel={onCancel} loading={loading} submitLabel={submitLabel} />
     </form>
   );
 };

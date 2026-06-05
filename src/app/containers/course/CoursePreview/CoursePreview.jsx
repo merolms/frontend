@@ -2,16 +2,15 @@ import { ArrowLeft, ArrowRight, BookOpen, Pencil } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 import SideBar from "@/app/containers/SideBar/SideBar";
 import { fetchAutosave, fetchLessonBlocks } from "@/app/services/blockService";
 import { fetchCourseById, fetchLessons } from "@/app/services/courseService";
+import { ReaderLayout } from "@/components/layouts/ReaderLayout";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import MeroEduEditor from "@/editor/Editor";
-import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 import { t } from "@/styles/theme";
-
-import { ReaderLayout } from "@/components/layouts/ReaderLayout";
 
 const CoursePreview = () => {
   const navigate = useNavigate();

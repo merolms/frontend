@@ -1,11 +1,8 @@
-import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
 
 import AdminDashboard from "@/app/containers/admin/Dashboard";
 import InstructorDashboard from "@/app/containers/instructor/Dashboard";
 import LearnerDashboard from "@/app/containers/learner/Dashboard";
-import RoleBadge from "@/components/common/RoleBadge";
 
 /**
  * Dashboard — Role-based entry point.

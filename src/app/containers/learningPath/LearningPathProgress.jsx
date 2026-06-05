@@ -6,9 +6,9 @@ import {
   fetchLearningPathById,
   fetchLearningPathProgress,
 } from "@/app/services/learningPathService";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import EmptyState from "@/components/common/EmptyState";
+import ProgressBar from "@/components/ProgressBar/ProgressBar";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 
 const LearningPathProgressPage = () => {
   const navigate = useNavigate();

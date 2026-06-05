@@ -1,7 +1,7 @@
 import { Extension } from "@tiptap/core";
+import { Fragment, Slice } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { NodeSelection } from "@tiptap/pm/state";
-import { Slice, Fragment } from "@tiptap/pm/model";
 
 const DRAG_HANDLE_KEY = new PluginKey("dragHandle");
 

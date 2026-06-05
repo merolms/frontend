@@ -1,11 +1,12 @@
 import { Extension } from "@tiptap/core";
-import Suggestion from "@tiptap/suggestion";
+import { PluginKey } from "@tiptap/pm/state";
 import { ReactRenderer } from "@tiptap/react";
+import Suggestion from "@tiptap/suggestion";
 import tippy from "tippy.js";
+
+import { Z_INDEX } from "../../../lib/z-index";
 import { filterCommands } from "./slashCommandsConfig";
 import SlashCommandsList from "./SlashCommandsList";
-import { PluginKey } from "@tiptap/pm/state";
-import { Z_INDEX } from "../../../lib/z-index";
 
 const slashCommandsPluginKey = new PluginKey("slashCommands");
 
