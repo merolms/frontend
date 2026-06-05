@@ -1,4 +1,5 @@
 import ProtectedRoute from "@/app/components/ProtectedRoute/ProtectedRoute";
+import RoleGuard from "@/components/auth/RoleGuard";
 import ForgotPassword from "@/app/containers/auth/ForgotPassword/ForgotPassword";
 import Login from "@/app/containers/auth/Login/Login";
 import ResetPassword from "@/app/containers/auth/ResetPassword/ResetPassword";
@@ -33,8 +34,44 @@ import UserContainer from "@/app/containers/user/User";
 import UserCreate from "@/app/containers/user/UserCreate/UserCreate";
 import UserDetail from "@/app/containers/user/UserDetail/UserDetail";
 import UserEdit from "@/app/containers/user/UserEdit/UserEdit";
+import AdminDashboard from "@/app/containers/admin/Dashboard";
+import InstructorDashboard from "@/app/containers/instructor/Dashboard";
+import LearnerDashboard from "@/app/containers/learner/Dashboard";
 
-// Public routes — no auth needed
+const adminOnly = (element, path) => ({
+  path,
+  element: (
+    <ProtectedRoute permissions={["dashboard.view"]}>
+      <RoleGuard roles={["Administrator"]}>{element}</RoleGuard>
+    </ProtectedRoute>
+  ),
+});
+
+const instructorPlus = (element, path) => ({
+  path,
+  element: (
+    <ProtectedRoute permissions={["courses.view"]}>
+      <RoleGuard roles={["Administrator", "Instructor"]}>{element}</RoleGuard>
+    </ProtectedRoute>
+  ),
+});
+
+const teamLeadPlus = (element, path) => ({
+  path,
+  element: (
+    <ProtectedRoute permissions={["teams.view"]}>
+      <RoleGuard roles={["Administrator", "Team Lead"]}>{element}</RoleGuard>
+    </ProtectedRoute>
+  ),
+});
+
+const anyAuth = (element, path, perms = []) => ({
+  path,
+  element: <ProtectedRoute permissions={perms}>{element}</ProtectedRoute>,
+});
+
+// ─── Public Routes ────────────────────────────────────────────────
+
 const publicRoutes = [
   { path: "/login", element: <Login /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
@@ -42,259 +79,69 @@ const publicRoutes = [
   { path: "/unauthorized", element: <Unauthorized /> },
 ];
 
-// Protected routes — require authentication (some require specific permissions)
-const protectedRoutes = [
-  {
-    path: "/",
-    element: (
-      <ProtectedRoute>
-        <Dashboard />
-      </ProtectedRoute>
-    ),
-    permissions: ["dashboard.view"],
-  },
-  {
-    path: "/courses",
-    element: (
-      <ProtectedRoute permissions={["courses.view"]}>
-        <CourseContainer />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/courses/create",
-    element: (
-      <ProtectedRoute permissions={["courses.create"]}>
-        <CourseCreate />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/courses/:id/builder/:lessonId?",
-    element: (
-      <ProtectedRoute permissions={["courses.edit"]}>
-        <CourseBuilder />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/courses/:id/preview/:lessonId?",
-    element: (
-      <ProtectedRoute permissions={["courses.edit"]}>
-        <CoursePreview />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/courses/:id",
-    element: (
-      <ProtectedRoute permissions={["courses.view"]}>
-        <CourseDetail />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/courses/:id/learn",
-    element: (
-      <ProtectedRoute permissions={["courses.view"]}>
-        <CourseViewer />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/courses/:id/edit",
-    element: (
-      <ProtectedRoute permissions={["courses.edit"]}>
-        <CourseEdit />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/categories",
-    element: (
-      <ProtectedRoute permissions={["courses.view"]}>
-        <CategoryManagement />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/my-learning",
-    element: (
-      <ProtectedRoute>
-        <MyLearning />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/my-learning/:learningPathId",
-    element: (
-      <ProtectedRoute>
-        <LearningPathProgress />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/users",
-    element: (
-      <ProtectedRoute permissions={["users.view"]}>
-        <UserContainer />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/users/create",
-    element: (
-      <ProtectedRoute permissions={["users.create"]}>
-        <UserCreate />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/users/:id",
-    element: (
-      <ProtectedRoute permissions={["users.view"]}>
-        <UserDetail />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/users/:id/edit",
-    element: (
-      <ProtectedRoute permissions={["users.edit"]}>
-        <UserEdit />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/profile",
-    element: (
-      <ProtectedRoute>
-        <Profile />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/settings",
-    element: (
-      <ProtectedRoute>
-        <Settings />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/teams",
-    element: (
-      <ProtectedRoute permissions={["teams.view"]}>
-        <TeamContainer />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/teams/create",
-    element: (
-      <ProtectedRoute permissions={["teams.create"]}>
-        <TeamCreate />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/teams/:id",
-    element: (
-      <ProtectedRoute permissions={["teams.view"]}>
-        <TeamDetail />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/teams/:id/edit",
-    element: (
-      <ProtectedRoute permissions={["teams.edit"]}>
-        <TeamEdit />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/roles",
-    element: (
-      <ProtectedRoute permissions={["roles.view"]}>
-        <RoleManagement />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/roles/create",
-    element: (
-      <ProtectedRoute permissions={["roles.create"]}>
-        <RoleCreate />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/roles/:id/edit",
-    element: (
-      <ProtectedRoute permissions={["roles.edit"]}>
-        <RoleEdit />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/learning-paths",
-    element: (
-      <ProtectedRoute permissions={["courses.view"]}>
-        <LearningPathList />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/learning-paths/create",
-    element: (
-      <ProtectedRoute permissions={["courses.create"]}>
-        <LearningPathForm />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/learning-paths/:id",
-    element: (
-      <ProtectedRoute permissions={["courses.view"]}>
-        <LearningPathDetail />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/learning-paths/:id/edit",
-    element: (
-      <ProtectedRoute permissions={["courses.edit"]}>
-        <LearningPathForm />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/events",
-    element: (
-      <ProtectedRoute permissions={["courses.view"]}>
-        <EventsPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/events/:id",
-    element: (
-      <ProtectedRoute permissions={["courses.view"]}>
-        <EventDetail />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/progress",
-    element: (
-      <ProtectedRoute permissions={["users.view"]}>
-        <AdminProgressTracking />
-      </ProtectedRoute>
-    ),
-  },
+// ─── Admin-Only Routes ────────────────────────────────────────────
+
+const adminRoutes = [
+  adminOnly(<AdminDashboard />, "/admin/dashboard"),
+  adminOnly(<UserContainer />, "/admin/users"),
+  adminOnly(<UserCreate />, "/admin/users/create"),
+  adminOnly(<UserDetail />, "/admin/users/:id"),
+  adminOnly(<UserEdit />, "/admin/users/:id/edit"),
+  adminOnly(<TeamContainer />, "/admin/teams"),
+  adminOnly(<TeamCreate />, "/admin/teams/create"),
+  adminOnly(<TeamDetail />, "/admin/teams/:id"),
+  adminOnly(<TeamEdit />, "/admin/teams/:id/edit"),
+  adminOnly(<RoleManagement />, "/admin/roles"),
+  adminOnly(<RoleCreate />, "/admin/roles/create"),
+  adminOnly(<RoleEdit />, "/admin/roles/:id/edit"),
+  adminOnly(<AdminProgressTracking />, "/admin/progress"),
+  adminOnly(<CategoryManagement />, "/admin/categories"),
+  adminOnly(<EventsPage />, "/admin/events"),
+  adminOnly(<EventDetail />, "/admin/events/:id"),
 ];
 
-const AppRoutes = [...publicRoutes, ...protectedRoutes];
+// ─── Instructor+ Routes ───────────────────────────────────────────
+
+const instructorRoutes = [
+  instructorPlus(<InstructorDashboard />, "/instructor/dashboard"),
+  instructorPlus(<CourseCreate />, "/courses/create"),
+  instructorPlus(<CourseBuilder />, "/courses/:id/builder/:lessonId?"),
+  instructorPlus(<CoursePreview />, "/courses/:id/preview/:lessonId?"),
+  instructorPlus(<CourseEdit />, "/courses/:id/edit"),
+  instructorPlus(<LearningPathForm />, "/learning-paths/create"),
+  instructorPlus(<LearningPathForm />, "/learning-paths/:id/edit"),
+];
+
+// ─── Team Lead+ Routes ────────────────────────────────────────────
+
+const teamLeadRoutes = [
+  teamLeadPlus(<TeamContainer />, "/teams"),
+  teamLeadPlus(<TeamCreate />, "/teams/create"),
+  teamLeadPlus(<TeamDetail />, "/teams/:id"),
+  teamLeadPlus(<TeamEdit />, "/teams/:id/edit"),
+];
+
+// ─── Shared Routes ────────────────────────────────────────────────
+
+const sharedRoutes = [
+  anyAuth(<Dashboard />, "/"),
+  anyAuth(<CourseContainer />, "/courses", ["courses.view"]),
+  anyAuth(<CourseDetail />, "/courses/:id", ["courses.view"]),
+  anyAuth(<CourseViewer />, "/courses/:id/learn", ["courses.view"]),
+  anyAuth(<LearningPathList />, "/learning-paths", ["courses.view"]),
+  anyAuth(<LearningPathDetail />, "/learning-paths/:id", ["courses.view"]),
+  anyAuth(<MyLearning />, "/my-learning"),
+  anyAuth(<LearningPathProgress />, "/my-learning/:learningPathId"),
+  anyAuth(<Profile />, "/profile"),
+  anyAuth(<Settings />, "/settings"),
+];
+
+const AppRoutes = [
+  ...publicRoutes,
+  ...adminRoutes,
+  ...instructorRoutes,
+  ...teamLeadRoutes,
+  ...sharedRoutes,
+];
 
 export default AppRoutes;

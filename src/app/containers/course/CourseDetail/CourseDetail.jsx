@@ -294,9 +294,11 @@ const CourseDetail = () => {
               </PermissionGuard>
             )}
             {course.status !== "Archived" && (
-              <Button size="sm" variant="ghost" onClick={() => setActiveModal("archive")}>
-                <Archive size={14} /> Archive
-              </Button>
+              <PermissionGuard permissions={["courses.publish"]}>
+                <Button size="sm" variant="ghost" onClick={() => setActiveModal("archive")}>
+                  <Archive size={14} /> Archive
+                </Button>
+              </PermissionGuard>
             )}
             <PermissionGuard permissions={["courses.delete"]}>
               <Button size="sm" variant="ghost" onClick={() => setActiveModal("delete")}>

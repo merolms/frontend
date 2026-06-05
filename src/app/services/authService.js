@@ -383,7 +383,10 @@ export const deleteRole = async (id) => {
 
 export const adminResetPassword = async (userId, newPassword) => {
   try {
-    return await apiPost("/auth/admin/reset-password", { userId: parseInt(userId, 10), newPassword });
+    return await apiPost("/auth/admin/reset-password", {
+      userId: parseInt(userId, 10),
+      newPassword,
+    });
   } catch (error) {
     console.error("Error resetting password:", error);
     throw error;

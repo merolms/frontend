@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, BookOpen, ChevronRight, Edit3, Pencil } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Pencil } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -12,12 +12,11 @@ import MeroEduEditor from "@/editor/Editor";
 import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 import { t } from "@/styles/theme";
 
-import { ReaderLayout } from "../CourseViewer/CourseViewer";
+import { ReaderLayout } from "@/components/layouts/ReaderLayout";
 
 const CoursePreview = () => {
   const navigate = useNavigate();
   const { id, lessonId } = useParams();
-  const { resolvedTheme: theme } = useThemeContext();
 
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
@@ -26,7 +25,6 @@ const CoursePreview = () => {
   const [error, setError] = useState(null);
 
   const loadLessonContent = useCallback(async (lesson) => {
-    // 1) Try autosave first
     try {
       const autosave = await fetchAutosave(lesson.id);
       if (autosave?.snapshot) {
@@ -39,12 +37,15 @@ const CoursePreview = () => {
               : snap.content
             : [snap];
       }
-    } catch { /* ignore */ }
-    // 2) Try blocks API
+    } catch {
+      /* ignore */
+    }
     try {
       const blocks = await fetchLessonBlocks(lesson.id);
       if (blocks.length > 0) return blocks;
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     return [];
   }, []);
 
@@ -54,7 +55,9 @@ const CoursePreview = () => {
         setLoading(true);
         const [c, l] = await Promise.all([fetchCourseById(id), fetchLessons(id)]);
         setCourse(c);
-        const sorted = (l || []).sort((a, b) => (a.sortOrder || a.sort_order || 0) - (b.sortOrder || b.sort_order || 0));
+        const sorted = (l || []).sort(
+          (a, b) => (a.sortOrder || a.sort_order || 0) - (b.sortOrder || b.sort_order || 0)
+        );
         setLessons(sorted);
         if (sorted.length > 0) {
           const target = lessonId
@@ -88,7 +91,15 @@ const CoursePreview = () => {
     return (
       <div style={{ display: "flex", height: "100vh" }}>
         <SideBar />
-        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", background: t("bg-secondary") }}>
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: t("bg-secondary"),
+          }}
+        >
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
             <Skeleton className="h-8 w-48" />
             <span style={{ color: t("text-muted"), fontSize: 14 }}>Loading preview…</span>
@@ -109,7 +120,6 @@ const CoursePreview = () => {
     );
   }
 
-  // Top bar extra buttons for preview mode
   const topBarRight = (
     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
       <ThemeSwitcher />
@@ -117,7 +127,6 @@ const CoursePreview = () => {
         variant="ghost"
         size="sm"
         onClick={() => navigate(`/courses/${id}/builder/${selectedLesson?.id || lessonId || ""}`)}
-        title="Back to Builder"
       >
         <Pencil size={14} /> Edit
       </Button>
@@ -135,36 +144,95 @@ const CoursePreview = () => {
           onGoToLesson={handleSelectLesson}
           topBarRight={topBarRight}
         >
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", maxWidth: 900, width: "100%", margin: "0 auto", padding: "32px 40px" }}>
-            {/* Lesson header */}
-            <div style={{ marginBottom: 24, paddingBottom: 16, borderBottom: `1px solid ${t("border-secondary")}` }}>
-              <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--text-muted)", marginBottom: 4 }}>
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              maxWidth: 900,
+              width: "100%",
+              margin: "0 auto",
+              padding: "32px 40px",
+            }}
+          >
+            <div
+              style={{
+                marginBottom: 24,
+                paddingBottom: 16,
+                borderBottom: `1px solid ${t("border-secondary")}`,
+              }}
+            >
+              <p
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.07em",
+                  color: "var(--text-muted)",
+                  marginBottom: 4,
+                }}
+              >
                 Lesson {lessonIndex >= 0 ? lessonIndex + 1 : 1}
               </p>
-              <h2 style={{ color: "var(--text-primary)", margin: 0, fontSize: "1.5rem", fontWeight: 700, lineHeight: 1.3 }}>
+              <h2
+                style={{
+                  color: "var(--text-primary)",
+                  margin: 0,
+                  fontSize: "1.5rem",
+                  fontWeight: 700,
+                  lineHeight: 1.3,
+                }}
+              >
                 {selectedLesson?.title || "Untitled Lesson"}
               </h2>
             </div>
 
-            {/* Content */}
             {selectedLesson?._content && selectedLesson._content.length > 0 ? (
               <div style={{ flex: 1 }}>
-                <MeroEduEditor initialContent={selectedLesson._content} editable={false} showToolbar={false} />
+                <MeroEduEditor
+                  initialContent={selectedLesson._content}
+                  editable={false}
+                  showToolbar={false}
+                />
               </div>
             ) : (
-              <div className="text-text-muted flex flex-1 items-center justify-center" style={{ minHeight: 300 }}>
+              <div
+                className="text-text-muted flex flex-1 items-center justify-center"
+                style={{ minHeight: 300 }}
+              >
                 <BookOpen size={32} style={{ opacity: 0.3, marginRight: 12 }} />
                 <span>This lesson has no content yet.</span>
               </div>
             )}
 
-            {/* Navigation */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 32, paddingTop: 16, borderTop: `1px solid ${t("border-secondary")}`, flexShrink: 0 }}>
-              <Button variant="ghost" size="sm" onClick={() => handleSelectLesson(lessonIndex - 1)} disabled={lessonIndex <= 0}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: 32,
+                paddingTop: 16,
+                borderTop: `1px solid ${t("border-secondary")}`,
+                flexShrink: 0,
+              }}
+            >
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleSelectLesson(lessonIndex - 1)}
+                disabled={lessonIndex <= 0}
+              >
                 <ArrowLeft size={14} /> Previous
               </Button>
-              <span className="text-text-muted text-xs">{lessonIndex + 1} / {lessons.length}</span>
-              <Button variant="ghost" size="sm" onClick={() => handleSelectLesson(lessonIndex + 1)} disabled={lessonIndex < 0 || lessonIndex >= lessons.length - 1}>
+              <span className="text-text-muted text-xs">
+                {lessonIndex + 1} / {lessons.length}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleSelectLesson(lessonIndex + 1)}
+                disabled={lessonIndex < 0 || lessonIndex >= lessons.length - 1}
+              >
                 Next <ArrowRight size={14} />
               </Button>
             </div>

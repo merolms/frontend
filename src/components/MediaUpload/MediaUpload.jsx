@@ -121,7 +121,10 @@ const MediaUpload = ({
   return (
     <div>
       <div
-        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragOver(true);
+        }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
         onClick={() => inputRef.current?.click()}
@@ -165,9 +168,7 @@ const MediaUpload = ({
                 }}
               />
             </div>
-            <span style={{ fontSize: 13, color: t("text-muted") }}>
-              Uploading… {progress}%
-            </span>
+            <span style={{ fontSize: 13, color: t("text-muted") }}>Uploading… {progress}%</span>
           </div>
         ) : (
           <div>
@@ -182,9 +183,7 @@ const MediaUpload = ({
         )}
       </div>
 
-      {error && (
-        <div style={{ marginTop: 8, fontSize: 12, color: "#EF4444" }}>{error}</div>
-      )}
+      {error && <div style={{ marginTop: 8, fontSize: 12, color: "#EF4444" }}>{error}</div>}
     </div>
   );
 };

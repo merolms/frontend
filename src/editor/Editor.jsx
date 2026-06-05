@@ -49,7 +49,13 @@ const DEFAULT_CONTENT = {
   content: [{ type: "paragraph", content: [{ type: "text", text: "Hi there" }] }],
 };
 
-function MeroEduEditor({ initialContent, onSave, onContentChange, editable = true, showToolbar = true }) {
+function MeroEduEditor({
+  initialContent,
+  onSave,
+  onContentChange,
+  editable = true,
+  showToolbar = true,
+}) {
   const [editorReady, setEditorReady] = React.useState(false);
 
   const extensions = React.useMemo(
@@ -145,7 +151,8 @@ function MeroEduEditor({ initialContent, onSave, onContentChange, editable = tru
     if (!editor || !initialContent) return;
 
     // Reset loaded flag when content actually changes
-    const contentKey = typeof initialContent === "string" ? initialContent : JSON.stringify(initialContent);
+    const contentKey =
+      typeof initialContent === "string" ? initialContent : JSON.stringify(initialContent);
     if (contentKey !== prevContentRef.current) {
       prevContentRef.current = contentKey;
       hasLoadedRef.current = false;

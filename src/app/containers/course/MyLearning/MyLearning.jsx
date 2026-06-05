@@ -22,24 +22,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const statusConfig = {
-  active: { label: "In Progress", color: "blue", icon: Play },
-  completed: { label: "Completed", color: "green", icon: CheckCircle },
-  dropped: { label: "Dropped", color: "red", icon: BookOpen },
-};
-
-const ProgressBar = ({ progress, color = "#6366F1", size = "md" }) => {
-  const h = size === "sm" ? "h-1.5" : size === "lg" ? "h-3" : "h-2";
-  return (
-    <div className={`w-full ${h} bg-bg-surface-active overflow-hidden rounded-full`}>
-      <div
-        className={`${h} rounded-full transition-all duration-500`}
-        style={{ width: `${progress}%`, background: color }}
-      />
-    </div>
-  );
-};
+import { getStatusColor, getStatusLabel } from "@/utils";
+import ProgressBar from "@/components/ProgressBar/ProgressBar";
+import EmptyState from "@/components/common/EmptyState";
+import LoadingState from "@/components/common/LoadingState";
 
 const MyLearning = () => {
   const navigate = useNavigate();
@@ -182,28 +168,29 @@ const MyLearning = () => {
 
       {/* Course list */}
       {loading ? (
-        <div className="grid grid-cols-1 gap-4">
-          {[...Array(4)].map((_, i) => (
-            <div
-              key={i}
-              className="border-border bg-bg-surface h-32 animate-pulse rounded-xl border"
-            />
-          ))}
-        </div>
+        <LoadingState count={4} height="h-32" />
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <BookOpen size={48} className="text-text-muted mb-3" />
-          <p className="text-text-primary text-sm font-medium">No courses found</p>
-          <p className="text-text-muted mt-1 text-xs">Browse courses to start learning.</p>
-          <Button size="sm" className="mt-4" onClick={() => navigate("/courses")}>
-            Browse Courses
-          </Button>
-        </div>
+        <EmptyState
+          icon={<BookOpen size={48} />}
+          title="No courses found"
+          description="Browse courses to start learning."
+          action={
+            <Button size="sm" onClick={() => navigate("/courses")}>
+              Browse Courses
+            </Button>
+          }
+        />
       ) : (
         <div className="grid grid-cols-1 gap-4">
           {filtered.map((enrollment) => {
-            const cfg = statusConfig[enrollment.status] || statusConfig.active;
-            const StatusIcon = cfg.icon;
+            const statusColor = getStatusColor(enrollment.status);
+            const statusLabel = getStatusLabel(enrollment.status);
+            const StatusIcon =
+              enrollment.status === "completed"
+                ? CheckCircle
+                : enrollment.status === "dropped"
+                  ? BookOpen
+                  : Play;
             return (
               <div
                 key={enrollment.id}
@@ -245,9 +232,9 @@ const MyLearning = () => {
                       </div>
                       <div className="flex flex-shrink-0 items-center gap-2">
                         <span
-                          className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${cfg.color === "green" ? "bg-success/10 text-success" : cfg.color === "red" ? "bg-error/10 text-error" : "bg-primary/10 text-primary"}`}
+                          className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${statusColor === "green" ? "bg-success/10 text-success" : statusColor === "red" ? "bg-error/10 text-error" : "bg-primary/10 text-primary"}`}
                         >
-                          <StatusIcon size={10} /> {cfg.label}
+                          <StatusIcon size={10} /> {statusLabel}
                         </span>
                       </div>
                     </div>

@@ -23,7 +23,10 @@ const ProgressBar = ({ progress, color = "#6366F1", size = "md", showLabel = fal
         />
       </div>
       {showLabel && (
-        <span className="text-text-muted text-xs font-medium flex-shrink-0" style={{ minWidth: 32 }}>
+        <span
+          className="text-text-muted flex-shrink-0 text-xs font-medium"
+          style={{ minWidth: 32 }}
+        >
           {clamped}%
         </span>
       )}

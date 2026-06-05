@@ -115,9 +115,7 @@ const enrollmentSlice = createSlice({
       .addCase(markLessonCompleteThunk.fulfilled, (state, action) => {
         state.currentEnrollment = action.payload;
         // Update in enrollments list
-        const idx = state.enrollments.findIndex(
-          (e) => e.courseId === action.payload.courseId
-        );
+        const idx = state.enrollments.findIndex((e) => e.courseId === action.payload.courseId);
         if (idx !== -1) state.enrollments[idx] = action.payload;
       });
   },

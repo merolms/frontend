@@ -224,6 +224,5 @@ const courseBuilderSlice = createSlice({
   },
 });
 
-export const { setSelectedBlock, setDirty, clearError, resetBuilder } =
-  courseBuilderSlice.actions;
+export const { setSelectedBlock, setDirty, clearError, resetBuilder } = courseBuilderSlice.actions;
 export default courseBuilderSlice.reducer;

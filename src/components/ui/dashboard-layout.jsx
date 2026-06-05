@@ -1,18 +1,15 @@
-import { Bell, Check, CheckCheck, Moon, Sun, Monitor, ChevronDown } from "lucide-react";
+import { Bell, Check, CheckCheck, ChevronDown } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import SideBar from "@/app/containers/SideBar/SideBar";
+import RoleBasedSidebar from "@/components/layouts/RoleBasedSidebar";
 import {
   fetchNotifications,
   getTimeAgo,
   markAllAsRead,
   markAsRead,
 } from "@/app/services/notificationService";
-import { logoutUser } from "@/redux/slices/authSlice";
-import { useTheme } from "@/app/context/ThemeContext";
-import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 
 const typeColors = {
   enrollment: "#22C55E",
@@ -101,7 +98,7 @@ export default function DashboardLayout({ children, title, subtitle }) {
 
   return (
     <div className="dashboard-layout">
-      <SideBar />
+      <RoleBasedSidebar />
       <div className="dashboard-main">
         {/* Top bar */}
         <div className="border-border bg-bg-surface sticky top-0 z-10 flex h-20 items-center justify-between border-b px-6">
@@ -213,30 +210,6 @@ export default function DashboardLayout({ children, title, subtitle }) {
                 </div>
               )}
             </div>
-
-            {/* User avatar */}
-            {user && (
-              <button
-                onClick={() => navigate("/profile")}
-                className="hover:bg-bg-surface-hover flex cursor-pointer items-center gap-2 rounded-lg p-1.5 transition-colors"
-              >
-                {user.avatar ? (
-                  <img
-                    src={user.avatar}
-                    alt={user.firstName}
-                    className="h-7 w-7 rounded-full object-cover"
-                  />
-                ) : (
-                  <div
-                    className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium text-white"
-                    style={{ background: "var(--primary)" }}
-                  >
-                    {user.firstName?.[0] || "U"}
-                  </div>
-                )}
-              </button>
-            )}
-            <ThemeSwitcher />
           </div>
         </div>
 
