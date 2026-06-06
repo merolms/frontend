@@ -1,4 +1,4 @@
-import { AlertCircle, Lightbulb, Loader, Network, Pencil, Plus, X } from "lucide-react";
+import { Lightbulb, Network, Pencil, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -6,6 +6,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
 import { fetchCategories } from "@/app/services/categoryService";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import FormActions from "@/components/forms/FormActions";
+import FormErrorBanner from "@/components/common/FormErrorBanner";
+import FormField from "@/components/forms/FormField";
+import LoadingState from "@/components/common/LoadingState";
 import { t } from "@/styles/theme";
 
 const CourseEdit = () => {
@@ -57,8 +61,6 @@ const CourseEdit = () => {
     if (form.title.trim().length < 3) e.title = "Title must be at least 3 characters";
     if (!form.description.trim()) e.description = "Description is required";
     if (!form.category) e.category = "Category is required";
-    console.log("Form data:", form.category);
-
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -88,10 +90,7 @@ const CourseEdit = () => {
   if (fetching) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center py-20">
-          <Loader className="text-text-muted animate-spin" size={20} />
-          <span className="text-text-muted ml-2 text-sm">Loading course data...</span>
-        </div>
+        <LoadingState variant="spinner" text="Loading course data..." centered className="py-20" />
       </DashboardLayout>
     );
   }
@@ -99,9 +98,7 @@ const CourseEdit = () => {
   if (apiError && !course) {
     return (
       <DashboardLayout>
-        <div className="text-error flex items-center gap-2 py-4">
-          <AlertCircle size={14} /> {apiError}
-        </div>
+        <FormErrorBanner message={apiError} />
         <button
           onClick={() => navigate("/courses")}
           className="text-primary text-sm hover:underline"
@@ -136,13 +133,12 @@ const CourseEdit = () => {
             <p className="text-text-muted text-xs">Update the course metadata and settings.</p>
 
             <form onSubmit={handleSubmit} className="space-y-3">
-              {apiError && <p className="text-error text-xs">{apiError}</p>}
+              {apiError && <FormErrorBanner message={apiError} />}
               {Object.keys(errors).length > 0 && !apiError && (
-                <p className="text-error text-xs">Please fix the errors below.</p>
+                <FormErrorBanner message="Please fix the errors below." />
               )}
 
-              <div>
-                <label className="text-text-primary text-xs font-semibold">Course Title *</label>
+              <FormField label="Course Title" error={errors.title} required>
                 <input
                   name="title"
                   value={form.title}
@@ -152,11 +148,9 @@ const CourseEdit = () => {
                   }}
                   className={inputCls}
                 />
-                {errors.title && <p className="text-error mt-0.5 text-[11px]">{errors.title}</p>}
-              </div>
+              </FormField>
 
-              <div>
-                <label className="text-text-primary text-xs font-semibold">Description *</label>
+              <FormField label="Description" error={errors.description} required>
                 <textarea
                   name="description"
                   className={`${inputCls} min-h-[110px] py-1.5`}
@@ -166,13 +160,9 @@ const CourseEdit = () => {
                     if (errors.description) setErrors((p) => ({ ...p, description: null }));
                   }}
                 />
-                {errors.description && (
-                  <p className="text-error mt-0.5 text-[11px]">{errors.description}</p>
-                )}
-              </div>
+              </FormField>
 
-              <div>
-                <label className="text-text-primary text-xs font-semibold">Category *</label>
+              <FormField label="Category" error={errors.category} required>
                 <select
                   name="category"
                   value={form.category || ""}
@@ -192,10 +182,7 @@ const CourseEdit = () => {
                     </option>
                   ))}
                 </select>
-                {errors.category && (
-                  <p className="text-error mt-0.5 text-[11px]">{errors.category}</p>
-                )}
-              </div>
+              </FormField>
 
               <div>
                 <label className="text-text-primary text-xs font-semibold">Cover Image</label>
@@ -234,23 +221,11 @@ const CourseEdit = () => {
                 )}
               </div>
 
-              <div className="flex justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => navigate(`/courses/${id}`)}
-                  disabled={loading}
-                  className="border-border text-text-secondary hover:bg-bg-surface-active h-8 cursor-pointer rounded-md border px-4 text-xs"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="bg-primary hover:bg-primary-hover h-8 cursor-pointer rounded-md px-4 text-xs font-medium text-white disabled:opacity-50"
-                >
-                  {loading ? "Saving..." : "Save Changes"}
-                </button>
-              </div>
+              <FormActions
+                onCancel={() => navigate(`/courses/${id}`)}
+                loading={loading}
+                submitLabel={loading ? "Saving..." : "Save Changes"}
+              />
             </form>
           </div>
         </div>

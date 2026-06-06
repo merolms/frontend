@@ -211,10 +211,8 @@ export default function DashboardLayout({ children, title, subtitle }) {
                 </div>
               )}
             </div>
-                              <ThemeSwitcher />
-
+            <ThemeSwitcher />
           </div>
-
         </div>
         {/* Content */}
         <div className="dashboard-content">{children}</div>

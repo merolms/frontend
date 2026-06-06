@@ -1,5 +1,4 @@
 import {
-  AlertCircle,
   Archive,
   BookOpen,
   Check,
@@ -8,7 +7,6 @@ import {
   Eye,
   Folder,
   List,
-  Loader,
   Network,
   Pencil,
   Plus,
@@ -33,13 +31,21 @@ import {
   fetchLessons,
   publishCourse,
 } from "@/app/services/courseService";
-import { dropCourse, enrollInCourse, isEnrolled } from "@/app/services/enrollmentService";
+import {
+  dropCourse,
+  enrollInCourse,
+  getCourseEnrollments,
+  isEnrolled,
+} from "@/app/services/enrollmentService";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import FormErrorBanner from "@/components/common/FormErrorBanner";
+import LoadingState from "@/components/common/LoadingState";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { t } from "@/styles/theme";
+import EnrollmentManagement from "./components/EnrollmentManagement";
 
 const CourseDetail = () => {
   const navigate = useNavigate();
@@ -51,6 +57,7 @@ const CourseDetail = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
   const [enrollment, setEnrollment] = useState(null);
+  const [enrollments, setEnrollments] = useState([]);
   const [error, setError] = useState(null);
 
   const loadData = useCallback(async () => {
@@ -61,6 +68,11 @@ const CourseDetail = () => {
       setCourse(courseData);
       setLessons(lessonsData || []);
       if (user) setEnrollment(isEnrolled(user.id, parseInt(id)));
+
+      const [enrollmentsData] = await Promise.all([
+        getCourseEnrollments(parseInt(id)).catch(() => []),
+      ]);
+      setEnrollments(Array.isArray(enrollmentsData) ? enrollmentsData : []);
     } catch (err) {
       setError(err.message || "Failed to load course");
     } finally {
@@ -113,6 +125,7 @@ const CourseDetail = () => {
       setActiveModal(null);
     }
   };
+
   const handleArchive = async () => {
     try {
       setActionLoading(true);
@@ -125,6 +138,7 @@ const CourseDetail = () => {
       setActiveModal(null);
     }
   };
+
   const handleDelete = async () => {
     try {
       setActionLoading(true);
@@ -146,9 +160,7 @@ const CourseDetail = () => {
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center py-20">
-          <Loader className="text-text-muted animate-spin" size={20} />
-        </div>
+        <LoadingState variant="spinner" centered className="py-20" />
       </DashboardLayout>
     );
   }
@@ -156,9 +168,7 @@ const CourseDetail = () => {
   if (error || !course) {
     return (
       <DashboardLayout>
-        <div className="text-error flex items-center gap-2 py-4">
-          <AlertCircle size={14} /> {error || "Course not found"}
-        </div>
+        <FormErrorBanner message={error || "Course not found"} />
         <Button size="sm" onClick={() => navigate("/courses")}>
           Back to Courses
         </Button>
@@ -234,7 +244,7 @@ const CourseDetail = () => {
               </div>
               <div className="text-center text-white">
                 <User size={20} className="mx-auto mb-1" style={{ color: t("primary") }} />
-                <div className="text-lg font-bold">0</div>
+                <div className="text-lg font-bold">{enrollments.length}</div>
                 <div className="text-[11px] text-white/60">Enrolled</div>
               </div>
               <div className="text-center text-white">
@@ -347,28 +357,27 @@ const CourseDetail = () => {
                         <div className="flex items-start gap-2">
                           <User size={14} className="mt-0.5" style={{ color: t("accent") }} />
                           <div>
-                            <div className="text-text-primary text-xs font-semibold">
-                              Instructor
+                            <div className="text-text-primary text-xs font-semibold">Instructor</div>
+                            <div className="text-text-muted text-xs">
+                              {course?.author || "N/A"}
+                              {course?.authorEmail && (
+                                <span className="ml-2 text-[10px]">· {course.authorEmail}</span>
+                              )}
                             </div>
-                            <div className="text-text-muted text-xs">{course?.author || "N/A"}</div>
                           </div>
                         </div>
                         <div className="flex items-start gap-2">
                           <Folder size={14} className="mt-0.5" style={{ color: t("secondary") }} />
                           <div>
                             <div className="text-text-primary text-xs font-semibold">Category</div>
-                            <div className="text-text-muted text-xs">
-                              {course?.category || "N/A"}
-                            </div>
+                            <div className="text-text-muted text-xs">{course?.category || "N/A"}</div>
                           </div>
                         </div>
                         <div className="flex items-start gap-2">
                           <Clock size={14} className="mt-0.5" style={{ color: t("warning") }} />
                           <div>
                             <div className="text-text-primary text-xs font-semibold">Duration</div>
-                            <div className="text-text-muted text-xs">
-                              {course?.duration || "N/A"}
-                            </div>
+                            <div className="text-text-muted text-xs">{course?.duration || "N/A"}</div>
                           </div>
                         </div>
                       </div>
@@ -377,18 +386,14 @@ const CourseDetail = () => {
                           <List size={14} className="mt-0.5" style={{ color: t("primary") }} />
                           <div>
                             <div className="text-text-primary text-xs font-semibold">Lessons</div>
-                            <div className="text-text-muted text-xs">
-                              {course?.totalLessons || 0}
-                            </div>
+                            <div className="text-text-muted text-xs">{course?.totalLessons || 0}</div>
                           </div>
                         </div>
                         <div className="flex items-start gap-2">
                           <BookOpen size={14} className="mt-0.5" style={{ color: t("accent") }} />
                           <div>
                             <div className="text-text-primary text-xs font-semibold">Created</div>
-                            <div className="text-text-muted text-xs">
-                              {course?.createdAt || "N/A"}
-                            </div>
+                            <div className="text-text-muted text-xs">{course?.createdAt || "N/A"}</div>
                           </div>
                         </div>
                       </div>
@@ -480,29 +485,34 @@ const CourseDetail = () => {
             </Paper>
           </div>
         </div>
-      </DashboardLayout>
 
-      <PublishModal
-        open={activeModal === "publish"}
-        onConfirm={handlePublish}
-        onCancel={() => setActiveModal(null)}
-        courseTitle={course.title}
-        loading={actionLoading}
-      />
-      <ArchiveModal
-        open={activeModal === "archive"}
-        onConfirm={handleArchive}
-        onCancel={() => setActiveModal(null)}
-        courseTitle={course.title}
-        loading={actionLoading}
-      />
-      <DeleteModal
-        open={activeModal === "delete"}
-        onConfirm={handleDelete}
-        onCancel={() => setActiveModal(null)}
-        itemName={course.title}
-        loading={actionLoading}
-      />
+        {/* Enrollment Management */}
+        <PermissionGuard permissions={["courses.enrollment.manage"]}>
+          <EnrollmentManagement courseId={id} enrollments={enrollments} />
+        </PermissionGuard>
+
+        <PublishModal
+          open={activeModal === "publish"}
+          onConfirm={handlePublish}
+          onCancel={() => setActiveModal(null)}
+          courseTitle={course.title}
+          loading={actionLoading}
+        />
+        <ArchiveModal
+          open={activeModal === "archive"}
+          onConfirm={handleArchive}
+          onCancel={() => setActiveModal(null)}
+          courseTitle={course.title}
+          loading={actionLoading}
+        />
+        <DeleteModal
+          open={activeModal === "delete"}
+          onConfirm={handleDelete}
+          onCancel={() => setActiveModal(null)}
+          itemName={course.title}
+          loading={actionLoading}
+        />
+      </DashboardLayout>
     </>
   );
 };

@@ -21,6 +21,7 @@ const normalizeCourse = (c) => ({
   category: c.category?.name || c.categories?.name || "",
   authorID: c.authorId,
   author: c.author ? `${c.author.firstName || ""} ${c.author.lastName || ""}`.trim() : "",
+  authorEmail: c.author?.email || "",
   tags: c.tags || [],
   totalLessons: c.lessonCount || 0,
   enrolledUsers: c.enrolledUsers || 0,

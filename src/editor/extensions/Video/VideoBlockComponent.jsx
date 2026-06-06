@@ -102,7 +102,9 @@ function VideoBlockComponent(props) {
             {fileName && <p className="mt-2 text-xs text-neutral-500">{fileName}</p>}
             {isEditable && (
               <button
-                onClick={() => props.updateAttributes({ fileUrl: null, dataUrl: null, fileName: null })}
+                onClick={() =>
+                  props.updateAttributes({ fileUrl: null, dataUrl: null, fileName: null })
+                }
                 className="mt-2 text-xs text-red-500 hover:text-red-700"
               >
                 Remove video

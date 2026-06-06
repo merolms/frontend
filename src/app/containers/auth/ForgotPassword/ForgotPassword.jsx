@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import { forgotPassword } from "@/app/services/authService";
+import FormErrorBanner from "@/components/common/FormErrorBanner";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -55,11 +56,7 @@ const ForgotPassword = () => {
               <p className="text-text-muted mb-4 text-center text-xs">
                 Enter your email address and we'll send you instructions to reset your password.
               </p>
-              {error && (
-                <div className="border-error/30 bg-error/5 text-error mb-4 flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm">
-                  <AlertCircle size={14} /> {error}
-                </div>
-              )}
+              <FormErrorBanner message={error} />
               <form onSubmit={handleSubmit} className="space-y-3">
                 <div>
                   <label className="text-text-primary text-sm font-medium">Email</label>

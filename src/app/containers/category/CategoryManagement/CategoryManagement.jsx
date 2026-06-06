@@ -1,4 +1,4 @@
-import { AlertCircle, Folder, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { Folder, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -16,6 +16,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import EmptyState from "@/components/common/EmptyState";
+import FormErrorBanner from "@/components/common/FormErrorBanner";
+import LoadingState from "@/components/common/LoadingState";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
 import {
@@ -25,7 +28,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 import { t } from "@/styles/theme";
 
 import CategoryForm from "../components/CategoryForm";
@@ -179,11 +181,7 @@ const CategoryManagement = () => {
         </div>
 
         {/* Error */}
-        {error && (
-          <div className="text-error mb-4 flex items-center gap-2 text-sm">
-            <AlertCircle size={14} /> {error}
-          </div>
-        )}
+        {error && <FormErrorBanner message={error} />}
 
         {/* Filters */}
         <Paper className="mb-4 p-3">
@@ -247,24 +245,20 @@ const CategoryManagement = () => {
         {/* Table */}
         <Paper className="overflow-hidden">
           {loading ? (
-            <div className="space-y-2 p-4">
-              {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} className="h-12 w-full" />
-              ))}
-            </div>
+            <LoadingState count={5} height="h-12" className="p-4" />
           ) : categories.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <Folder size={48} className="text-text-muted mb-3" />
-              <p className="text-text-primary text-sm font-medium">No categories found</p>
-              <p className="text-text-muted mt-1 text-xs">
-                Try adjusting your filters or create a new category.
-              </p>
-              <PermissionGuard permissions={["courses.create"]}>
-                <Button size="sm" className="mt-4" onClick={handleCreate}>
-                  <Plus size={14} /> Create First Category
-                </Button>
-              </PermissionGuard>
-            </div>
+            <EmptyState
+              icon={<Folder size={48} className="text-text-muted" />}
+              title="No categories found"
+              description="Try adjusting your filters or create a new category."
+              action={
+                <PermissionGuard permissions={["courses.create"]}>
+                  <Button size="sm" onClick={handleCreate}>
+                    <Plus size={14} /> Create First Category
+                  </Button>
+                </PermissionGuard>
+              }
+            />
           ) : (
             <table className="w-full text-sm">
               <thead>

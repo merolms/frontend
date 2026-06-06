@@ -6,6 +6,9 @@ import { useNavigate } from "react-router-dom";
 import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
 import { fetchCategories } from "@/app/services/categoryService";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import FormActions from "@/components/forms/FormActions";
+import FormErrorBanner from "@/components/common/FormErrorBanner";
+import FormField from "@/components/forms/FormField";
 import { t } from "@/styles/theme";
 
 const CourseCreate = () => {
@@ -80,13 +83,12 @@ const CourseCreate = () => {
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-3">
-              {apiError && <p className="text-error text-xs">{apiError}</p>}
+              {apiError && <FormErrorBanner message={apiError} />}
               {Object.keys(errors).length > 0 && !apiError && (
-                <p className="text-error text-xs">Please fix the errors below.</p>
+                <FormErrorBanner message="Please fix the errors below." />
               )}
 
-              <div>
-                <label className="text-text-primary text-xs font-semibold">Course Title *</label>
+              <FormField label="Course Title" error={errors.title} required>
                 <input
                   name="title"
                   placeholder="e.g., Advanced React Patterns"
@@ -97,11 +99,9 @@ const CourseCreate = () => {
                   }}
                   className={inputCls}
                 />
-                {errors.title && <p className="text-error mt-0.5 text-[11px]">{errors.title}</p>}
-              </div>
+              </FormField>
 
-              <div>
-                <label className="text-text-primary text-xs font-semibold">Description *</label>
+              <FormField label="Description" error={errors.description} required>
                 <textarea
                   name="description"
                   placeholder="What will students learn? What are the prerequisites?"
@@ -112,13 +112,9 @@ const CourseCreate = () => {
                     if (errors.description) setErrors((p) => ({ ...p, description: null }));
                   }}
                 />
-                {errors.description && (
-                  <p className="text-error mt-0.5 text-[11px]">{errors.description}</p>
-                )}
-              </div>
+              </FormField>
 
-              <div>
-                <label className="text-text-primary text-xs font-semibold">Category *</label>
+              <FormField label="Category" error={errors.category} required>
                 <select
                   name="category"
                   value={form.category || ""}
@@ -138,10 +134,7 @@ const CourseCreate = () => {
                     </option>
                   ))}
                 </select>
-                {errors.category && (
-                  <p className="text-error mt-0.5 text-[11px]">{errors.category}</p>
-                )}
-              </div>
+              </FormField>
 
               <div>
                 <label className="text-text-primary text-xs font-semibold">Cover Image</label>
@@ -180,23 +173,11 @@ const CourseCreate = () => {
                 )}
               </div>
 
-              <div className="flex justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => navigate("/courses")}
-                  disabled={loading}
-                  className="border-border text-text-secondary hover:bg-bg-surface-active h-8 cursor-pointer rounded-md border px-4 text-xs"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="bg-primary hover:bg-primary-hover h-8 cursor-pointer rounded-md px-4 text-xs font-medium text-white disabled:opacity-50"
-                >
-                  {loading ? "Creating..." : "Create Course"}
-                </button>
-              </div>
+              <FormActions
+                onCancel={() => navigate("/courses")}
+                loading={loading}
+                submitLabel={loading ? "Creating..." : "Create Course"}
+              />
             </form>
           </div>
         </div>

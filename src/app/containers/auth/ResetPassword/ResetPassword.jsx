@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { resetPassword } from "@/app/services/authService";
+import FormErrorBanner from "@/components/common/FormErrorBanner";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -65,11 +66,7 @@ const ResetPassword = () => {
               <p className="text-text-muted mb-4 text-center text-xs">
                 Enter your new password below.
               </p>
-              {error && (
-                <div className="border-error/30 bg-error/5 text-error mb-4 flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm">
-                  <AlertCircle size={14} /> {error}
-                </div>
-              )}
+              <FormErrorBanner message={error} />
               <form onSubmit={handleSubmit} className="space-y-3">
                 <div>
                   <label className="text-text-primary text-sm font-medium">New Password</label>

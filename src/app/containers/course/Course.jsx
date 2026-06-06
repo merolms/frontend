@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import EmptyState from "@/components/common/EmptyState";
+import FormErrorBanner from "@/components/common/FormErrorBanner";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
 import {
@@ -239,33 +241,33 @@ const CourseContainer = () => {
       {/* Error */}
       {error && !loading && (
         <Paper p="md" className="mb-4">
-          <div className="text-error flex items-center gap-2">
-            <span>{error}</span>
-            <Button
-              size="xs"
-              variant="default"
-              leftSection={<RefreshCw size={12} />}
-              onClick={fetchData}
-            >
-              Retry
-            </Button>
-          </div>
+          <FormErrorBanner message={error} />
+          <Button
+            size="xs"
+            variant="default"
+            leftSection={<RefreshCw size={12} />}
+            onClick={fetchData}
+            className="mt-2"
+          >
+            Retry
+          </Button>
         </Paper>
       )}
 
       {/* Empty */}
       {!error && courses.length === 0 && !loading ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <BookOpen size={48} className="text-text-muted mb-3" />
-          <p className="text-text-secondary">
-            No courses found. Try adjusting your filters or create a new course.
-          </p>
-          <PermissionGuard permissions={["courses.create"]}>
-            <Button size="sm" className="mt-4" onClick={() => navigate("/courses/create")}>
-              <Plus size={14} /> Create Course
-            </Button>
-          </PermissionGuard>
-        </div>
+        <EmptyState
+          icon={<BookOpen size={48} className="text-text-muted" />}
+          title="No courses found"
+          description="Try adjusting your filters or create a new course."
+          action={
+            <PermissionGuard permissions={["courses.create"]}>
+              <Button size="sm" onClick={() => navigate("/courses/create")}>
+                <Plus size={14} /> Create Course
+              </Button>
+            </PermissionGuard>
+          }
+        />
       ) : (
         !error && (
           <>

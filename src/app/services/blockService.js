@@ -225,10 +225,11 @@ export const uploadBlockMedia = async (lessonId, blockId, file) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
-    const safeBlockId = String(blockId).startsWith("temp_") ? 0 : blockId;
-    const data = await apiUpload(`/lessons/${lessonId}/blocks/${safeBlockId}/media`, formData);
+    const endpoint = `/lessons/${lessonId}/media`;
+    const data = await apiUpload(endpoint, formData);
+    if (!data?.url) return "";
     const serverBase = API_BASE.replace(/\/api$/, "");
-    return data?.url ? `${serverBase}${data.url}` : "";
+    return `${serverBase}${data.url}`;
   } catch (error) {
     console.error("Error uploading block media:", error);
     throw error;

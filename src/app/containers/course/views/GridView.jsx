@@ -1,7 +1,8 @@
 import { BookOpen, Clock, List, User } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import EmptyState from "@/components/common/EmptyState";
+import LoadingState from "@/components/common/LoadingState";
 
 import { getStatusLabel } from "./viewHelpers";
 
@@ -73,33 +74,26 @@ const GridView = ({ courses, navigate, loading, onRefresh }) => {
   if (loading) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {[...Array(8)].map((_, i) => (
-          <div key={i} className="border-border bg-bg-surface overflow-hidden rounded-lg border">
-            <Skeleton className="h-40 w-full" />
-            <div className="space-y-2 p-3">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-3 w-3/5" />
-              <Skeleton className="h-3 w-2/5" />
-            </div>
-          </div>
-        ))}
+        <LoadingState count={8} height="h-[292px]" className="contents" />
       </div>
     );
   }
 
   if (!courses || courses.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center">
-        <BookOpen size={48} className="text-text-muted mb-3" />
-        <p className="text-text-primary text-sm font-medium">No courses yet</p>
-        <p className="text-text-muted mt-1 text-xs">Create your first course to get started.</p>
-        <button
-          onClick={() => navigate?.("/courses/create")}
-          className="bg-primary hover:bg-primary-hover mt-4 rounded-md px-4 py-2 text-sm text-white"
-        >
-          Create Course
-        </button>
-      </div>
+      <EmptyState
+        icon={<BookOpen size={48} />}
+        title="No courses yet"
+        description="Create your first course to get started."
+action={
+          <button
+            onClick={() => navigate?.("/courses/create")}
+            className="bg-primary hover:bg-primary-hover mt-4 rounded-md px-4 py-2 text-sm text-white"
+          >
+            Create Course
+          </button>
+        }
+      />
     );
   }
 
