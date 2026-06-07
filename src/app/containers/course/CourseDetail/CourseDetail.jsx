@@ -37,6 +37,7 @@ import {
   getCourseEnrollments,
   isEnrolled,
 } from "@/app/services/enrollmentService";
+import { useToast } from "@/app/context/ToastContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
@@ -51,6 +52,7 @@ const CourseDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const user = useSelector((s) => s.auth.user);
+  const { addToast } = useToast();
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -93,8 +95,10 @@ const CourseDetail = () => {
       setActionLoading(true);
       const result = await enrollInCourse(user.id, parseInt(id));
       setEnrollment(result);
+      addToast("Successfully enrolled! Redirecting to course...", "success");
+      setTimeout(() => navigate(`/courses/${id}/learn`), 1500);
     } catch (err) {
-      alert(err.message);
+      addToast(err.message || "Failed to enroll", "error");
     } finally {
       setActionLoading(false);
     }
@@ -106,8 +110,9 @@ const CourseDetail = () => {
       setActionLoading(true);
       await dropCourse(user.id, parseInt(id));
       setEnrollment(isEnrolled(user.id, parseInt(id)));
+      addToast("Course dropped", "success");
     } catch (err) {
-      alert(err.message);
+      addToast(err.message || "Failed to drop course", "error");
     } finally {
       setActionLoading(false);
     }
@@ -118,8 +123,9 @@ const CourseDetail = () => {
       setActionLoading(true);
       const updated = await publishCourse(id);
       setCourse(updated);
+      addToast("Course published successfully!", "success");
     } catch (err) {
-      alert(err.message);
+      addToast(err.message || "Failed to publish course", "error");
     } finally {
       setActionLoading(false);
       setActiveModal(null);
@@ -131,8 +137,9 @@ const CourseDetail = () => {
       setActionLoading(true);
       const updated = await archiveCourse(id);
       setCourse(updated);
+      addToast("Course archived", "success");
     } catch (err) {
-      alert(err.message);
+      addToast(err.message || "Failed to archive course", "error");
     } finally {
       setActionLoading(false);
       setActiveModal(null);
@@ -143,9 +150,10 @@ const CourseDetail = () => {
     try {
       setActionLoading(true);
       await deleteCourse(id);
+      addToast("Course deleted", "success");
       navigate("/courses");
     } catch (err) {
-      alert(err.message);
+      addToast(err.message || "Failed to delete course", "error");
       setActionLoading(false);
       setActiveModal(null);
     }

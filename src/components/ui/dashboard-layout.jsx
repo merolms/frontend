@@ -11,6 +11,7 @@ import {
 } from "@/app/services/notificationService";
 import RoleBasedSidebar from "@/components/layouts/RoleBasedSidebar";
 import ThemeSwitcher from "@/app/components/ThemeSwitcher";
+import { logoutUser } from "@/redux/slices/authSlice";
 
 const typeColors = {
   enrollment: "#22C55E",

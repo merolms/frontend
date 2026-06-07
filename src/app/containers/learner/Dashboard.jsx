@@ -6,7 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { fetchEnrollments } from "@/app/services/enrollmentService";
 import LoadingState from "@/components/common/LoadingState";
 import StatCard from "@/components/common/StatCard";
+import EmptyState from "@/components/common/EmptyState";
 import ProgressBar from "@/components/ProgressBar/ProgressBar";
+import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 
 /**
@@ -49,50 +51,20 @@ const LearnerDashboard = () => {
     >
       {/* Stats */}
       <div className="mb-6 grid grid-cols-4 gap-4">
-        <div className="border-border bg-bg-surface rounded-xl border p-4 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
-              <BookOpen size={18} className="text-primary" />
-            </div>
-            <div>
-              <p className="text-text-primary text-2xl font-bold">{enrollments.length}</p>
-              <p className="text-text-muted text-[11px]">Enrolled</p>
-            </div>
-          </div>
-        </div>
-        <div className="border-border bg-bg-surface rounded-xl border p-4 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="bg-success/10 flex h-10 w-10 items-center justify-center rounded-lg">
-              <TrendingUp size={18} className="text-success" />
-            </div>
-            <div>
-              <p className="text-text-primary text-2xl font-bold">{activeEnrollments.length}</p>
-              <p className="text-text-muted text-[11px]">In Progress</p>
-            </div>
-          </div>
-        </div>
-        <div className="border-border bg-bg-surface rounded-xl border p-4 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="bg-accent/10 flex h-10 w-10 items-center justify-center rounded-lg">
-              <CheckCircle size={18} className="text-accent" />
-            </div>
-            <div>
-              <p className="text-text-primary text-2xl font-bold">{completedEnrollments.length}</p>
-              <p className="text-text-muted text-[11px]">Completed</p>
-            </div>
-          </div>
-        </div>
-        <div className="border-border bg-bg-surface rounded-xl border p-4 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="bg-warning/10 flex h-10 w-10 items-center justify-center rounded-lg">
-              <Clock size={18} className="text-warning" />
-            </div>
-            <div>
-              <p className="text-text-primary text-2xl font-bold">{avgProgress}%</p>
-              <p className="text-text-muted text-[11px]">Avg Progress</p>
-            </div>
-          </div>
-        </div>
+        <StatCard title="Enrolled" value={enrollments.length} icon={BookOpen} color="primary" />
+        <StatCard
+          title="In Progress"
+          value={activeEnrollments.length}
+          icon={TrendingUp}
+          color="accent"
+        />
+        <StatCard
+          title="Completed"
+          value={completedEnrollments.length}
+          icon={CheckCircle}
+          color="success"
+        />
+        <StatCard title="Avg Progress" value={`${avgProgress}%`} icon={Clock} color="warning" />
       </div>
 
       {/* Continue Learning */}
@@ -102,43 +74,45 @@ const LearnerDashboard = () => {
 
       {loading ? (
         <LoadingState count={3} height="h-32" />
+      ) : activeEnrollments.length === 0 ? (
+        <EmptyState
+          icon={<BookOpen size={48} className="text-text-muted" />}
+          title="No courses in progress"
+          description="Browse courses to start learning."
+          action={
+            <Button size="sm" onClick={() => navigate("/courses")}>
+              Browse Courses
+            </Button>
+          }
+        />
       ) : (
-        <>
-          {/* Stats */}
-          <div className="mb-6 grid grid-cols-4 gap-4">
-            <StatCard title="Enrolled" value={enrollments.length} icon={BookOpen} color="primary" />
-            <StatCard
-              title="In Progress"
-              value={activeEnrollments.length}
-              icon={TrendingUp}
-              color="accent"
-            />
-            <StatCard
-              title="Completed"
-              value={completedEnrollments.length}
-              icon={CheckCircle}
-              color="success"
-            />
-            <StatCard title="Avg Progress" value={`${avgProgress}%`} icon={Clock} color="warning" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <h4 className="text-text-primary truncate text-sm font-semibold">
-              {enrollment.courseTitle}
-            </h4>
-            <p className="text-text-muted text-[11px]">{enrollment.category}</p>
-            <div className="mt-2">
-              <div className="mb-1 flex items-center justify-between">
-                <span className="text-text-muted text-[11px]">
-                  {enrollment.progress || 0}% complete
-                </span>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {activeEnrollments.map((enrollment) => (
+            <div
+              key={enrollment.id}
+              className="border-border bg-bg-surface cursor-pointer rounded-xl border p-4 shadow-sm transition-all hover:shadow-md"
+              onClick={() => navigate(`/courses/${enrollment.courseId}/learn`)}
+            >
+              <div className="min-w-0 flex-1">
+                <h4 className="text-text-primary truncate text-sm font-semibold">
+                  {enrollment.courseTitle}
+                </h4>
+                <p className="text-text-muted text-[11px]">{enrollment.category}</p>
+                <div className="mt-2">
+                  <div className="mb-1 flex items-center justify-between">
+                    <span className="text-text-muted text-[11px]">
+                      {enrollment.progress || 0}% complete
+                    </span>
+                  </div>
+                  <ProgressBar progress={enrollment.progress || 0} size="sm" />
+                </div>
               </div>
-              <ProgressBar progress={enrollment.progress || 0} size="sm" />
+              <button className="bg-primary hover:bg-primary-hover mt-3 flex-shrink-0 rounded-md px-3 py-1.5 text-xs text-white">
+                Continue
+              </button>
             </div>
-          </div>
-          <button className="bg-primary hover:bg-primary-hover flex-shrink-0 rounded-md px-3 py-1.5 text-xs text-white">
-            Continue →
-          </button>
-        </>
+          ))}
+        </div>
       )}
     </DashboardLayout>
   );

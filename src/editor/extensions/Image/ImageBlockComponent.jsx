@@ -17,6 +17,7 @@ import Modal from "../../../components/ui/Modal";
 import { useEditorProvider } from "@/contexts/EditorContext";
 import { constructAcceptValue } from "../../../lib/constants";
 import { uploadEditorMedia } from "@/editor/utils/mediaUpload";
+import { useAuthenticatedMediaUrl } from "@/hooks";
 
 const SUPPORTED_FILES = constructAcceptValue(["jpg", "png", "webp", "gif"]);
 
@@ -39,6 +40,9 @@ function ImageBlockComponent(props) {
   const fileUrl = props.node.attrs.fileUrl || null;
   const unsplashUrl = props.node.attrs.unsplash_url || null;
   const imageUrl = fileUrl || dataUrl || unsplashUrl;
+
+  // Always fetch through API with auth — browser <img> can't send auth headers
+  const authenticatedUrl = useAuthenticatedMediaUrl(imageUrl);
 
   const uploadFile = async (file) => {
     setIsLoading(true);
@@ -137,12 +141,22 @@ function ImageBlockComponent(props) {
   // View mode - show only the image without block wrapper
   if (!isEditable && imageUrl) {
     const viewFrameStyle = { width: imageSize.width, maxWidth: "100%" };
+    // Must wait for authenticated blob URL — browser <img> can't send auth
+    if (!authenticatedUrl) {
+      return (
+        <NodeViewWrapper className="block-image w-full">
+          <div className="flex items-center justify-center rounded-lg bg-neutral-100 p-8">
+            <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+          </div>
+        </NodeViewWrapper>
+      );
+    }
     return (
       <>
         <NodeViewWrapper className="block-image w-full">
           <div className={`flex w-full flex-col ${getItemsAlignmentClass()}`}>
             <div className="group relative" style={viewFrameStyle}>
-              <img src={imageUrl} alt="" className="h-auto w-full max-w-full rounded-lg" />
+              <img src={authenticatedUrl} alt="" className="h-auto w-full max-w-full rounded-lg" />
               <div className="absolute top-2 right-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                 <button
                   onClick={handleExpand}
@@ -165,7 +179,7 @@ function ImageBlockComponent(props) {
           dialogContent={
             <div className="flex w-full flex-col items-center justify-center">
               <img
-                src={imageUrl}
+                src={authenticatedUrl}
                 alt=""
                 className="max-h-[80vh] max-w-full rounded-lg object-contain shadow-lg"
               />
@@ -281,7 +295,7 @@ function ImageBlockComponent(props) {
               >
                 <div className="relative">
                   <img
-                    src={imageUrl}
+                    src={authenticatedUrl || imageUrl}
                     alt=""
                     className="nice-shadow h-auto max-w-full rounded-lg"
                     style={{ width: "100%" }}
@@ -334,7 +348,7 @@ function ImageBlockComponent(props) {
           dialogContent={
             <div className="flex w-full flex-col items-center justify-center">
               <img
-                src={imageUrl}
+                src={authenticatedUrl || imageUrl}
                 alt=""
                 className="max-h-[80vh] max-w-full rounded-lg object-contain shadow-lg"
               />
