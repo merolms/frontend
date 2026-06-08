@@ -12,6 +12,7 @@ import AppRoutes from "@/app/Routes";
 import { setAuthErrorHandler } from "@/app/services/http";
 import { clearAuth, restoreSession } from "@/redux/slices/authSlice";
 import store from "@/redux/store";
+import { registerMediaServiceWorker } from "@/utils/mediaServiceWorker";
 
 const AuthErrorBridge = ({ children }) => {
   const dispatch = useDispatch();
@@ -46,3 +47,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     </ThemeProvider>
   </Provider>
 );
+
+// Register Service Worker for media auth
+registerMediaServiceWorker();

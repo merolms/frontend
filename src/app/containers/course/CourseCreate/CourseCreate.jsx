@@ -1,25 +1,65 @@
 import { Lightbulb, Plus, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
 import { fetchCategories } from "@/app/services/categoryService";
+import { useToast } from "@/app/context/ToastContext";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import FormActions from "@/components/forms/FormActions";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import FormField from "@/components/forms/FormField";
 import { t } from "@/styles/theme";
+import { usePageTitle } from "@/hooks";
+
+const DRAFT_KEY = "course_create_draft";
 
 const CourseCreate = () => {
+  usePageTitle("Create Course");
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.user);
-  const [form, setForm] = useState({ title: "", description: "", category: null, coverImage: "" });
+  const { addToast } = useToast();
+  const [form, setForm] = useState(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch { /* ignore */ }
+    return { title: "", description: "", category: null, coverImage: "" };
+  });
   const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [unsplashOpen, setUnsplashOpen] = useState(false);
+  const [dirty, setDirty] = useState(false);
+
+  // Auto-save draft to localStorage
+  useEffect(() => {
+    if (dirty) {
+      const timer = setTimeout(() => {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [form, dirty]);
+
+  // Warn before leaving with unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (dirty && (form.title || form.description)) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [dirty, form]);
+
+  // Mark dirty on first change
+  const updateForm = useCallback((updater) => {
+    setForm(updater);
+    setDirty(true);
+  }, []);
 
   useEffect(() => {
     fetchCategories()
@@ -50,6 +90,9 @@ const CourseCreate = () => {
         ...form,
         authorID: currentUser?.id ?? null,
       });
+      localStorage.removeItem(DRAFT_KEY);
+      setDirty(false);
+      addToast("Course created successfully!", "success");
       navigate(`/courses/${course.id}`);
     } catch (err) {
       setApiError(err.message || "Failed to create course. Please try again.");
@@ -94,7 +137,7 @@ const CourseCreate = () => {
                   placeholder="e.g., Advanced React Patterns"
                   value={form.title}
                   onChange={(e) => {
-                    setForm((p) => ({ ...p, title: e.target.value }));
+                    updateForm((p) => ({ ...p, title: e.target.value }));
                     if (errors.title) setErrors((p) => ({ ...p, title: null }));
                   }}
                   className={inputCls}
@@ -161,7 +204,14 @@ const CourseCreate = () => {
                       src={form.coverImage}
                       alt="Cover"
                       className="max-h-40 rounded-md object-cover"
+                      onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex'; }}
                     />
+                    <div
+                      style={{ display: 'none' }}
+                      className="max-h-40 w-48 items-center justify-center rounded-md border border-dashed border-error bg-error/5 p-4"
+                    >
+                      <span className="text-error text-xs">Invalid image URL</span>
+                    </div>
                     <button
                       type="button"
                       onClick={() => setForm((p) => ({ ...p, coverImage: "" }))}

@@ -36,37 +36,48 @@ import UserCreate from "@/app/containers/user/UserCreate/UserCreate";
 import UserDetail from "@/app/containers/user/UserDetail/UserDetail";
 import UserEdit from "@/app/containers/user/UserEdit/UserEdit";
 import RoleGuard from "@/components/auth/RoleGuard";
+import ErrorBoundary from "@/components/common/ErrorBoundary";
 
 const adminOnly = (element, path) => ({
   path,
   element: (
-    <ProtectedRoute permissions={["dashboard.view"]}>
-      <RoleGuard roles={["Administrator"]}>{element}</RoleGuard>
-    </ProtectedRoute>
+    <ErrorBoundary>
+      <ProtectedRoute permissions={["dashboard.view"]}>
+        <RoleGuard roles={["Administrator"]}>{element}</RoleGuard>
+      </ProtectedRoute>
+    </ErrorBoundary>
   ),
 });
 
 const instructorPlus = (element, path) => ({
   path,
   element: (
-    <ProtectedRoute permissions={["courses.view"]}>
-      <RoleGuard roles={["Administrator", "Instructor"]}>{element}</RoleGuard>
-    </ProtectedRoute>
+    <ErrorBoundary>
+      <ProtectedRoute permissions={["courses.view"]}>
+        <RoleGuard roles={["Administrator", "Instructor"]}>{element}</RoleGuard>
+      </ProtectedRoute>
+    </ErrorBoundary>
   ),
 });
 
 const teamLeadPlus = (element, path) => ({
   path,
   element: (
-    <ProtectedRoute permissions={["teams.view"]}>
-      <RoleGuard roles={["Administrator", "Team Lead"]}>{element}</RoleGuard>
-    </ProtectedRoute>
+    <ErrorBoundary>
+      <ProtectedRoute permissions={["teams.view"]}>
+        <RoleGuard roles={["Administrator", "Team Lead"]}>{element}</RoleGuard>
+      </ProtectedRoute>
+    </ErrorBoundary>
   ),
 });
 
 const anyAuth = (element, path, perms = []) => ({
   path,
-  element: <ProtectedRoute permissions={perms}>{element}</ProtectedRoute>,
+  element: (
+    <ErrorBoundary>
+      <ProtectedRoute permissions={perms}>{element}</ProtectedRoute>
+    </ErrorBoundary>
+  ),
 });
 
 // ─── Public Routes ────────────────────────────────────────────────

@@ -23,9 +23,9 @@ export const ToastProvider = ({ children }) => {
   return (
     <ToastContext.Provider value={{ addToast }}>
       {children}
-      <div className="toast-container">
+      <div className="toast-container" role="alert" aria-live="polite">
         {toasts.map((toast) => (
-          <div key={toast.id} className={`toast toast-${toast.type}`}>
+          <div key={toast.id} className={`toast toast-${toast.type}`} role="status">
             <span className="toast-icon">
               {toast.type === "success" ? "✓" : toast.type === "error" ? "✕" : "⚠"}
             </span>

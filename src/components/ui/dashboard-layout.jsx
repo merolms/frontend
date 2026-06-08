@@ -67,6 +67,18 @@ export default function DashboardLayout({ children, title, subtitle }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Close dropdown on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && showDropdown) {
+        setShowDropdown(false);
+        bellRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [showDropdown]);
+
   const handleLogout = () => {
     dispatch(logoutUser());
     navigate("/login");
@@ -116,6 +128,10 @@ export default function DashboardLayout({ children, title, subtitle }) {
             <div className="relative" ref={bellRef}>
               <button
                 onClick={handleBellClick}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleBellClick(); } }}
+                aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
+                aria-expanded={showDropdown}
+                aria-haspopup="true"
                 className="text-text-muted hover:bg-bg-surface-hover hover:text-text-primary relative flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg transition-colors"
               >
                 <Bell size={18} />

@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { t } from "@/styles/theme";
+import { usePageTitle } from "@/hooks";
 
 const statusOptions = [
   { value: "all", label: "All" },
@@ -34,6 +35,7 @@ const sortOptions = [
 const AVATAR_COUNT = 4;
 
 const TeamContainer = () => {
+  usePageTitle("Teams");
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [teams, setTeams] = useState([]);

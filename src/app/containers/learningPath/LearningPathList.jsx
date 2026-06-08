@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { usePageTitle } from "@/hooks";
 
 const difficultyColors = {
   Beginner: "green",
@@ -117,6 +118,7 @@ const LearningPathCard = ({ path, navigate }) => {
 };
 
 const LearningPathList = () => {
+  usePageTitle("Learning Paths");
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 

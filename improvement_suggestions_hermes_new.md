@@ -424,40 +424,45 @@ No feature recommendations. No competitor comparisons. Only real user problems.
 
 ## 5. Prioritized Fix List
 
-### Fix Today (Critical — broken functionality)
+### ✅ Fixed (25 issues)
+
+| # | Issue | File |
+|---|-------|------|
+| 1 | Media auth (video/images don't load) | VideoBlockComponent, ImageBlockComponent |
+| 2 | Instructor dashboard broken UI | instructor/Dashboard.jsx |
+| 3 | DashboardLayout logout crash | ui/dashboard-layout.jsx |
+| 4 | CourseBuilder resize state bug | CourseBuilder.jsx |
+| 5 | LearnerDashboard runtime crash | learner/Dashboard.jsx |
+| 6 | No feedback after enrollment | CourseDetail.jsx |
+| 7 | No feedback after course actions | CourseDetail.jsx |
+| 8 | alert() replaced with toasts | CourseDetail.jsx |
+| 9 | Settings page buttons don't work | user/Settings/Settings.jsx |
+| 10 | Delete uses modal (not window.confirm) | EventsPage.jsx, CourseBuilder.jsx |
+| 11 | Toast notifications accessible | ToastContext.jsx |
+| 12 | Icon-only buttons have aria-labels | RoleBasedSidebar.jsx |
+| 13 | Sidebar active state for nested routes | RoleBasedSidebar.jsx |
+| 14 | Error boundaries added | Routes.jsx + ErrorBoundary.jsx |
+| 15 | Course drop confirmation | CourseDetail.jsx |
+| 16 | Page titles on all pages | All page components |
+| 17 | Course creation draft auto-save | CourseCreate.jsx |
+| 18 | Unsaved changes warning | CourseCreate.jsx |
+| 19 | Cover image validation | CourseCreate.jsx, CourseEdit.jsx |
+| 20 | Table view responsive (horizontal scroll) | user/User.jsx |
+| 21 | Modal focus management (Radix Dialog) | CourseActions.jsx, ui/dialog.jsx |
+| 22 | Notification dropdown keyboard nav | ui/dashboard-layout.jsx |
+| 23 | Empty state for new students | learner/Dashboard.jsx |
+| 24 | Course creation success toast | CourseCreate.jsx |
+| 25 | Settings profile/password save | user/Settings/Settings.jsx |
+
+### Remaining — Low Priority ( polish)
 
 | # | Issue | File | Effort |
 |---|-------|------|--------|
-| 1 | Media auth (video/images don't load) | VideoBlockComponent, ImageBlockComponent | Medium |
-| 2 | Instructor dashboard broken UI | instructor/Dashboard.jsx | Low |
-| 3 | DashboardLayout logout crash | ui/dashboard-layout.jsx | Low |
-| 4 | CourseBuilder resize state bug | CourseBuilder.jsx | Low |
-
-### Fix This Week (High impact — user frustration)
-
-| # | Issue | File | Effort |
-|---|-------|------|--------|
-| 5 | No feedback after enrollment | CourseDetail.jsx | Low |
-| 6 | No feedback after course actions | CourseDetail.jsx | Low |
-| 7 | Settings page buttons don't work | user/Settings/Settings.jsx | Medium |
-| 8 | Delete actions use `window.confirm()` | CourseBuilder, EventsPage | Low |
-| 9 | Course detail uses `alert()` for errors | CourseDetail.jsx | Low |
-| 10 | No confirmation before drop | CourseDetail.jsx | Low |
-
-### Fix This Month (Medium impact — polish)
-
-| # | Issue | File | Effort |
-|---|-------|------|--------|
-| 11 | No loading states on navigation | Routes.jsx + layout | Medium |
-| 12 | No "Continue Learning" section | learner/Dashboard.jsx, Course.jsx | Medium |
-| 13 | Sidebar active state lost on nested routes | RoleBasedSidebar.jsx | Low |
-| 14 | Toast notifications not accessible | ToastContext.jsx | Low |
-| 15 | Icon-only buttons lack aria-labels | RoleBasedSidebar, ReaderLayout | Low |
-| 16 | No focus management in modals | ui/dialog.jsx | Medium |
-| 17 | No error boundaries | App.jsx or Routes.jsx | Medium |
-| 18 | Course creation has no draft auto-save | CourseCreate.jsx | Medium |
-| 19 | No page titles | All page components | Low |
-| 20 | No unsaved changes warning | All form pages | Medium |
+| 26 | Inconsistent button styling | All pages | Medium |
+| 27 | Inline styles vs Tailwind inconsistency | All pages | High |
+| 28 | No loading states on page transitions | Routes.jsx + layout | Medium |
+| 29 | No "Continue Learning" on course list | Course.jsx | Medium |
+| 30 | Notification dropdown focus management | ui/dashboard-layout.jsx | Low |
 
 ---
 

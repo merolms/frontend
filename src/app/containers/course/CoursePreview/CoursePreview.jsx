@@ -11,8 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import MeroEduEditor from "@/editor/Editor";
 import { t } from "@/styles/theme";
+import { usePageTitle } from "@/hooks";
 
 const CoursePreview = () => {
+  usePageTitle("Course Preview");
   const navigate = useNavigate();
   const { id, lessonId } = useParams();
 

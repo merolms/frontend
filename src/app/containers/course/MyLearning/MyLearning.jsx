@@ -26,8 +26,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getStatusColor, getStatusLabel } from "@/utils";
+import { usePageTitle } from "@/hooks";
 
 const MyLearning = () => {
+  usePageTitle("My Learning");
   const navigate = useNavigate();
   const user = useSelector((s) => s.auth.user);
   const [enrollments, setEnrollments] = useState([]);

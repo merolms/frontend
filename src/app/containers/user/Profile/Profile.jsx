@@ -8,8 +8,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import { usePageTitle } from "@/hooks";
 
 const Profile = () => {
+  usePageTitle("Profile");
   const navigate = useNavigate();
   const reduxUser = useSelector((state) => state.auth.user);
   const [profile, setProfile] = useState(null);

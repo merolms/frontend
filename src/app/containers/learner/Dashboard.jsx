@@ -10,12 +10,14 @@ import EmptyState from "@/components/common/EmptyState";
 import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import { usePageTitle } from "@/hooks";
 
 /**
  * LearnerDashboard — Main dashboard for Student role.
  * Shows enrolled courses, progress, and quick actions.
  */
 const LearnerDashboard = () => {
+  usePageTitle("Dashboard");
   const navigate = useNavigate();
   const user = useSelector((s) => s.auth.user);
   const [enrollments, setEnrollments] = useState([]);

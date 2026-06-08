@@ -21,6 +21,7 @@ function VideoBlockComponent(props) {
   const videoUrl = fileUrl || dataUrl;
 
   // Always fetch through API with auth — browser <video> can't send auth headers
+  // The hook appends ?token=<jwt> to the URL so the browser can make direct requests
   const authenticatedUrl = useAuthenticatedMediaUrl(videoUrl);
 
   const uploadFile = async (file) => {
@@ -98,7 +99,6 @@ function VideoBlockComponent(props) {
       </NodeViewWrapper>
     );
   }
-
   return (
     <NodeViewWrapper className="block-video w-full">
       <div className="nice-shadow rounded-xl bg-neutral-50 px-5 py-4 transition-all ease-linear">
@@ -111,7 +111,13 @@ function VideoBlockComponent(props) {
 
         {videoUrl ? (
           <div>
-            <video src={authenticatedUrl || videoUrl} controls className="w-full rounded-lg" />
+            {authenticatedUrl ? (
+              <video src={authenticatedUrl} controls className="w-full rounded-lg" />
+            ) : (
+              <div className="flex items-center justify-center rounded-lg bg-neutral-100 p-8">
+                <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+              </div>
+            )}
             {fileName && <p className="mt-2 text-xs text-neutral-500">{fileName}</p>}
             {isEditable && (
               <button

@@ -1,32 +1,30 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:9090";
 
 /**
- * Fetches a media URL that requires authentication and returns a blob URL
- * that can be used directly in <img>, <video>, <audio> etc.
+ * Returns the full media URL for same-origin media.
+ * The Service Worker intercepts these requests and adds the Authorization header.
+ * This allows browser-native <video>, <img>, <audio> elements to make
+ * authenticated requests with proper range request support for seeking.
  *
- * Handles:
- * - Relative URLs like /media/<uuid> → fetched with auth via API_BASE
- * - Absolute URLs pointing to the same API base → fetched with auth
- * - data: / blob: URLs → passed through unchanged
- * - External URLs (unsplash, etc.) → passed through unchanged
+ * For external URLs (unsplash, data:, blob:), returns unchanged.
  *
- * @param {string|null} url - Media URL that may require auth
- * @returns {string|null} Blob URL or null while loading/on error
+ * @param {string|null} url - Media URL that may need auth
+ * @returns {string|null} Full media URL, or null if no URL / not authenticated
  */
 export function useAuthenticatedMediaUrl(url) {
-  const [blobUrl, setBlobUrl] = useState(null);
+  const [authenticatedUrl, setAuthenticatedUrl] = useState(null);
 
   useEffect(() => {
     if (!url) {
-      setBlobUrl(null);
+      setAuthenticatedUrl(null);
       return;
     }
 
     // data: or blob: URLs — use directly
     if (url.startsWith("data:") || url.startsWith("blob:")) {
-      setBlobUrl(url);
+      setAuthenticatedUrl(url);
       return;
     }
 
@@ -40,49 +38,21 @@ export function useAuthenticatedMediaUrl(url) {
 
     // External URLs (unsplash, etc.) — use directly, no auth needed
     if (!isSameOrigin) {
-      setBlobUrl(url);
+      setAuthenticatedUrl(url);
       return;
     }
 
-    // Build the fetch URL — if absolute, use as-is; if relative, prepend API_BASE
-    const fetchUrl = url.startsWith("http") ? url : `${API_BASE}${url}`;
+    // Check if user is authenticated
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
+      setAuthenticatedUrl(null);
+      return;
+    }
 
-    let objectUrl = null;
-    let cancelled = false;
-
-    const fetchMedia = async () => {
-      try {
-        const token = localStorage.getItem("auth_token");
-        const headers = {};
-        if (token) {
-          headers["Authorization"] = `Bearer ${token}`;
-        }
-
-        const response = await fetch(fetchUrl, { headers });
-        if (!response.ok) {
-          if (!cancelled) setBlobUrl(null);
-          return;
-        }
-
-        const blob = await response.blob();
-        if (cancelled) return;
-
-        objectUrl = URL.createObjectURL(blob);
-        setBlobUrl(objectUrl);
-      } catch {
-        if (!cancelled) setBlobUrl(null);
-      }
-    };
-
-    fetchMedia();
-
-    return () => {
-      cancelled = true;
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl);
-      }
-    };
+    // Build the full URL (Service Worker will add Authorization header)
+    const fullUrl = url.startsWith("http") ? url : `${API_BASE}${url}`;
+    setAuthenticatedUrl(fullUrl);
   }, [url]);
 
-  return blobUrl;
+  return authenticatedUrl;
 }

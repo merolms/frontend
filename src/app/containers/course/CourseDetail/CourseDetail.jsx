@@ -38,6 +38,7 @@ import {
   isEnrolled,
 } from "@/app/services/enrollmentService";
 import { useToast } from "@/app/context/ToastContext";
+import { usePageTitle } from "@/hooks";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
@@ -54,6 +55,7 @@ const CourseDetail = () => {
   const user = useSelector((s) => s.auth.user);
   const { addToast } = useToast();
   const [course, setCourse] = useState(null);
+  usePageTitle(course?.title ? `${course.title} — Course` : "Course Details");
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);

@@ -21,8 +21,9 @@ import { t } from "@/styles/theme";
 
 // import TipTapEditor from "./components/TipTapEditor/TipTapEditor";
 import LessonPanel from "./components/LessonPanel";
+import { usePageTitle } from "@/hooks";
 
-// ─── BLOCKS → BlockNote DOC CONVERTER ───────────────────────────
+// ─── BLOCKS → BLOCKNOTE DOC CONVERTER ───────────────────────────
 // Converts blocks from GET /lessons/{id}/blocks API into BlockNote
 // document format ({id, type, content, props, children}[]).
 
@@ -154,6 +155,7 @@ const Spinner = ({ size = 14 }) => (
 
 // ─── CourseBuilder ───────────────────────────────────────────────
 const CourseBuilder = () => {
+  usePageTitle("Course Builder");
   const navigate = useNavigate();
   const { id, lessonId } = useParams();
   const { resolvedTheme: theme } = useThemeContext();
@@ -338,7 +340,7 @@ const CourseBuilder = () => {
     (e) => {
       e.preventDefault();
       setIsResizing(true);
-      setIsDragging(TruckElectricIcon);
+      setIsDragging(true);
       resizeStart.current = { x: e.clientX, width: panelWidth };
       const handleMove = (ev) => {
         const dx = ev.clientX - resizeStart.current.x;
@@ -379,7 +381,6 @@ const CourseBuilder = () => {
   };
 
   const handleDeleteLesson = async (lessonId) => {
-    if (!window.confirm("Delete this lesson? This cannot be undone.")) return;
     try {
       await deleteLesson(id, lessonId);
       const updated = lessons.filter((l) => l.id !== lessonId);

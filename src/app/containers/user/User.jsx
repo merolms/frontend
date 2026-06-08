@@ -29,6 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { usePageTitle } from "@/hooks";
 
 const statusOptions = [
   { value: "all", label: "All Status" },
@@ -58,6 +59,7 @@ const getRoleColor = (role) => {
 };
 
 const UserContainer = () => {
+  usePageTitle("Users");
   const navigate = useNavigate();
   const { addToast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -256,6 +258,7 @@ const UserContainer = () => {
         ) : (
           <>
             <Paper className="overflow-hidden">
+              <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -323,6 +326,7 @@ const UserContainer = () => {
                   ))}
                 </TableBody>
               </Table>
+              </div>
             </Paper>
 
             {totalPages > 1 && (

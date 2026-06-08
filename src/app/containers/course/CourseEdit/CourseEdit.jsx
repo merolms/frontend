@@ -11,8 +11,10 @@ import FormErrorBanner from "@/components/common/FormErrorBanner";
 import FormField from "@/components/forms/FormField";
 import LoadingState from "@/components/common/LoadingState";
 import { t } from "@/styles/theme";
+import { usePageTitle } from "@/hooks";
 
 const CourseEdit = () => {
+  usePageTitle("Edit Course");
   const navigate = useNavigate();
   const { id } = useParams();
   const currentUser = useSelector((state) => state.auth.user);

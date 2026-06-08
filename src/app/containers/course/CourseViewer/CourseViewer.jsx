@@ -15,8 +15,10 @@ import {
 import { ReaderLayout } from "@/components/layouts/ReaderLayout";
 import MeroEduEditor from "@/editor/Editor";
 import { t } from "@/styles/theme";
+import { usePageTitle } from "@/hooks";
 
 const CourseViewer = () => {
+  usePageTitle("Course Viewer");
   const navigate = useNavigate();
   const { id } = useParams();
   const { addToast } = useToast();

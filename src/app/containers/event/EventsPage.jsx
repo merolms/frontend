@@ -2,6 +2,7 @@ import { CalendarDays, Clock, List, MapPin, Plus, Search, Users } from "lucide-r
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import {
   fetchEvents,
   formatEventDate,
@@ -24,6 +25,7 @@ import {
 
 import Calendar from "./components/Calendar";
 import EventForm from "./components/EventForm";
+import { usePageTitle } from "@/hooks";
 
 const typeLabels = {
   workshop: "Workshop",
@@ -123,6 +125,7 @@ const EventCard = ({ event, onEdit, onDelete, navigate }) => {
 };
 
 const EventsPage = () => {
+  usePageTitle("Events");
   const navigate = useNavigate();
   const [view, setView] = useState("calendar"); // 'calendar' | 'list'
   const [events, setEvents] = useState([]);
@@ -137,6 +140,8 @@ const EventsPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const eventTypes = getEventTypes();
 
@@ -180,13 +185,21 @@ const EventsPage = () => {
   };
 
   const handleDelete = async (event) => {
-    if (!window.confirm(`Delete "${event.title}"?`)) return;
+    setDeleteTarget(event);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
     try {
+      setActionLoading(true);
       const { deleteEvent } = await import("@/app/services/eventService");
-      await deleteEvent(event.id);
+      await deleteEvent(deleteTarget.id);
+      setDeleteTarget(null);
       fetchData();
     } catch (err) {
       setError("Failed to delete event.");
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -342,6 +355,15 @@ const EventsPage = () => {
           }}
         />
       )}
+
+      <DeleteModal
+        open={!!deleteTarget}
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+        itemName={deleteTarget?.title || ""}
+        itemType="event"
+        loading={actionLoading}
+      />
     </DashboardLayout>
   );
 };

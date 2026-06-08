@@ -6,12 +6,14 @@ import { fetchDashboardStats } from "@/app/services/dashboardService";
 import LoadingState from "@/components/common/LoadingState";
 import StatCard from "@/components/common/StatCard";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import { usePageTitle } from "@/hooks";
 
 /**
  * AdminDashboard — Main dashboard for Administrator role.
  * Shows system stats, recent activity, and quick actions.
  */
 const AdminDashboard = () => {
+  usePageTitle("Admin Dashboard");
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);

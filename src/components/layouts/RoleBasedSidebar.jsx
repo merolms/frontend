@@ -26,7 +26,7 @@ const RoleBasedSidebar = () => {
 
   const isActive = (path) => {
     if (path === "/") return currentPath === "/";
-    return currentPath === path || currentPath.startsWith(path + "/");
+    return currentPath === path || currentPath.startsWith(path + "/") || currentPath.startsWith(path + "?");
   };
 
   return (
@@ -35,6 +35,7 @@ const RoleBasedSidebar = () => {
       <div className="sidebar-logo">
         <Link
           to="/"
+          aria-label="MeroEdu Dashboard"
           className="group flex h-10 w-10 items-center justify-center rounded-lg"
           title="MeroEdu"
         >
@@ -56,6 +57,7 @@ const RoleBasedSidebar = () => {
                 key={item.path}
                 to={item.path}
                 title={item.label}
+                aria-label={item.label}
                 className={active ? "sidebar-nav-item-active" : "sidebar-nav-item"}
               >
                 <Icon size={18} />
@@ -101,12 +103,13 @@ const RoleBasedSidebar = () => {
             </button>
             <button
               onClick={() => navigate("/settings")}
+              aria-label="Settings"
               title="Settings"
               className="sidebar-nav-item"
             >
               <Settings size={18} />
             </button>
-            <button onClick={handleLogout} title="Sign Out" className="sidebar-signout-btn">
+            <button onClick={handleLogout} aria-label="Sign Out" title="Sign Out" className="sidebar-signout-btn">
               <LogOut size={18} />
             </button>
           </>

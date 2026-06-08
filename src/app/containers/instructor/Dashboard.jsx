@@ -9,12 +9,14 @@ import Can from "@/components/auth/Can";
 import LoadingState from "@/components/common/LoadingState";
 import StatCard from "@/components/common/StatCard";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import { usePageTitle } from "@/hooks";
 
 /**
  * InstructorDashboard — Main dashboard for Instructor role.
  * Shows created courses, student count, and quick actions.
  */
 const InstructorDashboard = () => {
+  usePageTitle("Instructor Dashboard");
   const navigate = useNavigate();
   const user = useSelector((s) => s.auth.user);
   const [courses, setCourses] = useState([]);
