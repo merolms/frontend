@@ -1,58 +1,32 @@
-import { useState, useEffect } from "react";
-
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:9090";
 
 /**
- * Returns the full media URL for same-origin media.
- * The Service Worker intercepts these requests and adds the Authorization header.
- * This allows browser-native <video>, <img>, <audio> elements to make
- * authenticated requests with proper range request support for seeking.
+ * Returns a URL with ?token=<jwt> for same-origin media URLs.
+ * The backend auth middleware accepts ?token= as an alternative to Authorization header.
+ * For video/audio, the backend 302-redirects to a presigned S3 URL (Range requests work).
+ * For images/docs, the backend serves the content directly.
  *
- * For external URLs (unsplash, data:, blob:), returns unchanged.
+ * External URLs, data:, and blob: URLs are passed through unchanged.
  *
- * @param {string|null} url - Media URL that may need auth
- * @returns {string|null} Full media URL, or null if no URL / not authenticated
+ * @param {string|null} url - Media URL that may require auth
+ * @returns {string|null} Authenticated URL or null
  */
 export function useAuthenticatedMediaUrl(url) {
-  const [authenticatedUrl, setAuthenticatedUrl] = useState(null);
+  if (!url) return null;
+  if (url.startsWith("data:") || url.startsWith("blob:")) return url;
 
-  useEffect(() => {
-    if (!url) {
-      setAuthenticatedUrl(null);
-      return;
-    }
+  // External URLs (different origin) — pass through, no auth needed
+  const isSameOrigin =
+    url.startsWith(API_BASE) ||
+    url.startsWith("/media/") ||
+    url.startsWith("/uploads/") ||
+    url.startsWith("/lessons/") ||
+    url.startsWith("/blocks/");
 
-    // data: or blob: URLs — use directly
-    if (url.startsWith("data:") || url.startsWith("blob:")) {
-      setAuthenticatedUrl(url);
-      return;
-    }
+  if (!isSameOrigin) return url;
 
-    // Determine if this URL points to our API server (needs auth)
-    const isSameOrigin =
-      url.startsWith(API_BASE) ||
-      url.startsWith("/media/") ||
-      url.startsWith("/uploads/") ||
-      url.startsWith("/lessons/") ||
-      url.startsWith("/blocks/");
-
-    // External URLs (unsplash, etc.) — use directly, no auth needed
-    if (!isSameOrigin) {
-      setAuthenticatedUrl(url);
-      return;
-    }
-
-    // Check if user is authenticated
-    const token = localStorage.getItem("auth_token");
-    if (!token) {
-      setAuthenticatedUrl(null);
-      return;
-    }
-
-    // Build the full URL (Service Worker will add Authorization header)
-    const fullUrl = url.startsWith("http") ? url : `${API_BASE}${url}`;
-    setAuthenticatedUrl(fullUrl);
-  }, [url]);
-
-  return authenticatedUrl;
+  // Same-origin: append ?token= so backend auth middleware accepts the request
+  const token = localStorage.getItem("auth_token");
+  const fullUrl = url.startsWith("http") ? url : `${API_BASE}${url}`;
+  return token ? `${fullUrl}?token=${encodeURIComponent(token)}` : fullUrl;
 }

@@ -1,10 +1,21 @@
 import { NodeViewWrapper } from "@tiptap/react";
-import { AlertCircle, Loader2, RefreshCcw, Upload, Video } from "lucide-react";
+import { AlertCircle, Loader2, RefreshCcw, Upload, Video } from "lucide-react"; // Loader2 used for upload state only
 import React from "react";
 
 import { useEditorProvider } from "@/contexts/EditorContext";
 import { uploadEditorMedia } from "@/editor/utils/mediaUpload";
-import { useAuthenticatedMediaUrl } from "@/hooks";
+
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:9090";
+
+// Returns a URL the browser can use directly for <video> with HTTP range-request support.
+// Appends ?token=<jwt> so the backend auth middleware accepts it without custom headers.
+function buildStreamUrl(url) {
+  if (!url) return null;
+  if (url.startsWith("data:") || url.startsWith("blob:")) return url;
+  const token = localStorage.getItem("auth_token");
+  const fullUrl = url.startsWith("http") ? url : `${API_BASE}${url}`;
+  return token ? `${fullUrl}?token=${encodeURIComponent(token)}` : fullUrl;
+}
 
 function VideoBlockComponent(props) {
   const editorState = useEditorProvider();
@@ -20,9 +31,7 @@ function VideoBlockComponent(props) {
   const fileName = props.node.attrs.fileName;
   const videoUrl = fileUrl || dataUrl;
 
-  // Always fetch through API with auth — browser <video> can't send auth headers
-  // The hook appends ?token=<jwt> to the URL so the browser can make direct requests
-  const authenticatedUrl = useAuthenticatedMediaUrl(videoUrl);
+  const streamUrl = buildStreamUrl(videoUrl);
 
   const uploadFile = async (file) => {
     setIsLoading(true);
@@ -82,20 +91,14 @@ function VideoBlockComponent(props) {
   // View mode - no video
   if (!isEditable && !videoUrl) return null;
 
-  // View mode - has video: must wait for authenticated blob URL
+  // View mode - has video: use stream URL directly so browser handles range requests
   if (!isEditable && videoUrl) {
-    if (!authenticatedUrl) {
-      return (
-        <NodeViewWrapper className="block-video w-full">
-          <div className="flex items-center justify-center rounded-lg bg-neutral-100 p-8">
-            <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
-          </div>
-        </NodeViewWrapper>
-      );
-    }
     return (
       <NodeViewWrapper className="block-video w-full">
-        <video src={authenticatedUrl} controls className="w-full rounded-lg" />
+        <video width="640" height="480" controls autoplay>
+          <source src={streamUrl} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       </NodeViewWrapper>
     );
   }
@@ -111,13 +114,7 @@ function VideoBlockComponent(props) {
 
         {videoUrl ? (
           <div>
-            {authenticatedUrl ? (
-              <video src={authenticatedUrl} controls className="w-full rounded-lg" />
-            ) : (
-              <div className="flex items-center justify-center rounded-lg bg-neutral-100 p-8">
-                <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
-              </div>
-            )}
+            <video src={streamUrl} controls preload="metadata" className="w-full rounded-lg" />
             {fileName && <p className="mt-2 text-xs text-neutral-500">{fileName}</p>}
             {isEditable && (
               <button

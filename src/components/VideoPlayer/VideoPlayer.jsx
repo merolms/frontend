@@ -2,6 +2,22 @@ import { useEffect, useRef, useState } from "react";
 
 import { t } from "@/styles/theme";
 
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:9090";
+
+/**
+ * Build a stream URL with ?token= for auth — same pattern as VideoBlockComponent.
+ * Lets the browser use native HTTP Range requests for seeking.
+ */
+function buildStreamUrl(src) {
+  if (!src) return null;
+  if (src.startsWith("data:") || src.startsWith("blob:")) return src;
+  // External URLs (different origin) — pass through, no auth
+  if (src.startsWith("http") && !src.startsWith(API_BASE)) return src;
+  const token = localStorage.getItem("auth_token");
+  const fullUrl = src.startsWith("http") ? src : `${API_BASE}${src}`;
+  return token ? `${fullUrl}?token=${encodeURIComponent(token)}` : fullUrl;
+}
+
 /**
  * VideoPlayer — HLS-capable video player with fallback to native <video>.
  *
@@ -15,14 +31,17 @@ const VideoPlayer = ({ src, poster, onProgress }) => {
   const [error, setError] = useState(null);
   const progressInterval = useRef(null);
 
+  // Build authenticated stream URL
+  const streamUrl = buildStreamUrl(src);
+
   // Load HLS.js dynamically if needed
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !src) return;
+    if (!video || !streamUrl) return;
 
     // Check if native HLS is supported (Safari)
     if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = src;
+      video.src = streamUrl;
       return;
     }
 
@@ -33,7 +52,7 @@ const VideoPlayer = ({ src, poster, onProgress }) => {
         const Hls = mod.default;
         if (Hls.isSupported()) {
           hls = new Hls();
-          hls.loadSource(src);
+          hls.loadSource(streamUrl);
           hls.attachMedia(video);
           hls.on(Hls.Events.MANIFEST_PARSED, () => {
             // ready
@@ -43,19 +62,19 @@ const VideoPlayer = ({ src, poster, onProgress }) => {
           });
         } else {
           // Fallback: try direct playback
-          video.src = src;
+          video.src = streamUrl;
         }
       })
       .catch(() => {
         // HLS.js not available, try direct
-        video.src = src;
+        video.src = streamUrl;
       });
 
     return () => {
       if (hls) hls.destroy();
       if (progressInterval.current) clearInterval(progressInterval.current);
     };
-  }, [src]);
+  }, [streamUrl]);
 
   // Track progress
   useEffect(() => {
@@ -122,7 +141,7 @@ const VideoPlayer = ({ src, poster, onProgress }) => {
         <div style={{ fontSize: 24, marginBottom: 8 }}>⚠️</div>
         <div>{error}</div>
         <a
-          href={src}
+          href={streamUrl}
           target="_blank"
           rel="noopener noreferrer"
           style={{ color: t("accent"), fontSize: 13, marginTop: 8, display: "inline-block" }}
