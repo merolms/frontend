@@ -85,7 +85,7 @@ const GridView = ({ courses, navigate, loading, onRefresh }) => {
         icon={<BookOpen size={48} />}
         title="No courses yet"
         description="Create your first course to get started."
-action={
+        action={
           <button
             onClick={() => navigate?.("/courses/create")}
             className="bg-primary hover:bg-primary-hover mt-4 rounded-md px-4 py-2 text-sm text-white"

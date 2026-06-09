@@ -259,73 +259,73 @@ const UserContainer = () => {
           <>
             <Paper className="overflow-hidden">
               <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Joined</TableHead>
-                    <TableHead className="text-center">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {users.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell>
-                        <div
-                          className="flex cursor-pointer items-center gap-2"
-                          onClick={() => navigate(`/users/${user.id}`)}
-                        >
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={user.avatar || "https://i.pravatar.cc/150?img=1"} />
-                            <AvatarFallback>
-                              {(user.firstName?.[0] || "U").toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <div className="text-text-primary text-xs font-semibold">
-                              {user.firstName} {user.lastName}
-                            </div>
-                            <div className="text-text-muted text-[11px]">{user.email}</div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={getRoleColor(user.role)}>{user.role}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={user.status === 1 ? "green" : "gray"}>
-                          {user.status === 1 ? "Active" : "Inactive"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-text-muted text-[11px]">
-                        {user.created_at
-                          ? new Date(user.created_at * 1000).toLocaleDateString()
-                          : "—"}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center justify-center gap-1">
-                          <button
-                            className="border-border hover:bg-bg-surface-active text-text-secondary flex h-7 w-7 items-center justify-center rounded-md border"
-                            onClick={() => navigate(`/users/${user.id}/edit`)}
-                            title="Edit"
-                          >
-                            <Pencil size={12} />
-                          </button>
-                          <button
-                            className="border-border hover:bg-error/10 text-error flex h-7 w-7 items-center justify-center rounded-md border"
-                            onClick={() => setDeleteTarget(user)}
-                            title="Delete"
-                          >
-                            <Trash2 size={12} />
-                          </button>
-                        </div>
-                      </TableCell>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Joined</TableHead>
+                      <TableHead className="text-center">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {users.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell>
+                          <div
+                            className="flex cursor-pointer items-center gap-2"
+                            onClick={() => navigate(`/users/${user.id}`)}
+                          >
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src={user.avatar || "https://i.pravatar.cc/150?img=1"} />
+                              <AvatarFallback>
+                                {(user.firstName?.[0] || "U").toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="text-text-primary text-xs font-semibold">
+                                {user.firstName} {user.lastName}
+                              </div>
+                              <div className="text-text-muted text-[11px]">{user.email}</div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={getRoleColor(user.role)}>{user.role}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={user.status === 1 ? "green" : "gray"}>
+                            {user.status === 1 ? "Active" : "Inactive"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-text-muted text-[11px]">
+                          {user.created_at
+                            ? new Date(user.created_at * 1000).toLocaleDateString()
+                            : "—"}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center justify-center gap-1">
+                            <button
+                              className="border-border hover:bg-bg-surface-active text-text-secondary flex h-7 w-7 items-center justify-center rounded-md border"
+                              onClick={() => navigate(`/users/${user.id}/edit`)}
+                              title="Edit"
+                            >
+                              <Pencil size={12} />
+                            </button>
+                            <button
+                              className="border-border hover:bg-error/10 text-error flex h-7 w-7 items-center justify-center rounded-md border"
+                              onClick={() => setDeleteTarget(user)}
+                              title="Delete"
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </Paper>
 

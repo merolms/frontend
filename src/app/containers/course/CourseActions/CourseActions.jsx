@@ -16,8 +16,8 @@ export const PublishModal = ({ open, onConfirm, onCancel, courseTitle, loading =
         <DialogTitle>Publish Course</DialogTitle>
       </DialogHeader>
       <p className="text-text-secondary text-sm">
-        Are you sure you want to publish <strong>{courseTitle}</strong>? Once published, it will
-        be visible to all users.
+        Are you sure you want to publish <strong>{courseTitle}</strong>? Once published, it will be
+        visible to all users.
       </p>
       <DialogFooter>
         <Button variant="default" onClick={onCancel} disabled={loading}>
@@ -38,8 +38,8 @@ export const ArchiveModal = ({ open, onConfirm, onCancel, courseTitle, loading =
         <DialogTitle>Archive Course</DialogTitle>
       </DialogHeader>
       <p className="text-text-secondary text-sm">
-        Are you sure you want to archive <strong>{courseTitle}</strong>? Archived courses are
-        hidden from users but can be restored later.
+        Are you sure you want to archive <strong>{courseTitle}</strong>? Archived courses are hidden
+        from users but can be restored later.
       </p>
       <DialogFooter>
         <Button variant="default" onClick={onCancel} disabled={loading}>
@@ -78,8 +78,7 @@ export const DeleteModal = ({
         </DialogTitle>
       </DialogHeader>
       <p className="text-text-secondary text-sm">
-        Are you sure you want to delete <strong>{itemName}</strong>? This action cannot be
-        undone.
+        Are you sure you want to delete <strong>{itemName}</strong>? This action cannot be undone.
       </p>
       <DialogFooter>
         <Button variant="default" onClick={onCancel} disabled={loading}>

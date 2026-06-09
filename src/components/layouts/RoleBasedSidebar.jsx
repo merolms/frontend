@@ -26,7 +26,11 @@ const RoleBasedSidebar = () => {
 
   const isActive = (path) => {
     if (path === "/") return currentPath === "/";
-    return currentPath === path || currentPath.startsWith(path + "/") || currentPath.startsWith(path + "?");
+    return (
+      currentPath === path ||
+      currentPath.startsWith(path + "/") ||
+      currentPath.startsWith(path + "?")
+    );
   };
 
   return (
@@ -109,7 +113,12 @@ const RoleBasedSidebar = () => {
             >
               <Settings size={18} />
             </button>
-            <button onClick={handleLogout} aria-label="Sign Out" title="Sign Out" className="sidebar-signout-btn">
+            <button
+              onClick={handleLogout}
+              aria-label="Sign Out"
+              title="Sign Out"
+              className="sidebar-signout-btn"
+            >
               <LogOut size={18} />
             </button>
           </>

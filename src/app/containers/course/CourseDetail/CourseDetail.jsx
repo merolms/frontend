@@ -367,7 +367,9 @@ const CourseDetail = () => {
                         <div className="flex items-start gap-2">
                           <User size={14} className="mt-0.5" style={{ color: t("accent") }} />
                           <div>
-                            <div className="text-text-primary text-xs font-semibold">Instructor</div>
+                            <div className="text-text-primary text-xs font-semibold">
+                              Instructor
+                            </div>
                             <div className="text-text-muted text-xs">
                               {course?.author || "N/A"}
                               {course?.authorEmail && (
@@ -380,14 +382,18 @@ const CourseDetail = () => {
                           <Folder size={14} className="mt-0.5" style={{ color: t("secondary") }} />
                           <div>
                             <div className="text-text-primary text-xs font-semibold">Category</div>
-                            <div className="text-text-muted text-xs">{course?.category || "N/A"}</div>
+                            <div className="text-text-muted text-xs">
+                              {course?.category || "N/A"}
+                            </div>
                           </div>
                         </div>
                         <div className="flex items-start gap-2">
                           <Clock size={14} className="mt-0.5" style={{ color: t("warning") }} />
                           <div>
                             <div className="text-text-primary text-xs font-semibold">Duration</div>
-                            <div className="text-text-muted text-xs">{course?.duration || "N/A"}</div>
+                            <div className="text-text-muted text-xs">
+                              {course?.duration || "N/A"}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -396,14 +402,18 @@ const CourseDetail = () => {
                           <List size={14} className="mt-0.5" style={{ color: t("primary") }} />
                           <div>
                             <div className="text-text-primary text-xs font-semibold">Lessons</div>
-                            <div className="text-text-muted text-xs">{course?.totalLessons || 0}</div>
+                            <div className="text-text-muted text-xs">
+                              {course?.totalLessons || 0}
+                            </div>
                           </div>
                         </div>
                         <div className="flex items-start gap-2">
                           <BookOpen size={14} className="mt-0.5" style={{ color: t("accent") }} />
                           <div>
                             <div className="text-text-primary text-xs font-semibold">Created</div>
-                            <div className="text-text-muted text-xs">{course?.createdAt || "N/A"}</div>
+                            <div className="text-text-muted text-xs">
+                              {course?.createdAt || "N/A"}
+                            </div>
                           </div>
                         </div>
                       </div>

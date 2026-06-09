@@ -24,7 +24,9 @@ const CourseCreate = () => {
     try {
       const saved = localStorage.getItem(DRAFT_KEY);
       if (saved) return JSON.parse(saved);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     return { title: "", description: "", category: null, coverImage: "" };
   });
   const [categories, setCategories] = useState([]);
@@ -204,11 +206,14 @@ const CourseCreate = () => {
                       src={form.coverImage}
                       alt="Cover"
                       className="max-h-40 rounded-md object-cover"
-                      onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex'; }}
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.nextElementSibling.style.display = "flex";
+                      }}
                     />
                     <div
-                      style={{ display: 'none' }}
-                      className="max-h-40 w-48 items-center justify-center rounded-md border border-dashed border-error bg-error/5 p-4"
+                      style={{ display: "none" }}
+                      className="border-error bg-error/5 max-h-40 w-48 items-center justify-center rounded-md border border-dashed p-4"
                     >
                       <span className="text-error text-xs">Invalid image URL</span>
                     </div>

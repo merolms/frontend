@@ -8,9 +8,9 @@ Your task is NOT to review code quality or architecture.
 
 Your task is to evaluate the application from the perspective of:
 
-* Students
-* Instructors
-* Administrators
+- Students
+- Instructors
+- Administrators
 
 Analyze the UI, UX, workflows, usability, consistency, accessibility, and overall product experience.
 
@@ -26,12 +26,12 @@ Navigate through all pages and user flows.
 
 Document:
 
-* Screens reviewed
-* User journeys reviewed
-* UX issues discovered
-* UI inconsistencies discovered
-* Missing product features
-* Areas causing friction
+- Screens reviewed
+- User journeys reviewed
+- UX issues discovered
+- UI inconsistencies discovered
+- Missing product features
+- Areas causing friction
 
 Do not focus on code.
 
@@ -43,16 +43,16 @@ Focus on user experience.
 
 Provide:
 
-* Overall UI score (1-10)
-* Overall UX score (1-10)
-* Accessibility score (1-10)
-* Mobile responsiveness score (1-10)
+- Overall UI score (1-10)
+- Overall UX score (1-10)
+- Accessibility score (1-10)
+- Mobile responsiveness score (1-10)
 
 Summarize:
 
-* Biggest strengths
-* Biggest weaknesses
-* Highest-impact improvements
+- Biggest strengths
+- Biggest weaknesses
+- Highest-impact improvements
 
 ---
 
@@ -64,10 +64,10 @@ Review the complete learning journey:
 
 Evaluate:
 
-* Course discovery
-* Search
-* Filters
-* Enrollment process
+- Course discovery
+- Search
+- Filters
+- Enrollment process
 
 Identify friction points.
 
@@ -77,18 +77,18 @@ Identify friction points.
 
 Review:
 
-* Course navigation
-* Lesson navigation
-* Video player experience
-* Reading materials
-* Assessments
-* Progress visibility
+- Course navigation
+- Lesson navigation
+- Video player experience
+- Reading materials
+- Assessments
+- Progress visibility
 
 Evaluate:
 
-* Ease of use
-* Clarity
-* User motivation
+- Ease of use
+- Clarity
+- User motivation
 
 Recommend improvements.
 
@@ -98,15 +98,15 @@ Recommend improvements.
 
 Review:
 
-* Lesson completion indicators
-* Course progress indicators
-* Learning path progress
+- Lesson completion indicators
+- Course progress indicators
+- Learning path progress
 
 Evaluate:
 
-* Visibility
-* Clarity
-* Motivation
+- Visibility
+- Clarity
+- Motivation
 
 Recommend improvements.
 
@@ -116,16 +116,16 @@ Recommend improvements.
 
 Review:
 
-* Course creation workflow
-* Lesson creation workflow
-* Quiz creation workflow
-* Content management
+- Course creation workflow
+- Lesson creation workflow
+- Quiz creation workflow
+- Content management
 
 Evaluate:
 
-* Number of clicks required
-* Workflow efficiency
-* Information architecture
+- Number of clicks required
+- Workflow efficiency
+- Information architecture
 
 Identify opportunities to simplify workflows.
 
@@ -135,15 +135,15 @@ Identify opportunities to simplify workflows.
 
 Review:
 
-* Dashboard usability
-* User management
-* Course management
-* Reporting interfaces
+- Dashboard usability
+- User management
+- Course management
+- Reporting interfaces
 
 Evaluate:
 
-* Operational efficiency
-* Ease of navigation
+- Operational efficiency
+- Ease of navigation
 
 Recommend improvements.
 
@@ -153,16 +153,16 @@ Recommend improvements.
 
 Review:
 
-* Sidebar design
-* Top navigation
-* Breadcrumbs
-* Search experience
+- Sidebar design
+- Top navigation
+- Breadcrumbs
+- Search experience
 
 Identify:
 
-* Confusing navigation
-* Deep menu structures
-* Missing shortcuts
+- Confusing navigation
+- Deep menu structures
+- Missing shortcuts
 
 Recommend better organization.
 
@@ -172,15 +172,15 @@ Recommend better organization.
 
 Evaluate consistency of:
 
-* Buttons
-* Forms
-* Tables
-* Cards
-* Modals
-* Colors
-* Typography
-* Icons
-* Spacing
+- Buttons
+- Forms
+- Tables
+- Cards
+- Modals
+- Colors
+- Typography
+- Icons
+- Spacing
 
 Identify inconsistencies.
 
@@ -192,11 +192,11 @@ Provide recommendations for creating a unified design system.
 
 Evaluate:
 
-* Keyboard navigation
-* Screen reader compatibility
-* Color contrast
-* Focus states
-* Form accessibility
+- Keyboard navigation
+- Screen reader compatibility
+- Color contrast
+- Focus states
+- Form accessibility
 
 Identify WCAG issues.
 
@@ -208,15 +208,15 @@ Recommend improvements.
 
 Review all major screens on:
 
-* Mobile
-* Tablet
-* Desktop
+- Mobile
+- Tablet
+- Desktop
 
 Identify:
 
-* Layout issues
-* Overflow issues
-* Touch usability issues
+- Layout issues
+- Overflow issues
+- Touch usability issues
 
 Recommend improvements.
 
@@ -226,14 +226,14 @@ Recommend improvements.
 
 Evaluate whether the platform includes:
 
-* Course recommendations
-* Continue learning section
-* Learning streaks
-* Certificates
-* Achievements
-* Learning paths
-* Recently viewed content
-* Personalized dashboard
+- Course recommendations
+- Continue learning section
+- Learning streaks
+- Certificates
+- Achievements
+- Learning paths
+- Recently viewed content
+- Personalized dashboard
 
 Recommend features commonly found in modern LMS products.
 
@@ -243,12 +243,12 @@ Recommend features commonly found in modern LMS products.
 
 Identify:
 
-* Areas requiring too many clicks
-* Confusing workflows
-* Poor feedback states
-* Missing loading states
-* Missing empty states
-* Missing confirmation states
+- Areas requiring too many clicks
+- Confusing workflows
+- Poor feedback states
+- Missing loading states
+- Missing empty states
+- Missing confirmation states
 
 Rank issues by severity.
 
@@ -258,17 +258,17 @@ Rank issues by severity.
 
 Evaluate:
 
-* Modern appearance
-* Professional appearance
-* Trustworthiness
-* Educational focus
+- Modern appearance
+- Professional appearance
+- Trustworthiness
+- Educational focus
 
 Recommend improvements to:
 
-* Layout
-* Spacing
-* Hierarchy
-* Visual emphasis
+- Layout
+- Spacing
+- Hierarchy
+- Visual emphasis
 
 ---
 
@@ -276,13 +276,13 @@ Recommend improvements to:
 
 Create recommendations for:
 
-* Typography scale
-* Color system
-* Button system
-* Form system
-* Table system
-* Card system
-* Modal system
+- Typography scale
+- Color system
+- Button system
+- Form system
+- Table system
+- Card system
+- Modal system
 
 Provide examples where inconsistencies exist.
 
@@ -292,11 +292,11 @@ Provide examples where inconsistencies exist.
 
 Compare the LMS against:
 
-* Coursera
-* Udemy
-* Canvas
-* Moodle
-* TalentLMS
+- Coursera
+- Udemy
+- Canvas
+- Moodle
+- TalentLMS
 
 Identify missing UX patterns and opportunities.
 
@@ -330,10 +330,10 @@ Generate a detailed markdown report.
 
 For every issue found provide:
 
-* Severity (Critical / High / Medium / Low)
-* Screenshot reference (if available)
-* Current behavior
-* Recommended improvement
-* Expected user impact
+- Severity (Critical / High / Medium / Low)
+- Screenshot reference (if available)
+- Current behavior
+- Recommended improvement
+- Expected user impact
 
 Focus on practical recommendations that improve learner engagement, course completion rates, usability, and overall user satisfaction.

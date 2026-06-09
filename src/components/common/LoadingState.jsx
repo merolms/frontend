@@ -13,22 +13,20 @@ import { cn } from "@/lib/utils";
  *   centered    - center the spinner in a flex container
  *   className   - additional classes
  */
-const LoadingState = ({ 
-  count = 3, 
-  height = "h-24", 
+const LoadingState = ({
+  count = 3,
+  height = "h-24",
   compact = false,
   variant = "skeleton",
   text,
   centered = false,
-  className 
+  className,
 }) => {
   if (variant === "spinner") {
     return (
-      <div className={cn(
-        "flex items-center gap-2",
-        centered && "flex-col justify-center",
-        className
-      )}>
+      <div
+        className={cn("flex items-center gap-2", centered && "flex-col justify-center", className)}
+      >
         <Loader className="text-text-muted animate-spin" size={20} />
         {text && <span className="text-text-muted text-sm">{text}</span>}
       </div>

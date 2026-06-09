@@ -76,6 +76,7 @@
     "@tiptap/extension-task-item": "^3.24.0",
     "@tiptap/extension-task-list": "^3.24.0",
     "@tiptap/extension-text-align": "^3.24.0",
+    "@tiptap/extension-text-style": "^3.26.0",
     "@tiptap/extension-typography": "^3.24.0",
     "@tiptap/extension-youtube": "^3.24.0",
     "@tiptap/html": "^3.10.1",
@@ -83,6 +84,7 @@
     "@tiptap/react": "^3.24.0",
     "@tiptap/starter-kit": "^3.24.0",
     "@tiptap/suggestion": "^3.24.0",
+    "@videojs/react": "^10.0.0-beta.24",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dompurify": "^3.4.7",
@@ -117,6 +119,7 @@
     "tippy.js": "^6.3.7",
     "turndown": "^7.2.4",
     "uuid": "^14.0.0",
+    "video.js": "^8.23.7",
     "vite": "^5.1.4"
   },
   "devDependencies": {

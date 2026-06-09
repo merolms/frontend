@@ -17,21 +17,21 @@ Your objective is to identify:
 
 For every recommendation:
 
-* Explain the actual user problem.
-* Explain how often users encounter it.
-* Estimate impact (High/Medium/Low).
-* Estimate implementation effort (High/Medium/Low).
-* Explain why the change improves completion rates, usability, or efficiency.
+- Explain the actual user problem.
+- Explain how often users encounter it.
+- Estimate impact (High/Medium/Low).
+- Estimate implementation effort (High/Medium/Low).
+- Explain why the change improves completion rates, usability, or efficiency.
 
 Do NOT recommend:
 
-* Gamification
-* AI features
-* Social features
-* Mobile apps
-* Discussion forums
-* Certificates
-* Ratings/reviews
+- Gamification
+- AI features
+- Social features
+- Mobile apps
+- Discussion forums
+- Certificates
+- Ratings/reviews
 
 Unless there is strong evidence they solve a real user problem discovered in the application.
 

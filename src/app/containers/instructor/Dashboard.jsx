@@ -53,12 +53,7 @@ const InstructorDashboard = () => {
     >
       {/* Stats */}
       <div className="mb-6 grid grid-cols-4 gap-4">
-        <StatCard
-          title="Total Courses"
-          value={courses.length}
-          icon={BookOpen}
-          color="primary"
-        />
+        <StatCard title="Total Courses" value={courses.length} icon={BookOpen} color="primary" />
         <StatCard
           title="Published"
           value={publishedCourses.length}

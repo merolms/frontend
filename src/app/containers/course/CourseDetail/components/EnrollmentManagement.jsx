@@ -142,8 +142,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
       <div
         className="flex items-center justify-between px-5 py-3.5"
         style={{
-          background:
-            "linear-gradient(180deg, rgba(99,102,241,0.08) 0%, rgba(99,102,241,0) 100%)",
+          background: "linear-gradient(180deg, rgba(99,102,241,0.08) 0%, rgba(99,102,241,0) 100%)",
         }}
       >
         <div className="flex items-center gap-2.5">
@@ -302,12 +301,13 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                     .filter((u) => !getEnrolledUserIds().has(u.id))
                     .slice(0, 20)
                     .map((u) => (
-                      <SelectItem key={u.id} value={String(u.id)}>{`${u.firstName || ""} ${u.lastName || ""} (${u.email || `User ${u.id}`})`}</SelectItem>
+                      <SelectItem
+                        key={u.id}
+                        value={String(u.id)}
+                      >{`${u.firstName || ""} ${u.lastName || ""} (${u.email || `User ${u.id}`})`}</SelectItem>
                     ))}
                   {users.filter((u) => !getEnrolledUserIds().has(u.id)).length === 0 && (
-                    <div className="text-text-muted px-2 py-1.5 text-[11px]">
-                      No eligible users
-                    </div>
+                    <div className="text-text-muted px-2 py-1.5 text-[11px]">No eligible users</div>
                   )}
                 </SelectContent>
               </Select>
@@ -384,9 +384,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                       </SelectItem>
                     ))}
                   {teams.filter((t) => !getEnrolledTeamIds().has(t.id)).length === 0 && (
-                    <div className="text-text-muted px-2 py-1.5 text-[11px]">
-                      No eligible teams
-                    </div>
+                    <div className="text-text-muted px-2 py-1.5 text-[11px]">No eligible teams</div>
                   )}
                 </SelectContent>
               </Select>

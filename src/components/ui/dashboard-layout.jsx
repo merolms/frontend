@@ -128,7 +128,12 @@ export default function DashboardLayout({ children, title, subtitle }) {
             <div className="relative" ref={bellRef}>
               <button
                 onClick={handleBellClick}
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleBellClick(); } }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleBellClick();
+                  }
+                }}
                 aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
                 aria-expanded={showDropdown}
                 aria-haspopup="true"
