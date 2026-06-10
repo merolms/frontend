@@ -1,5 +1,4 @@
 "use client";
-import "./editor.css";
 
 import CharacterCount from "@tiptap/extension-character-count";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";

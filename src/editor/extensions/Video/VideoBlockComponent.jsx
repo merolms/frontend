@@ -26,8 +26,6 @@ function VideoBlockComponent(props) {
   const editorState = useEditorProvider();
   const isEditable = editorState.isEditable;
   const fileInputRef = React.useRef(null);
-  const videoRef = React.useRef(null);
-  const playerRef = React.useRef(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
   const [isDragging, setIsDragging] = React.useState(false);
@@ -41,33 +39,6 @@ function VideoBlockComponent(props) {
   const streamUrl = buildStreamUrl(videoUrl);
 
   const Player = createPlayer({ features: videoFeatures });
-
-  // // Initialize / dispose video.js player
-  // React.useEffect(() => {
-  //   if (!videoRef.current || !streamUrl) return;
-
-  //   // Dispose previous player if any
-  //   if (playerRef.current) {
-  //     playerRef.current.dispose();
-  //     playerRef.current = null;
-  //   }
-
-  //   const player = videojs(videoRef.current, {
-  //     controls: true,
-  //     responsive: true,
-  //     fluid: true,
-  //     preload: "metadata",
-  //     sources: [{ src: streamUrl, type: "video/mp4" }],
-  //   });
-  //   playerRef.current = player;
-
-  //   return () => {
-  //     if (playerRef.current) {
-  //       playerRef.current.dispose();
-  //       playerRef.current = null;
-  //     }
-  //   };
-  // }, [streamUrl]);
 
   const uploadFile = async (file) => {
     setIsLoading(true);

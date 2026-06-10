@@ -141,7 +141,6 @@ export const updateCourse = async (id, courseData) => {
       description: courseData.description,
       imageUrl: courseData.coverImage || courseData.imageURL || "",
       categoryId: courseData.category || null,
-      authorId: courseData.authorID || null,
       status: courseData.status || "DRAFT",
     };
     const data = await apiPut(`/courses/${id}`, payload);

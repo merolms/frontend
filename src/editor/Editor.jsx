@@ -1,5 +1,3 @@
-import "./editor.css";
-
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { Color } from "@tiptap/extension-color";
 import Highlight from "@tiptap/extension-highlight";
@@ -43,6 +41,8 @@ import UserBlock from "./extensions/Users/UserBlock";
 import VideoBlock from "./extensions/Video/VideoBlock";
 import WebPreview from "./extensions/WebPreview/WebPreview";
 import { ToolbarButtons } from "./Toolbar/ToolbarButtons";
+import Placeholder from "@tiptap/extension-placeholder";
+import { placeholder } from "@codemirror/view";
 
 const DEFAULT_CONTENT = {
   type: "doc",
@@ -66,6 +66,9 @@ function MeroEduEditor({
         link: false,
         bulletList: { HTMLAttributes: { class: "bullet-list" } },
         orderedList: { HTMLAttributes: { class: "ordered-list" } },
+      }),
+      Placeholder.configure({
+        placeholder: "Type some content here!",
       }),
       Color.configure({ types: [TextStyleKit.name, ListItem.name] }),
       TextStyleKit,

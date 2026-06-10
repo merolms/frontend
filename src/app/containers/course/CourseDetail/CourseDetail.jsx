@@ -13,6 +13,7 @@ import {
   Star,
   Trash2,
   User,
+  Users,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -35,6 +36,7 @@ import {
   dropCourse,
   enrollInCourse,
   getCourseEnrollments,
+  getLessonCompletionCounts,
   isEnrolled,
 } from "@/app/services/enrollmentService";
 import { useToast } from "@/app/context/ToastContext";
@@ -62,6 +64,7 @@ const CourseDetail = () => {
   const [activeModal, setActiveModal] = useState(null);
   const [enrollment, setEnrollment] = useState(null);
   const [enrollments, setEnrollments] = useState([]);
+  const [lessonCompletionCounts, setLessonCompletionCounts] = useState({});
   const [error, setError] = useState(null);
 
   const loadData = useCallback(async () => {
@@ -77,6 +80,10 @@ const CourseDetail = () => {
         getCourseEnrollments(parseInt(id)).catch(() => []),
       ]);
       setEnrollments(Array.isArray(enrollmentsData) ? enrollmentsData : []);
+
+      // Fetch per-lesson completion counts
+      const counts = await getLessonCompletionCounts(parseInt(id));
+      setLessonCompletionCounts(counts);
     } catch (err) {
       setError(err.message || "Failed to load course");
     } finally {
@@ -360,6 +367,105 @@ const CourseDetail = () => {
                       </div>
                     </div>
                   )}
+
+                  {/* Enrollment Summary */}
+                  {enrollments.length > 0 && (
+                    <div>
+                      <h3 className="text-text-primary mb-2 flex items-center gap-1.5 text-sm font-semibold">
+                        <Users size={14} style={{ color: t("primary") }} /> Enrollment
+                      </h3>
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="border-border bg-bg-surface rounded-lg border px-3 py-2 text-center">
+                          <div className="text-text-primary text-lg font-bold">
+                            {enrollments.length}
+                          </div>
+                          <div className="text-text-muted text-[10px]">Total Enrolled</div>
+                        </div>
+                        <div className="border-border bg-bg-surface rounded-lg border px-3 py-2 text-center">
+                          <div className="text-success text-lg font-bold">
+                            {enrollments.filter((e) => e.status === "active").length}
+                          </div>
+                          <div className="text-text-muted text-[10px]">Active</div>
+                        </div>
+                        <div className="border-border bg-bg-surface rounded-lg border px-3 py-2 text-center">
+                          <div className="text-accent text-lg font-bold">
+                            {enrollments.filter((e) => e.status === "completed").length}
+                          </div>
+                          <div className="text-text-muted text-[10px]">Completed</div>
+                        </div>
+                      </div>
+                      {/* Average progress */}
+                      <div className="mt-3">
+                        <div className="mb-1 flex items-center justify-between">
+                          <span className="text-text-muted text-[11px]">Average Progress</span>
+                          <span className="text-text-primary text-[11px] font-semibold">
+                            {Math.round(
+                              enrollments.reduce((sum, e) => sum + (e.progress ?? 0), 0) /
+                                enrollments.length
+                            )}
+                            %
+                          </span>
+                        </div>
+                        <div className="bg-bg-surface-active h-1.5 w-full overflow-hidden rounded-full">
+                          <div
+                            className="bg-primary h-full rounded-full transition-all"
+                            style={{
+                              width: `${Math.round(enrollments.reduce((sum, e) => sum + (e.progress ?? 0), 0) / enrollments.length)}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
+                      {/* Recent enrollees */}
+                      <div className="mt-3 space-y-1.5">
+                        {enrollments.slice(0, 5).map((enr) => (
+                          <div
+                            key={enr.id}
+                            className="bg-bg-surface flex items-center justify-between rounded-md px-2.5 py-1.5"
+                          >
+                            <div className="flex items-center gap-2">
+                              <div
+                                className="flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-bold text-white"
+                                style={{
+                                  background:
+                                    enr.status === "completed"
+                                      ? "#22C55E"
+                                      : enr.status === "dropped"
+                                        ? "#EF4444"
+                                        : "#6366F1",
+                                }}
+                              >
+                                {(enr.userName || enr.teamName || "U")[0].toUpperCase()}
+                              </div>
+                              <span className="text-text-primary text-[11px] font-medium">
+                                {enr.userName || enr.teamName || `#${enr.userId || enr.teamId}`}
+                              </span>
+                              <Badge
+                                className="text-[9px]"
+                                variant={
+                                  enr.status === "completed"
+                                    ? "green"
+                                    : enr.status === "dropped"
+                                      ? "red"
+                                      : "default"
+                                }
+                              >
+                                {enr.status}
+                              </Badge>
+                            </div>
+                            <span className="text-text-muted text-[10px]">
+                              {enr.progress ?? 0}%
+                            </span>
+                          </div>
+                        ))}
+                        {enrollments.length > 5 && (
+                          <div className="text-text-muted text-center text-[10px]">
+                            +{enrollments.length - 5} more enrolled
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   <div>
                     <h3 className="text-text-primary mb-2 text-sm font-semibold">Course Details</h3>
                     <div className="grid grid-cols-2 gap-4">
@@ -431,20 +537,48 @@ const CourseDetail = () => {
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      {lessons.map((lesson, index) => (
-                        <div
-                          key={lesson.id}
-                          className="hover:bg-bg-surface-hover flex items-center gap-3 rounded-lg p-2 transition-colors"
-                        >
-                          <div className="bg-primary-light text-primary flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold">
-                            {index + 1}
+                      {lessons.map((lesson, index) => {
+                        const completionCount = lessonCompletionCounts[lesson.id] || 0;
+                        const enrollCount = enrollments.length;
+                        const completionPct =
+                          enrollCount > 0 ? Math.round((completionCount / enrollCount) * 100) : 0;
+                        return (
+                          <div
+                            key={lesson.id}
+                            className="hover:bg-bg-surface-hover flex items-center gap-3 rounded-lg p-2 transition-colors"
+                          >
+                            <div className="bg-primary-light text-primary flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold">
+                              {index + 1}
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-text-primary text-xs font-semibold">
+                                {lesson.title}
+                              </div>
+                              {enrollCount > 0 && (
+                                <div className="mt-1 flex items-center gap-2">
+                                  <div className="bg-bg-surface-active h-1 w-16 overflow-hidden rounded-full">
+                                    <div
+                                      className="bg-success h-full rounded-full transition-all"
+                                      style={{ width: `${completionPct}%` }}
+                                    />
+                                  </div>
+                                  <span className="text-text-muted text-[10px]">
+                                    {completionCount}/{enrollCount} completed
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {lesson.duration && <Badge variant="teal">{lesson.duration}</Badge>}
+                              {completionCount > 0 && (
+                                <Badge variant="green" className="text-[10px]">
+                                  {completionPct}%
+                                </Badge>
+                              )}
+                            </div>
                           </div>
-                          <div className="text-text-primary flex-1 text-xs font-semibold">
-                            {lesson.title}
-                          </div>
-                          {lesson.duration && <Badge variant="teal">{lesson.duration}</Badge>}
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </TabsContent>

@@ -70,6 +70,17 @@ export const getCourseEnrollments = async (courseId) => {
   }
 };
 
+// Get per-lesson completion counts for a course (admin)
+export const getLessonCompletionCounts = async (courseId) => {
+  try {
+    const data = await apiGet(`/courses/${courseId}/admin/lesson-completion-counts`);
+    return data?.data || {};
+  } catch (error) {
+    console.error("Error fetching lesson completion counts:", error);
+    return {};
+  }
+};
+
 export const enrollInLearningPathAPI = async (learningPathId) => {
   try {
     return await apiPost(`/learning-paths/${learningPathId}/enroll`, {});

@@ -74,10 +74,7 @@ const CourseEdit = () => {
     setApiError(null);
     try {
       const { updateCourse } = await import("@/app/services/courseService");
-      await updateCourse(id, {
-        ...form,
-        authorID: currentUser?.id ?? null,
-      });
+      await updateCourse(id, form);
       navigate(`/courses/${id}`);
     } catch (err) {
       setApiError(err.message || "Failed to update course. Please try again.");

@@ -144,35 +144,36 @@ export const ToolbarButtons = React.memo(({ editor }) => {
               <Redo2 className="h-5 w-5 flex-none" />
             </Button>
           </Alert>
-          <div
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            className={`editor-tool-btn ${editor.isActive("bold") ? "is-active" : ""}`}
-            title="Bold"
-          >
-            <Bold className="h-5 w-5 flex-none" />
-          </div>
-          <div
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={`editor-tool-btn ${editor.isActive("italic") ? "is-active" : ""}`}
-            title="Italic"
-          >
-            <Italic className="h-5 w-5 flex-none" />
-          </div>
-          <div
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
-            className={`editor-tool-btn ${editor.isActive("underline") ? "is-active" : ""}`}
-            title="Underline"
-          >
-            <UnderlineIcon className="h-5 w-5 flex-none" />
-          </div>
-          <div
-            onClick={() => editor.chain().focus().toggleStrike().run()}
-            className={`editor-tool-btn ${editor.isActive("strike") ? "is-active" : ""}`}
-            title="Strikethrough"
-          >
-            <Strikethrough className="h-5 w-5 flex-none" />
-          </div>
-
+          <Alert className="m-0 flex h-fit w-fit flex-row gap-1 p-1">
+            <div
+              onClick={() => editor.chain().focus().toggleBold().run()}
+              className={`editor-tool-btn ${editor.isActive("bold") ? "is-active" : ""}`}
+              title="Bold"
+            >
+              <Bold className="h-5 w-5 flex-none" />
+            </div>
+            <div
+              onClick={() => editor.chain().focus().toggleItalic().run()}
+              className={`editor-tool-btn ${editor.isActive("italic") ? "is-active" : ""}`}
+              title="Italic"
+            >
+              <Italic className="h-5 w-5 flex-none" />
+            </div>
+            <div
+              onClick={() => editor.chain().focus().toggleUnderline().run()}
+              className={`editor-tool-btn ${editor.isActive("underline") ? "is-active" : ""}`}
+              title="Underline"
+            >
+              <UnderlineIcon className="h-5 w-5 flex-none" />
+            </div>
+            <div
+              onClick={() => editor.chain().focus().toggleStrike().run()}
+              className={`editor-tool-btn ${editor.isActive("strike") ? "is-active" : ""}`}
+              title="Strikethrough"
+            >
+              <Strikethrough className="h-5 w-5 flex-none" />
+            </div>
+          </Alert>
           {/* <DividerVerticalIcon style={{ marginTop: "auto", marginBottom: "auto", color: "grey" }} /> */}
           {/* alignment like left, center, right, etc. */}
           <Alert className="m-0 flex h-fit w-fit flex-row gap-1 p-1">
@@ -645,7 +646,7 @@ export const ToolbarButtons = React.memo(({ editor }) => {
           {/* <DividerVerticalIcon style={{ marginTop: "auto", marginBottom: "auto", color: "grey" }} /> */}
 
           {/* Media */}
-          <div className="m-0 flex h-fit flex-row flex-wrap gap-1 p-0">
+          <Alert className="m-0 flex h-fit w-fit flex-row gap-1 p-1">
             <ToolTip content="Image">
               <div
                 className="editor-tool-btn editor-tool-btn-media mt-1 p-0"
@@ -797,7 +798,7 @@ export const ToolbarButtons = React.memo(({ editor }) => {
                 <GitBranch size={15} weight="fill" />
               </div>
             </ToolTip>
-          </div>
+          </Alert>
           {/* <DividerVerticalIcon style={{ marginTop: "auto", marginBottom: "auto", color: "grey" }} /> */}
 
           {/* Code dropdown */}
@@ -816,14 +817,6 @@ export const ToolbarButtons = React.memo(({ editor }) => {
           </div>
         )}
       </div> */}
-
-          {/* Interactive */}
-
-          {/* <ToolTip content="User Block">
-        <div className="editor-tool-btn editor-tool-btn-user" onClick={() => editor.chain().focus().insertContent({ type: 'blockUser' }).run()} title="User Block">
-          <User size={15} weight="fill" />
-        </div>
-      </ToolTip> */}
         </div>
       </div>
     </div>
