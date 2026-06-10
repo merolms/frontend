@@ -41,6 +41,15 @@ export const markLessonCompleteAPI = async (lessonId, timeSpentSeconds = 0) => {
   }
 };
 
+export const dropCourseAPI = async (courseId) => {
+  try {
+    return await apiPost(`/courses/${courseId}/drop`, {});
+  } catch (error) {
+    console.error("Error dropping course:", error);
+    throw error;
+  }
+};
+
 // ─── ADMIN ENROLLMENT API CALLS ───────────────────────────────────
 
 export const adminEnrollUserInCourse = async (courseId, userId) => {
@@ -73,8 +82,9 @@ export const getCourseEnrollments = async (courseId) => {
 // Get per-lesson completion counts for a course (admin)
 export const getLessonCompletionCounts = async (courseId) => {
   try {
-    const data = await apiGet(`/courses/${courseId}/admin/lesson-completion-counts`);
-    return data?.data || {};
+    // apiGet already unwraps the { message, data } envelope
+    const counts = await apiGet(`/courses/${courseId}/admin/lesson-completion-counts`);
+    return counts || {};
   } catch (error) {
     console.error("Error fetching lesson completion counts:", error);
     return {};

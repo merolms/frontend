@@ -7,6 +7,7 @@ import {
   Eye,
   Folder,
   List,
+  LogOut,
   Network,
   Pencil,
   Plus,
@@ -25,6 +26,8 @@ import {
   DeleteModal,
   PublishModal,
 } from "@/app/containers/course/CourseActions/CourseActions";
+import { useToast } from "@/app/context/ToastContext";
+import { hasPermission } from "@/app/services/authService";
 import {
   archiveCourse,
   deleteCourse,
@@ -33,22 +36,22 @@ import {
   publishCourse,
 } from "@/app/services/courseService";
 import {
-  dropCourse,
-  enrollInCourse,
+  dropCourseAPI,
+  enrollInCourseAPI,
   getCourseEnrollments,
+  getEnrollmentStatus,
   getLessonCompletionCounts,
-  isEnrolled,
 } from "@/app/services/enrollmentService";
-import { useToast } from "@/app/context/ToastContext";
-import { usePageTitle } from "@/hooks";
+import FormErrorBanner from "@/components/common/FormErrorBanner";
+import LoadingState from "@/components/common/LoadingState";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
-import FormErrorBanner from "@/components/common/FormErrorBanner";
-import LoadingState from "@/components/common/LoadingState";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { usePageTitle } from "@/hooks";
 import { t } from "@/styles/theme";
+
 import EnrollmentManagement from "./components/EnrollmentManagement";
 
 const CourseDetail = () => {
@@ -67,29 +70,36 @@ const CourseDetail = () => {
   const [lessonCompletionCounts, setLessonCompletionCounts] = useState({});
   const [error, setError] = useState(null);
 
+  const canManageEnrollments = hasPermission(user, "courses.edit");
+
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const [courseData, lessonsData] = await Promise.all([fetchCourseById(id), fetchLessons(id)]);
+      const [courseData, lessonsData, enrollmentData] = await Promise.all([
+        fetchCourseById(id),
+        fetchLessons(id),
+        user ? getEnrollmentStatus(parseInt(id)) : Promise.resolve(null),
+      ]);
       setCourse(courseData);
       setLessons(lessonsData || []);
-      if (user) setEnrollment(isEnrolled(user.id, parseInt(id)));
+      setEnrollment(enrollmentData);
 
-      const [enrollmentsData] = await Promise.all([
-        getCourseEnrollments(parseInt(id)).catch(() => []),
-      ]);
-      setEnrollments(Array.isArray(enrollmentsData) ? enrollmentsData : []);
-
-      // Fetch per-lesson completion counts
-      const counts = await getLessonCompletionCounts(parseInt(id));
-      setLessonCompletionCounts(counts);
+      // Admin-only analytics — calling these without permission would 403
+      if (canManageEnrollments) {
+        const [enrollmentsData, counts] = await Promise.all([
+          getCourseEnrollments(parseInt(id)).catch(() => []),
+          getLessonCompletionCounts(parseInt(id)),
+        ]);
+        setEnrollments(Array.isArray(enrollmentsData) ? enrollmentsData : []);
+        setLessonCompletionCounts(counts);
+      }
     } catch (err) {
       setError(err.message || "Failed to load course");
     } finally {
       setLoading(false);
     }
-  }, [id, user]);
+  }, [id, user, canManageEnrollments]);
 
   useEffect(() => {
     loadData();
@@ -102,7 +112,7 @@ const CourseDetail = () => {
     }
     try {
       setActionLoading(true);
-      const result = await enrollInCourse(user.id, parseInt(id));
+      const result = await enrollInCourseAPI(parseInt(id));
       setEnrollment(result);
       addToast("Successfully enrolled! Redirecting to course...", "success");
       setTimeout(() => navigate(`/courses/${id}/learn`), 1500);
@@ -117,8 +127,8 @@ const CourseDetail = () => {
     if (!confirm("Are you sure you want to drop this course?")) return;
     try {
       setActionLoading(true);
-      await dropCourse(user.id, parseInt(id));
-      setEnrollment(isEnrolled(user.id, parseInt(id)));
+      const result = await dropCourseAPI(parseInt(id));
+      setEnrollment(result);
       addToast("Course dropped", "success");
     } catch (err) {
       addToast(err.message || "Failed to drop course", "error");
@@ -261,7 +271,9 @@ const CourseDetail = () => {
               </div>
               <div className="text-center text-white">
                 <User size={20} className="mx-auto mb-1" style={{ color: t("primary") }} />
-                <div className="text-lg font-bold">{enrollments.length}</div>
+                <div className="text-lg font-bold">
+                  {canManageEnrollments ? enrollments.length : "—"}
+                </div>
                 <div className="text-[11px] text-white/60">Enrolled</div>
               </div>
               <div className="text-center text-white">
@@ -304,8 +316,8 @@ const CourseDetail = () => {
               </Button>
             )}
             {enrollment?.status === "active" && (
-              <Button size="sm" variant="default" onClick={handleDrop}>
-                <Plus size={14} /> Drop
+              <Button size="sm" variant="ghost" onClick={handleDrop} disabled={actionLoading}>
+                <LogOut size={14} /> Drop
               </Button>
             )}
             {!enrollment && user && course.status === "Published" && (
@@ -400,7 +412,7 @@ const CourseDetail = () => {
                           <span className="text-text-muted text-[11px]">Average Progress</span>
                           <span className="text-text-primary text-[11px] font-semibold">
                             {Math.round(
-                              enrollments.reduce((sum, e) => sum + (e.progress ?? 0), 0) /
+                              enrollments.reduce((sum, e) => sum + (e.progressPercent ?? 0), 0) /
                                 enrollments.length
                             )}
                             %
@@ -410,7 +422,7 @@ const CourseDetail = () => {
                           <div
                             className="bg-primary h-full rounded-full transition-all"
                             style={{
-                              width: `${Math.round(enrollments.reduce((sum, e) => sum + (e.progress ?? 0), 0) / enrollments.length)}%`,
+                              width: `${Math.round(enrollments.reduce((sum, e) => sum + (e.progressPercent ?? 0), 0) / enrollments.length)}%`,
                             }}
                           />
                         </div>
@@ -434,10 +446,10 @@ const CourseDetail = () => {
                                         : "#6366F1",
                                 }}
                               >
-                                {(enr.userName || enr.teamName || "U")[0].toUpperCase()}
+                                {(enr.userName || "U")[0].toUpperCase()}
                               </div>
                               <span className="text-text-primary text-[11px] font-medium">
-                                {enr.userName || enr.teamName || `#${enr.userId || enr.teamId}`}
+                                {enr.userName || `User #${enr.userId}`}
                               </span>
                               <Badge
                                 className="text-[9px]"
@@ -453,7 +465,7 @@ const CourseDetail = () => {
                               </Badge>
                             </div>
                             <span className="text-text-muted text-[10px]">
-                              {enr.progress ?? 0}%
+                              {enr.progressPercent ?? 0}%
                             </span>
                           </div>
                         ))}

@@ -208,22 +208,24 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                               : "#6366F1",
                       }}
                     >
-                      {(enr.userName || enr.teamName || "U")[0].toUpperCase()}
+                      {(enr.userName || "U")[0].toUpperCase()}
                     </div>
                     <div>
                       <p className="text-text-primary text-xs font-medium">
-                        {enr.userName || enr.teamName || `#${enr.userId || enr.teamId}`}
+                        {enr.userName || `User #${enr.userId}`}
                       </p>
                       <p className="text-text-muted text-[10px]">
-                        {enr.userId ? "User" : "Team"} • Enrolled{" "}
-                        {enr.enrolledAt || enr.enrolledOn || "—"}
+                        Enrolled{" "}
+                        {enr.enrolledAt
+                          ? new Date(enr.enrolledAt * 1000).toLocaleDateString()
+                          : "—"}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="text-right">
                       <p className="text-text-primary text-[11px] font-semibold">
-                        {enr.progress ?? 0}%
+                        {enr.progressPercent ?? 0}%
                       </p>
                       <p className="text-text-muted text-[10px]">
                         {enr.status === "completed"
