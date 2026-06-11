@@ -92,9 +92,16 @@ export const adminEnrollTeamInCourse = async (courseId, teamId) => {
   }
 };
 
-export const getCourseEnrollments = async (courseId) => {
+export const getCourseEnrollments = async (courseId, params = {}) => {
   try {
-    return await apiGet(`/courses/${courseId}/admin/enrollments`);
+    const queryParams = new URLSearchParams();
+    if (params.start !== undefined) queryParams.append('start', params.start);
+    if (params.limit !== undefined) queryParams.append('limit', params.limit);
+    
+    const queryString = queryParams.toString();
+    const url = `/courses/${courseId}/admin/enrollments${queryString ? `?${queryString}` : ''}`;
+    
+    return await apiGet(url);
   } catch (error) {
     console.error("Error fetching course enrollments:", error);
     return [];

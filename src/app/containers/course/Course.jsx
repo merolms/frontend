@@ -87,7 +87,8 @@ const CourseContainer = () => {
       setTotalPages(data.totalPages);
       setTotal(data.total);
     } catch (err) {
-      setError(err.message || "Failed to load courses");
+      const errorMessage = err.response?.data?.message || err.message || "Failed to load courses. Please try again.";
+      setError(errorMessage);
       console.error("Error fetching courses:", err);
     } finally {
       setLoading(false);

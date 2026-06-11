@@ -12,7 +12,7 @@ const DialogClose = DialogPrimitive.Close;
 const DialogOverlay = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
-    className={cn("animate-in fade-in-0 fixed inset-0 z-50 bg-black/50", className)}
+    className={cn("animate-in fade-in-0 fixed inset-0 z-50 bg-black/50 backdrop-blur-sm", className)}
     {...props}
   />
 ));
@@ -24,13 +24,13 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "border-border bg-bg-surface animate-in fade-in-0 zoom-in-95 fixed top-[50%] left-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-lg border p-6 shadow-lg",
+        "border-border bg-bg-surface animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 fixed top-[50%] left-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-md border p-6 shadow-lg",
         className
       )}
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="text-text-muted absolute top-4 right-4 rounded-sm opacity-70 hover:opacity-100">
+      <DialogPrimitive.Close className="text-text-muted absolute top-4 right-4 rounded-sm opacity-70 hover:opacity-100 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none">
         <X size={16} />
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>

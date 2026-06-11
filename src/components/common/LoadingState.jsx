@@ -38,8 +38,10 @@ const LoadingState = ({
       {[...Array(count)].map((_, i) => (
         <div
           key={i}
-          className={`bg-bg-surface border-border animate-pulse rounded-xl border ${height}`}
-        />
+          className={`bg-bg-surface border-border rounded-md border ${height} relative overflow-hidden`}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-bg-surface-hover to-transparent opacity-50 animate-[shimmer_2s_infinite]" />
+        </div>
       ))}
     </div>
   );

@@ -6,7 +6,7 @@ const Card = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "border-border bg-bg-surface text-text-primary rounded-lg border shadow-sm",
+      "border-border bg-bg-surface text-text-primary rounded-md border shadow-sm",
       className
     )}
     {...props}
@@ -42,7 +42,7 @@ CardFooter.displayName = "CardFooter";
 const Paper = React.forwardRef(({ className, children, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("border-border bg-bg-surface rounded-lg border", className)}
+    className={cn("border-border bg-bg-surface rounded-md border", className)}
     {...props}
   >
     {children}

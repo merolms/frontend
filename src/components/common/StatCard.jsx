@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { memo } from "react";
 
 /**
  * StatCard — Reusable statistics card component.
@@ -10,7 +11,7 @@ import { cn } from "@/lib/utils";
  *   color    - Theme color: "primary" | "success" | "warning" | "accent" | "error"
  *   className - Additional classes
  */
-const StatCard = ({ title, value, icon: Icon, color = "primary", className }) => {
+const StatCard = memo(({ title, value, icon: Icon, color = "primary", className }) => {
   const colorClasses = {
     primary: "bg-primary/10 text-primary",
     success: "bg-success/10 text-success",
@@ -20,11 +21,11 @@ const StatCard = ({ title, value, icon: Icon, color = "primary", className }) =>
   };
 
   return (
-    <div className="border-border bg-bg-surface rounded-xl border p-4 shadow-sm">
+    <div className="border-border bg-bg-surface rounded-md border p-4 shadow-sm">
       <div className="flex items-center gap-3">
         <div
           className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-lg",
+            "flex h-10 w-10 items-center justify-center rounded-md",
             colorClasses[color]
           )}
         >
@@ -37,6 +38,6 @@ const StatCard = ({ title, value, icon: Icon, color = "primary", className }) =>
       </div>
     </div>
   );
-};
+});
 
 export default StatCard;

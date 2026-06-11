@@ -151,7 +151,9 @@ export default function DashboardLayout({ children, title, subtitle }) {
               {showDropdown && (
                 <div
                   ref={dropdownRef}
-                  className="border-border bg-bg-surface absolute top-full right-0 z-50 mt-2 w-80 overflow-hidden rounded-xl border shadow-lg"
+                  role="menu"
+                  aria-label="Notifications"
+                  className="border-border bg-bg-surface absolute top-full right-0 z-50 mt-2 w-80 overflow-hidden rounded-md border shadow-lg"
                 >
                   {/* Header */}
                   <div className="border-border bg-bg-surface-hover flex items-center justify-between border-b px-4 py-3">
@@ -180,8 +182,16 @@ export default function DashboardLayout({ children, title, subtitle }) {
                       notifications.map((notif) => (
                         <div
                           key={notif.id}
-                          className={`border-border hover:bg-bg-surface-hover flex cursor-pointer items-start gap-3 border-b px-4 py-3 transition-colors ${!notif.read ? "bg-bg-surface-active/30" : ""}`}
+                          role="menuitem"
+                          tabIndex={0}
+                          className={`border-border hover:bg-bg-surface-hover focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none flex cursor-pointer items-start gap-3 border-b px-4 py-3 transition-colors ${!notif.read ? "bg-bg-surface-active/30" : ""}`}
                           onClick={() => handleMarkRead(notif.id, { stopPropagation: () => {} })}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              handleMarkRead(notif.id, { stopPropagation: () => {} });
+                            }
+                          }}
                         >
                           {/* Type indicator */}
                           <div

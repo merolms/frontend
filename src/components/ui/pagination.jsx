@@ -15,11 +15,12 @@ const Pagination = ({ total, value, onChange, className }) => {
   }
 
   return (
-    <div className={cn("flex items-center gap-1", className)}>
+    <div className={cn("flex items-center gap-1", className)} role="navigation" aria-label="Pagination">
       <button
         onClick={() => onChange(Math.max(1, value - 1))}
         disabled={value === 1}
-        className="border-border text-text-secondary hover:bg-bg-surface-active flex h-8 cursor-pointer items-center gap-1 rounded-md border px-2 text-xs disabled:pointer-events-none disabled:opacity-50"
+        aria-label="Previous page"
+        className="border-border text-text-secondary hover:bg-bg-surface-active focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none flex h-8 cursor-pointer items-center gap-1 rounded-md border px-2 text-xs disabled:pointer-events-none disabled:opacity-50"
       >
         <ChevronLeft size={14} />
         <span>Previous</span>
@@ -33,8 +34,10 @@ const Pagination = ({ total, value, onChange, className }) => {
           <button
             key={p}
             onClick={() => onChange(p)}
+            aria-label={p === value ? `Current page, page ${p}` : `Go to page ${p}`}
+            aria-current={p === value ? "page" : undefined}
             className={cn(
-              "flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-xs font-medium transition-colors",
+              "flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
               p === value
                 ? "bg-primary text-secondary"
                 : "border-border text-text-secondary hover:bg-bg-surface-active border"
@@ -47,7 +50,8 @@ const Pagination = ({ total, value, onChange, className }) => {
       <button
         onClick={() => onChange(Math.min(total, value + 1))}
         disabled={value === total}
-        className="border-border text-text-secondary hover:bg-bg-surface-active flex h-8 cursor-pointer items-center gap-1 rounded-md border px-2 text-xs disabled:pointer-events-none disabled:opacity-50"
+        aria-label="Next page"
+        className="border-border text-text-secondary hover:bg-bg-surface-active focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none flex h-8 cursor-pointer items-center gap-1 rounded-md border px-2 text-xs disabled:pointer-events-none disabled:opacity-50"
       >
         <span>Next</span>
         <ChevronRight size={14} />

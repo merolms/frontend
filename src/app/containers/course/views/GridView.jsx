@@ -1,4 +1,5 @@
 import { BookOpen, Clock, List, User } from "lucide-react";
+import { memo } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import EmptyState from "@/components/common/EmptyState";
@@ -6,18 +7,50 @@ import LoadingState from "@/components/common/LoadingState";
 
 import { getStatusLabel } from "./viewHelpers";
 
-const CourseCard = ({ course, navigate }) => {
+const CourseCardSkeleton = memo(() => (
+  <div className="border-border bg-bg-surface flex h-full flex-col overflow-hidden rounded-md border shadow-sm">
+    {/* Image skeleton */}
+    <div className="bg-bg-surface-active h-40 w-full animate-pulse" />
+    <div className="flex flex-1 flex-col gap-2 p-3">
+      {/* Badge skeleton */}
+      <div className="bg-bg-surface-active h-5 w-16 animate-pulse rounded-full" />
+      {/* Title skeleton */}
+      <div className="bg-bg-surface-active h-4 w-full animate-pulse rounded" />
+      <div className="bg-bg-surface-active h-4 w-3/4 animate-pulse rounded" />
+      {/* Description skeleton */}
+      <div className="bg-bg-surface-active h-3 w-full animate-pulse rounded" />
+      <div className="bg-bg-surface-active h-3 w-2/3 animate-pulse rounded" />
+      {/* Stats skeleton */}
+      <div className="text-text-muted mt-auto flex items-center gap-3 text-[11px]">
+        <div className="bg-bg-surface-active h-3 w-12 animate-pulse rounded" />
+        <div className="bg-bg-surface-active h-3 w-12 animate-pulse rounded" />
+        <div className="bg-bg-surface-active h-3 w-12 animate-pulse rounded" />
+      </div>
+    </div>
+  </div>
+));
+
+const CourseCard = memo(({ course, navigate }) => {
   const status = getStatusLabel(course.status);
   const slide = course.coverImage || course.images?.[0];
 
   return (
     <div
-      className="border-border bg-bg-surface flex h-full cursor-pointer flex-col overflow-hidden rounded-lg border shadow-sm transition-shadow hover:shadow-md"
+      role="button"
+      tabIndex={0}
+      aria-label={`View course: ${course.title}`}
+      className="border-border bg-bg-surface flex h-full cursor-pointer flex-col overflow-hidden rounded-md border shadow-sm transition-shadow hover:shadow-md focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
       onClick={() => navigate(`/courses/${course.id}`)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          navigate(`/courses/${course.id}`);
+        }
+      }}
     >
       {/* Image */}
       {slide ? (
-        <img src={slide} alt={course.title} className="h-40 w-full object-cover" />
+        <img src={slide} alt={`Cover image for ${course.title}`} className="h-40 w-full object-cover" loading="lazy" />
       ) : (
         <div className="bg-bg-surface-active flex h-40 w-full items-center justify-center">
           <BookOpen size={48} className="text-text-muted" />
@@ -68,13 +101,15 @@ const CourseCard = ({ course, navigate }) => {
       </div>
     </div>
   );
-};
+});
 
 const GridView = ({ courses, navigate, loading, onRefresh }) => {
   if (loading) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        <LoadingState count={8} height="h-[292px]" className="contents" />
+        {[...Array(8)].map((_, i) => (
+          <CourseCardSkeleton key={i} />
+        ))}
       </div>
     );
   }

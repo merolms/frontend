@@ -1,3 +1,5 @@
+import { cn } from "@/lib/utils";
+
 /**
  * EmptyState — reusable empty state with icon, message, and optional action.
  *
@@ -7,38 +9,87 @@
  *   description - Secondary message
  *   action      - React node (button/link)
  *   compact     - boolean for smaller padding
+ *   variant     - "default" | "search" | "filter" | "error"
  */
-const EmptyState = ({ icon = "📭", title, description, action, compact = false }) => {
+const EmptyState = ({ icon = "📭", title, description, action, compact = false, variant = "default" }) => {
+  const variantStyles = {
+    default: "",
+    search: "bg-bg-surface-active/30",
+    filter: "bg-bg-surface-active/30",
+    error: "bg-error/5",
+  };
+
+  const getVariantIcon = () => {
+    switch (variant) {
+      case "search":
+        return "🔍";
+      case "filter":
+        return "🎯";
+      case "error":
+        return "⚠️";
+      default:
+        return icon;
+    }
+  };
+
+  const getVariantTitle = () => {
+    switch (variant) {
+      case "search":
+        return title || "No results found";
+      case "filter":
+        return title || "No matches found";
+      case "error":
+        return title || "Something went wrong";
+      default:
+        return title;
+    }
+  };
+
+  const getVariantDescription = () => {
+    switch (variant) {
+      case "search":
+        return description || "Try adjusting your search terms or filters";
+      case "filter":
+        return description || "Try clearing or adjusting your filters";
+      case "error":
+        return description || "Please try again or contact support if the problem persists";
+      default:
+        return description;
+    }
+  };
+
   return (
     <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: compact ? "24px 16px" : "48px 24px",
-        textAlign: "center",
-      }}
+      role="status"
+      aria-live="polite"
+      className={cn(
+        "flex flex-col items-center justify-center text-center rounded-md",
+        variantStyles[variant],
+        compact ? "p-6" : "p-12"
+      )}
     >
-      <div style={{ fontSize: compact ? 32 : 48, marginBottom: compact ? 8 : 16, opacity: 0.5 }}>
-        {icon}
+      <div
+        className={cn(
+          "opacity-50",
+          compact ? "mb-2 text-3xl" : "mb-4 text-5xl"
+        )}
+      >
+        {getVariantIcon()}
       </div>
       <p
-        style={{
-          fontSize: compact ? 13 : 14,
-          fontWeight: 500,
-          color: "var(--text-primary)",
-          margin: 0,
-        }}
+        className={cn(
+          "text-text-primary font-medium m-0",
+          compact ? "text-xs" : "text-sm"
+        )}
       >
-        {title}
+        {getVariantTitle()}
       </p>
-      {description && (
-        <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4, marginBottom: 0 }}>
-          {description}
+      {getVariantDescription() && (
+        <p className="text-text-muted mt-1 mb-0 text-xs">
+          {getVariantDescription()}
         </p>
       )}
-      {action && <div style={{ marginTop: 16 }}>{action}</div>}
+      {action && <div className="mt-4">{action}</div>}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { Loader, Search, UserPlus, Users } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useToast } from "@/app/context/ToastContext";
 import {
@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Pagination } from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -21,6 +22,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { t } from "@/styles/theme";
+
+// Simple Tab component
+const TabButton = ({ active, onClick, children }) => (
+  <button
+    onClick={onClick}
+    className={`px-4 py-2 text-xs font-medium transition-colors ${
+      active
+        ? "text-primary border-b-2 border-primary"
+        : "text-text-muted hover:text-text-primary border-b-2 border-transparent"
+    }`}
+  >
+    {children}
+  </button>
+);
 
 const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => {
   const { addToast } = useToast();
@@ -33,6 +48,13 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
   const [enrollmentFilter, setEnrollmentFilter] = useState("all");
   const [userSearchQuery, setUserSearchQuery] = useState("");
   const [teamSearchQuery, setTeamSearchQuery] = useState("");
+  const [enrollmentPage, setEnrollmentPage] = useState(1);
+  const [enrollmentPageSize] = useState(100);
+  const [totalEnrollments, setTotalEnrollments] = useState(0);
+  const [activeTab, setActiveTab] = useState("user");
+
+  // Calculate start index for pagination
+  const getStartIndex = (page, pageSize) => (page - 1) * pageSize;
 
   // Load initial users and teams on mount
   useEffect(() => {
@@ -51,18 +73,42 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
     loadInitialData();
   }, []);
 
+  // Reload enrollments when page changes
+  useEffect(() => {
+    if (courseId) {
+      loadEnrollments();
+    }
+  }, [enrollmentPage, courseId]);
+
   const loadEnrollments = async () => {
     try {
-      const data = await getCourseEnrollments(parseInt(courseId));
-      setEnrollments(Array.isArray(data) ? data : []);
+      const startIndex = getStartIndex(enrollmentPage, enrollmentPageSize);
+      const data = await getCourseEnrollments(parseInt(courseId), {
+        start: startIndex,
+        limit: enrollmentPageSize,
+      });
+      // Handle response structure - could be direct array or object with enrollments property
+      const enrollmentsArray = Array.isArray(data) ? data : (Array.isArray(data?.enrollments) ? data.enrollments : []);
+      setEnrollments(enrollmentsArray);
+      setTotalEnrollments(data?.total || data?.count || enrollmentsArray.length);
     } catch (err) {
-      console.error(err);
+      console.error("Error loading enrollments:", err);
+      setEnrollments([]);
+      setTotalEnrollments(0);
     }
   };
 
   const handleAdminEnrollUser = async (e) => {
     e.preventDefault();
     if (!selectedUser || enrolling.user) return;
+
+    // Check for duplicate enrollment
+    const enrolledUserIds = getEnrolledUserIds();
+    if (enrolledUserIds.has(parseInt(selectedUser))) {
+      addToast("User is already enrolled in this course", "error");
+      return;
+    }
+
     try {
       setEnrolling((s) => ({ ...s, user: true }));
       await adminEnrollUserInCourse(parseInt(courseId), parseInt(selectedUser));
@@ -80,6 +126,14 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
   const handleAdminEnrollTeam = async (e) => {
     e.preventDefault();
     if (!selectedTeam || enrolling.team) return;
+
+    // Check for duplicate enrollment
+    const enrolledTeamIds = getEnrolledTeamIds();
+    if (enrolledTeamIds.has(parseInt(selectedTeam))) {
+      addToast("Team is already enrolled in this course", "error");
+      return;
+    }
+
     try {
       setEnrolling((s) => ({ ...s, team: true }));
       await adminEnrollTeamInCourse(parseInt(courseId), parseInt(selectedTeam));
@@ -94,31 +148,60 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
     }
   };
 
-  const handleSearchTeams = async () => {
-    if (!teamSearchQuery.trim()) {
-      setTeams([]);
+  const handleSearchTeams = async (query) => {
+    if (!query || !query.trim()) {
+      // Reset to all teams when search is empty
+      try {
+        const data = await fetchTeams({ start: 0, limit: 100 });
+        setTeams(Array.isArray(data?.teams) ? data.teams : []);
+      } catch (err) {
+        console.error(err);
+      }
       return;
     }
     try {
-      const data = await fetchTeams({ search: teamSearchQuery, start: 0, limit: 50 });
+      const data = await fetchTeams({ search: query, start: 0, limit: 100 });
       setTeams(Array.isArray(data?.teams) ? data.teams : []);
     } catch (err) {
       console.error(err);
     }
   };
 
-  const handleSearchUsers = async () => {
-    if (!userSearchQuery.trim()) {
-      setUsers([]);
+  const handleSearchUsers = async (query) => {
+    if (!query || !query.trim()) {
+      // Reset to all users when search is empty
+      try {
+        const data = await fetchUsers({ start: 0, limit: 100 });
+        setUsers(Array.isArray(data?.users) ? data.users : []);
+      } catch (err) {
+        console.error(err);
+      }
       return;
     }
     try {
-      const data = await fetchUsers({ search: userSearchQuery, start: 0, limit: 20 });
+      const data = await fetchUsers({ search: query, start: 0, limit: 100 });
       setUsers(Array.isArray(data?.users) ? data.users : []);
     } catch (err) {
       console.error(err);
     }
   };
+
+  // Debounced search functions
+  const debouncedSearchUsers = useCallback(
+    (query) => {
+      const timer = setTimeout(() => handleSearchUsers(query), 300);
+      return () => clearTimeout(timer);
+    },
+    []
+  );
+
+  const debouncedSearchTeams = useCallback(
+    (query) => {
+      const timer = setTimeout(() => handleSearchTeams(query), 300);
+      return () => clearTimeout(timer);
+    },
+    []
+  );
 
   const getEnrolledUserIds = () => {
     const ids = new Set();
@@ -170,7 +253,145 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
         </div>
       </div>
 
-      {/* Enrolled List */}
+      {/* Enroll Actions - Moved to top */}
+      <div className="border-border grid grid-cols-1 gap-4 border-t px-5 py-4 md:grid-cols-2">
+        {/* Enroll User */}
+        <div className="border-border bg-bg-surface/50 rounded-lg border border-dashed p-3">
+          <div className="mb-2.5 flex items-center gap-2">
+            <div className="bg-primary/10 flex h-6 w-6 items-center justify-center rounded-md">
+              <UserPlus size={12} style={{ color: t("primary") }} />
+            </div>
+            <p className="text-text-primary text-xs font-semibold">Enroll Users</p>
+          </div>
+          <form onSubmit={handleAdminEnrollUser} className="space-y-2">
+            <div className="relative">
+              <Search
+                size={12}
+                className="text-text-muted absolute top-1/2 left-2 -translate-y-1/2"
+              />
+              <Input
+                placeholder="Search users..."
+                value={userSearchQuery}
+                onChange={(e) => {
+                  setUserSearchQuery(e.target.value);
+                  debouncedSearchUsers(e.target.value);
+                }}
+                className="h-8 pl-7 text-[11px]"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Select
+                value={selectedUser}
+                onValueChange={(v) => setSelectedUser(v)}
+                disabled={enrolling.user}
+              >
+                <SelectTrigger className="h-8 flex-1 text-[11px]">
+                  <SelectValue placeholder="Select user" />
+                </SelectTrigger>
+                <SelectContent>
+                  {users
+                    .filter((u) => !getEnrolledUserIds().has(u.id))
+                    .map((u) => (
+                      <SelectItem
+                        key={u.id}
+                        value={String(u.id)}
+                      >{`${u.firstName || ""} ${u.lastName || ""} (${u.email || `User ${u.id}`})`}</SelectItem>
+                    ))}
+                  {users.filter((u) => !getEnrolledUserIds().has(u.id)).length === 0 && (
+                    <div className="text-text-muted px-2 py-1.5 text-[11px]">No eligible users</div>
+                  )}
+                </SelectContent>
+              </Select>
+              <Button
+                type="submit"
+                size="sm"
+                variant="green"
+                className="h-8 px-3 text-[11px]"
+                disabled={!selectedUser || enrolling.user}
+              >
+                {enrolling.user ? (
+                  <span className="flex items-center gap-1.5">
+                    <Loader size={10} className="animate-spin" /> Enrolling...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1.5">
+                    <UserPlus size={10} /> Enroll
+                  </span>
+                )}
+              </Button>
+            </div>
+          </form>
+        </div>
+
+        {/* Enroll Team */}
+        <div className="border-border bg-bg-surface/50 rounded-lg border border-dashed p-3">
+          <div className="mb-2.5 flex items-center gap-2">
+            <div className="bg-primary/10 flex h-6 w-6 items-center justify-center rounded-md">
+              <Users size={12} style={{ color: t("primary") }} />
+            </div>
+            <p className="text-text-primary text-xs font-semibold">Enroll Teams</p>
+          </div>
+          <form onSubmit={handleAdminEnrollTeam} className="space-y-2">
+            <div className="relative">
+              <Search
+                size={12}
+                className="text-text-muted absolute top-1/2 left-2 -translate-y-1/2"
+              />
+              <Input
+                placeholder="Search teams..."
+                value={teamSearchQuery}
+                onChange={(e) => {
+                  setTeamSearchQuery(e.target.value);
+                  debouncedSearchTeams(e.target.value);
+                }}
+                className="h-8 pl-7 text-[11px]"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Select
+                value={selectedTeam}
+                onValueChange={(v) => setSelectedTeam(v)}
+                disabled={enrolling.team}
+              >
+                <SelectTrigger className="h-8 flex-1 text-[11px]">
+                  <SelectValue placeholder="Select team" />
+                </SelectTrigger>
+                <SelectContent>
+                  {(teams || [])
+                    .filter((t) => !getEnrolledTeamIds().has(t.id))
+                    .map((t) => (
+                      <SelectItem key={t.id} value={String(t.id)}>
+                        {t.name || `Team ${t.id}`}
+                      </SelectItem>
+                    ))}
+                  {teams.filter((t) => !getEnrolledTeamIds().has(t.id)).length === 0 && (
+                    <div className="text-text-muted px-2 py-1.5 text-[11px]">No eligible teams</div>
+                  )}
+                </SelectContent>
+              </Select>
+              <Button
+                type="submit"
+                size="sm"
+                variant="green"
+                className="h-8 px-3 text-[11px]"
+                disabled={!selectedTeam || enrolling.team}
+              >
+                {enrolling.team ? (
+                  <span className="flex items-center gap-1.5">
+                    <Loader size={10} className="animate-spin" /> Enrolling...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1.5">
+                    <Users size={10} /> Enroll
+                  </span>
+                )}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* Enrolled List - Moved to bottom */}
       {enrollments.length > 0 && (
         <div className="border-border border-t px-5 py-3">
           <div className="mb-2 flex items-center justify-between">
@@ -251,166 +472,17 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                 </div>
               ))}
           </div>
+          {totalEnrollments > enrollmentPageSize && (
+            <div className="mt-4 flex justify-center">
+              <Pagination
+                total={Math.ceil(totalEnrollments / enrollmentPageSize)}
+                value={enrollmentPage}
+                onChange={setEnrollmentPage}
+              />
+            </div>
+          )}
         </div>
       )}
-
-      {/* Enroll Actions */}
-      <div className="border-border grid grid-cols-1 gap-4 border-t px-5 py-4 md:grid-cols-2">
-        {/* Enroll User */}
-        <div className="border-border bg-bg-surface/50 rounded-lg border border-dashed p-3">
-          <div className="mb-2.5 flex items-center gap-2">
-            <div className="bg-primary/10 flex h-6 w-6 items-center justify-center rounded-md">
-              <UserPlus size={12} style={{ color: t("primary") }} />
-            </div>
-            <p className="text-text-primary text-xs font-semibold">Enroll Users</p>
-          </div>
-          <form onSubmit={handleAdminEnrollUser} className="space-y-2">
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <Search
-                  size={12}
-                  className="text-text-muted absolute top-1/2 left-2 -translate-y-1/2"
-                />
-                <Input
-                  placeholder="Search users..."
-                  value={userSearchQuery}
-                  onChange={(e) => setUserSearchQuery(e.target.value)}
-                  className="h-8 pl-7 text-[11px]"
-                />
-              </div>
-              <Button
-                type="button"
-                size="sm"
-                variant="default"
-                className="h-8 px-3 text-[11px]"
-                onClick={handleSearchUsers}
-                disabled={!userSearchQuery.trim()}
-              >
-                Search
-              </Button>
-            </div>
-            <div className="flex items-center gap-2">
-              <Select
-                value={selectedUser}
-                onValueChange={(v) => setSelectedUser(v)}
-                disabled={enrolling.user}
-              >
-                <SelectTrigger className="h-8 flex-1 text-[11px]">
-                  <SelectValue placeholder="Select user" />
-                </SelectTrigger>
-                <SelectContent>
-                  {users
-                    .filter((u) => !getEnrolledUserIds().has(u.id))
-                    .slice(0, 20)
-                    .map((u) => (
-                      <SelectItem
-                        key={u.id}
-                        value={String(u.id)}
-                      >{`${u.firstName || ""} ${u.lastName || ""} (${u.email || `User ${u.id}`})`}</SelectItem>
-                    ))}
-                  {users.filter((u) => !getEnrolledUserIds().has(u.id)).length === 0 && (
-                    <div className="text-text-muted px-2 py-1.5 text-[11px]">No eligible users</div>
-                  )}
-                </SelectContent>
-              </Select>
-              <Button
-                type="submit"
-                size="sm"
-                variant="green"
-                className="h-8 px-3 text-[11px]"
-                disabled={!selectedUser || enrolling.user}
-              >
-                {enrolling.user ? (
-                  <span className="flex items-center gap-1.5">
-                    <Loader size={10} className="animate-spin" /> Enrolling...
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1.5">
-                    <UserPlus size={10} /> Enroll
-                  </span>
-                )}
-              </Button>
-            </div>
-          </form>
-        </div>
-
-        {/* Enroll Team */}
-        <div className="border-border bg-bg-surface/50 rounded-lg border border-dashed p-3">
-          <div className="mb-2.5 flex items-center gap-2">
-            <div className="bg-primary/10 flex h-6 w-6 items-center justify-center rounded-md">
-              <Users size={12} style={{ color: t("primary") }} />
-            </div>
-            <p className="text-text-primary text-xs font-semibold">Enroll Teams</p>
-          </div>
-          <form onSubmit={handleAdminEnrollTeam} className="space-y-2">
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <Search
-                  size={12}
-                  className="text-text-muted absolute top-1/2 left-2 -translate-y-1/2"
-                />
-                <Input
-                  placeholder="Search teams..."
-                  value={teamSearchQuery}
-                  onChange={(e) => setTeamSearchQuery(e.target.value)}
-                  className="h-8 pl-7 text-[11px]"
-                />
-              </div>
-              <Button
-                type="button"
-                size="sm"
-                variant="default"
-                className="h-8 px-3 text-[11px]"
-                onClick={handleSearchTeams}
-                disabled={!teamSearchQuery.trim()}
-              >
-                Search
-              </Button>
-            </div>
-            <div className="flex items-center gap-2">
-              <Select
-                value={selectedTeam}
-                onValueChange={(v) => setSelectedTeam(v)}
-                disabled={enrolling.team}
-              >
-                <SelectTrigger className="h-8 flex-1 text-[11px]">
-                  <SelectValue placeholder="Select team" />
-                </SelectTrigger>
-                <SelectContent>
-                  {(teams || [])
-                    .filter((t) => !getEnrolledTeamIds().has(t.id))
-                    .slice(0, 50)
-                    .map((t) => (
-                      <SelectItem key={t.id} value={String(t.id)}>
-                        {t.name || `Team ${t.id}`}
-                      </SelectItem>
-                    ))}
-                  {teams.filter((t) => !getEnrolledTeamIds().has(t.id)).length === 0 && (
-                    <div className="text-text-muted px-2 py-1.5 text-[11px]">No eligible teams</div>
-                  )}
-                </SelectContent>
-              </Select>
-              <Button
-                type="submit"
-                size="sm"
-                variant="green"
-                className="h-8 px-3 text-[11px]"
-                disabled={!selectedTeam || enrolling.team}
-              >
-                {enrolling.team ? (
-                  <span className="flex items-center gap-1.5">
-                    <Loader size={10} className="animate-spin" /> Enrolling...
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1.5">
-                    <Users size={10} /> Enroll
-                  </span>
-                )}
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
     </Paper>
   );
 };
