@@ -1,7 +1,7 @@
 // Course API Service
 // Handles all API calls related to courses and lessons
 
-import { apiDelete, apiGet, apiPost, apiPut } from "@/app/services/http";
+import { apiDelete, apiGet, apiPost, apiPut, apiUpload } from "@/app/services/http";
 
 // ==================== FIELD MAPPING ====================
 // Backend now sends camelCase: imageUrl, authorId, categoryId, lessonCount
@@ -37,58 +37,67 @@ const normalizeCourse = (c) => ({
  * Fetch paginated courses. Frontend uses page/limit; backend uses start/limit.
  * Returns { courses, total, page, limit, totalPages } for the frontend.
  */
+// The backend only supports search + pagination on GET /courses. When
+// status/category/sort filters are active we fetch a wide window (search
+// still applied server-side) and filter/sort/paginate client-side so the
+// controls operate on the whole dataset, not just the current page.
+const CLIENT_FILTER_FETCH_LIMIT = 500;
+
+// GET /courses may return a bare array or a Summaries envelope { total, data }
+const unwrapCourseList = (raw) =>
+  Array.isArray(raw) ? raw : Array.isArray(raw?.data) ? raw.data : [];
+
 export const fetchCourses = async (params = {}) => {
   try {
     const page = parseInt(params.page) || 1;
     const limit = parseInt(params.limit) || 8;
-    const start = (page - 1) * limit;
+    const search = params.search || "";
+    const status = params.status && params.status !== "all" ? params.status : "";
+    const category = params.category && params.category !== "all" ? params.category : "";
+    const sort = params.sort && params.sort !== "all" ? params.sort : "";
 
-    const queryParams = new URLSearchParams();
-    queryParams.set("start", start);
-    queryParams.set("limit", limit);
+    const searchQS = search ? `&search=${encodeURIComponent(search)}` : "";
+    const needsClientFiltering = Boolean(status || category || sort);
 
-    const token = localStorage.getItem("auth_token");
-    const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:9090";
-    const headers = {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
-
-    const url = `/courses?${queryParams}`;
-    const [listRes, statRes] = await Promise.all([
-      fetch(`${API_BASE}${url}`, { headers }),
-      fetch(`${API_BASE}/courses/stat`, { headers }),
-    ]);
-
-    if (!listRes.ok) throw new Error("Failed to fetch courses: " + listRes.status);
-    const body = await listRes.json();
-    const envelope = body.data || body;
-    const rawCourses = Array.isArray(envelope.data)
-      ? envelope.data
-      : Array.isArray(envelope)
-        ? envelope
-        : [];
-
-    let total = rawCourses.length;
-    if (statRes.ok) {
-      const statBody = await statRes.json();
-      if (statBody.data && typeof statBody.data.count === "number") {
-        total = statBody.data.count;
-      } else if (envelope.total !== undefined) {
-        total = envelope.total;
-      }
-    } else if (envelope.total !== undefined) {
-      total = envelope.total;
+    if (!needsClientFiltering) {
+      const start = (page - 1) * limit;
+      const [rawList, stat] = await Promise.all([
+        apiGet(`/courses?start=${start}&limit=${limit}${searchQS}`),
+        apiGet(`/courses/stat${search ? `?search=${encodeURIComponent(search)}` : ""}`).catch(
+          () => null
+        ),
+      ]);
+      const list = unwrapCourseList(rawList);
+      const total =
+        typeof stat?.count === "number"
+          ? stat.count
+          : typeof rawList?.total === "number"
+            ? rawList.total
+            : list.length;
+      return {
+        courses: list.map(normalizeCourse),
+        total,
+        page,
+        limit,
+        totalPages: Math.max(1, Math.ceil(total / limit)),
+      };
     }
 
-    const totalPages = Math.ceil(total / limit);
+    const rawList = await apiGet(`/courses?start=0&limit=${CLIENT_FILTER_FETCH_LIMIT}${searchQS}`);
+    let courses = unwrapCourseList(rawList).map(normalizeCourse);
+    if (status) courses = courses.filter((c) => c.status === status);
+    if (category) courses = courses.filter((c) => c.category === category);
+    if (sort === "title") {
+      courses = [...courses].sort((a, b) => a.title.localeCompare(b.title));
+    }
 
+    const total = courses.length;
     return {
-      courses: rawCourses.map(normalizeCourse),
+      courses: courses.slice((page - 1) * limit, page * limit),
       total,
       page,
       limit,
-      totalPages,
+      totalPages: Math.max(1, Math.ceil(total / limit)),
     };
   } catch (error) {
     console.error("Error fetching courses:", error);
@@ -113,6 +122,16 @@ export const fetchCourseById = async (id) => {
  * Create a new course
  * Accepts frontend field names, converts to backend field names.
  */
+// Upload a course cover image; returns the public URL string.
+export const uploadCourseImage = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("entity_type", "course");
+  formData.append("content_type", "image");
+  const result = await apiUpload("/media/upload", formData);
+  return result?.presignUrl || "";
+};
+
 export const createCourse = async (courseData) => {
   try {
     const payload = {
@@ -121,6 +140,7 @@ export const createCourse = async (courseData) => {
       imageUrl: courseData.coverImage || courseData.imageURL || "",
       categoryId: courseData.category || null,
       authorId: courseData.authorID || null,
+      duration: parseInt(courseData.duration, 10) || 0,
       status: courseData.status || "DRAFT",
     };
     const data = await apiPost("/courses", payload);
@@ -141,6 +161,7 @@ export const updateCourse = async (id, courseData) => {
       description: courseData.description,
       imageUrl: courseData.coverImage || courseData.imageURL || "",
       categoryId: courseData.category || null,
+      duration: parseInt(courseData.duration, 10) || 0,
       status: courseData.status || "DRAFT",
     };
     const data = await apiPut(`/courses/${id}`, payload);
@@ -185,6 +206,17 @@ export const archiveCourse = async (id) => {
     return normalizeCourse(data);
   } catch (error) {
     console.error("Error archiving course:", error);
+    throw error;
+  }
+};
+
+// Restore an archived course back to Draft so it can be edited/republished.
+export const restoreCourse = async (id) => {
+  try {
+    const data = await apiPut(`/courses/${id}`, { status: "DRAFT" });
+    return normalizeCourse(data);
+  } catch (error) {
+    console.error("Error restoring course:", error);
     throw error;
   }
 };

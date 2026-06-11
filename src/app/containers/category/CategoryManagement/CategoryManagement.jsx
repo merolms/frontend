@@ -1,4 +1,4 @@
-import { Folder, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { Folder, Pencil, Plus, Search, ToggleLeft, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -12,13 +12,13 @@ import {
   toggleCategoryStatus,
   updateCategory,
 } from "@/app/services/categoryService";
+import EmptyState from "@/components/common/EmptyState";
+import FormErrorBanner from "@/components/common/FormErrorBanner";
+import LoadingState from "@/components/common/LoadingState";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
-import EmptyState from "@/components/common/EmptyState";
-import FormErrorBanner from "@/components/common/FormErrorBanner";
-import LoadingState from "@/components/common/LoadingState";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
 import {
@@ -68,11 +68,24 @@ const CategoryManagement = () => {
     try {
       setLoading(true);
       setError(null);
-      const start = (page - 1) * limit;
-      let { categories: data, total: totalCount } = await fetchCategoriesWithPagination({
-        start,
-        limit,
-      });
+      const hasFilters = Boolean(search || statusFilter || sort);
+
+      if (!hasFilters) {
+        // Plain browsing — server-side pagination
+        const start = (page - 1) * limit;
+        const { categories: data, total: totalCount } = await fetchCategoriesWithPagination({
+          start,
+          limit,
+        });
+        setCategories(data);
+        setTotal(totalCount);
+        setTotalPages(Math.ceil(totalCount / limit) || 1);
+        return;
+      }
+
+      // The API only supports start/limit, so filters must operate on the
+      // whole dataset: fetch a wide window, then filter/sort/paginate locally.
+      let { categories: data } = await fetchCategoriesWithPagination({ start: 0, limit: 500 });
       if (search) {
         const q = search.toLowerCase();
         data = data.filter(
@@ -86,9 +99,11 @@ const CategoryManagement = () => {
       }
       if (sort === "name") data.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
       else if (sort === "recent") data.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
-      setCategories(data);
-      setTotal(totalCount);
-      setTotalPages(Math.ceil(totalCount / limit) || 1);
+
+      const filteredTotal = data.length;
+      setCategories(data.slice((page - 1) * limit, page * limit));
+      setTotal(filteredTotal);
+      setTotalPages(Math.ceil(filteredTotal / limit) || 1);
     } catch (err) {
       setError(err.message || "Failed to load categories");
     } finally {
@@ -140,10 +155,10 @@ const CategoryManagement = () => {
       setActionLoading(true);
       await deleteCategory(deleteTarget.id);
       setDeleteTarget(null);
-      addToast(`Category "${deleteTarget.name}" deleted`, "error");
+      addToast(`Category "${deleteTarget.name}" deleted`, "success");
       await fetchData();
     } catch (err) {
-      alert(err.message);
+      addToast(err.message || "Failed to delete category.", "error");
     } finally {
       setActionLoading(false);
     }
@@ -152,9 +167,13 @@ const CategoryManagement = () => {
   const handleToggleStatus = async (cat) => {
     try {
       await toggleCategoryStatus(cat.id);
+      addToast(
+        `Category "${cat.name}" ${cat.status === 1 ? "deactivated" : "activated"}`,
+        "success"
+      );
       await fetchData();
     } catch (err) {
-      alert(err.message);
+      addToast(err.message || "Failed to update category status.", "error");
     }
   };
   const handleClear = () => {
@@ -173,7 +192,7 @@ const CategoryManagement = () => {
       >
         {/* Action bar */}
         <div className="mb-4 flex items-center justify-end">
-          <PermissionGuard permissions={["courses.create"]}>
+          <PermissionGuard permissions={["category.create"]}>
             <Button size="sm" onClick={handleCreate}>
               <Plus size={14} /> New Category
             </Button>
@@ -252,7 +271,7 @@ const CategoryManagement = () => {
               title="No categories found"
               description="Try adjusting your filters or create a new category."
               action={
-                <PermissionGuard permissions={["courses.create"]}>
+                <PermissionGuard permissions={["category.create"]}>
                   <Button size="sm" onClick={handleCreate}>
                     <Plus size={14} /> Create First Category
                   </Button>
@@ -319,7 +338,7 @@ const CategoryManagement = () => {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-center gap-1">
-                        <PermissionGuard permissions={["courses.edit"]}>
+                        <PermissionGuard permissions={["category.edit"]}>
                           <button
                             className="border-border hover:bg-bg-surface-active text-text-secondary flex h-7 w-7 items-center justify-center rounded-md border"
                             onClick={() => handleEdit(cat)}
@@ -333,9 +352,9 @@ const CategoryManagement = () => {
                           onClick={() => handleToggleStatus(cat)}
                           title={cat.status === 1 ? "Deactivate" : "Activate"}
                         >
-                          <Trash2 size={12} />
+                          <ToggleLeft size={12} />
                         </button>
-                        <PermissionGuard permissions={["courses.delete"]}>
+                        <PermissionGuard permissions={["category.delete"]}>
                           <button
                             className="border-border hover:bg-error/10 text-error flex h-7 w-7 items-center justify-center rounded-md border"
                             onClick={() => setDeleteTarget(cat)}

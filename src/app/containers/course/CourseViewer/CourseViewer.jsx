@@ -1,10 +1,9 @@
 import { ArrowLeft, ArrowRight, BookOpen, Loader } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 import { useToast } from "@/app/context/ToastContext";
-import { fetchAutosave } from "@/app/services/blockService";
 import { fetchCourseById, fetchLessons } from "@/app/services/courseService";
 import {
   enrollInCourseAPI,
@@ -15,6 +14,7 @@ import {
 } from "@/app/services/enrollmentService";
 import { ReaderLayout } from "@/components/layouts/ReaderLayout";
 import MeroEduEditor from "@/editor/Editor";
+import { loadLessonDoc } from "@/editor/utils/lessonContent";
 import { usePageTitle } from "@/hooks";
 import { t } from "@/styles/theme";
 
@@ -30,15 +30,16 @@ const CourseViewer = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lessonContents, setLessonContents] = useState({});
+  const lessonContentsRef = useRef({});
   const [enrollment, setEnrollment] = useState(null);
   const [lessonCompletionStatus, setLessonCompletionStatus] = useState({});
   const [enrolling, setEnrolling] = useState(false);
 
   useEffect(() => {
     loadData();
-  }, [id]);
+  }, [loadData]);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -49,49 +50,21 @@ const CourseViewer = () => {
       );
       setLessons(sorted);
 
-      // Load lesson contents
-      const contents = {};
-      await Promise.all(
-        (l || []).map(async (lesson) => {
-          try {
-            const autosave = await fetchAutosave(lesson.id);
-            if (autosave?.snapshot) {
-              const snap = JSON.parse(autosave.snapshot);
-              contents[lesson.id] = Array.isArray(snap)
-                ? snap
-                : snap.content
-                  ? typeof snap.content === "string"
-                    ? JSON.parse(snap.content)
-                    : snap.content
-                  : snap;
-              return;
-            }
-          } catch {
-            /* ignore */
-          }
-          if (lesson.content)
-            contents[lesson.id] =
-              typeof lesson.content === "string" ? lesson.content : JSON.stringify(lesson.content);
-        })
-      );
-      setLessonContents(contents);
+      // Load enrollment first so we can resume at the right lesson
+      const completion = user?.id ? await loadEnrollment() : {};
 
-      // Load enrollment
-      if (user?.id) await loadEnrollment();
+      // Resume at the first incomplete lesson (fall back to the first lesson)
+      const firstIncomplete = sorted.findIndex((ls) => !completion[ls.id]);
+      setActiveIndex(firstIncomplete >= 0 ? firstIncomplete : 0);
+      // Content for the active (and adjacent) lessons is loaded lazily by effect
     } catch (err) {
-      if (err?.status === 401 || err?.status === 403) {
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("auth_user");
-        window.location.href = "/login";
-        return;
-      }
       setError(err.message || "Failed to load course.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, user?.id, loadEnrollment]);
 
-  const loadEnrollment = async () => {
+  const loadEnrollment = useCallback(async () => {
     try {
       const status = await getEnrollmentStatus(id);
       if (status) {
@@ -108,6 +81,7 @@ const CourseViewer = () => {
             newStatus[c.lessonId] = true;
           });
           setLessonCompletionStatus(newStatus);
+          return newStatus;
         } catch {
           /* ok */
         }
@@ -115,7 +89,23 @@ const CourseViewer = () => {
     } catch (err) {
       if (err?.status === 401 || err?.status === 403) throw err;
     }
-  };
+    return {};
+  }, [id]);
+
+  // Lazy-load lesson content on demand, cached in a ref to avoid refetching.
+  const ensureLessonContent = useCallback(async (lesson) => {
+    const lid = lesson?.id;
+    if (!lid || lessonContentsRef.current[lid] !== undefined) return;
+    const doc = await loadLessonDoc(lid);
+    let value = "";
+    if (doc.length > 0) {
+      value = doc;
+    } else if (lesson.content) {
+      value = typeof lesson.content === "string" ? lesson.content : JSON.stringify(lesson.content);
+    }
+    lessonContentsRef.current[lid] = value;
+    setLessonContents((prev) => ({ ...prev, [lid]: value }));
+  }, []);
 
   const handleEnroll = async () => {
     if (!user?.id) {
@@ -159,13 +149,17 @@ const CourseViewer = () => {
 
   const handleMarkCourseComplete = async () => {
     if (!user?.id) return;
+    const remaining = lessons.filter((lesson) => !lessonCompletionStatus[lesson.id]);
+    if (remaining.length === 0) return;
     try {
-      for (const lesson of lessons) {
-        if (!lessonCompletionStatus[lesson.id]) {
-          await markLessonCompleteAPI(lesson.id);
-          setLessonCompletionStatus((prev) => ({ ...prev, [lesson.id]: true }));
-        }
-      }
+      await Promise.all(remaining.map((lesson) => markLessonCompleteAPI(lesson.id)));
+      setLessonCompletionStatus((prev) => {
+        const next = { ...prev };
+        remaining.forEach((lesson) => {
+          next[lesson.id] = true;
+        });
+        return next;
+      });
       addToast("Congratulations! Course completed!", "success");
       await loadEnrollment();
     } catch (err) {
@@ -182,6 +176,14 @@ const CourseViewer = () => {
 
   const activeLesson = lessons[activeIndex];
   const activeContent = activeLesson ? lessonContents[activeLesson.id] : null;
+
+  // Load content for the active lesson and prefetch the next one
+  useEffect(() => {
+    const current = lessons[activeIndex];
+    if (current) ensureLessonContent(current);
+    const next = lessons[activeIndex + 1];
+    if (next) ensureLessonContent(next);
+  }, [activeIndex, lessons, ensureLessonContent]);
 
   if (loading) {
     return (

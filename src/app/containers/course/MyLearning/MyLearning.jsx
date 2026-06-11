@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 
 import { getMyEnrollments } from "@/app/services/enrollmentService";
 import EmptyState from "@/components/common/EmptyState";
+import FormErrorBanner from "@/components/common/FormErrorBanner";
 import LoadingState from "@/components/common/LoadingState";
 import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import { Button } from "@/components/ui/button";
@@ -34,20 +35,22 @@ const MyLearning = () => {
   const user = useSelector((s) => s.auth.user);
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("recent");
 
   useEffect(() => {
     loadEnrollments();
-  }, [user]);
+  }, [user?.id]);
 
   const loadEnrollments = async () => {
     try {
       setLoading(true);
+      setError(null);
       const data = await getMyEnrollments();
       setEnrollments(data);
     } catch (err) {
-      console.error(err);
+      setError(err.message || "Failed to load your courses.");
     } finally {
       setLoading(false);
     }
@@ -178,6 +181,13 @@ const MyLearning = () => {
       {/* Course list */}
       {loading ? (
         <LoadingState count={4} height="h-32" />
+      ) : error ? (
+        <div className="space-y-3">
+          <FormErrorBanner message={error} />
+          <Button size="sm" onClick={loadEnrollments}>
+            Retry
+          </Button>
+        </div>
       ) : filtered.length === 0 ? (
         <EmptyState
           icon={<BookOpen size={48} />}
@@ -261,7 +271,7 @@ const MyLearning = () => {
                         <span
                           className="text-xs font-bold"
                           style={{
-                            color: enrollment.status === "completed" ? "#22C55E" : "#6366F1",
+                            color: enrollment.status === "completed" ? "hsl(var(--success))" : "hsl(var(--primary))",
                           }}
                         >
                           {enrollment.progressPercent || 0}%
@@ -269,7 +279,7 @@ const MyLearning = () => {
                       </div>
                       <ProgressBar
                         progress={enrollment.progressPercent || 0}
-                        color={enrollment.status === "completed" ? "#22C55E" : "#6366F1"}
+                        color={enrollment.status === "completed" ? "hsl(var(--success))" : "hsl(var(--primary))"}
                       />
                     </div>
 

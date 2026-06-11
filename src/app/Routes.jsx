@@ -49,11 +49,11 @@ const adminOnly = (element, path) => ({
   ),
 });
 
-const instructorPlus = (element, path) => ({
+const instructorPlus = (element, path, perms = ["courses.view"]) => ({
   path,
   element: (
     <ErrorBoundary>
-      <ProtectedRoute permissions={["courses.view"]}>
+      <ProtectedRoute permissions={perms}>
         <RoleGuard roles={["Administrator", "Instructor"]}>{element}</RoleGuard>
       </ProtectedRoute>
     </ErrorBoundary>
@@ -114,10 +114,10 @@ const adminRoutes = [
 
 const instructorRoutes = [
   instructorPlus(<InstructorDashboard />, "/instructor/dashboard"),
-  instructorPlus(<CourseCreate />, "/courses/create"),
-  instructorPlus(<CourseBuilder />, "/courses/:id/builder/:lessonId?"),
-  instructorPlus(<CoursePreview />, "/courses/:id/preview/:lessonId?"),
-  instructorPlus(<CourseEdit />, "/courses/:id/edit"),
+  instructorPlus(<CourseCreate />, "/courses/create", ["courses.create"]),
+  instructorPlus(<CourseBuilder />, "/courses/:id/builder/:lessonId?", ["courses.lessons.manage"]),
+  instructorPlus(<CoursePreview />, "/courses/:id/preview/:lessonId?", ["courses.lessons.manage"]),
+  instructorPlus(<CourseEdit />, "/courses/:id/edit", ["courses.edit"]),
   instructorPlus(<LearningPathForm />, "/learning-paths/create"),
   instructorPlus(<LearningPathForm />, "/learning-paths/:id/edit"),
 ];

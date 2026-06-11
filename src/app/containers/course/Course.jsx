@@ -3,13 +3,14 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
-import { fetchCourses, mockCategories } from "@/app/services/courseService";
+import { fetchCategories } from "@/app/services/categoryService";
+import { fetchCourses } from "@/app/services/courseService";
+import EmptyState from "@/components/common/EmptyState";
+import FormErrorBanner from "@/components/common/FormErrorBanner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
-import EmptyState from "@/components/common/EmptyState";
-import FormErrorBanner from "@/components/common/FormErrorBanner";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
 import {
@@ -31,11 +32,6 @@ const statusOptions = [
   { value: "Published", label: "Published" },
   { value: "DRAFT", label: "Draft" },
   { value: "Archived", label: "Archived" },
-];
-
-const categoryOptions = [
-  { value: "all", label: "All Categories" },
-  ...mockCategories.map((cat) => ({ value: cat, label: cat })),
 ];
 
 const sortOptions = [
@@ -61,6 +57,18 @@ const CourseContainer = () => {
   const viewMode = searchParams.get("view") || "grid";
 
   const [searchInput, setSearchInput] = useState(search);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    fetchCategories({ start: 0, limit: 100 })
+      .then((list) => setCategories(Array.isArray(list) ? list : []))
+      .catch(() => setCategories([]));
+  }, []);
+
+  const categoryOptions = [
+    { value: "all", label: "All Categories" },
+    ...categories.map((cat) => ({ value: cat.name, label: cat.name })),
+  ];
 
   const fetchData = useCallback(async () => {
     try {
@@ -96,6 +104,15 @@ const CourseContainer = () => {
     if (!updates.page && !updates.view) newParams.delete("page");
     setSearchParams(newParams);
   };
+
+  // Debounced search — applies as the user types, no Enter required
+  useEffect(() => {
+    if (searchInput === search) return undefined;
+    const timer = setTimeout(() => {
+      updateParams({ search: searchInput, page: 1 });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   const handleSearch = (e) => {
     e.preventDefault();

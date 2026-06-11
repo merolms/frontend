@@ -1,11 +1,10 @@
-import { TruckElectricIcon } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 import SideBar from "@/app/containers/SideBar/SideBar";
 import { useTheme as useThemeContext } from "@/app/context/ThemeContext";
-import { fetchAutosave, fetchLessonBlocks, saveAutosave } from "@/app/services/blockService";
+import { saveAutosave } from "@/app/services/blockService";
 import {
   createLesson,
   deleteLesson,
@@ -14,60 +13,12 @@ import {
   reorderLessons,
   updateLesson,
 } from "@/app/services/courseService";
-// import BlockNoteEditor from "./components/BlockNoteEditor/BlockNoteEditor";
-// import { TipTapEditor } from "@/editor/TipTapEditor";
 import MeroEduEditor from "@/editor/Editor";
+import { loadLessonDoc } from "@/editor/utils/lessonContent";
+import { usePageTitle } from "@/hooks";
 import { t } from "@/styles/theme";
 
-// import TipTapEditor from "./components/TipTapEditor/TipTapEditor";
 import LessonPanel from "./components/LessonPanel";
-import { usePageTitle } from "@/hooks";
-
-// ─── BLOCKS → BLOCKNOTE DOC CONVERTER ───────────────────────────
-// Converts blocks from GET /lessons/{id}/blocks API into BlockNote
-// document format ({id, type, content, props, children}[]).
-
-const PARA_PROPS = { textAlignment: "left", backgroundColor: "default", textColor: "default" };
-
-const convertBlock = (block) => {
-  const type = block.type || "paragraph";
-  const contentStr = block.content || block.data || "[]";
-  let content = [];
-  try {
-    const parsed = JSON.parse(contentStr);
-    if (Array.isArray(parsed)) {
-      content = parsed.map((item) => ({
-        type: item.type || "text",
-        text: item.text || "",
-        styles: item.styles || {},
-      }));
-    } else if (typeof parsed === "string") {
-      content = [{ type: "text", text: parsed, styles: {} }];
-    }
-  } catch {
-    if (typeof contentStr === "string" && contentStr.trim()) {
-      content = [{ type: "text", text: contentStr, styles: {} }];
-    }
-  }
-  // Use title as heading text if content is empty
-  if (content.length === 0 && block.title && block.title !== block.type) {
-    content = [{ type: "text", text: block.title, styles: {} }];
-  }
-  return {
-    id: String(block.id) || String(Math.random()),
-    type,
-    props: { ...PARA_PROPS },
-    content,
-    children: [],
-  };
-};
-
-const blocksToDoc = (blocks) => {
-  if (!blocks || blocks.length === 0) return [];
-  // Sort by order field
-  const sorted = [...blocks].sort((a, b) => (a.order || 0) - (b.order || 0));
-  return sorted.map(convertBlock);
-};
 
 // ─── Icons ───────────────────────────────────────────────────────
 const SaveIcon = () => (
@@ -177,9 +128,9 @@ const CourseBuilder = () => {
   const [words, setWords] = useState(0);
   useEffect(() => {
     loadData();
-  }, [id]);
+  }, [loadData]);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -208,9 +159,9 @@ const CourseBuilder = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, lessonId, navigate]);
 
-  const loadLesson = async (lesson) => {
+  const loadLesson = useCallback(async (lesson) => {
     setSelectedLesson(lesson);
     setContent("");
     contentRef.current = "";
@@ -220,58 +171,30 @@ const CourseBuilder = () => {
     // Update URL to reflect selected lesson (replace to avoid history spam)
     navigate(`/courses/${id}/builder/${lesson.id}`, { replace: true });
 
-    try {
-      // 1) Try autosave first (most recent edits)
-      const autosave = await fetchAutosave(lesson.id);
-      if (autosave?.snapshot) {
-        const snap = JSON.parse(autosave.snapshot);
-        const c = Array.isArray(snap)
-          ? JSON.stringify(snap)
-          : snap.content
-            ? typeof snap.content === "string"
-              ? snap.content
-              : JSON.stringify(snap.content)
-            : JSON.stringify(snap);
-        setContent(c);
-        contentRef.current = c;
-        return;
-      }
-    } catch {
-      /* ignore autosave errors */
-    }
-
-    // 2) Fetch blocks from API and build BlockNote document
-    try {
-      const blocks = await fetchLessonBlocks(lesson.id);
-      if (blocks.length > 0) {
-        const doc = blocksToDoc(blocks);
-        const json = JSON.stringify(doc);
-        setContent(json);
-        contentRef.current = json;
-        return;
-      }
-    } catch {
-      /* ignore blocks fetch errors */
-    }
-
-    // 3) Empty lesson — nothing to load
-    setContent("");
-    contentRef.current = "";
-  };
+    // Autosave snapshot first, then DB blocks (shared parse rules)
+    const doc = await loadLessonDoc(lesson.id);
+    const json = doc.length > 0 ? JSON.stringify(doc) : "";
+    setContent(json);
+    contentRef.current = json;
+  }, [id, navigate]);
 
   const handleSave = async () => {
     if (!selectedLesson) return;
     try {
-      console.log("Saving content:", contentRef.current);
       setSaving(true);
       setError(null);
       clearTimeout(autosaveTimer.current);
       const currentContent = contentRef.current;
+      // Persist to the lesson record (source of truth); autosave is recovery only
+      await updateLesson(id, selectedLesson.id, {
+        title: selectedLesson.title,
+        content: currentContent,
+        type: "blocknote",
+      });
       await saveAutosave(
         selectedLesson.id,
         JSON.stringify({ content: currentContent, format: "blocknote" })
       );
-      // await updateLesson(id, selectedLesson.id, { title: selectedLesson.title, content: currentContent, type: 'blocknote' });
       lastAutosaveContent.current = currentContent;
       setAutosaveStatus("saved");
       setTimeout(() => setAutosaveStatus(""), 3000);
@@ -301,8 +224,8 @@ const CourseBuilder = () => {
       // Clear the "saved" indicator after 3s, but only if no newer change came in
       clearTimeout(autosaveTimer.current);
       autosaveTimer.current = setTimeout(() => setAutosaveStatus(""), 3000);
-    } catch (err) {
-      console.error("Autosave failed:", err);
+    } catch {
+      // autosave is best-effort; ignore
     } finally {
       isSavingAutosave.current = false;
     }
@@ -313,7 +236,6 @@ const CourseBuilder = () => {
   // Track whether user has changed content since last autosave
   const handleContentChange = useCallback(
     (json) => {
-      console.log("Content changed:", json);
       contentRef.current = json;
       doAutosave();
     },

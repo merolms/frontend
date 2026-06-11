@@ -4,14 +4,14 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
-import { fetchCategories } from "@/app/services/categoryService";
 import { useToast } from "@/app/context/ToastContext";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import FormActions from "@/components/forms/FormActions";
+import { fetchCategories } from "@/app/services/categoryService";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
+import FormActions from "@/components/forms/FormActions";
 import FormField from "@/components/forms/FormField";
-import { t } from "@/styles/theme";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import { usePageTitle } from "@/hooks";
+import { t } from "@/styles/theme";
 
 const DRAFT_KEY = "course_create_draft";
 
@@ -27,7 +27,7 @@ const CourseCreate = () => {
     } catch {
       /* ignore */
     }
-    return { title: "", description: "", category: null, coverImage: "" };
+    return { title: "", description: "", category: null, coverImage: "", duration: "" };
   });
   const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState({});
@@ -35,6 +35,25 @@ const CourseCreate = () => {
   const [apiError, setApiError] = useState(null);
   const [unsplashOpen, setUnsplashOpen] = useState(false);
   const [dirty, setDirty] = useState(false);
+  const [coverUploading, setCoverUploading] = useState(false);
+  const [coverError, setCoverError] = useState(false);
+
+  const handleCoverUpload = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setCoverUploading(true);
+    try {
+      const { uploadCourseImage } = await import("@/app/services/courseService");
+      const presignUrl = await uploadCourseImage(file);
+      setCoverError(false);
+      updateForm((p) => ({ ...p, coverImage: presignUrl }));
+    } catch (err) {
+      addToast(err.message || "Failed to upload image", "error");
+    } finally {
+      setCoverUploading(false);
+    }
+  };
 
   // Auto-save draft to localStorage
   useEffect(() => {
@@ -153,7 +172,7 @@ const CourseCreate = () => {
                   className={`${inputCls} min-h-[110px] py-1.5`}
                   value={form.description}
                   onChange={(e) => {
-                    setForm((p) => ({ ...p, description: e.target.value }));
+                    updateForm((p) => ({ ...p, description: e.target.value }));
                     if (errors.description) setErrors((p) => ({ ...p, description: null }));
                   }}
                 />
@@ -164,7 +183,7 @@ const CourseCreate = () => {
                   name="category"
                   value={form.category || ""}
                   onChange={(e) => {
-                    setForm((p) => ({
+                    updateForm((p) => ({
                       ...p,
                       category: e.target.value ? parseInt(e.target.value) : null,
                     }));
@@ -181,6 +200,18 @@ const CourseCreate = () => {
                 </select>
               </FormField>
 
+              <FormField label="Duration (hours)" error={errors.duration}>
+                <input
+                  name="duration"
+                  type="number"
+                  min="0"
+                  placeholder="e.g. 8"
+                  value={form.duration ?? ""}
+                  onChange={(e) => updateForm((p) => ({ ...p, duration: e.target.value }))}
+                  className={inputCls}
+                />
+              </FormField>
+
               <div>
                 <label className="text-text-primary text-xs font-semibold">Cover Image</label>
                 <div className="mt-1 flex gap-2">
@@ -188,9 +219,26 @@ const CourseCreate = () => {
                     name="coverImage"
                     placeholder="https://example.com/cover.jpg"
                     value={form.coverImage}
-                    onChange={(e) => setForm((p) => ({ ...p, coverImage: e.target.value }))}
+                    onChange={(e) => {
+                      setCoverError(false);
+                      updateForm((p) => ({ ...p, coverImage: e.target.value }));
+                    }}
                     className={`${inputCls} flex-1`}
                   />
+                  <label
+                    className={`border-border text-text-secondary hover:bg-bg-surface-active flex h-8 items-center rounded-md border px-3 text-xs ${
+                      coverUploading || loading ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+                    }`}
+                  >
+                    {coverUploading ? "Uploading…" : "Upload"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleCoverUpload}
+                      disabled={coverUploading || loading}
+                      className="hidden"
+                    />
+                  </label>
                   <button
                     type="button"
                     onClick={() => setUnsplashOpen(true)}
@@ -202,24 +250,24 @@ const CourseCreate = () => {
                 </div>
                 {form.coverImage && (
                   <div className="relative mt-2 inline-block">
-                    <img
-                      src={form.coverImage}
-                      alt="Cover"
-                      className="max-h-40 rounded-md object-cover"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                        e.target.nextElementSibling.style.display = "flex";
-                      }}
-                    />
-                    <div
-                      style={{ display: "none" }}
-                      className="border-error bg-error/5 max-h-40 w-48 items-center justify-center rounded-md border border-dashed p-4"
-                    >
-                      <span className="text-error text-xs">Invalid image URL</span>
-                    </div>
+                    {coverError ? (
+                      <div className="border-error bg-error/5 flex max-h-40 w-48 items-center justify-center rounded-md border border-dashed p-4">
+                        <span className="text-error text-xs">Invalid image URL</span>
+                      </div>
+                    ) : (
+                      <img
+                        src={form.coverImage}
+                        alt="Cover"
+                        className="max-h-40 rounded-md object-cover"
+                        onError={() => setCoverError(true)}
+                      />
+                    )}
                     <button
                       type="button"
-                      onClick={() => setForm((p) => ({ ...p, coverImage: "" }))}
+                      onClick={() => {
+                        setCoverError(false);
+                        updateForm((p) => ({ ...p, coverImage: "" }));
+                      }}
                       className="bg-error absolute top-1 right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded text-white hover:opacity-80"
                     >
                       <X size={10} />
@@ -262,7 +310,7 @@ const CourseCreate = () => {
         open={unsplashOpen}
         onClose={() => setUnsplashOpen(false)}
         onSelect={(url) => {
-          setForm((p) => ({ ...p, coverImage: url }));
+          updateForm((p) => ({ ...p, coverImage: url }));
           setUnsplashOpen(false);
         }}
         initialQuery={form.title || "education"}

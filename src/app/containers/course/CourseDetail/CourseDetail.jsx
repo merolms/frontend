@@ -1,5 +1,6 @@
 import {
   Archive,
+  ArchiveRestore,
   BookOpen,
   Check,
   ChevronRight,
@@ -26,6 +27,7 @@ import {
   DeleteModal,
   DropModal,
   PublishModal,
+  RestoreModal,
 } from "@/app/containers/course/CourseActions/CourseActions";
 import { useToast } from "@/app/context/ToastContext";
 import { hasPermission } from "@/app/services/authService";
@@ -35,6 +37,7 @@ import {
   fetchCourseById,
   fetchLessons,
   publishCourse,
+  restoreCourse,
 } from "@/app/services/courseService";
 import {
   dropCourseAPI,
@@ -160,6 +163,20 @@ const CourseDetail = () => {
       addToast("Course archived", "success");
     } catch (err) {
       addToast(err.message || "Failed to archive course", "error");
+    } finally {
+      setActionLoading(false);
+      setActiveModal(null);
+    }
+  };
+
+  const handleRestore = async () => {
+    try {
+      setActionLoading(true);
+      const updated = await restoreCourse(id);
+      setCourse(updated);
+      addToast("Course restored to Draft", "success");
+    } catch (err) {
+      addToast(err.message || "Failed to restore course", "error");
     } finally {
       setActionLoading(false);
       setActiveModal(null);
@@ -331,17 +348,24 @@ const CourseDetail = () => {
                 <Plus size={14} /> Enroll Now
               </Button>
             )}
-            {course.status !== "Published" && (
+            {course.status === "DRAFT" && (
               <PermissionGuard permissions={["courses.publish"]}>
                 <Button size="sm" variant="ghost" onClick={() => setActiveModal("publish")}>
                   <Check size={14} /> Publish
                 </Button>
               </PermissionGuard>
             )}
-            {course.status !== "Archived" && (
+            {course.status === "Published" && (
               <PermissionGuard permissions={["courses.publish"]}>
                 <Button size="sm" variant="ghost" onClick={() => setActiveModal("archive")}>
                   <Archive size={14} /> Archive
+                </Button>
+              </PermissionGuard>
+            )}
+            {course.status === "Archived" && (
+              <PermissionGuard permissions={["courses.publish"]}>
+                <Button size="sm" variant="ghost" onClick={() => setActiveModal("restore")}>
+                  <ArchiveRestore size={14} /> Restore
                 </Button>
               </PermissionGuard>
             )}
@@ -390,7 +414,7 @@ const CourseDetail = () => {
                   )}
 
                   {/* Enrollment Summary */}
-                  {enrollments.length > 0 && (
+                  {canManageEnrollments && enrollments.length > 0 && (
                     <div>
                       <h3 className="text-text-primary mb-2 flex items-center gap-1.5 text-sm font-semibold">
                         <Users size={14} style={{ color: t("primary") }} /> Enrollment
@@ -435,54 +459,6 @@ const CourseDetail = () => {
                             }}
                           />
                         </div>
-                      </div>
-                      {/* Recent enrollees */}
-                      <div className="mt-3 space-y-1.5">
-                        {enrollments.slice(0, 5).map((enr) => (
-                          <div
-                            key={enr.id}
-                            className="bg-bg-surface flex items-center justify-between rounded-md px-2.5 py-1.5"
-                          >
-                            <div className="flex items-center gap-2">
-                              <div
-                                className="flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-bold text-white"
-                                style={{
-                                  background:
-                                    enr.status === "completed"
-                                      ? "#22C55E"
-                                      : enr.status === "dropped"
-                                        ? "#EF4444"
-                                        : "#6366F1",
-                                }}
-                              >
-                                {(enr.userName || "U")[0].toUpperCase()}
-                              </div>
-                              <span className="text-text-primary text-[11px] font-medium">
-                                {enr.userName || `User #${enr.userId}`}
-                              </span>
-                              <Badge
-                                className="text-[9px]"
-                                variant={
-                                  enr.status === "completed"
-                                    ? "green"
-                                    : enr.status === "dropped"
-                                      ? "red"
-                                      : "default"
-                                }
-                              >
-                                {enr.status}
-                              </Badge>
-                            </div>
-                            <span className="text-text-muted text-[10px]">
-                              {enr.progressPercent ?? 0}%
-                            </span>
-                          </div>
-                        ))}
-                        {enrollments.length > 5 && (
-                          <div className="text-text-muted text-center text-[10px]">
-                            +{enrollments.length - 5} more enrolled
-                          </div>
-                        )}
                       </div>
                     </div>
                   )}
@@ -575,7 +551,7 @@ const CourseDetail = () => {
                               <div className="text-text-primary text-xs font-semibold">
                                 {lesson.title}
                               </div>
-                              {enrollCount > 0 && (
+                              {canManageEnrollments && enrollCount > 0 && (
                                 <div className="mt-1 flex items-center gap-2">
                                   <div className="bg-bg-surface-active h-1 w-16 overflow-hidden rounded-full">
                                     <div
@@ -591,7 +567,7 @@ const CourseDetail = () => {
                             </div>
                             <div className="flex items-center gap-2">
                               {lesson.duration && <Badge variant="teal">{lesson.duration}</Badge>}
-                              {completionCount > 0 && (
+                              {canManageEnrollments && completionCount > 0 && (
                                 <Badge variant="green" className="text-[10px]">
                                   {completionPct}%
                                 </Badge>
@@ -676,6 +652,13 @@ const CourseDetail = () => {
         <ArchiveModal
           open={activeModal === "archive"}
           onConfirm={handleArchive}
+          onCancel={() => setActiveModal(null)}
+          courseTitle={course.title}
+          loading={actionLoading}
+        />
+        <RestoreModal
+          open={activeModal === "restore"}
+          onConfirm={handleRestore}
           onCancel={() => setActiveModal(null)}
           courseTitle={course.title}
           loading={actionLoading}

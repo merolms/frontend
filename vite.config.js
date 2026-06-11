@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     visualizer({
-      open: true,
+      open: false,
       gzipSize: true,
     }),
   ],

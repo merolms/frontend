@@ -1,23 +1,22 @@
 import { Lightbulb, Network, Pencil, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
 import { fetchCategories } from "@/app/services/categoryService";
-import DashboardLayout from "@/components/ui/dashboard-layout";
-import FormActions from "@/components/forms/FormActions";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
-import FormField from "@/components/forms/FormField";
 import LoadingState from "@/components/common/LoadingState";
-import { t } from "@/styles/theme";
+import FormActions from "@/components/forms/FormActions";
+import FormField from "@/components/forms/FormField";
+import { Badge } from "@/components/ui/badge";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import { usePageTitle } from "@/hooks";
+import { t } from "@/styles/theme";
 
 const CourseEdit = () => {
   usePageTitle("Edit Course");
   const navigate = useNavigate();
   const { id } = useParams();
-  const currentUser = useSelector((state) => state.auth.user);
   const [course, setCourse] = useState(null);
   const [categories, setCategories] = useState([]);
   const [form, setForm] = useState({ title: "", description: "", category: null, coverImage: "" });
@@ -26,6 +25,23 @@ const CourseEdit = () => {
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [unsplashOpen, setUnsplashOpen] = useState(false);
+  const [coverUploading, setCoverUploading] = useState(false);
+
+  const handleCoverUpload = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setCoverUploading(true);
+    try {
+      const { uploadCourseImage } = await import("@/app/services/courseService");
+      const presignUrl = await uploadCourseImage(file);
+      setForm((p) => ({ ...p, coverImage: presignUrl }));
+    } catch (err) {
+      setApiError(err.message || "Failed to upload image");
+    } finally {
+      setCoverUploading(false);
+    }
+  };
 
   useEffect(() => {
     fetchCategories()
@@ -44,8 +60,9 @@ const CourseEdit = () => {
         setForm({
           title: data.title || "",
           description: data.description || "",
-          category: data.categoryID || data.category || null,
+          category: data.categoryID || null,
           coverImage: data.coverImage || data.imageURL || "",
+          duration: data.duration || "",
           status: data.status || "DRAFT",
         });
       } catch (err) {
@@ -131,6 +148,24 @@ const CourseEdit = () => {
             </h2>
             <p className="text-text-muted text-xs">Update the course metadata and settings.</p>
 
+            <div className="flex items-center gap-2">
+              <span className="text-text-muted text-xs">Status</span>
+              <Badge
+                variant={
+                  form.status === "Published"
+                    ? "green"
+                    : form.status === "Archived"
+                      ? "orange"
+                      : "gray"
+                }
+              >
+                {form.status === "DRAFT" ? "Draft" : form.status || "Draft"}
+              </Badge>
+              <span className="text-text-muted text-[11px]">
+                Use the course detail page to publish, archive, or restore.
+              </span>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-3">
               {apiError && <FormErrorBanner message={apiError} />}
               {Object.keys(errors).length > 0 && !apiError && (
@@ -183,6 +218,18 @@ const CourseEdit = () => {
                 </select>
               </FormField>
 
+              <FormField label="Duration (hours)" error={errors.duration}>
+                <input
+                  name="duration"
+                  type="number"
+                  min="0"
+                  placeholder="e.g. 8"
+                  value={form.duration ?? ""}
+                  onChange={(e) => setForm((p) => ({ ...p, duration: e.target.value }))}
+                  className={inputCls}
+                />
+              </FormField>
+
               <div>
                 <label className="text-text-primary text-xs font-semibold">Cover Image</label>
                 <div className="mt-1 flex gap-2">
@@ -193,6 +240,20 @@ const CourseEdit = () => {
                     onChange={(e) => setForm((p) => ({ ...p, coverImage: e.target.value }))}
                     className={`${inputCls} flex-1`}
                   />
+                  <label
+                    className={`border-border text-text-secondary hover:bg-bg-surface-active flex h-8 items-center rounded-md border px-3 text-xs ${
+                      coverUploading || loading ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+                    }`}
+                  >
+                    {coverUploading ? "Uploading…" : "Upload"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleCoverUpload}
+                      disabled={coverUploading || loading}
+                      className="hidden"
+                    />
+                  </label>
                   <button
                     type="button"
                     onClick={() => setUnsplashOpen(true)}

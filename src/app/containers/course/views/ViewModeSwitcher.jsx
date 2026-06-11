@@ -21,7 +21,7 @@ const ViewModeSwitcher = ({ value, onChange }) => (
           className={cn(
             "flex h-7 w-7 cursor-pointer items-center justify-center transition-colors",
             value === m.value
-              ? "bg-primary text-white"
+              ? "bg-primary text-secondary"
               : "text-text-muted hover:bg-bg-surface-active"
           )}
         >

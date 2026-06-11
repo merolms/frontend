@@ -4,14 +4,14 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 import SideBar from "@/app/containers/SideBar/SideBar";
-import { fetchAutosave, fetchLessonBlocks } from "@/app/services/blockService";
 import { fetchCourseById, fetchLessons } from "@/app/services/courseService";
 import { ReaderLayout } from "@/components/layouts/ReaderLayout";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import MeroEduEditor from "@/editor/Editor";
-import { t } from "@/styles/theme";
+import { loadLessonDoc } from "@/editor/utils/lessonContent";
 import { usePageTitle } from "@/hooks";
+import { t } from "@/styles/theme";
 
 const CoursePreview = () => {
   usePageTitle("Course Preview");
@@ -24,32 +24,7 @@ const CoursePreview = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const loadLessonContent = useCallback(async (lesson) => {
-    try {
-      const autosave = await fetchAutosave(lesson.id);
-      if (autosave?.snapshot) {
-        const snap = JSON.parse(autosave.snapshot);
-
-        return Array.isArray(snap)
-          ? snap
-          : snap.content
-            ? typeof snap.content === "string"
-              ? JSON.parse(snap.content)
-              : snap.content
-            : [snap];
-      }
-    } catch {
-      /* ignore */
-      console.error("Failed to load autosave for lesson", lesson.id);
-    }
-    try {
-      const blocks = await fetchLessonBlocks(lesson.id);
-      if (blocks.length > 0) return blocks;
-    } catch {
-      /* ignore */
-    }
-    return [];
-  }, []);
+  const loadLessonContent = useCallback((lesson) => loadLessonDoc(lesson.id), []);
 
   useEffect(() => {
     (async () => {
@@ -66,7 +41,6 @@ const CoursePreview = () => {
             ? sorted.find((x) => String(x.id) === String(lessonId)) || sorted[0]
             : sorted[0];
           const content = await loadLessonContent(target);
-          console.log("Loaded content for lesson", target.id, content);
           setSelectedLesson({ ...target, _content: content });
         }
       } catch (err) {
@@ -188,10 +162,10 @@ const CoursePreview = () => {
               </h2>
             </div>
 
-            {selectedLesson?._content ? (
+            {selectedLesson?._content?.length > 0 ? (
               <div style={{ flex: 1, marginLeft: "-35px" }}>
                 <MeroEduEditor
-                  initialContent={selectedLesson._content.content}
+                  initialContent={selectedLesson._content}
                   editable={false}
                   showToolbar={false}
                   lessonId={selectedLesson?.id}

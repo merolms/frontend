@@ -1,4 +1,4 @@
-import { Archive, Check, LogOut, Trash2 } from "lucide-react";
+import { Archive, ArchiveRestore, Check, LogOut, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -114,4 +114,26 @@ export const DropModal = ({ open, onConfirm, onCancel, courseTitle, loading = fa
   </Dialog>
 );
 
-export default { PublishModal, ArchiveModal, DeleteModal, DropModal };
+export const RestoreModal = ({ open, onConfirm, onCancel, courseTitle, loading = false }) => (
+  <Dialog open={open} onOpenChange={loading ? undefined : onCancel}>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Restore Course</DialogTitle>
+      </DialogHeader>
+      <p className="text-text-secondary text-sm">
+        Restore <strong>{courseTitle}</strong> to Draft? It will be editable again and can be
+        republished when ready.
+      </p>
+      <DialogFooter>
+        <Button variant="default" onClick={onCancel} disabled={loading}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={onConfirm} disabled={loading}>
+          <ArchiveRestore size={14} /> Restore to Draft
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+);
+
+export default { PublishModal, ArchiveModal, DeleteModal, DropModal, RestoreModal };
