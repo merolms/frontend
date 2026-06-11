@@ -70,7 +70,7 @@ function MeroEduEditor({
       Placeholder.configure({
         placeholder: "Type some content here!",
       }),
-      Color.configure({ types: [TextStyleKit.name, ListItem.name] }),
+      // Color.configure({ types: [TextStyleKit.name, ListItem.name] }),
       TextStyleKit,
       Callout,
       InfoCallout.configure({ editable }),
