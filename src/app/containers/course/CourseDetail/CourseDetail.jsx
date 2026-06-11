@@ -24,6 +24,7 @@ import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute"
 import {
   ArchiveModal,
   DeleteModal,
+  DropModal,
   PublishModal,
 } from "@/app/containers/course/CourseActions/CourseActions";
 import { useToast } from "@/app/context/ToastContext";
@@ -124,7 +125,6 @@ const CourseDetail = () => {
   };
 
   const handleDrop = async () => {
-    if (!confirm("Are you sure you want to drop this course?")) return;
     try {
       setActionLoading(true);
       const result = await dropCourseAPI(parseInt(id));
@@ -134,6 +134,7 @@ const CourseDetail = () => {
       addToast(err.message || "Failed to drop course", "error");
     } finally {
       setActionLoading(false);
+      setActiveModal(null);
     }
   };
 
@@ -311,17 +312,22 @@ const CourseDetail = () => {
               </Button>
             )}
             {enrollment?.status === "dropped" && (
-              <Button size="sm" variant="green" onClick={handleEnroll}>
+              <Button size="sm" variant="green" onClick={handleEnroll} disabled={actionLoading}>
                 <Plus size={14} /> Re-enroll
               </Button>
             )}
             {enrollment?.status === "active" && (
-              <Button size="sm" variant="ghost" onClick={handleDrop} disabled={actionLoading}>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setActiveModal("drop")}
+                disabled={actionLoading}
+              >
                 <LogOut size={14} /> Drop
               </Button>
             )}
             {!enrollment && user && course.status === "Published" && (
-              <Button size="sm" variant="green" onClick={handleEnroll}>
+              <Button size="sm" variant="green" onClick={handleEnroll} disabled={actionLoading}>
                 <Plus size={14} /> Enroll Now
               </Button>
             )}
@@ -355,6 +361,9 @@ const CourseDetail = () => {
                 <TabsList>
                   <TabsTrigger value="overview">Overview</TabsTrigger>
                   <TabsTrigger value="lessons">Lessons ({lessons.length})</TabsTrigger>
+                  <PermissionGuard permissions={["courses.enrollment.manage"]}>
+                    <TabsTrigger value="enrollment">Enrollment ({enrollments.length})</TabsTrigger>
+                  </PermissionGuard>
                 </TabsList>
                 <TabsContent value="overview" className="space-y-4">
                   {course?.description && (
@@ -594,6 +603,11 @@ const CourseDetail = () => {
                     </div>
                   )}
                 </TabsContent>
+                <TabsContent value="enrollment">
+                  <PermissionGuard permissions={["courses.enrollment.manage"]}>
+                    <EnrollmentManagement courseId={id} enrollments={enrollments} />
+                  </PermissionGuard>
+                </TabsContent>
               </Tabs>
             </Paper>
           </div>
@@ -652,11 +666,6 @@ const CourseDetail = () => {
           </div>
         </div>
 
-        {/* Enrollment Management */}
-        <PermissionGuard permissions={["courses.enrollment.manage"]}>
-          <EnrollmentManagement courseId={id} enrollments={enrollments} />
-        </PermissionGuard>
-
         <PublishModal
           open={activeModal === "publish"}
           onConfirm={handlePublish}
@@ -676,6 +685,13 @@ const CourseDetail = () => {
           onConfirm={handleDelete}
           onCancel={() => setActiveModal(null)}
           itemName={course.title}
+          loading={actionLoading}
+        />
+        <DropModal
+          open={activeModal === "drop"}
+          onConfirm={handleDrop}
+          onCancel={() => setActiveModal(null)}
+          courseTitle={course.title}
           loading={actionLoading}
         />
       </DashboardLayout>

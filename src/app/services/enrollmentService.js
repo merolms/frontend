@@ -50,6 +50,28 @@ export const dropCourseAPI = async (courseId) => {
   }
 };
 
+// Get the lessons the current user has completed in a course
+export const getMyLessonCompletions = async (courseId) => {
+  try {
+    const completions = await apiGet(`/courses/${courseId}/completions`);
+    return Array.isArray(completions) ? completions : [];
+  } catch (error) {
+    console.error("Error fetching lesson completions:", error);
+    return [];
+  }
+};
+
+// Get the current user's enrollments enriched with course info (My Learning)
+export const getMyEnrollments = async (limit = 100) => {
+  try {
+    const enrollments = await apiGet(`/courses/my/enrollments?limit=${limit}`);
+    return Array.isArray(enrollments) ? enrollments : [];
+  } catch (error) {
+    console.error("Error fetching my enrollments:", error);
+    return [];
+  }
+};
+
 // ─── ADMIN ENROLLMENT API CALLS ───────────────────────────────────
 
 export const adminEnrollUserInCourse = async (courseId, userId) => {

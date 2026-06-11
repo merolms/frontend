@@ -1,4 +1,4 @@
-import { Archive, Check, Trash2 } from "lucide-react";
+import { Archive, Check, LogOut, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -92,4 +92,26 @@ export const DeleteModal = ({
   </Dialog>
 );
 
-export default { PublishModal, ArchiveModal, DeleteModal };
+export const DropModal = ({ open, onConfirm, onCancel, courseTitle, loading = false }) => (
+  <Dialog open={open} onOpenChange={loading ? undefined : onCancel}>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Drop Course</DialogTitle>
+      </DialogHeader>
+      <p className="text-text-secondary text-sm">
+        Are you sure you want to drop <strong>{courseTitle}</strong>? Your progress is kept and you
+        can re-enroll at any time.
+      </p>
+      <DialogFooter>
+        <Button variant="default" onClick={onCancel} disabled={loading}>
+          Cancel
+        </Button>
+        <Button variant="danger" onClick={onConfirm} disabled={loading}>
+          <LogOut size={14} /> Drop Course
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+);
+
+export default { PublishModal, ArchiveModal, DeleteModal, DropModal };

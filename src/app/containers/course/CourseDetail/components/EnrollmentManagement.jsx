@@ -137,7 +137,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
   };
 
   return (
-    <Paper className="mb-4 overflow-hidden p-0">
+    <Paper className="overflow-hidden p-0">
       {/* Header */}
       <div
         className="flex items-center justify-between px-5 py-3.5"

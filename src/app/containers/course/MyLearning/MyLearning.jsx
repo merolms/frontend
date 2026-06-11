@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { fetchEnrollments } from "@/app/services/enrollmentService";
+import { getMyEnrollments } from "@/app/services/enrollmentService";
 import EmptyState from "@/components/common/EmptyState";
 import LoadingState from "@/components/common/LoadingState";
 import ProgressBar from "@/components/ProgressBar/ProgressBar";
@@ -25,8 +25,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getStatusColor, getStatusLabel } from "@/utils";
 import { usePageTitle } from "@/hooks";
+import { getStatusColor, getStatusLabel } from "@/utils";
 
 const MyLearning = () => {
   usePageTitle("My Learning");
@@ -39,13 +39,13 @@ const MyLearning = () => {
 
   useEffect(() => {
     loadEnrollments();
-  }, [user, sortBy]);
+  }, [user]);
 
   const loadEnrollments = async () => {
     try {
       setLoading(true);
-      const data = await fetchEnrollments({ userId: user?.id, sort: sortBy });
-      setEnrollments(data || []);
+      const data = await getMyEnrollments();
+      setEnrollments(data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -53,8 +53,15 @@ const MyLearning = () => {
     }
   };
 
-  const filtered =
-    statusFilter === "all" ? enrollments : enrollments.filter((e) => e.status === statusFilter);
+  const filtered = (
+    statusFilter === "all" ? enrollments : enrollments.filter((e) => e.status === statusFilter)
+  )
+    .slice()
+    .sort((a, b) =>
+      sortBy === "progress"
+        ? (b.progressPercent ?? 0) - (a.progressPercent ?? 0)
+        : (b.lastAccessedAt ?? 0) - (a.lastAccessedAt ?? 0)
+    );
 
   // Stats
   const totalCourses = enrollments.length;
@@ -62,7 +69,7 @@ const MyLearning = () => {
   const inProgress = enrollments.filter((e) => e.status === "active").length;
   const avgProgress =
     totalCourses > 0
-      ? Math.round(enrollments.reduce((sum, e) => sum + (e.progress || 0), 0) / totalCourses)
+      ? Math.round(enrollments.reduce((sum, e) => sum + (e.progressPercent || 0), 0) / totalCourses)
       : 0;
 
   return (
@@ -200,9 +207,9 @@ const MyLearning = () => {
               >
                 <div className="flex gap-4 p-4">
                   {/* Course image */}
-                  {enrollment.coverImage ? (
+                  {enrollment.courseImageUrl ? (
                     <img
-                      src={enrollment.coverImage}
+                      src={enrollment.courseImageUrl}
                       alt={enrollment.courseTitle}
                       className="h-20 w-28 flex-shrink-0 rounded-lg object-cover"
                     />
@@ -222,14 +229,17 @@ const MyLearning = () => {
                           </h4>
                         </div>
                         <div className="text-text-muted flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]">
-                          <span>{enrollment.category}</span>
-                          <span className="flex items-center gap-1">
-                            <Clock size={10} /> {enrollment.duration}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Calendar size={10} /> {enrollment.lastAccessed}
-                          </span>
-                          {enrollment.instructor && <span>By {enrollment.instructor}</span>}
+                          {enrollment.courseDuration > 0 && (
+                            <span className="flex items-center gap-1">
+                              <Clock size={10} /> {enrollment.courseDuration}
+                            </span>
+                          )}
+                          {enrollment.lastAccessedAt > 0 && (
+                            <span className="flex items-center gap-1">
+                              <Calendar size={10} /> Last visited{" "}
+                              {new Date(enrollment.lastAccessedAt * 1000).toLocaleDateString()}
+                            </span>
+                          )}
                         </div>
                       </div>
                       <div className="flex flex-shrink-0 items-center gap-2">
@@ -245,8 +255,8 @@ const MyLearning = () => {
                     <div className="mt-3">
                       <div className="mb-1 flex items-center justify-between">
                         <span className="text-text-muted text-[11px]">
-                          {enrollment.completedLessons?.length || 0} of{" "}
-                          {enrollment.totalLessons || 0} lessons
+                          {enrollment.completedLessons || 0} of {enrollment.totalLessons || 0}{" "}
+                          lessons
                         </span>
                         <span
                           className="text-xs font-bold"
@@ -254,30 +264,34 @@ const MyLearning = () => {
                             color: enrollment.status === "completed" ? "#22C55E" : "#6366F1",
                           }}
                         >
-                          {enrollment.progress || 0}%
+                          {enrollment.progressPercent || 0}%
                         </span>
                       </div>
                       <ProgressBar
-                        progress={enrollment.progress || 0}
+                        progress={enrollment.progressPercent || 0}
                         color={enrollment.status === "completed" ? "#22C55E" : "#6366F1"}
                       />
                     </div>
 
                     {/* Actions */}
-                    <div className="mt-3 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {enrollment.status === "completed" && (
-                          <button className="text-accent flex cursor-pointer items-center gap-1 text-[11px] hover:underline">
-                            <Award size={11} /> View Certificate
-                          </button>
-                        )}
-                      </div>
+                    <div className="mt-3 flex items-center justify-end">
                       <Button
                         size="sm"
                         variant="default"
-                        onClick={() => navigate(`/courses/${enrollment.courseId}`)}
+                        onClick={() =>
+                          navigate(
+                            enrollment.status === "active"
+                              ? `/courses/${enrollment.courseId}/learn`
+                              : `/courses/${enrollment.courseId}`
+                          )
+                        }
                       >
-                        {enrollment.status === "completed" ? "Review" : "Continue"} →
+                        {enrollment.status === "completed"
+                          ? "Review"
+                          : enrollment.status === "dropped"
+                            ? "View Course"
+                            : "Continue"}{" "}
+                        →
                       </Button>
                     </div>
                   </div>

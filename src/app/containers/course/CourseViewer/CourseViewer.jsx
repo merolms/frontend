@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowRight, BookOpen, Loader } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { useToast } from "@/app/context/ToastContext";
 import { fetchAutosave } from "@/app/services/blockService";
@@ -10,16 +10,16 @@ import {
   enrollInCourseAPI,
   getCourseProgress,
   getEnrollmentStatus,
+  getMyLessonCompletions,
   markLessonCompleteAPI,
 } from "@/app/services/enrollmentService";
 import { ReaderLayout } from "@/components/layouts/ReaderLayout";
 import MeroEduEditor from "@/editor/Editor";
-import { t } from "@/styles/theme";
 import { usePageTitle } from "@/hooks";
+import { t } from "@/styles/theme";
 
 const CourseViewer = () => {
   usePageTitle("Course Viewer");
-  const navigate = useNavigate();
   const { id } = useParams();
   const { addToast } = useToast();
   const user = useSelector((s) => s.auth.user);
@@ -97,18 +97,17 @@ const CourseViewer = () => {
       if (status) {
         setEnrollment(status);
         try {
-          const progress = await getCourseProgress(id);
-          if (progress) {
-            setEnrollment(progress);
-            const completedCount = progress.progressPercent
-              ? Math.round((progress.progressPercent / 100) * lessons.length)
-              : 0;
-            const newStatus = {};
-            lessons.forEach((lesson, idx) => {
-              if (idx < completedCount) newStatus[lesson.id] = true;
-            });
-            setLessonCompletionStatus(newStatus);
-          }
+          const [progress, completions] = await Promise.all([
+            getCourseProgress(id),
+            getMyLessonCompletions(id),
+          ]);
+          if (progress) setEnrollment(progress);
+          // Mark exactly the lessons the user completed, keyed by lesson id
+          const newStatus = {};
+          completions.forEach((c) => {
+            newStatus[c.lessonId] = true;
+          });
+          setLessonCompletionStatus(newStatus);
         } catch {
           /* ok */
         }
