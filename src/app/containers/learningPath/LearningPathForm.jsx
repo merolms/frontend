@@ -411,7 +411,7 @@ const LearningPathForm = () => {
                 >
                   {/* Step number */}
                   <div
-                    className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                    className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold text-secondary"
                     style={{ background: form.color }}
                   >
                     {idx + 1}
@@ -472,7 +472,7 @@ const LearningPathForm = () => {
                   <React.Fragment key={course.id}>
                     <div className="bg-bg-surface border-border flex flex-shrink-0 items-center gap-1.5 rounded-md border px-2 py-1">
                       <div
-                        className="flex h-4 w-4 items-center justify-center rounded-full text-[8px] font-bold text-white"
+                        className="flex h-4 w-4 items-center justify-center rounded-full text-[8px] font-bold text-secondary"
                         style={{ background: form.color }}
                       >
                         {idx + 1}

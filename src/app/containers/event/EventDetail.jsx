@@ -204,7 +204,7 @@ const EventDetail = () => {
               <Button
                 size="sm"
                 onClick={handleDelete}
-                className="bg-error hover:bg-error/90 text-white"
+                className="bg-error hover:bg-error/90 text-secondary"
               >
                 Delete
               </Button>

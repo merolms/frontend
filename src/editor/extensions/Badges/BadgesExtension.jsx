@@ -80,8 +80,8 @@ const BadgesExtension = (props) => {
       teal: "bg-teal-400 text-teal-900",
       amber: "bg-amber-600 text-amber-100",
       indigo: "bg-indigo-400 text-indigo-50",
-      neutral: "bg-neutral-800 text-white",
-    })[c] || "bg-sky-400 text-white";
+      neutral: "bg-neutral-800 text-secondary",
+    })[c] || "bg-sky-400 text-secondary";
 
   return (
     <NodeViewWrapper>

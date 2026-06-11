@@ -10,7 +10,7 @@
 // All viewers/editors should resolve content through loadLessonDoc so the
 // parse rules stay in one place.
 
-import { fetchAutosave, fetchLessonBlocks } from "@/app/services/blockService";
+import { fetchLessonBlocks } from "@/app/services/blockService";
 
 const PARA_PROPS = { textAlignment: "left", backgroundColor: "default", textColor: "default" };
 
@@ -54,7 +54,7 @@ export const blocksToDoc = (blocks) => {
   return sorted.map(convertBlock);
 };
 
-// Parse an autosave snapshot string into a BlockNote document array.
+// Parse an autosave snapshot string into a BlockNote/Tiptap document object.
 // Returns null when the snapshot can't be parsed.
 export const parseSnapshotToDoc = (snapshot) => {
   if (!snapshot) return null;
@@ -64,6 +64,10 @@ export const parseSnapshotToDoc = (snapshot) => {
     if (snap?.content !== undefined && snap.content !== null && snap.content !== "") {
       if (typeof snap.content === "string") return JSON.parse(snap.content);
       if (Array.isArray(snap.content)) return snap.content;
+      // BlockNote format: { content: { type: "doc", content: [...] } }
+      if (snap.content?.type === "doc" && Array.isArray(snap.content.content)) {
+        return snap.content;
+      }
     }
     return null;
   } catch {
@@ -71,21 +75,19 @@ export const parseSnapshotToDoc = (snapshot) => {
   }
 };
 
-// Resolve a lesson's content as a BlockNote document array:
-// autosave snapshot first (most recent edits), then DB blocks, else [].
+// Resolve a lesson's content as a BlockNote document:
+// autosave snapshot first (most recent edits), then fallback to empty.
 export const loadLessonDoc = async (lessonId) => {
   try {
-    const autosave = await fetchAutosave(lessonId);
+    const autosave = await fetchLessonBlocks(lessonId);
     const doc = parseSnapshotToDoc(autosave?.snapshot);
-    if (doc && doc.length > 0) return doc;
+    if (doc) {
+      // Array doc: check length; Object doc {type:"doc",content:[...]}: check content
+      if (Array.isArray(doc) && doc.length > 0) return doc;
+      if (!Array.isArray(doc) && doc.content && doc.content.length > 0) return doc;
+    }
   } catch {
-    /* fall through to blocks */
-  }
-  try {
-    const blocks = await fetchLessonBlocks(lessonId);
-    if (blocks?.length > 0) return blocksToDoc(blocks);
-  } catch {
-    /* fall through to empty */
+    /* fall through */
   }
   return [];
 };

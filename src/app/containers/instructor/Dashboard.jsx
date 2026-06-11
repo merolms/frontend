@@ -70,7 +70,7 @@ const InstructorDashboard = () => {
         <Can permission="courses.create">
           <button
             onClick={() => navigate("/courses/create")}
-            className="bg-primary hover:bg-primary-hover flex items-center gap-1 rounded-md px-3 py-1.5 text-xs text-white"
+            className="bg-primary hover:bg-primary-hover flex items-center gap-1 rounded-md px-3 py-1.5 text-xs text-secondary"
           >
             <Plus size={14} /> New Course
           </button>

@@ -216,7 +216,7 @@ function WebPreviewComponent({ node, updateAttributes, deleteNode }) {
                         key={opt.value}
                         type="button"
                         onClick={() => handleAlignmentChange(opt.value)}
-                        className={`rounded-full border px-2 py-1 text-sm transition-colors ${alignment === opt.value ? "border-black bg-black text-white" : "border-neutral-200 hover:bg-neutral-50"}`}
+                        className={`rounded-full border px-2 py-1 text-sm transition-colors ${alignment === opt.value ? "border-black bg-black text-secondary" : "border-neutral-200 hover:bg-neutral-50"}`}
                       >
                         {opt.label}
                       </button>
@@ -235,7 +235,7 @@ function WebPreviewComponent({ node, updateAttributes, deleteNode }) {
                   <button
                     type="submit"
                     disabled={loading || !inputUrl}
-                    className="flex items-center gap-1 rounded-lg bg-neutral-800 px-3 py-2 text-sm text-white hover:bg-neutral-900 disabled:opacity-50"
+                    className="flex items-center gap-1 rounded-lg bg-neutral-800 px-3 py-2 text-sm text-secondary hover:bg-neutral-900 disabled:opacity-50"
                   >
                     <Save size={14} /> Save
                   </button>
@@ -288,7 +288,7 @@ function WebPreviewComponent({ node, updateAttributes, deleteNode }) {
                 (openInPopup ? (
                   <button
                     type="button"
-                    className="mt-4 block w-full rounded-xl bg-black px-4 py-2.5 text-center text-[16px] font-semibold text-white transition-all hover:bg-gray-900"
+                    className="mt-4 block w-full rounded-xl bg-black px-4 py-2.5 text-center text-[16px] font-semibold text-secondary transition-all hover:bg-gray-900"
                     onClick={() => setPopupOpen(true)}
                   >
                     {buttonLabel || "Visit Site"}
@@ -298,7 +298,7 @@ function WebPreviewComponent({ node, updateAttributes, deleteNode }) {
                     href={previewData.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-4 block w-full rounded-xl bg-black px-4 py-2.5 text-center text-[16px] font-semibold text-white transition-all hover:bg-gray-900"
+                    className="mt-4 block w-full rounded-xl bg-black px-4 py-2.5 text-center text-[16px] font-semibold text-secondary transition-all hover:bg-gray-900"
                     style={{ textDecoration: "none", color: "white" }}
                   >
                     {buttonLabel || "Visit Site"}
@@ -313,7 +313,7 @@ function WebPreviewComponent({ node, updateAttributes, deleteNode }) {
                         key={opt.value}
                         type="button"
                         onClick={() => handleAlignmentChange(opt.value)}
-                        className={`flex items-center justify-center rounded-full border p-1.5 text-gray-600 transition-colors ${alignment === opt.value ? "border-gray-600 bg-gray-600 text-white" : "border-gray-200 bg-white hover:bg-gray-100"}`}
+                        className={`flex items-center justify-center rounded-full border p-1.5 text-gray-600 transition-colors ${alignment === opt.value ? "border-gray-600 bg-gray-600 text-secondary" : "border-gray-200 bg-white hover:bg-gray-100"}`}
                       >
                         {opt.label}
                       </button>

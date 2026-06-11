@@ -168,7 +168,7 @@ const LearningPathProgressPage = () => {
                 </div>
                 <button
                   onClick={() => navigate(`/courses/${course.courseId}`)}
-                  className="bg-primary hover:bg-primary-hover rounded-md px-3 py-1 text-xs text-white"
+                  className="bg-primary hover:bg-primary-hover rounded-md px-3 py-1 text-xs text-secondary"
                 >
                   {idx === 0 ? "Start" : "View"} →
                 </button>

@@ -84,9 +84,9 @@ export const parseBlocks = (content) => {
  * Save an autosave snapshot for a lesson.
  * snapshot should be a JSON string.
  */
-export const saveAutosave = async (lessonId, snapshot) => {
+export const saveLessonBlocks = async (lessonId, snapshot) => {
   try {
-    return await apiPost(`/lessons/${lessonId}/autosave`, { snapshot });
+    return await apiPost(`/lessons/${lessonId}/blocks`, { snapshot });
   } catch (error) {
     console.error("Error saving autosave:", error);
     throw error;
@@ -96,9 +96,9 @@ export const saveAutosave = async (lessonId, snapshot) => {
 /**
  * Fetch the latest autosave for a lesson.
  */
-export const fetchAutosave = async (lessonId) => {
+export const fetchLessonBlocks = async (lessonId) => {
   try {
-    const data = await apiGet(`/lessons/${lessonId}/autosave`);
+    const data = await apiGet(`/lessons/${lessonId}/blocks`);
     if (!data) return null;
     return {
       id: data.id,
@@ -114,34 +114,6 @@ export const fetchAutosave = async (lessonId) => {
 };
 
 // ─── BLOCKS ─────────────────────────────────────────────────────
-
-/**
- * Fetch all blocks for a lesson from the blocks API.
- * Returns blocks sorted by order field.
- */
-export const fetchLessonBlocks = async (lessonId) => {
-  try {
-    const data = await apiGet(`/lessons/${lessonId}/blocks`);
-    const list = Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : [];
-    list.sort((a, b) => (a.order || 0) - (b.order || 0));
-    return list;
-  } catch (error) {
-    console.error("Error fetching lesson blocks:", error);
-    throw error;
-  }
-};
-
-/**
- * Create a new block in a lesson.
- */
-export const createBlock = async (lessonId, blockData) => {
-  try {
-    return await apiPost(`/lessons/${lessonId}/blocks`, blockData);
-  } catch (error) {
-    console.error("Error creating block:", error);
-    throw error;
-  }
-};
 
 /**
  * Fetch a single block by ID.

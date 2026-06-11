@@ -49,7 +49,7 @@ const TableView = ({ courses, navigate, loading }) => {
                   onClick={() => navigate(`/courses/${course.id}`)}
                 >
                   <Avatar className="h-10 w-10 rounded-md">
-                    <AvatarImage src={course.coverImage} />
+                    <AvatarImage src={course.coverImage || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=100&h=100&fit=crop"} />
                     <AvatarFallback>{(course.title?.[0] || "C").toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div>

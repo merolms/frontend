@@ -1,5 +1,5 @@
 import { Lightbulb, Plus, X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -11,6 +11,7 @@ import FormActions from "@/components/forms/FormActions";
 import FormField from "@/components/forms/FormField";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { usePageTitle } from "@/hooks";
+import { useUnsavedChanges } from "@/hooks";
 import { t } from "@/styles/theme";
 
 const DRAFT_KEY = "course_create_draft";
@@ -38,6 +39,8 @@ const CourseCreate = () => {
   const [coverUploading, setCoverUploading] = useState(false);
   const [coverError, setCoverError] = useState(false);
 
+  const { updateForm, clearDirty } = useUnsavedChanges(form, { title: "", description: "", category: null, coverImage: "", duration: "" }, setForm, { draftKey: DRAFT_KEY });
+
   const handleCoverUpload = async (e) => {
     const file = e.target.files?.[0];
     e.target.value = "";
@@ -54,33 +57,6 @@ const CourseCreate = () => {
       setCoverUploading(false);
     }
   };
-
-  // Auto-save draft to localStorage
-  useEffect(() => {
-    if (dirty) {
-      const timer = setTimeout(() => {
-        localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [form, dirty]);
-
-  // Warn before leaving with unsaved changes
-  useEffect(() => {
-    const handleBeforeUnload = (e) => {
-      if (dirty && (form.title || form.description)) {
-        e.preventDefault();
-      }
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [dirty, form]);
-
-  // Mark dirty on first change
-  const updateForm = useCallback((updater) => {
-    setForm(updater);
-    setDirty(true);
-  }, []);
 
   useEffect(() => {
     fetchCategories()
@@ -111,8 +87,7 @@ const CourseCreate = () => {
         ...form,
         authorID: currentUser?.id ?? null,
       });
-      localStorage.removeItem(DRAFT_KEY);
-      setDirty(false);
+      clearDirty();
       addToast("Course created successfully!", "success");
       navigate(`/courses/${course.id}`);
     } catch (err) {
@@ -268,7 +243,7 @@ const CourseCreate = () => {
                         setCoverError(false);
                         updateForm((p) => ({ ...p, coverImage: "" }));
                       }}
-                      className="bg-error absolute top-1 right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded text-white hover:opacity-80"
+                      className="bg-error absolute top-1 right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded text-secondary hover:opacity-80"
                     >
                       <X size={10} />
                     </button>

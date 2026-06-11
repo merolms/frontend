@@ -109,7 +109,7 @@ const LearnerDashboard = () => {
                   <ProgressBar progress={enrollment.progress || 0} size="sm" />
                 </div>
               </div>
-              <button className="bg-primary hover:bg-primary-hover mt-3 flex-shrink-0 rounded-md px-3 py-1.5 text-xs text-white">
+              <button className="bg-primary hover:bg-primary-hover mt-3 flex-shrink-0 rounded-md px-3 py-1.5 text-xs text-secondary">
                 Continue
               </button>
             </div>

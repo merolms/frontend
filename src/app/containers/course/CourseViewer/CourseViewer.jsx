@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 import { useToast } from "@/app/context/ToastContext";
+import CourseCompletionCelebration from "@/components/CourseCompletionCelebration";
+import { Badge } from "@/components/ui/badge";
 import { fetchCourseById, fetchLessons } from "@/app/services/courseService";
 import {
   enrollInCourseAPI,
@@ -12,6 +14,7 @@ import {
   getMyLessonCompletions,
   markLessonCompleteAPI,
 } from "@/app/services/enrollmentService";
+import { hasPermission } from "@/app/services/authService";
 import { ReaderLayout } from "@/components/layouts/ReaderLayout";
 import MeroEduEditor from "@/editor/Editor";
 import { loadLessonDoc } from "@/editor/utils/lessonContent";
@@ -34,35 +37,8 @@ const CourseViewer = () => {
   const [enrollment, setEnrollment] = useState(null);
   const [lessonCompletionStatus, setLessonCompletionStatus] = useState({});
   const [enrolling, setEnrolling] = useState(false);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  const loadData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const [c, l] = await Promise.all([fetchCourseById(id), fetchLessons(id)]);
-      setCourse(c);
-      const sorted = (l || []).sort(
-        (a, b) => (a.sortOrder || a.sort_order || 0) - (b.sortOrder || b.sort_order || 0)
-      );
-      setLessons(sorted);
-
-      // Load enrollment first so we can resume at the right lesson
-      const completion = user?.id ? await loadEnrollment() : {};
-
-      // Resume at the first incomplete lesson (fall back to the first lesson)
-      const firstIncomplete = sorted.findIndex((ls) => !completion[ls.id]);
-      setActiveIndex(firstIncomplete >= 0 ? firstIncomplete : 0);
-      // Content for the active (and adjacent) lessons is loaded lazily by effect
-    } catch (err) {
-      setError(err.message || "Failed to load course.");
-    } finally {
-      setLoading(false);
-    }
-  }, [id, user?.id, loadEnrollment]);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const hasCelebratedRef = useRef(false);
 
   const loadEnrollment = useCallback(async () => {
     try {
@@ -92,14 +68,44 @@ const CourseViewer = () => {
     return {};
   }, [id]);
 
+  const loadData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const [c, l] = await Promise.all([fetchCourseById(id), fetchLessons(id)]);
+      setCourse(c);
+      const sorted = (l || []).sort(
+        (a, b) => (a.sortOrder || a.sort_order || 0) - (b.sortOrder || b.sort_order || 0)
+      );
+      setLessons(sorted);
+
+      // Load enrollment first so we can resume at the right lesson
+      const completion = user?.id ? await loadEnrollment() : {};
+
+      // Resume at the first incomplete lesson (fall back to the first lesson)
+      const firstIncomplete = sorted.findIndex((ls) => !completion[ls.id]);
+      setActiveIndex(firstIncomplete >= 0 ? firstIncomplete : 0);
+      // Content for the active (and adjacent) lessons is loaded lazily by effect
+    } catch (err) {
+      setError(err.message || "Failed to load course.");
+    } finally {
+      setLoading(false);
+    }
+  }, [id, user?.id, loadEnrollment]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
   // Lazy-load lesson content on demand, cached in a ref to avoid refetching.
   const ensureLessonContent = useCallback(async (lesson) => {
     const lid = lesson?.id;
     if (!lid || lessonContentsRef.current[lid] !== undefined) return;
     const doc = await loadLessonDoc(lid);
     let value = "";
-    if (doc.length > 0) {
-      value = doc;
+    const hasContent = Array.isArray(doc) ? doc.length > 0 : (doc?.content?.length || 0) > 0;
+    if (hasContent) {
+      value = typeof doc === "string" ? doc : JSON.stringify(doc);
     } else if (lesson.content) {
       value = typeof lesson.content === "string" ? lesson.content : JSON.stringify(lesson.content);
     }
@@ -177,6 +183,26 @@ const CourseViewer = () => {
   const activeLesson = lessons[activeIndex];
   const activeContent = activeLesson ? lessonContents[activeLesson.id] : null;
 
+  // Keyboard navigation: left/right arrows to move between lessons
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Don't capture when typing in inputs/textareas
+      const tag = e.target.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (e.target.isContentEditable) return;
+
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        if (activeIndex < lessons.length - 1) goToLesson(activeIndex + 1);
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        if (activeIndex > 0) goToLesson(activeIndex - 1);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeIndex, lessons.length, goToLesson]);
+
   // Load content for the active lesson and prefetch the next one
   useEffect(() => {
     const current = lessons[activeIndex];
@@ -184,6 +210,46 @@ const CourseViewer = () => {
     const next = lessons[activeIndex + 1];
     if (next) ensureLessonContent(next);
   }, [activeIndex, lessons, ensureLessonContent]);
+
+  // Auto-mark current lesson complete when user navigates to it
+  useEffect(() => {
+    if (!user?.id || !enrollment) return;
+    const lesson = lessons[activeIndex];
+    if (!lesson || lessonCompletionStatus[lesson.id]) return;
+    // Mark lesson complete (best-effort; ignore errors silently)
+    markLessonCompleteAPI(lesson.id)
+      .then(() => {
+        setLessonCompletionStatus((prev) => ({ ...prev, [lesson.id]: true }));
+      })
+      .catch(() => {});
+  }, [activeIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-mark course complete when all lessons are done
+  useEffect(() => {
+    if (!user?.id || !enrollment || lessons.length === 0) return;
+    const allDone = lessons.every((l) => lessonCompletionStatus[l.id]);
+    if (!allDone) return;
+    // Mark any remaining lessons complete, then reload enrollment
+    const remaining = lessons.filter((l) => !lessonCompletionStatus[l.id]);
+    if (remaining.length > 0) {
+      Promise.all(remaining.map((l) => markLessonCompleteAPI(l.id)))
+        .then(() => {
+          setLessonCompletionStatus((prev) => {
+            const next = { ...prev };
+            remaining.forEach((l) => { next[l.id] = true; });
+            return next;
+          });
+          addToast("Congratulations! Course completed!", "success");
+          return loadEnrollment();
+        })
+        .catch(() => {});
+    }
+    // Show celebration once
+    if (!hasCelebratedRef.current) {
+      hasCelebratedRef.current = true;
+      setShowCelebration(true);
+    }
+  }, [lessonCompletionStatus]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) {
     return (
@@ -213,8 +279,49 @@ const CourseViewer = () => {
     );
   }
 
-  // Not enrolled — show enroll prompt
+  // Determine if course is enrollable
+  const isPublished = course.status === "Published";
+  const isAdmin = hasPermission(user, "courses.publish"); // admin/instructor can see all
+
+  // Not enrolled — show enroll prompt (only for published courses, or admins)
   if (!enrollment) {
+    // Draft/archived: show info message instead of enroll button (unless admin)
+    if (!isPublished && !isAdmin) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100vh",
+            background: t("bg-secondary"),
+          }}
+        >
+          <div
+            style={{
+              background: t("bg-surface"),
+              borderRadius: 12,
+              padding: 40,
+              textAlign: "center",
+              maxWidth: 420,
+              boxShadow: t("shadow-md"),
+            }}
+          >
+            <BookOpen size={48} style={{ color: t("text-muted"), marginBottom: 16 }} />
+            <h2 style={{ color: t("text-primary"), margin: "0 0 8px" }}>{course.title}</h2>
+            <p style={{ color: t("text-muted"), fontSize: 14, marginBottom: 8 }}>
+              {course.status === "DRAFT"
+                ? "This course is not yet available. It is currently being prepared."
+                : "This course is no longer available for enrollment."}
+            </p>
+            <Badge variant={course.status === "DRAFT" ? "gray" : "orange"}>
+              {course.status === "DRAFT" ? "Draft" : "Archived"}
+            </Badge>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div
         style={{
@@ -242,10 +349,10 @@ const CourseViewer = () => {
           </p>
           <button
             onClick={handleEnroll}
-            disabled={enrolling}
-            className="bg-primary hover:bg-primary-hover rounded-md px-6 py-2 text-sm font-medium text-white disabled:opacity-50"
+            disabled={enrolling || !isPublished}
+            className="bg-primary hover:bg-primary-hover rounded-md px-6 py-2 text-sm font-medium text-secondary disabled:opacity-50"
           >
-            {enrolling ? "Enrolling…" : "Enroll Now"}
+            {enrolling ? "Enrolling…" : !isPublished ? "Enrollment Closed" : "Enroll Now"}
           </button>
         </div>
       </div>
@@ -253,6 +360,7 @@ const CourseViewer = () => {
   }
 
   return (
+    <>
     <ReaderLayout
       course={course}
       lessons={lessons}
@@ -355,6 +463,13 @@ const CourseViewer = () => {
         </div>
       </div>
     </ReaderLayout>
+    {showCelebration && (
+      <CourseCompletionCelebration
+        courseTitle={course?.title}
+        onClose={() => setShowCelebration(false)}
+      />
+    )}
+    </>
   );
 };
 

@@ -88,7 +88,7 @@ const GridView = ({ courses, navigate, loading, onRefresh }) => {
         action={
           <button
             onClick={() => navigate?.("/courses/create")}
-            className="bg-primary hover:bg-primary-hover mt-4 rounded-md px-4 py-2 text-sm text-white"
+            className="bg-primary hover:bg-primary-hover mt-4 rounded-md px-4 py-2 text-sm text-secondary"
           >
             Create Course
           </button>

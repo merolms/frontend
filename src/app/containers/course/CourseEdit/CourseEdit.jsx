@@ -11,6 +11,7 @@ import FormField from "@/components/forms/FormField";
 import { Badge } from "@/components/ui/badge";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { usePageTitle } from "@/hooks";
+import { useUnsavedChanges } from "@/hooks";
 import { t } from "@/styles/theme";
 
 const CourseEdit = () => {
@@ -27,6 +28,9 @@ const CourseEdit = () => {
   const [unsplashOpen, setUnsplashOpen] = useState(false);
   const [coverUploading, setCoverUploading] = useState(false);
 
+  const initialForm = course ? { title: course.title || "", description: course.description || "", category: course.categoryID || null, coverImage: course.coverImage || course.imageURL || "", duration: course.duration || "" } : form;
+  const { updateForm, clearDirty } = useUnsavedChanges(form, initialForm, setForm);
+
   const handleCoverUpload = async (e) => {
     const file = e.target.files?.[0];
     e.target.value = "";
@@ -35,7 +39,7 @@ const CourseEdit = () => {
     try {
       const { uploadCourseImage } = await import("@/app/services/courseService");
       const presignUrl = await uploadCourseImage(file);
-      setForm((p) => ({ ...p, coverImage: presignUrl }));
+      updateForm((p) => ({ ...p, coverImage: presignUrl }));
     } catch (err) {
       setApiError(err.message || "Failed to upload image");
     } finally {
@@ -92,6 +96,7 @@ const CourseEdit = () => {
     try {
       const { updateCourse } = await import("@/app/services/courseService");
       await updateCourse(id, form);
+      clearDirty();
       navigate(`/courses/${id}`);
     } catch (err) {
       setApiError(err.message || "Failed to update course. Please try again.");
@@ -177,7 +182,7 @@ const CourseEdit = () => {
                   name="title"
                   value={form.title}
                   onChange={(e) => {
-                    setForm((p) => ({ ...p, title: e.target.value }));
+                    updateForm((p) => ({ ...p, title: e.target.value }));
                     if (errors.title) setErrors((p) => ({ ...p, title: null }));
                   }}
                   className={inputCls}
@@ -190,7 +195,7 @@ const CourseEdit = () => {
                   className={`${inputCls} min-h-[110px] py-1.5`}
                   value={form.description}
                   onChange={(e) => {
-                    setForm((p) => ({ ...p, description: e.target.value }));
+                    updateForm((p) => ({ ...p, description: e.target.value }));
                     if (errors.description) setErrors((p) => ({ ...p, description: null }));
                   }}
                 />
@@ -201,7 +206,7 @@ const CourseEdit = () => {
                   name="category"
                   value={form.category || ""}
                   onChange={(e) => {
-                    setForm((p) => ({
+                    updateForm((p) => ({
                       ...p,
                       category: e.target.value ? parseInt(e.target.value) : null,
                     }));
@@ -225,7 +230,7 @@ const CourseEdit = () => {
                   min="0"
                   placeholder="e.g. 8"
                   value={form.duration ?? ""}
-                  onChange={(e) => setForm((p) => ({ ...p, duration: e.target.value }))}
+                  onChange={(e) => updateForm((p) => ({ ...p, duration: e.target.value }))}
                   className={inputCls}
                 />
               </FormField>
@@ -237,7 +242,7 @@ const CourseEdit = () => {
                     name="coverImage"
                     placeholder="https://example.com/cover.jpg"
                     value={form.coverImage}
-                    onChange={(e) => setForm((p) => ({ ...p, coverImage: e.target.value }))}
+                    onChange={(e) => updateForm((p) => ({ ...p, coverImage: e.target.value }))}
                     className={`${inputCls} flex-1`}
                   />
                   <label
@@ -272,8 +277,8 @@ const CourseEdit = () => {
                     />
                     <button
                       type="button"
-                      onClick={() => setForm((p) => ({ ...p, coverImage: "" }))}
-                      className="bg-error absolute top-1 right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded text-white hover:opacity-80"
+                      onClick={() => updateForm((p) => ({ ...p, coverImage: "" }))}
+                      className="bg-error absolute top-1 right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded text-secondary hover:opacity-80"
                     >
                       <X size={10} />
                     </button>
@@ -296,12 +301,12 @@ const CourseEdit = () => {
               <Plus size={14} className="mr-1 inline" style={{ color: t("warning") }} />
               Quick Actions
             </h3>
-            <a
-              href={`/courses/${id}/builder`}
+            <button
+              onClick={() => navigate(`/courses/${id}/builder`)}
               className="text-primary flex items-center gap-1.5 text-xs hover:underline"
             >
               <Network size={12} /> Open Course Builder
-            </a>
+            </button>
           </div>
           {form.coverImage && (
             <div className="border-border bg-bg-surface rounded-lg border p-6 shadow-sm">
@@ -327,7 +332,7 @@ const CourseEdit = () => {
         open={unsplashOpen}
         onClose={() => setUnsplashOpen(false)}
         onSelect={(url) => {
-          setForm((p) => ({ ...p, coverImage: url }));
+          updateForm((p) => ({ ...p, coverImage: url }));
           setUnsplashOpen(false);
         }}
         initialQuery={form.title || "education"}

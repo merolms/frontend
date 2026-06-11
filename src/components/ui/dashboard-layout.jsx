@@ -141,7 +141,7 @@ export default function DashboardLayout({ children, title, subtitle }) {
               >
                 <Bell size={18} />
                 {unreadCount > 0 && (
-                  <span className="bg-error absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white">
+                  <span className="bg-error absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-secondary">
                     {unreadCount > 9 ? "9+" : unreadCount}
                   </span>
                 )}

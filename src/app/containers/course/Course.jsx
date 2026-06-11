@@ -1,8 +1,10 @@
 import { BookOpen, Plus, RefreshCw, Search } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
+import { hasPermission } from "@/app/services/authService";
 import { fetchCategories } from "@/app/services/categoryService";
 import { fetchCourses } from "@/app/services/courseService";
 import EmptyState from "@/components/common/EmptyState";
@@ -42,6 +44,7 @@ const sortOptions = [
 const CourseContainer = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const user = useSelector((s) => s.auth.user);
 
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -49,9 +52,13 @@ const CourseContainer = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
 
+  const isAdmin = hasPermission(user, "courses.publish");
+
+  // Non-admin users (learner, team lead) only see published courses by default
+  const defaultStatus = isAdmin ? "" : "Published";
   const page = parseInt(searchParams.get("page")) || 1;
   const search = searchParams.get("search") || "";
-  const status = searchParams.get("status") || "";
+  const status = searchParams.get("status") || defaultStatus;
   const category = searchParams.get("category") || "";
   const sort = searchParams.get("sort") || "";
   const viewMode = searchParams.get("view") || "grid";
@@ -174,18 +181,20 @@ const CourseContainer = () => {
             </div>
           </form>
           <Select
-            value={status}
+            value={status || (isAdmin ? "all" : "Published")}
             onValueChange={(v) => updateParams({ status: v === "all" ? "" : v, page: 1 })}
           >
             <SelectTrigger className="w-32">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              {statusOptions.map((o) => (
-                <SelectItem key={o.value} value={o.value}>
-                  {o.label}
-                </SelectItem>
-              ))}
+              {statusOptions
+                .filter((o) => isAdmin || (o.value !== "DRAFT" && o.value !== "Archived"))
+                .map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
           <Select

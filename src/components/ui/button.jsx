@@ -13,8 +13,8 @@ const buttonVariants = cva(
         default: "bg-bg-surface border border-border text-text-primary hover:bg-bg-surface-active",
         ghost: "text-text-secondary hover:bg-bg-surface-active",
         danger: "text-error hover:bg-error/10",
-        green: "bg-success text-white hover:opacity-90",
-        orange: "bg-warning text-white hover:opacity-90",
+        green: "bg-success text-secondary hover:opacity-90",
+        orange: "bg-warning text-secondary hover:opacity-90",
       },
       size: {
         default: "h-8 px-3 py-1.5 text-xs",

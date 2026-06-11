@@ -155,7 +155,7 @@ const Calendar = ({ onDateClick, onEventClick, selectedDate }) => {
               <div
                 className={`mb-1 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-medium ${
                   today
-                    ? "bg-primary text-white"
+                    ? "bg-primary text-secondary"
                     : selected
                       ? "bg-primary/20 text-primary"
                       : dayInfo.isCurrentMonth

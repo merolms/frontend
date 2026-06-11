@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 import SideBar from "@/app/containers/SideBar/SideBar";
 import { useTheme as useThemeContext } from "@/app/context/ThemeContext";
-import { saveAutosave } from "@/app/services/blockService";
+import { saveLessonBlocks } from "@/app/services/blockService";
 import {
   createLesson,
   deleteLesson,
@@ -126,9 +126,6 @@ const CourseBuilder = () => {
   const [addingLesson, setAddingLesson] = useState(false);
   const [error, setError] = useState(null);
   const [words, setWords] = useState(0);
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
 
   const loadData = useCallback(async () => {
     try {
@@ -173,10 +170,15 @@ const CourseBuilder = () => {
 
     // Autosave snapshot first, then DB blocks (shared parse rules)
     const doc = await loadLessonDoc(lesson.id);
-    const json = doc.length > 0 ? JSON.stringify(doc) : "";
+    const hasContent = Array.isArray(doc) ? doc.length > 0 : (doc?.content?.length || 0) > 0;
+    const json = hasContent ? JSON.stringify(doc) : "";
     setContent(json);
     contentRef.current = json;
   }, [id, navigate]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleSave = async () => {
     if (!selectedLesson) return;
@@ -191,7 +193,7 @@ const CourseBuilder = () => {
         content: currentContent,
         type: "blocknote",
       });
-      await saveAutosave(
+      await saveLessonBlocks(
         selectedLesson.id,
         JSON.stringify({ content: currentContent, format: "blocknote" })
       );
@@ -215,7 +217,7 @@ const CourseBuilder = () => {
     if (!currentContent || currentContent === lastAutosaveContent.current) return;
     isSavingAutosave.current = true;
     try {
-      await saveAutosave(
+      await saveLessonBlocks(
         selectedLesson.id,
         JSON.stringify({ content: currentContent, format: "blocknote" })
       );

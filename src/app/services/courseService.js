@@ -7,12 +7,14 @@ import { apiDelete, apiGet, apiPost, apiPut, apiUpload } from "@/app/services/ht
 // Backend now sends camelCase: imageUrl, authorId, categoryId, lessonCount
 // Frontend uses: coverImage, authorId, categoryId, lessonCount
 
+const DEFAULT_COURSE_IMAGE = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop";
+
 const normalizeCourse = (c) => ({
   id: c.id,
   title: c.title || "",
   description: c.description || "",
-  imageURL: c.imageUrl || "",
-  coverImage: c.imageUrl || "",
+  imageURL: c.imageUrl || DEFAULT_COURSE_IMAGE,
+  coverImage: c.imageUrl || DEFAULT_COURSE_IMAGE,
   duration: c.duration ? String(c.duration) : "",
   status: c.status || "DRAFT",
   // categoryId is a numeric FK; preserve as-is for edit forms

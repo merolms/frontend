@@ -236,7 +236,7 @@ const TeamContainer = () => {
                     className="-mx-4 -mt-4 mb-3 flex items-center justify-between rounded-t-lg p-3"
                     style={{ background: team.color || t("accent"), borderRadius: "8px 8px 0 0" }}
                   >
-                    <Users size={18} className="text-white/80" />
+                    <Users size={18} className="text-secondary/80" />
                     <Badge variant={team.status === 1 ? "green" : "gray"}>
                       {team.status === 1 ? "Active" : "Inactive"}
                     </Badge>

@@ -40,7 +40,9 @@ const CoursePreview = () => {
           const target = lessonId
             ? sorted.find((x) => String(x.id) === String(lessonId)) || sorted[0]
             : sorted[0];
-          const content = await loadLessonContent(target);
+          const doc = await loadLessonContent(target);
+          const hasContent = Array.isArray(doc) ? doc.length > 0 : (doc?.content?.length || 0) > 0;
+          const content = hasContent ? JSON.stringify(doc) : "";
           setSelectedLesson({ ...target, _content: content });
         }
       } catch (err) {
@@ -57,12 +59,32 @@ const CoursePreview = () => {
       if (!lesson || lesson.id === selectedLesson?.id) return;
       navigate(`/courses/${id}/preview/${lesson.id}`, { replace: true });
       const content = await loadLessonContent(lesson);
-      setSelectedLesson({ ...lesson, _content: content });
+      const hasContent = Array.isArray(content) ? content.length > 0 : (content?.content?.length || 0) > 0;
+      setSelectedLesson({ ...lesson, _content: hasContent ? JSON.stringify(content) : "" });
     },
     [id, lessons, selectedLesson, navigate, loadLessonContent]
   );
 
   const lessonIndex = selectedLesson ? lessons.findIndex((l) => l.id === selectedLesson.id) : -1;
+
+  // Keyboard navigation: left/right arrows to move between lessons
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const tag = e.target.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (e.target.isContentEditable) return;
+
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        if (lessonIndex < lessons.length - 1) handleSelectLesson(lessonIndex + 1);
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        if (lessonIndex > 0) handleSelectLesson(lessonIndex - 1);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [lessonIndex, lessons.length, handleSelectLesson]);
 
   if (loading) {
     return (
@@ -162,7 +184,7 @@ const CoursePreview = () => {
               </h2>
             </div>
 
-            {selectedLesson?._content?.length > 0 ? (
+            {selectedLesson?._content ? (
               <div style={{ flex: 1, marginLeft: "-35px" }}>
                 <MeroEduEditor
                   initialContent={selectedLesson._content}

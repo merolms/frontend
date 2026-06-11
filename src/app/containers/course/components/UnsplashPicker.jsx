@@ -125,7 +125,7 @@ const UnsplashPicker = ({ open, onClose, onSelect, initialQuery = "" }) => {
                     />
                     {selectedId === photo.id && (
                       <div className="bg-success absolute top-1 right-1 rounded-full p-1">
-                        <Check size={12} className="text-white" />
+                        <Check size={12} className="text-secondary" />
                       </div>
                     )}
                   </div>

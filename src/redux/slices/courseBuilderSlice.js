@@ -1,13 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import {
-  createBlock,
   deleteBlock,
-  fetchAutosave,
   fetchLessonBlocks,
   generateAIContent,
   reorderBlocks,
-  saveAutosave,
+  saveLessonBlocks,
   updateBlock,
   uploadBlockMedia,
 } from "@/app/services/blockService";
@@ -21,17 +19,6 @@ export const loadLessonBlocks = createAsyncThunk(
       return await fetchLessonBlocks(lessonId);
     } catch (error) {
       return rejectWithValue(error.message || "Failed to load blocks");
-    }
-  }
-);
-
-export const addBlock = createAsyncThunk(
-  "courseBuilder/addBlock",
-  async ({ lessonId, blockData }, { rejectWithValue }) => {
-    try {
-      return await createBlock(lessonId, blockData);
-    } catch (error) {
-      return rejectWithValue(error.message || "Failed to create block");
     }
   }
 );
@@ -74,7 +61,7 @@ export const autoSaveContent = createAsyncThunk(
   "courseBuilder/autosave",
   async ({ lessonId, snapshot }, { rejectWithValue }) => {
     try {
-      return await saveAutosave(lessonId, snapshot);
+      return await saveLessonBlocks(lessonId, snapshot);
     } catch (error) {
       return rejectWithValue(error.message || "Autosave failed");
     }
@@ -85,7 +72,7 @@ export const loadAutosave = createAsyncThunk(
   "courseBuilder/loadAutosave",
   async (lessonId, { rejectWithValue }) => {
     try {
-      return await fetchAutosave(lessonId);
+      return await fetchLessonBlocks(lessonId);
     } catch (error) {
       return rejectWithValue(error.message || "Failed to load autosave");
     }
@@ -161,11 +148,6 @@ const courseBuilderSlice = createSlice({
       .addCase(loadLessonBlocks.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      })
-      // addBlock
-      .addCase(addBlock.fulfilled, (state, action) => {
-        state.lessonBlocks.push(action.payload);
-        state.isDirty = true;
       })
       // saveBlock
       .addCase(saveBlock.pending, (state) => {

@@ -55,7 +55,7 @@ const EnrollButton = ({ enrollment, onEnroll, onContinue, onReview }) => {
   }
 
   const variantStyles = {
-    primary: "bg-primary hover:bg-primary-hover text-white",
+    primary: "bg-primary hover:bg-primary-hover text-secondary",
     success: "bg-success/10 text-success border border-success/20 cursor-default",
     outline: "border border-border text-text-primary hover:bg-bg-surface-hover",
   };

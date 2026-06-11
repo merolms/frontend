@@ -136,7 +136,7 @@ function PDFBlockComponent(props) {
               />
               <button
                 type="submit"
-                className="rounded-lg bg-neutral-700 px-3 py-2 text-sm text-white hover:bg-neutral-800"
+                className="rounded-lg bg-neutral-700 px-3 py-2 text-sm text-secondary hover:bg-neutral-800"
               >
                 Load
               </button>

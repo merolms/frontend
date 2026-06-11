@@ -1,5 +1,7 @@
 import { BookOpen } from "lucide-react";
 
+const DEFAULT_COURSE_IMAGE = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop";
+
 /**
  * CourseCard — Reusable card for displaying course information.
  *
@@ -25,17 +27,12 @@ const CourseCard = ({
       className="border-border bg-bg-surface flex cursor-pointer items-center gap-4 rounded-xl border p-4 shadow-sm transition-all hover:shadow-md"
       onClick={onClick}
     >
-      {course.coverImage ? (
-        <img
-          src={course.coverImage}
-          alt={course.title}
-          className="h-16 w-24 flex-shrink-0 rounded-lg object-cover"
-        />
-      ) : (
-        <div className="bg-bg-surface-active flex h-16 w-24 flex-shrink-0 items-center justify-center rounded-lg">
-          <BookOpen size={20} className="text-text-muted" />
-        </div>
-      )}
+      <img
+        src={course.coverImage || DEFAULT_COURSE_IMAGE}
+        alt={course.title}
+        className="h-16 w-24 flex-shrink-0 rounded-lg object-cover"
+        onError={(e) => { e.target.src = DEFAULT_COURSE_IMAGE; }}
+      />
       <div className="min-w-0 flex-1">
         <h4 className="text-text-primary truncate text-sm font-semibold">{course.title}</h4>
         <p className="text-text-muted text-[11px]">
@@ -79,7 +76,7 @@ const CourseCard = ({
           </button>
         )}
         {actionLabel && (
-          <button className="bg-primary hover:bg-primary-hover flex-shrink-0 rounded-md px-3 py-1.5 text-xs text-white">
+          <button className="bg-primary hover:bg-primary-hover flex-shrink-0 rounded-md px-3 py-1.5 text-xs text-secondary">
             {actionLabel}
           </button>
         )}

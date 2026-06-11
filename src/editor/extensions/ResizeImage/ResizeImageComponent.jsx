@@ -212,7 +212,7 @@ export const ResizableImageComponent = (props) => {
             className="absolute top-0 right-0 hidden h-8 w-8 cursor-pointer items-center justify-center rounded-tr-lg rounded-bl-md bg-black/50 group-hover:flex"
             onClick={toggleEditMode}
           >
-            <span className="text-xs text-white">
+            <span className="text-xs text-secondary">
               <Settings className="h-6 w-6 flex-none" strokeWidth={1} />
             </span>
           </button>

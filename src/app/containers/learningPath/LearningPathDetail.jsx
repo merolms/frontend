@@ -209,7 +209,7 @@ const LearningPathDetail = () => {
                           className="flex h-7 w-7 items-center justify-center rounded-full"
                           style={{ background: path.color }}
                         >
-                          <Check size={14} className="text-white" />
+                          <Check size={14} className="text-secondary" />
                         </div>
                       ) : (
                         <div
@@ -259,23 +259,18 @@ const LearningPathDetail = () => {
           {activeCourse && (
             <div className="border-border bg-bg-surface overflow-hidden rounded-xl border shadow-sm">
               {/* Course cover */}
-              {activeCourse.coverImage ? (
-                <img
-                  src={activeCourse.coverImage}
-                  alt={activeCourse.title}
-                  className="h-48 w-full object-cover"
-                />
-              ) : (
-                <div className="bg-bg-surface-active flex h-48 w-full items-center justify-center">
-                  <BookOpen size={48} className="text-text-muted" />
-                </div>
-              )}
+              <img
+                src={activeCourse.coverImage || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop"}
+                alt={activeCourse.title}
+                className="h-48 w-full object-cover"
+                onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop"; }}
+              />
 
               <div className="p-5">
                 {/* Step badge */}
                 <div className="mb-3 flex items-center gap-2">
                   <div
-                    className="flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                    className="flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold text-secondary"
                     style={{ background: path.color }}
                   >
                     {activeStep + 1}
@@ -347,7 +342,7 @@ const LearningPathDetail = () => {
               <Button
                 size="sm"
                 onClick={handleDelete}
-                className="bg-error hover:bg-error/90 text-white"
+                className="bg-error hover:bg-error/90 text-secondary"
               >
                 Delete
               </Button>

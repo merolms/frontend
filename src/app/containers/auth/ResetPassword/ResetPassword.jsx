@@ -56,7 +56,7 @@ const ResetPassword = () => {
               </div>
               <button
                 onClick={() => navigate("/login")}
-                className="bg-primary hover:bg-primary-hover h-10 w-full cursor-pointer rounded-lg text-sm font-medium text-white transition-colors"
+                className="bg-primary hover:bg-primary-hover h-10 w-full cursor-pointer rounded-lg text-sm font-medium text-secondary transition-colors"
               >
                 Go to Sign In
               </button>
@@ -105,7 +105,7 @@ const ResetPassword = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="bg-primary hover:bg-primary-hover h-10 w-full cursor-pointer rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
+                  className="bg-primary hover:bg-primary-hover h-10 w-full cursor-pointer rounded-lg text-sm font-medium text-secondary transition-colors disabled:opacity-50"
                 >
                   {loading ? "Resetting..." : "Reset Password"}
                 </button>

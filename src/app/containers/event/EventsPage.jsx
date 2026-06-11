@@ -234,13 +234,13 @@ const EventsPage = () => {
           <div className="border-border flex items-center overflow-hidden rounded-lg border">
             <button
               onClick={() => setView("calendar")}
-              className={`flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-xs transition-colors ${view === "calendar" ? "bg-primary text-white" : "text-text-muted hover:bg-bg-surface-hover"}`}
+              className={`flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-xs transition-colors ${view === "calendar" ? "bg-primary text-secondary" : "text-text-muted hover:bg-bg-surface-hover"}`}
             >
               <CalendarDays size={13} /> Calendar
             </button>
             <button
               onClick={() => setView("list")}
-              className={`flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-xs transition-colors ${view === "list" ? "bg-primary text-white" : "text-text-muted hover:bg-bg-surface-hover"}`}
+              className={`flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-xs transition-colors ${view === "list" ? "bg-primary text-secondary" : "text-text-muted hover:bg-bg-surface-hover"}`}
             >
               <List size={13} /> List
             </button>

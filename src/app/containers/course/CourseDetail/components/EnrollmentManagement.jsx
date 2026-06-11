@@ -198,7 +198,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                 >
                   <div className="flex items-center gap-2.5">
                     <div
-                      className="flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold text-white shadow-sm"
+                      className="flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold text-secondary shadow-sm"
                       style={{
                         background:
                           enr.status === "completed"

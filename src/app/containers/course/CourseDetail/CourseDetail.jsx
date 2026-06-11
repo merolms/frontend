@@ -239,9 +239,7 @@ const CourseDetail = () => {
         <div
           className="mb-4 overflow-hidden rounded-xl"
           style={{
-            background: course.coverImage
-              ? `linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%), url(${course.coverImage}) center/cover`
-              : "linear-gradient(135deg, #1a2332 0%, #232f3e 100%)",
+            background: `linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%), url(${course.coverImage || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&h=400&fit=crop"}) center/cover`,
           }}
         >
           <div className="flex items-start justify-between gap-6 p-6">
@@ -553,9 +551,9 @@ const CourseDetail = () => {
                               </div>
                               {canManageEnrollments && enrollCount > 0 && (
                                 <div className="mt-1 flex items-center gap-2">
-                                  <div className="bg-bg-surface-active h-1 w-16 overflow-hidden rounded-full">
+                                  <div className="bg-bg-surface-active h-1 w-full overflow-hidden rounded-full">
                                     <div
-                                      className="bg-success h-full rounded-full transition-all"
+                                      className="bg-primary h-full rounded-full transition-all"
                                       style={{ width: `${completionPct}%` }}
                                     />
                                   </div>

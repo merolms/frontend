@@ -21,7 +21,7 @@ const Unauthorized = () => {
           </button>
           <button
             onClick={() => navigate("/")}
-            className="bg-primary hover:bg-primary-hover flex h-8 cursor-pointer items-center gap-1 rounded-md px-3 text-xs font-medium text-white"
+            className="bg-primary hover:bg-primary-hover flex h-8 cursor-pointer items-center gap-1 rounded-md px-3 text-xs font-medium text-secondary"
           >
             <Home size={14} /> Dashboard
           </button>

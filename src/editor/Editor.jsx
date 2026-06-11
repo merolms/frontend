@@ -42,11 +42,11 @@ import VideoBlock from "./extensions/Video/VideoBlock";
 import WebPreview from "./extensions/WebPreview/WebPreview";
 import { ToolbarButtons } from "./Toolbar/ToolbarButtons";
 import Placeholder from "@tiptap/extension-placeholder";
-import { placeholder } from "@codemirror/view";
+// import { placeholder } from "@codemirror/view";
 
 const DEFAULT_CONTENT = {
   type: "doc",
-  content: [{ type: "paragraph", content: [{ type: "text", text: " " }] }],
+  content: [],
 };
 
 function MeroEduEditor({
@@ -137,7 +137,6 @@ function MeroEduEditor({
   const editor = useEditor({
     editable,
     extensions,
-    content: DEFAULT_CONTENT,
     immediatelyRender: false,
     autofocus: "start",
     onCreate: () => {

@@ -36,7 +36,7 @@ const Pagination = ({ total, value, onChange, className }) => {
             className={cn(
               "flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-xs font-medium transition-colors",
               p === value
-                ? "bg-primary text-white"
+                ? "bg-primary text-secondary"
                 : "border-border text-text-secondary hover:bg-bg-surface-active border"
             )}
           >
