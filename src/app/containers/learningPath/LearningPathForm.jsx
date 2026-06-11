@@ -106,6 +106,7 @@ const LearningPathForm = () => {
     color: "#6366F1",
     courses: [],
     versionNotes: "",
+    isPublic: false,
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -138,6 +139,7 @@ const LearningPathForm = () => {
         color: imported.color || "#6366F1",
         courses: (imported.courses || []).map((c, i) => ({ ...c, order: i + 1 })),
         versionNotes: imported.versionNotes || "",
+        isPublic: imported.isPublic || false,
       });
       addToast("Learning path imported successfully", "success");
       // Clear the state to prevent re-importing on refresh
@@ -192,6 +194,7 @@ const LearningPathForm = () => {
           color: data.color || "#6366F1",
           courses: normalized,
           versionNotes: data.versionNotes || "",
+          isPublic: data.isPublic || false,
         });
       }
     } catch (err) {
@@ -227,6 +230,7 @@ const LearningPathForm = () => {
       color: template.color,
       courses: template.courses.map((c, i) => ({ ...c, order: i + 1 })),
       versionNotes: "",
+      isPublic: false,
     }));
     setSelectedTemplate(template.id);
     setShowTemplatePicker(false);
@@ -514,6 +518,37 @@ const LearningPathForm = () => {
                 <p className="text-text-muted mt-0.5 text-[10px]">{form.versionNotes.length}/200 characters</p>
               </div>
             )}
+
+            <div>
+              <label className="text-text-primary text-xs font-semibold">Visibility</label>
+              <div className="mt-2 flex items-center gap-3">
+                <label className="flex cursor-pointer items-center gap-2">
+                  <input
+                    type="radio"
+                    name="visibility"
+                    value="private"
+                    checked={!form.isPublic}
+                    onChange={(e) => handleChange("isPublic", false)}
+                    className="h-4 w-4"
+                  />
+                  <span className="text-text-secondary text-sm">Private</span>
+                </label>
+                <label className="flex cursor-pointer items-center gap-2">
+                  <input
+                    type="radio"
+                    name="visibility"
+                    value="public"
+                    checked={form.isPublic}
+                    onChange={(e) => handleChange("isPublic", true)}
+                    className="h-4 w-4"
+                  />
+                  <span className="text-text-secondary text-sm">Public</span>
+                </label>
+              </div>
+              <p className="text-text-muted mt-1 text-[10px]">
+                {form.isPublic ? "Anyone can view this learning path" : "Only you can view this learning path"}
+              </p>
+            </div>
 
             <div className="grid grid-cols-4 gap-3">
               <div>

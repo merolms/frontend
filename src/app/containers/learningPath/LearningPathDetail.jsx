@@ -5,10 +5,12 @@ import {
   Check,
   ChevronRight,
   Clock,
+  Copy,
   Edit,
   Eye,
   Layers,
   Play,
+  Share2,
   Star,
   Trash2,
   TrendingUp,
@@ -41,6 +43,7 @@ const LearningPathDetail = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [showDelete, setShowDelete] = useState(false);
   const [showStats, setShowStats] = useState(false);
+  const [showShare, setShowShare] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
@@ -71,6 +74,34 @@ const LearningPathDetail = () => {
     } catch (err) {
       setError("Failed to delete learning path.");
     }
+  };
+
+  const handleCopyLink = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    addToast("Link copied to clipboard", "success");
+  };
+
+  const handleSocialShare = (platform) => {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent(path?.title || "Learning Path");
+    const text = encodeURIComponent(`Check out this learning path: ${path?.title}`);
+    
+    let shareUrl = "";
+    switch (platform) {
+      case "twitter":
+        shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+        break;
+      case "linkedin":
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+        break;
+      case "facebook":
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+        break;
+      default:
+        return;
+    }
+    window.open(shareUrl, "_blank", "width=600,height=400");
   };
 
   if (loading) {
@@ -154,6 +185,13 @@ const LearningPathDetail = () => {
               <Button
                 variant="outline"
                 size="sm"
+                onClick={() => setShowShare(!showShare)}
+              >
+                <Share2 size={14} /> Share
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => setShowStats(!showStats)}
               >
                 <BarChart3 size={14} /> Statistics
@@ -190,6 +228,65 @@ const LearningPathDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Share Modal */}
+      {showShare && (
+        <div className="border-border bg-bg-surface mb-6 rounded-xl border p-5 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-text-primary text-sm font-semibold">Share Learning Path</h3>
+            <button
+              onClick={() => setShowShare(false)}
+              className="text-text-muted hover:text-text-primary"
+            >
+              <X size={16} />
+            </button>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <label className="text-text-secondary mb-2 block text-xs font-semibold">Share Link</label>
+              <div className="flex gap-2">
+                <Input
+                  value={window.location.href}
+                  readOnly
+                  className="flex-1"
+                />
+                <Button size="sm" onClick={handleCopyLink}>
+                  <Copy size={14} className="mr-1" /> Copy
+                </Button>
+              </div>
+            </div>
+            <div>
+              <label className="text-text-secondary mb-2 block text-xs font-semibold">Share on Social Media</label>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleSocialShare("twitter")}
+                  className="flex-1"
+                >
+                  Twitter
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleSocialShare("linkedin")}
+                  className="flex-1"
+                >
+                  LinkedIn
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleSocialShare("facebook")}
+                  className="flex-1"
+                >
+                  Facebook
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Statistics Dashboard */}
       {showStats && (

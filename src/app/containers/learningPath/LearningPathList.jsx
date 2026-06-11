@@ -1,4 +1,4 @@
-import { ChevronRight, Clock, Download, Layers, Plus, Search, Sparkles, Star, Upload, Users } from "lucide-react";
+import { Bookmark, BookmarkCheck, ChevronRight, Clock, Download, Layers, Plus, Search, Sparkles, Star, Upload, Users } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -25,7 +25,7 @@ const difficultyColors = {
   "Beginner to Advanced": "purple",
 };
 
-const LearningPathCard = ({ path, navigate, onExport }) => {
+const LearningPathCard = ({ path, navigate, onExport, onBookmark, isBookmarked }) => {
   const gradientStyle = {
     background: `linear-gradient(135deg, ${path.color}22 0%, ${path.color}44 100%)`,
     borderLeft: `4px solid ${path.color}`,
@@ -57,16 +57,28 @@ const LearningPathCard = ({ path, navigate, onExport }) => {
               {path.title}
             </h3>
           </div>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onExport(path);
-            }}
-            className="text-text-muted hover:text-primary transition-colors"
-            title="Export learning path"
-          >
-            <Download size={16} />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onBookmark(path.id);
+              }}
+              className="text-text-muted hover:text-primary transition-colors"
+              title={isBookmarked ? "Remove bookmark" : "Bookmark learning path"}
+            >
+              {isBookmarked ? <BookmarkCheck size={16} className="text-primary" /> : <Bookmark size={16} />}
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onExport(path);
+              }}
+              className="text-text-muted hover:text-primary transition-colors"
+              title="Export learning path"
+            >
+              <Download size={16} />
+            </button>
+          </div>
         </div>
         <p className="text-text-muted mt-2 line-clamp-2 text-xs">{path.description}</p>
       </div>
@@ -137,10 +149,12 @@ const LearningPathList = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [categories, setCategories] = useState(["All Categories"]);
+  const [bookmarkedPaths, setBookmarkedPaths] = useState(new Set());
 
   const page = parseInt(searchParams.get("page")) || 1;
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category") || "";
+  const showBookmarked = searchParams.get("bookmarked") === "true";
   const [searchInput, setSearchInput] = useState(search);
 
   const fetchData = useCallback(async () => {
@@ -165,6 +179,27 @@ const LearningPathList = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Load bookmarks from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("bookmarkedLearningPaths");
+    if (saved) {
+      setBookmarkedPaths(new Set(JSON.parse(saved)));
+    }
+  }, []);
+
+  const toggleBookmark = (pathId) => {
+    setBookmarkedPaths((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(pathId)) {
+        newSet.delete(pathId);
+      } else {
+        newSet.add(pathId);
+      }
+      localStorage.setItem("bookmarkedLearningPaths", JSON.stringify(Array.from(newSet)));
+      return newSet;
+    });
+  };
 
   // Debounced search effect
   useEffect(() => {
@@ -295,6 +330,42 @@ const LearningPathList = () => {
         </div>
       </div>
 
+      {/* Recommendations */}
+      {!showBookmarked && !search && !category && paths.length > 0 && (
+        <Paper className="mb-4 p-4">
+          <div className="mb-3 flex items-center gap-2">
+            <Sparkles size={14} className="text-primary" />
+            <h3 className="text-text-primary text-sm font-semibold">Recommended for You</h3>
+          </div>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+            {paths
+              .filter((p) => !bookmarkedPaths.has(p.id))
+              .slice(0, 3)
+              .map((path) => (
+                <button
+                  key={path.id}
+                  onClick={() => navigate(`/learning-paths/${path.id}`)}
+                  className="border-border bg-bg-surface-hover hover:bg-bg-surface-active border rounded-lg p-3 text-left transition-colors"
+                >
+                  <div className="mb-2 flex items-center gap-2">
+                    <div
+                      className="h-6 w-6 rounded"
+                      style={{ background: path.color }}
+                    />
+                    <span className="text-text-primary line-clamp-1 text-xs font-semibold">{path.title}</span>
+                  </div>
+                  <p className="text-text-muted line-clamp-2 text-[10px]">{path.description}</p>
+                  <div className="text-text-muted mt-2 flex items-center gap-2 text-[10px]">
+                    <span>{path.category}</span>
+                    <span>·</span>
+                    <span>{path.difficulty}</span>
+                  </div>
+                </button>
+              ))}
+          </div>
+        </Paper>
+      )}
+
       {/* Filters */}
       <Paper className="mb-4 p-3">
         <div className="flex flex-wrap items-center gap-2">
@@ -325,6 +396,14 @@ const LearningPathList = () => {
               ))}
             </SelectContent>
           </Select>
+          <Button
+            variant={showBookmarked ? "default" : "outline"}
+            size="sm"
+            onClick={() => updateParams({ bookmarked: showBookmarked ? "" : "true", page: 1 })}
+          >
+            {showBookmarked ? <BookmarkCheck size={14} className="mr-1" /> : <Bookmark size={14} className="mr-1" />}
+            {showBookmarked ? "Bookmarked" : "Bookmarks"}
+          </Button>
           {(search || category) && (
             <Button variant="default" size="sm" onClick={handleClear}>
               Clear
@@ -349,6 +428,16 @@ const LearningPathList = () => {
             </div>
           ))}
         </div>
+      ) : showBookmarked && paths.filter((p) => bookmarkedPaths.has(p.id)).length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="bg-bg-surface-hover border-border mb-4 flex h-20 w-20 items-center justify-center rounded-full border">
+            <Bookmark size={40} className="text-text-muted" />
+          </div>
+          <p className="text-text-secondary text-base font-semibold">No bookmarked learning paths.</p>
+          <p className="text-text-muted mt-2 text-sm">
+            Bookmark learning paths to save them for later.
+          </p>
+        </div>
       ) : paths.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="bg-bg-surface-hover border-border mb-4 flex h-20 w-20 items-center justify-center rounded-full border">
@@ -365,8 +454,17 @@ const LearningPathList = () => {
       ) : (
         <>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {paths.map((path) => (
-              <LearningPathCard key={path.id} path={path} navigate={navigate} onExport={handleExportPath} />
+            {paths
+              .filter((p) => !showBookmarked || bookmarkedPaths.has(p.id))
+              .map((path) => (
+              <LearningPathCard 
+                key={path.id} 
+                path={path} 
+                navigate={navigate} 
+                onExport={handleExportPath}
+                onBookmark={toggleBookmark}
+                isBookmarked={bookmarkedPaths.has(path.id)}
+              />
             ))}
           </div>
           {totalPages > 1 && (
