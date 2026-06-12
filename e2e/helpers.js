@@ -388,7 +388,7 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
   });
 
   // Mock autosave
-  await page.route("**/lessons/**/autosave**", async (route) => {
+  await page.route("**/lessons/**/blocks**", async (route) => {
     if (route.request().method() === "GET") {
       await route.fulfill({
         status: 200,

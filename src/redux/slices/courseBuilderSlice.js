@@ -58,7 +58,7 @@ export const reorderLessonBlocks = createAsyncThunk(
 );
 
 export const autoSaveContent = createAsyncThunk(
-  "courseBuilder/autosave",
+  "courseBuilder/blocks",
   async ({ lessonId, snapshot }, { rejectWithValue }) => {
     try {
       return await saveLessonBlocks(lessonId, snapshot);
