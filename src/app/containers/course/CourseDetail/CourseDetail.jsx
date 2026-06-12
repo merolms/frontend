@@ -327,7 +327,7 @@ const CourseDetail = () => {
               </Button>
             )}
             {enrollment?.status === "dropped" && (
-              <Button size="sm" variant="green" onClick={handleEnroll} disabled={actionLoading}>
+              <Button size="sm" variant="ghost" onClick={handleEnroll} disabled={actionLoading}>
                 <Plus size={14} /> Re-enroll
               </Button>
             )}
@@ -342,7 +342,7 @@ const CourseDetail = () => {
               </Button>
             )}
             {!enrollment && user && course.status === "Published" && (
-              <Button size="sm" variant="green" onClick={handleEnroll} disabled={actionLoading}>
+              <Button size="sm" variant="primary" onClick={handleEnroll} disabled={actionLoading}>
                 <Plus size={14} /> Enroll Now
               </Button>
             )}
@@ -368,7 +368,7 @@ const CourseDetail = () => {
               </PermissionGuard>
             )}
             <PermissionGuard permissions={["courses.delete"]}>
-              <Button size="sm" variant="ghost" onClick={() => setActiveModal("delete")}>
+              <Button size="sm" variant="danger" onClick={() => setActiveModal("delete")}>
                 <Trash2 size={14} /> Delete
               </Button>
             </PermissionGuard>

@@ -77,6 +77,22 @@ const normalizeTeamEnrollment = (e) => ({
 // ==================== ASSIGNMENTS ====================
 
 /**
+ * Get paginated list of all assignments
+ */
+export const getAssignments = async (params = {}) => {
+  const { start = 0, limit = 10 } = params;
+  const { request } = await import("@/app/services/http");
+  const response = await request(`/assignments?start=${start}&limit=${limit}`);
+  console.log("Response message", response)
+  const assignments = Array.isArray(response) ? response : [];
+  console.log("assignment", assignments)
+  return {
+    assignments: assignments.map(normalizeAssignment),
+    total: response.total || 0,
+  };
+};
+
+/**
  * Get assignments by lesson ID
  */
 export const getAssignmentsByLesson = async (lessonId) => {

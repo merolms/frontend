@@ -1,18 +1,22 @@
-import { BookOpen, Plus, RefreshCw, Search } from "lucide-react";
+import { BookOpen, Pencil, Plus, Search, ToggleLeft, Trash2,RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
+import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import { hasPermission } from "@/app/services/authService";
 import { fetchAssignmentsByLesson } from "@/redux/slices/assignmentSlice";
 import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
+import LoadingState from "@/components/common/LoadingState";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Input } from "@/components/ui/input";
+import { Pagination } from "@/components/ui/pagination";
+
 import {
   Select,
   SelectContent,
@@ -20,232 +24,365 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/app/context/ToastContext";
+import { t } from "@/styles/theme";
 
 const statusOptions = [
-  { value: "all", label: "All" },
+  { value: "all", label: "All Status" },
   { value: "PUBLISHED", label: "Published" },
   { value: "DRAFT", label: "Draft" },
   { value: "CLOSED", label: "Closed" },
 ];
 
 const sortOptions = [
-  { value: "newest", label: "Newest First" },
+  { value: "all", label: "Default" },
   { value: "title", label: "Title A-Z" },
-  { value: "dueDate", label: "Due Date" },
+  { value: "recent", label: "Recently Updated" },
 ];
 
 const AssignmentContainer = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const user = useSelector((s) => s.auth.user);
+  const { addToast } = useToast();
 
   const [assignments, setAssignments] = useState([]);
-  const [filteredAssignments, setFilteredAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("newest");
-  const [lessonId, setLessonId] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [sort, setSort] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
+  const limit = 10;
 
-  useEffect(() => {
-    const lessonIdParam = searchParams.get("lessonId");
-    if (lessonIdParam) {
-      setLessonId(lessonIdParam);
-      loadAssignments(lessonIdParam);
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
-    let filtered = [...assignments];
-
-    // Search filter
-    if (searchQuery) {
-      filtered = filtered.filter(
-        (a) =>
-          a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          a.description.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    // Status filter
-    if (statusFilter !== "all") {
-      filtered = filtered.filter((a) => a.status === statusFilter);
-    }
-
-    // Sort
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "title":
-          return a.title.localeCompare(b.title);
-        case "dueDate":
-          if (!a.dueDate) return 1;
-          if (!b.dueDate) return -1;
-          return new Date(a.dueDate) - new Date(b.dueDate);
-        case "newest":
-        default:
-          return new Date(b.createdAt) - new Date(a.createdAt);
-      }
-    });
-
-    setFilteredAssignments(filtered);
-  }, [assignments, searchQuery, statusFilter, sortBy]);
-
-  const loadAssignments = async (lessonId) => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      // Dispatch the action - for now we'll use the service directly
-      // In a real implementation, you'd use the Redux thunk
-      const { getAssignmentsByLesson } = await import("@/app/services/assignmentService");
-      const data = await getAssignmentsByLesson(lessonId);
-      setAssignments(data);
+      const hasFilters = Boolean(search || statusFilter || sort);
+
+      if (!hasFilters) {
+        // Plain browsing — server-side pagination
+        const start = (page - 1) * limit;
+        const { getAssignments } = await import("@/app/services/assignmentService");
+        const result = await getAssignments({ start, limit });
+        console.log("API result:", result);
+        setAssignments(result.assignments || []);
+        setTotal(result.total || 0);
+        setTotalPages(Math.ceil((result.total || 0) / limit) || 1);
+        return;
+      }
+
+      // The API only supports start/limit, so filters must operate on the
+      // whole dataset: fetch a wide window, then filter/sort/paginate locally.
+      const { getAssignments } = await import("@/app/services/assignmentService");
+      let result = await getAssignments({ start: 0, limit: 500 });
+      let data = result.assignments || [];
+      if (search) {
+        const q = search.toLowerCase();
+        data = data.filter(
+          (a) =>
+            (a.title || "").toLowerCase().includes(q) ||
+            (a.description || "").toLowerCase().includes(q)
+        );
+      }
+      if (statusFilter) {
+        data = data.filter((a) => a.status === statusFilter);
+      }
+      if (sort === "title") data.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+      else if (sort === "recent") data.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+      const filteredTotal = data.length;
+      setAssignments(data.slice((page - 1) * limit, page * limit));
+      setTotal(filteredTotal);
+      setTotalPages(Math.ceil(filteredTotal / limit) || 1);
     } catch (err) {
+      console.error("Error fetching assignments:", err);
       setError(err.message || "Failed to load assignments");
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, statusFilter, sort, page]);
 
-  const handleRefresh = () => {
-    if (lessonId) loadAssignments(lessonId);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearch(searchInput);
+    setPage(1);
   };
 
   const handleCreate = () => {
-    navigate(`/assignments/create?lessonId=${lessonId}`);
+    navigate("/assignments/create");
   };
 
-  const canCreate = hasPermission(user, "assignment:create");
+  const handleEdit = (assignment) => {
+    navigate(`/assignments/${assignment.id}/edit`);
+  };
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    try {
+      setActionLoading(true);
+      const { deleteAssignment } = await import("@/app/services/assignmentService");
+      await deleteAssignment(deleteTarget.id);
+      setDeleteTarget(null);
+      addToast(`Assignment "${deleteTarget.title}" deleted`, "success");
+      await fetchData();
+    } catch (err) {
+      addToast(err.message || "Failed to delete assignment.", "error");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleToggleStatus = async (assignment) => {
+    try {
+      const { updateAssignment } = await import("@/app/services/assignmentService");
+      const newStatus = assignment.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED";
+      await updateAssignment(assignment.id, { status: newStatus });
+      addToast(
+        `Assignment "${assignment.title}" ${newStatus === "PUBLISHED" ? "published" : "unpublished"}`,
+        "success"
+      );
+      await fetchData();
+    } catch (err) {
+      addToast(err.message || "Failed to update assignment status.", "error");
+    }
+  };
+
+  const handleClear = () => {
+    setSearchInput("");
+    setSearch("");
+    setStatusFilter("");
+    setSort("");
+    setPage(1);
+  };
 
   return (
-    <DashboardLayout
-      title={"Assignments"}
-      subtitle={"Manage course assignments"}
-    >
-      {/* Action bar */}
-      <div className="mb-4 flex items-center justify-end">
-        <PermissionGuard permissions={["courses.create"]}>
-                      <Button variant="outline" size="sm" onClick={handleRefresh}>
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Refresh
+    <>
+      <DashboardLayout
+        title="Assignments"
+        subtitle={`${total} assignment${total === 1 ? "" : "s"} total`}
+      >
+        {/* Action bar */}
+        <div className="mb-4 flex items-center justify-end">
+          <PermissionGuard permissions={["assignment.create"]}>
+            <Button size="sm" onClick={handleCreate}>
+              <Plus size={14} /> New Assignment
             </Button>
-          <Button size="sm" onClick={handleCreate}>
-            <Plus size={14} /> Create Assignment
-          </Button>
-        </PermissionGuard>
-      </div>
-      
-      <div className="space-y-6">
-
-        {/* Error Banner */}
-        {error && <FormErrorBanner message={error} onClose={() => setError(null)} />}
-
-        {/* Filters */}
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <Input
-              placeholder="Search assignments..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="max-w-sm"
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              {statusOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              {sortOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          </PermissionGuard>
         </div>
 
-        {/* Loading State */}
-        {loading && (
-          <div className="flex items-center justify-center py-12">
-            <RefreshCw className="h-8 w-8 animate-spin text-gray-400" />
+        {/* Error */}
+        {error && <FormErrorBanner message={error} />}
+
+        {/* Filters */}
+        <Paper className="mb-4 p-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <form className="flex flex-1 items-center gap-2" onSubmit={handleSearch}>
+              <div className="relative flex-1">
+                <Search
+                  size={14}
+                  className="text-text-muted absolute top-1/2 left-2.5 -translate-y-1/2"
+                />
+                <Input
+                  placeholder="Search assignments..."
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  className="pl-8"
+                />
+              </div>
+            </form>
+            <Select
+              value={statusFilter}
+              onValueChange={(v) => {
+                setStatusFilter(v === "all" ? "" : v);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="w-32">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                {statusOptions.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={sort}
+              onValueChange={(v) => {
+                setSort(v === "all" ? "" : v);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="w-36">
+                <SelectValue placeholder="Sort" />
+              </SelectTrigger>
+              <SelectContent>
+                {sortOptions.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button variant="default" size="sm" onClick={handleClear}>
+              Clear
+            </Button>
           </div>
-        )}
+        </Paper>
 
-        {/* Empty State */}
-        {!loading && filteredAssignments.length === 0 && (
-          <EmptyState
-            icon={<BookOpen className="h-12 w-12 text-gray-400" />}
-            title="No assignments found"
-            description={
-              searchQuery || statusFilter !== "all"
-                ? "Try adjusting your filters"
-                : "Create your first assignment to get started"
-            }
-            action={
-              canCreate && !searchQuery && statusFilter === "all" ? (
-                <Button onClick={handleCreate}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Assignment
-                </Button>
-              ) : null
-            }
-          />
-        )}
-
-        {/* Assignment List */}
-        {!loading && filteredAssignments.length > 0 && (
-          <div className="grid gap-4">
-            {filteredAssignments.map((assignment) => (
-              <Paper
-                key={assignment.id}
-                className="cursor-pointer p-6 transition-shadow hover:shadow-md"
-                onClick={() => navigate(`/assignments/${assignment.id}`)}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="mb-2 flex items-center gap-2">
-                      <h3 className="text-lg font-semibold text-gray-900">{assignment.title}</h3>
-                      <Badge variant={assignment.status === "PUBLISHED" ? "default" : "secondary"}>
+        {/* Table */}
+        <Paper className="overflow-hidden">
+          {loading ? (
+            <LoadingState count={5} height="h-12" className="p-4" />
+          ) : assignments.length === 0 ? (
+            <EmptyState
+              icon={<BookOpen size={48} className="text-text-muted" />}
+              title="No assignments found"
+              description="Try adjusting your filters or create a new assignment."
+              action={
+                <PermissionGuard permissions={["assignment.create"]}>
+                  <Button size="sm" onClick={handleCreate}>
+                    <Plus size={14} /> Create First Assignment
+                  </Button>
+                </PermissionGuard>
+              }
+            />
+          ) : (
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-border border-b">
+                  <th className="text-text-muted px-4 py-2.5 text-left text-xs font-medium">
+                    Assignment
+                  </th>
+                  <th className="text-text-muted px-4 py-2.5 text-left text-xs font-medium">
+                    Description
+                  </th>
+                  <th className="text-text-muted px-4 py-2.5 text-center text-xs font-medium">
+                    Points
+                  </th>
+                  <th className="text-text-muted px-4 py-2.5 text-left text-xs font-medium">
+                    Status
+                  </th>
+                  <th className="text-text-muted px-4 py-2.5 text-left text-xs font-medium">
+                    Due Date
+                  </th>
+                  <th className="text-text-muted px-4 py-2.5 text-center text-xs font-medium">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-border divide-y">
+                {assignments.map((assignment) => (
+                  <tr
+                    key={assignment.id}
+                    className={`hover:bg-bg-surface-hover transition-colors cursor-pointer ${
+                      assignment.status === "DRAFT" ? "opacity-60" : ""
+                    }`}
+                    onClick={() => navigate(`/assignments/${assignment.id}`)}
+                  >
+                    <td className="px-4 py-3">
+                      <div>
+                        <span className="text-text-primary text-xs font-semibold">
+                          {assignment.title}
+                        </span>
+                        {assignment.audienceType !== "COURSE" && (
+                          <p className="text-text-muted text-[11px]">{assignment.audienceType}</p>
+                        )}
+                      </div>
+                    </td>
+                    <td className="text-text-muted px-4 py-3 text-xs line-clamp-2">
+                      {assignment.description || "—"}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <Badge variant="blue">
+                        {assignment.maxPoints} pts
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3">
+                      <Badge
+                        variant={
+                          assignment.status === "PUBLISHED"
+                            ? "green"
+                            : assignment.status === "CLOSED"
+                            ? "red"
+                            : "gray"
+                        }
+                      >
                         {assignment.status}
                       </Badge>
-                      {assignment.audienceType !== "COURSE" && (
-                        <Badge variant="outline">{assignment.audienceType}</Badge>
-                      )}
-                    </div>
-                    <p className="mb-3 line-clamp-2 text-sm text-gray-600">
-                      {assignment.description}
-                    </p>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <span>Max Points: {assignment.maxPoints}</span>
-                      <span>Passing: {assignment.passingPoints}</span>
-                      {assignment.dueDate && (
-                        <span>Due: {new Date(assignment.dueDate).toLocaleDateString()}</span>
-                      )}
-                      <span>Submissions: {assignment.submissions?.length || 0}</span>
-                    </div>
-                  </div>
-                  <div className="text-sm text-gray-400">
-                    {new Date(assignment.updatedAt).toLocaleDateString()}
-                  </div>
-                </div>
-              </Paper>
-            ))}
+                    </td>
+                    <td className="text-text-muted px-4 py-3 text-[11px]">
+                      {assignment.dueDate
+                        ? new Date(assignment.dueDate * 1000).toLocaleDateString()
+                        : "—"}
+                    </td>
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center justify-center gap-1">
+                        <PermissionGuard permissions={["assignment.edit"]}>
+                          <button
+                            className="border-border hover:bg-bg-surface-active text-text-secondary flex h-7 w-7 items-center justify-center rounded-md border"
+                            onClick={() => handleEdit(assignment)}
+                            title="Edit"
+                          >
+                            <Pencil size={12} />
+                          </button>
+                        </PermissionGuard>
+                        <button
+                          className="border-border hover:bg-bg-surface-active text-text-secondary flex h-7 w-7 items-center justify-center rounded-md border"
+                          onClick={() => handleToggleStatus(assignment)}
+                          title={
+                            assignment.status === "PUBLISHED" ? "Unpublish" : "Publish"
+                          }
+                        >
+                          <ToggleLeft size={12} />
+                        </button>
+                        <PermissionGuard permissions={["assignment.delete"]}>
+                          <button
+                            className="border-border hover:bg-error/10 text-error flex h-7 w-7 items-center justify-center rounded-md border"
+                            onClick={() => setDeleteTarget(assignment)}
+                            title="Delete"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </PermissionGuard>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </Paper>
+
+        {totalPages > 1 && (
+          <div className="mt-4 flex justify-center">
+            <Pagination total={totalPages} value={page} onChange={setPage} />
           </div>
         )}
-      </div>
-    </DashboardLayout>
+
+        <DeleteModal
+          open={!!deleteTarget}
+          onConfirm={handleDelete}
+          onCancel={() => setDeleteTarget(null)}
+          itemName={deleteTarget?.title}
+          itemType="assignment"
+          loading={actionLoading}
+        />
+      </DashboardLayout>
+    </>
   );
 };
 
