@@ -94,7 +94,7 @@ const ButtonsExtension = (props) => {
         <button
           onClick={isEditable ? undefined : () => window.open(link, "_blank")}
           className={twMerge(
-            "flex items-center space-x-2 rounded-xl px-4 py-2 text-secondary transition-colors",
+            "text-secondary flex items-center space-x-2 rounded-xl px-4 py-2 transition-colors",
             getButtonColor(color),
             isEditable && "pointer-events-none",
             !link && "opacity-60"

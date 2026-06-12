@@ -11,7 +11,14 @@ import { cn } from "@/lib/utils";
  *   compact     - boolean for smaller padding
  *   variant     - "default" | "search" | "filter" | "error"
  */
-const EmptyState = ({ icon = "📭", title, description, action, compact = false, variant = "default" }) => {
+const EmptyState = ({
+  icon = "📭",
+  title,
+  description,
+  action,
+  compact = false,
+  variant = "default",
+}) => {
   const variantStyles = {
     default: "",
     search: "bg-bg-surface-active/30",
@@ -63,31 +70,19 @@ const EmptyState = ({ icon = "📭", title, description, action, compact = false
       role="status"
       aria-live="polite"
       className={cn(
-        "flex flex-col items-center justify-center text-center rounded-md",
+        "flex flex-col items-center justify-center rounded-md text-center",
         variantStyles[variant],
         compact ? "p-6" : "p-12"
       )}
     >
-      <div
-        className={cn(
-          "opacity-50",
-          compact ? "mb-2 text-3xl" : "mb-4 text-5xl"
-        )}
-      >
+      <div className={cn("opacity-50", compact ? "mb-2 text-3xl" : "mb-4 text-5xl")}>
         {getVariantIcon()}
       </div>
-      <p
-        className={cn(
-          "text-text-primary font-medium m-0",
-          compact ? "text-xs" : "text-sm"
-        )}
-      >
+      <p className={cn("text-text-primary m-0 font-medium", compact ? "text-xs" : "text-sm")}>
         {getVariantTitle()}
       </p>
       {getVariantDescription() && (
-        <p className="text-text-muted mt-1 mb-0 text-xs">
-          {getVariantDescription()}
-        </p>
+        <p className="text-text-muted mt-1 mb-0 text-xs">{getVariantDescription()}</p>
       )}
       {action && <div className="mt-4">{action}</div>}
     </div>

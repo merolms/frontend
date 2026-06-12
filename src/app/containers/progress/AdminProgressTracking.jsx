@@ -260,7 +260,7 @@ const AdminProgressTracking = () => {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <div
-                          className="flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold text-secondary"
+                          className="text-secondary flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold"
                           style={{ background: "#6366F1" }}
                         >
                           {(enrollment.userName || "U")[0]}

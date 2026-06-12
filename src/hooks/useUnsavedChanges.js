@@ -45,15 +45,21 @@ export const useUnsavedChanges = (form, initialForm, setForm, options = {}) => {
   }, [dirty]);
 
   // Mark dirty on first change
-  const updateForm = useCallback((updater) => {
-    setForm(updater);
-    setDirty(true);
-  }, [setForm]);
+  const updateForm = useCallback(
+    (updater) => {
+      setForm(updater);
+      setDirty(true);
+    },
+    [setForm]
+  );
 
   // Check if a specific field has been modified
-  const isDirtyField = useCallback((field) => {
-    return form[field] !== initialRef.current[field];
-  }, [form]);
+  const isDirtyField = useCallback(
+    (field) => {
+      return form[field] !== initialRef.current[field];
+    },
+    [form]
+  );
 
   // Clear dirty state (e.g. after successful save)
   const clearDirty = useCallback(() => {

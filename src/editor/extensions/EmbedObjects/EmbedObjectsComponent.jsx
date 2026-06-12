@@ -321,7 +321,7 @@ function EmbedObjectsComponent(props) {
                       className="flex h-10 w-10 items-center justify-center rounded-lg shadow-md"
                       style={{ backgroundColor: product.color }}
                     >
-                      <span className="text-xs font-bold text-secondary">
+                      <span className="text-secondary text-xs font-bold">
                         {product.name.slice(0, 2)}
                       </span>
                     </div>
@@ -427,7 +427,7 @@ function EmbedObjectsComponent(props) {
                   </button>
                   <button
                     type="submit"
-                    className="rounded-lg bg-neutral-700 px-4 py-2 text-sm font-medium text-secondary transition-colors hover:bg-neutral-800 disabled:opacity-50"
+                    className="text-secondary rounded-lg bg-neutral-700 px-4 py-2 text-sm font-medium transition-colors hover:bg-neutral-800 disabled:opacity-50"
                     disabled={
                       (activeInput === "url" && !embedUrl) || (activeInput === "code" && !embedCode)
                     }

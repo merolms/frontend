@@ -12,7 +12,7 @@ const SelectTrigger = React.forwardRef(({ className, children, ...props }, ref) 
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "border-border bg-bg-surface text-text-primary placeholder:text-text-muted focus-visible:ring-primary flex h-8 w-full items-center justify-between rounded-md border px-3 py-1.5 text-xs shadow-sm transition-colors focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+      "border-border bg-bg-surface text-text-primary placeholder:text-text-muted focus-visible:ring-primary focus-visible:ring-primary flex h-8 w-full items-center justify-between rounded-md border px-3 py-1.5 text-xs shadow-sm transition-colors focus-visible:border-transparent focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
       className
     )}
     {...props}
@@ -53,7 +53,7 @@ const SelectContent = React.forwardRef(
       <SelectPrimitive.Content
         ref={ref}
         className={cn(
-          "border-border bg-bg-surface text-text-primary animate-in fade-in-80 relative z-50 min-w-[8rem] overflow-hidden rounded-md border shadow-md focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
+          "border-border bg-bg-surface text-text-primary animate-in fade-in-80 focus-visible:ring-primary relative z-50 min-w-[8rem] overflow-hidden rounded-md border shadow-md focus-visible:ring-2 focus-visible:outline-none",
           position === "popper" && "translate-y-1",
           className
         )}

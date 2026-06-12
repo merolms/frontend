@@ -158,23 +158,26 @@ const CourseBuilder = () => {
     }
   }, [id, lessonId, navigate]);
 
-  const loadLesson = useCallback(async (lesson) => {
-    setSelectedLesson(lesson);
-    setContent("");
-    contentRef.current = "";
-    clearTimeout(autosaveTimer.current);
-    lastAutosaveContent.current = "";
+  const loadLesson = useCallback(
+    async (lesson) => {
+      setSelectedLesson(lesson);
+      setContent("");
+      contentRef.current = "";
+      clearTimeout(autosaveTimer.current);
+      lastAutosaveContent.current = "";
 
-    // Update URL to reflect selected lesson (replace to avoid history spam)
-    navigate(`/courses/${id}/builder/${lesson.id}`, { replace: true });
+      // Update URL to reflect selected lesson (replace to avoid history spam)
+      navigate(`/courses/${id}/builder/${lesson.id}`, { replace: true });
 
-    // Autosave snapshot first, then DB blocks (shared parse rules)
-    const doc = await loadLessonDoc(lesson.id);
-    const hasContent = Array.isArray(doc) ? doc.length > 0 : (doc?.content?.length || 0) > 0;
-    const json = hasContent ? JSON.stringify(doc) : "";
-    setContent(json);
-    contentRef.current = json;
-  }, [id, navigate]);
+      // Autosave snapshot first, then DB blocks (shared parse rules)
+      const doc = await loadLessonDoc(lesson.id);
+      const hasContent = Array.isArray(doc) ? doc.length > 0 : (doc?.content?.length || 0) > 0;
+      const json = hasContent ? JSON.stringify(doc) : "";
+      setContent(json);
+      contentRef.current = json;
+    },
+    [id, navigate]
+  );
 
   useEffect(() => {
     loadData();

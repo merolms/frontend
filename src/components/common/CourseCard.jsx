@@ -1,6 +1,7 @@
 import { BookOpen } from "lucide-react";
 
-const DEFAULT_COURSE_IMAGE = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop";
+const DEFAULT_COURSE_IMAGE =
+  "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop";
 
 /**
  * CourseCard — Reusable card for displaying course information.
@@ -31,7 +32,9 @@ const CourseCard = ({
         src={course.coverImage || DEFAULT_COURSE_IMAGE}
         alt={course.title}
         className="h-16 w-24 flex-shrink-0 rounded-lg object-cover"
-        onError={(e) => { e.target.src = DEFAULT_COURSE_IMAGE; }}
+        onError={(e) => {
+          e.target.src = DEFAULT_COURSE_IMAGE;
+        }}
       />
       <div className="min-w-0 flex-1">
         <h4 className="text-text-primary truncate text-sm font-semibold">{course.title}</h4>
@@ -76,7 +79,7 @@ const CourseCard = ({
           </button>
         )}
         {actionLabel && (
-          <button className="bg-primary hover:bg-primary-hover flex-shrink-0 rounded-md px-3 py-1.5 text-xs text-secondary">
+          <button className="bg-primary hover:bg-primary-hover text-secondary flex-shrink-0 rounded-md px-3 py-1.5 text-xs">
             {actionLabel}
           </button>
         )}

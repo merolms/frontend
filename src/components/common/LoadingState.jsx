@@ -40,7 +40,7 @@ const LoadingState = ({
           key={i}
           className={`bg-bg-surface border-border rounded-md border ${height} relative overflow-hidden`}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-bg-surface-hover to-transparent opacity-50 animate-[shimmer_2s_infinite]" />
+          <div className="via-bg-surface-hover absolute inset-0 animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent to-transparent opacity-50" />
         </div>
       ))}
     </div>

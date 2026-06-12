@@ -141,7 +141,7 @@ export default function DashboardLayout({ children, title, subtitle }) {
               >
                 <Bell size={18} />
                 {unreadCount > 0 && (
-                  <span className="bg-error absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-secondary">
+                  <span className="bg-error text-secondary absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold">
                     {unreadCount > 9 ? "9+" : unreadCount}
                   </span>
                 )}
@@ -184,7 +184,7 @@ export default function DashboardLayout({ children, title, subtitle }) {
                           key={notif.id}
                           role="menuitem"
                           tabIndex={0}
-                          className={`border-border hover:bg-bg-surface-hover focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none flex cursor-pointer items-start gap-3 border-b px-4 py-3 transition-colors ${!notif.read ? "bg-bg-surface-active/30" : ""}`}
+                          className={`border-border hover:bg-bg-surface-hover focus-visible:ring-primary flex cursor-pointer items-start gap-3 border-b px-4 py-3 transition-colors focus-visible:ring-2 focus-visible:outline-none ${!notif.read ? "bg-bg-surface-active/30" : ""}`}
                           onClick={() => handleMarkRead(notif.id, { stopPropagation: () => {} })}
                           onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {

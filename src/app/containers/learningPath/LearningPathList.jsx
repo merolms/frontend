@@ -1,4 +1,17 @@
-import { Bookmark, BookmarkCheck, ChevronRight, Clock, Download, Layers, Plus, Search, Sparkles, Star, Upload, Users } from "lucide-react";
+import {
+  Bookmark,
+  BookmarkCheck,
+  ChevronRight,
+  Clock,
+  Download,
+  Layers,
+  Plus,
+  Search,
+  Sparkles,
+  Star,
+  Upload,
+  Users,
+} from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -32,7 +45,7 @@ const LearningPathCard = ({ path, navigate, onExport, onBookmark, isBookmarked, 
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       navigate(`/learning-paths/${path.id}`);
     }
@@ -40,7 +53,7 @@ const LearningPathCard = ({ path, navigate, onExport, onBookmark, isBookmarked, 
 
   return (
     <div
-      className="border-border bg-bg-surface group cursor-pointer overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 focus-within:ring-2 focus-within:ring-primary/50"
+      className="border-border bg-bg-surface group focus-within:ring-primary/50 cursor-pointer overflow-hidden rounded-xl border shadow-sm transition-all duration-300 focus-within:ring-2 hover:-translate-y-1 hover:shadow-lg"
       tabIndex={0}
       role="button"
       onKeyDown={handleKeyDown}
@@ -49,7 +62,10 @@ const LearningPathCard = ({ path, navigate, onExport, onBookmark, isBookmarked, 
       {/* Header with gradient */}
       <div className="relative p-5 pb-3" style={gradientStyle}>
         <div className="flex items-start justify-between">
-          <div className="min-w-0 flex-1 cursor-pointer" onClick={() => navigate(`/learning-paths/${path.id}`)}>
+          <div
+            className="min-w-0 flex-1 cursor-pointer"
+            onClick={() => navigate(`/learning-paths/${path.id}`)}
+          >
             <div className="mb-2 flex items-center gap-2">
               <div
                 className="flex h-8 w-8 items-center justify-center rounded-lg transition-transform group-hover:scale-110"
@@ -79,7 +95,11 @@ const LearningPathCard = ({ path, navigate, onExport, onBookmark, isBookmarked, 
               aria-label={isBookmarked ? "Remove bookmark" : "Bookmark learning path"}
               aria-pressed={isBookmarked}
             >
-              {isBookmarked ? <BookmarkCheck size={16} className="text-primary" /> : <Bookmark size={16} />}
+              {isBookmarked ? (
+                <BookmarkCheck size={16} className="text-primary" />
+              ) : (
+                <Bookmark size={16} />
+              )}
             </button>
             <button
               onClick={(e) => {
@@ -91,7 +111,11 @@ const LearningPathCard = ({ path, navigate, onExport, onBookmark, isBookmarked, 
               aria-label="Export learning path"
               disabled={exporting}
             >
-              {exporting ? <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" /> : <Download size={16} />}
+              {exporting ? (
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              ) : (
+                <Download size={16} />
+              )}
             </button>
           </div>
         </div>
@@ -99,7 +123,7 @@ const LearningPathCard = ({ path, navigate, onExport, onBookmark, isBookmarked, 
       </div>
 
       {/* Course preview strip */}
-      <div className="border-border bg-bg-surface-hover border-t px-5 py-3 transition-colors group-hover:bg-bg-surface">
+      <div className="border-border bg-bg-surface-hover group-hover:bg-bg-surface border-t px-5 py-3 transition-colors">
         <div className="mb-2 flex items-center gap-1">
           <span className="text-text-secondary text-[11px] font-semibold">
             {path.totalCourses} Courses
@@ -130,7 +154,7 @@ const LearningPathCard = ({ path, navigate, onExport, onBookmark, isBookmarked, 
       </div>
 
       {/* Footer stats */}
-      <div className="border-border flex items-center justify-between border-t px-5 py-3 transition-colors group-hover:bg-bg-surface">
+      <div className="border-border group-hover:bg-bg-surface flex items-center justify-between border-t px-5 py-3 transition-colors">
         <div className="text-text-muted flex items-center gap-3 text-[11px]">
           <span className="flex items-center gap-1">
             <Users size={11} /> {path.enrolledCount}
@@ -335,14 +359,9 @@ const LearningPathList = () => {
               >
                 <Upload size={14} /> Import
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleExportAll}
-                disabled={exporting}
-              >
+              <Button variant="outline" size="sm" onClick={handleExportAll} disabled={exporting}>
                 {exporting ? (
-                  <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full mr-1" />
+                  <div className="mr-1 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                 ) : (
                   <Download size={14} className="mr-1" />
                 )}
@@ -371,14 +390,13 @@ const LearningPathList = () => {
                 <button
                   key={path.id}
                   onClick={() => navigate(`/learning-paths/${path.id}`)}
-                  className="border-border bg-bg-surface-hover hover:bg-bg-surface-active border rounded-lg p-3 text-left transition-colors"
+                  className="border-border bg-bg-surface-hover hover:bg-bg-surface-active rounded-lg border p-3 text-left transition-colors"
                 >
                   <div className="mb-2 flex items-center gap-2">
-                    <div
-                      className="h-6 w-6 rounded"
-                      style={{ background: path.color }}
-                    />
-                    <span className="text-text-primary line-clamp-1 text-xs font-semibold">{path.title}</span>
+                    <div className="h-6 w-6 rounded" style={{ background: path.color }} />
+                    <span className="text-text-primary line-clamp-1 text-xs font-semibold">
+                      {path.title}
+                    </span>
                   </div>
                   <p className="text-text-muted line-clamp-2 text-[10px]">{path.description}</p>
                   <div className="text-text-muted mt-2 flex items-center gap-2 text-[10px]">
@@ -428,7 +446,11 @@ const LearningPathList = () => {
             size="sm"
             onClick={() => updateParams({ bookmarked: showBookmarked ? "" : "true", page: 1 })}
           >
-            {showBookmarked ? <BookmarkCheck size={14} className="mr-1" /> : <Bookmark size={14} className="mr-1" />}
+            {showBookmarked ? (
+              <BookmarkCheck size={14} className="mr-1" />
+            ) : (
+              <Bookmark size={14} className="mr-1" />
+            )}
             {showBookmarked ? "Bookmarked" : "Bookmarks"}
           </Button>
           {(search || category) && (
@@ -460,7 +482,9 @@ const LearningPathList = () => {
           <div className="bg-bg-surface-hover border-border mb-4 flex h-20 w-20 items-center justify-center rounded-full border">
             <Bookmark size={40} className="text-text-muted" />
           </div>
-          <p className="text-text-secondary text-base font-semibold">No bookmarked learning paths.</p>
+          <p className="text-text-secondary text-base font-semibold">
+            No bookmarked learning paths.
+          </p>
           <p className="text-text-muted mt-2 text-sm">
             Bookmark learning paths to save them for later.
           </p>
@@ -484,16 +508,16 @@ const LearningPathList = () => {
             {paths
               .filter((p) => !showBookmarked || bookmarkedPaths.has(p.id))
               .map((path) => (
-              <LearningPathCard 
-                key={path.id} 
-                path={path} 
-                navigate={navigate} 
-                onExport={handleExportPath}
-                onBookmark={toggleBookmark}
-                isBookmarked={bookmarkedPaths.has(path.id)}
-                exporting={exporting}
-              />
-            ))}
+                <LearningPathCard
+                  key={path.id}
+                  path={path}
+                  navigate={navigate}
+                  onExport={handleExportPath}
+                  onBookmark={toggleBookmark}
+                  isBookmarked={bookmarkedPaths.has(path.id)}
+                  exporting={exporting}
+                />
+              ))}
           </div>
           {totalPages > 1 && (
             <div className="mt-6 flex justify-center">

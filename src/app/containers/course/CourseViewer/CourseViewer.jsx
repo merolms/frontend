@@ -236,7 +236,9 @@ const CourseViewer = () => {
         .then(() => {
           setLessonCompletionStatus((prev) => {
             const next = { ...prev };
-            remaining.forEach((l) => { next[l.id] = true; });
+            remaining.forEach((l) => {
+              next[l.id] = true;
+            });
             return next;
           });
           addToast("Congratulations! Course completed!", "success");
@@ -350,7 +352,7 @@ const CourseViewer = () => {
           <button
             onClick={handleEnroll}
             disabled={enrolling || !isPublished}
-            className="bg-primary hover:bg-primary-hover rounded-md px-6 py-2 text-sm font-medium text-secondary disabled:opacity-50"
+            className="bg-primary hover:bg-primary-hover text-secondary rounded-md px-6 py-2 text-sm font-medium disabled:opacity-50"
           >
             {enrolling ? "Enrolling…" : !isPublished ? "Enrollment Closed" : "Enroll Now"}
           </button>
@@ -361,114 +363,114 @@ const CourseViewer = () => {
 
   return (
     <>
-    <ReaderLayout
-      course={course}
-      lessons={lessons}
-      activeIndex={activeIndex}
-      onGoToLesson={goToLesson}
-      enrollment={enrollment}
-      onMarkLessonComplete={handleMarkLessonComplete}
-      onMarkCourseComplete={handleMarkCourseComplete}
-      lessonCompletionStatus={lessonCompletionStatus}
-    >
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          margin: "0 auto",
-          padding: "32px 40px",
-        }}
+      <ReaderLayout
+        course={course}
+        lessons={lessons}
+        activeIndex={activeIndex}
+        onGoToLesson={goToLesson}
+        enrollment={enrollment}
+        onMarkLessonComplete={handleMarkLessonComplete}
+        onMarkCourseComplete={handleMarkCourseComplete}
+        lessonCompletionStatus={lessonCompletionStatus}
       >
         <div
           style={{
-            marginBottom: 24,
-            paddingBottom: 16,
-            borderBottom: `1px solid ${t("border-secondary")}`,
-          }}
-        >
-          <p
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.07em",
-              color: "var(--text-muted)",
-              marginBottom: 4,
-            }}
-          >
-            Lesson {activeIndex + 1}
-          </p>
-          <h2
-            style={{
-              color: "var(--text-primary)",
-              margin: 0,
-              fontSize: "1.5rem",
-              fontWeight: 700,
-              lineHeight: 1.3,
-            }}
-          >
-            {activeLesson?.title || "Untitled Lesson"}
-          </h2>
-        </div>
-
-        {activeContent ? (
-          <div style={{ flex: 1 }}>
-            <MeroEduEditor
-              initialContent={activeContent}
-              editable={false}
-              showToolbar={false}
-              lessonId={activeLesson?.id}
-            />
-          </div>
-        ) : (
-          <div
-            className="text-text-muted flex flex-1 items-center justify-center"
-            style={{ minHeight: 300 }}
-          >
-            <BookOpen size={32} style={{ opacity: 0.3, marginRight: 12 }} />
-            <span>This lesson has no content yet.</span>
-          </div>
-        )}
-
-        <div
-          style={{
+            flex: 1,
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginTop: 32,
-            paddingTop: 16,
-            borderTop: `1px solid ${t("border-secondary")}`,
-            flexShrink: 0,
+            flexDirection: "column",
+            width: "100%",
+            margin: "0 auto",
+            padding: "32px 40px",
           }}
         >
-          <button
-            onClick={() => goToLesson(activeIndex - 1)}
-            disabled={activeIndex === 0}
-            className="text-text-secondary hover:bg-bg-surface-hover flex items-center gap-1 rounded-md px-3 py-1.5 text-xs disabled:opacity-50"
+          <div
+            style={{
+              marginBottom: 24,
+              paddingBottom: 16,
+              borderBottom: `1px solid ${t("border-secondary")}`,
+            }}
           >
-            <ArrowLeft size={14} /> Previous
-          </button>
-          <span className="text-text-muted text-xs">
-            {activeIndex + 1} / {lessons.length}
-          </span>
-          <button
-            onClick={() => goToLesson(activeIndex + 1)}
-            disabled={activeIndex >= lessons.length - 1}
-            className="text-text-secondary hover:bg-bg-surface-hover flex items-center gap-1 rounded-md px-3 py-1.5 text-xs disabled:opacity-50"
+            <p
+              style={{
+                fontSize: 10,
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.07em",
+                color: "var(--text-muted)",
+                marginBottom: 4,
+              }}
+            >
+              Lesson {activeIndex + 1}
+            </p>
+            <h2
+              style={{
+                color: "var(--text-primary)",
+                margin: 0,
+                fontSize: "1.5rem",
+                fontWeight: 700,
+                lineHeight: 1.3,
+              }}
+            >
+              {activeLesson?.title || "Untitled Lesson"}
+            </h2>
+          </div>
+
+          {activeContent ? (
+            <div style={{ flex: 1 }}>
+              <MeroEduEditor
+                initialContent={activeContent}
+                editable={false}
+                showToolbar={false}
+                lessonId={activeLesson?.id}
+              />
+            </div>
+          ) : (
+            <div
+              className="text-text-muted flex flex-1 items-center justify-center"
+              style={{ minHeight: 300 }}
+            >
+              <BookOpen size={32} style={{ opacity: 0.3, marginRight: 12 }} />
+              <span>This lesson has no content yet.</span>
+            </div>
+          )}
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop: 32,
+              paddingTop: 16,
+              borderTop: `1px solid ${t("border-secondary")}`,
+              flexShrink: 0,
+            }}
           >
-            Next <ArrowRight size={14} />
-          </button>
+            <button
+              onClick={() => goToLesson(activeIndex - 1)}
+              disabled={activeIndex === 0}
+              className="text-text-secondary hover:bg-bg-surface-hover flex items-center gap-1 rounded-md px-3 py-1.5 text-xs disabled:opacity-50"
+            >
+              <ArrowLeft size={14} /> Previous
+            </button>
+            <span className="text-text-muted text-xs">
+              {activeIndex + 1} / {lessons.length}
+            </span>
+            <button
+              onClick={() => goToLesson(activeIndex + 1)}
+              disabled={activeIndex >= lessons.length - 1}
+              className="text-text-secondary hover:bg-bg-surface-hover flex items-center gap-1 rounded-md px-3 py-1.5 text-xs disabled:opacity-50"
+            >
+              Next <ArrowRight size={14} />
+            </button>
+          </div>
         </div>
-      </div>
-    </ReaderLayout>
-    {showCelebration && (
-      <CourseCompletionCelebration
-        courseTitle={course?.title}
-        onClose={() => setShowCelebration(false)}
-      />
-    )}
+      </ReaderLayout>
+      {showCelebration && (
+        <CourseCompletionCelebration
+          courseTitle={course?.title}
+          onClose={() => setShowCelebration(false)}
+        />
+      )}
     </>
   );
 };

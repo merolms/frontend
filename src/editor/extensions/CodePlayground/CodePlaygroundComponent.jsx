@@ -112,7 +112,7 @@ function CodePlaygroundComponent(props) {
           <div className="flex items-center justify-between border-b border-white/5 bg-[#16161e] px-4 py-2">
             <div className="flex items-center gap-2">
               <Terminal size={14} className="text-secondary/40" />
-              <span className="text-xs font-medium text-secondary/40">{currentLang.name}</span>
+              <span className="text-secondary/40 text-xs font-medium">{currentLang.name}</span>
             </div>
             <div className="flex items-center gap-2">
               {difficulty && (
@@ -130,7 +130,7 @@ function CodePlaygroundComponent(props) {
               )}
               <button
                 onClick={handleCopy}
-                className="rounded p-1.5 text-secondary/40 transition-colors hover:bg-white/10 hover:text-secondary/70"
+                className="text-secondary/40 hover:text-secondary/70 rounded p-1.5 transition-colors hover:bg-white/10"
               >
                 {copied ? <ClipboardCheck size={14} /> : <Copy size={14} />}
               </button>
@@ -139,18 +139,18 @@ function CodePlaygroundComponent(props) {
 
           {/* Description */}
           {description && (
-            <div className="prose prose-invert prose-sm max-w-none border-b border-white/5 px-4 py-3 text-sm text-secondary/70">
+            <div className="prose prose-invert prose-sm text-secondary/70 max-w-none border-b border-white/5 px-4 py-3 text-sm">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{description}</ReactMarkdown>
             </div>
           )}
 
           {/* Editor */}
-          <pre className="overflow-auto p-4 font-mono text-sm whitespace-pre-wrap text-secondary/80">
+          <pre className="text-secondary/80 overflow-auto p-4 font-mono text-sm whitespace-pre-wrap">
             {code}
           </pre>
 
           {/* Notice */}
-          <div className="flex items-center gap-2 border-t border-white/5 bg-[#16161e] px-4 py-3 text-xs text-secondary/30">
+          <div className="text-secondary/30 flex items-center gap-2 border-t border-white/5 bg-[#16161e] px-4 py-3 text-xs">
             <Terminal size={12} />
             <span>Code execution requires a backend connection. Standalone mode — edit only.</span>
           </div>
@@ -212,7 +212,7 @@ function CodePlaygroundComponent(props) {
             <select
               value={languageId}
               onChange={(e) => handleLangChange(e.target.value)}
-              className="rounded border border-white/10 bg-transparent px-2 py-1 text-xs text-secondary/60 transition-colors outline-none hover:border-white/20"
+              className="text-secondary/60 rounded border border-white/10 bg-transparent px-2 py-1 text-xs transition-colors outline-none hover:border-white/20"
             >
               {PLAYGROUND_LANGUAGES.map((l) => (
                 <option key={l.id} value={l.id} className="bg-[#1a1b26]">
@@ -226,7 +226,7 @@ function CodePlaygroundComponent(props) {
                 setDifficulty(e.target.value);
                 saveAttrs({ difficulty: e.target.value });
               }}
-              className="rounded border border-white/10 bg-transparent px-2 py-1 text-xs text-secondary/60 transition-colors outline-none hover:border-white/20"
+              className="text-secondary/60 rounded border border-white/10 bg-transparent px-2 py-1 text-xs transition-colors outline-none hover:border-white/20"
             >
               <option value="easy" className="bg-[#1a1b26]">
                 Easy
@@ -245,14 +245,14 @@ function CodePlaygroundComponent(props) {
                 setCode(currentLang.defaultCode);
                 saveAttrs({ starterCode: currentLang.defaultCode });
               }}
-              className="rounded p-1.5 text-secondary/40 transition-colors hover:bg-white/10 hover:text-secondary/60"
+              className="text-secondary/40 hover:text-secondary/60 rounded p-1.5 transition-colors hover:bg-white/10"
               title="Reset to default"
             >
               <RotateCcw size={14} />
             </button>
             <button
               onClick={handleCopy}
-              className="rounded p-1.5 text-secondary/40 transition-colors hover:bg-white/10 hover:text-secondary/70"
+              className="text-secondary/40 hover:text-secondary/70 rounded p-1.5 transition-colors hover:bg-white/10"
             >
               {copied ? <ClipboardCheck size={14} /> : <Copy size={14} />}
             </button>
@@ -267,7 +267,7 @@ function CodePlaygroundComponent(props) {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-4 py-2 text-xs font-medium transition-colors ${
                 activeTab === tab.id
-                  ? "border-b-2 border-blue-500 text-secondary"
+                  ? "text-secondary border-b-2 border-blue-500"
                   : "text-secondary/40 hover:text-secondary/60"
               }`}
             >
@@ -287,13 +287,13 @@ function CodePlaygroundComponent(props) {
             }}
             rows={16}
             spellCheck={false}
-            className="w-full resize-none bg-[#1a1b26] p-4 font-mono text-sm text-secondary/80 outline-none"
+            className="text-secondary/80 w-full resize-none bg-[#1a1b26] p-4 font-mono text-sm outline-none"
           />
         )}
 
         {activeTab === "description" && (
           <div className="p-4">
-            <label className="mb-2 block text-xs text-secondary/40">
+            <label className="text-secondary/40 mb-2 block text-xs">
               Problem description (Markdown supported)
             </label>
             <textarea
@@ -304,7 +304,7 @@ function CodePlaygroundComponent(props) {
               }}
               placeholder="Describe the coding challenge..."
               rows={8}
-              className="w-full resize-none rounded-lg border border-white/10 bg-[#16161e] p-3 font-mono text-sm text-secondary/80 outline-none focus:border-white/20"
+              className="text-secondary/80 w-full resize-none rounded-lg border border-white/10 bg-[#16161e] p-3 font-mono text-sm outline-none focus:border-white/20"
             />
           </div>
         )}
@@ -317,7 +317,7 @@ function CodePlaygroundComponent(props) {
                 className="space-y-2 rounded-lg border border-white/10 bg-[#16161e] p-3"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-secondary/40">Test case {i + 1}</span>
+                  <span className="text-secondary/40 text-xs font-medium">Test case {i + 1}</span>
                   <button
                     onClick={() => removeTestCase(tc.id)}
                     className="text-secondary/30 transition-colors hover:text-red-400"
@@ -327,21 +327,21 @@ function CodePlaygroundComponent(props) {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="mb-1 block text-xs text-secondary/30">Input</label>
+                    <label className="text-secondary/30 mb-1 block text-xs">Input</label>
                     <textarea
                       value={tc.input}
                       onChange={(e) => updateTestCase(tc.id, "input", e.target.value)}
                       rows={2}
-                      className="w-full resize-none rounded border border-white/10 bg-[#1a1b26] p-2 font-mono text-xs text-secondary/70 outline-none"
+                      className="text-secondary/70 w-full resize-none rounded border border-white/10 bg-[#1a1b26] p-2 font-mono text-xs outline-none"
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs text-secondary/30">Expected Output</label>
+                    <label className="text-secondary/30 mb-1 block text-xs">Expected Output</label>
                     <textarea
                       value={tc.expectedOutput}
                       onChange={(e) => updateTestCase(tc.id, "expectedOutput", e.target.value)}
                       rows={2}
-                      className="w-full resize-none rounded border border-white/10 bg-[#1a1b26] p-2 font-mono text-xs text-secondary/70 outline-none"
+                      className="text-secondary/70 w-full resize-none rounded border border-white/10 bg-[#1a1b26] p-2 font-mono text-xs outline-none"
                     />
                   </div>
                 </div>
@@ -349,13 +349,13 @@ function CodePlaygroundComponent(props) {
                   value={tc.description}
                   onChange={(e) => updateTestCase(tc.id, "description", e.target.value)}
                   placeholder="Test description (optional)"
-                  className="w-full rounded border border-white/10 bg-[#1a1b26] p-2 text-xs text-secondary/50 outline-none"
+                  className="text-secondary/50 w-full rounded border border-white/10 bg-[#1a1b26] p-2 text-xs outline-none"
                 />
               </div>
             ))}
             <button
               onClick={addTestCase}
-              className="flex items-center gap-2 text-xs text-secondary/40 transition-colors hover:text-secondary/60"
+              className="text-secondary/40 hover:text-secondary/60 flex items-center gap-2 text-xs transition-colors"
             >
               <Plus size={14} />
               Add test case
@@ -375,11 +375,11 @@ function CodePlaygroundComponent(props) {
                   onChange={(e) => updateHint(i, e.target.value)}
                   rows={2}
                   placeholder={`Hint ${i + 1}...`}
-                  className="flex-1 resize-none rounded-lg border border-white/10 bg-[#16161e] p-2 text-sm text-secondary/70 outline-none focus:border-yellow-700/40"
+                  className="text-secondary/70 flex-1 resize-none rounded-lg border border-white/10 bg-[#16161e] p-2 text-sm outline-none focus:border-yellow-700/40"
                 />
                 <button
                   onClick={() => removeHint(i)}
-                  className="mt-1 flex-shrink-0 text-secondary/30 transition-colors hover:text-red-400"
+                  className="text-secondary/30 mt-1 flex-shrink-0 transition-colors hover:text-red-400"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -387,7 +387,7 @@ function CodePlaygroundComponent(props) {
             ))}
             <button
               onClick={addHint}
-              className="flex items-center gap-2 text-xs text-secondary/40 transition-colors hover:text-yellow-400"
+              className="text-secondary/40 flex items-center gap-2 text-xs transition-colors hover:text-yellow-400"
             >
               <Plus size={14} />
               Add hint
@@ -395,7 +395,7 @@ function CodePlaygroundComponent(props) {
           </div>
         )}
 
-        <div className="border-t border-white/5 bg-[#16161e] px-4 py-2 text-xs text-secondary/20">
+        <div className="text-secondary/20 border-t border-white/5 bg-[#16161e] px-4 py-2 text-xs">
           Code execution requires a backend — standalone mode.
         </div>
       </div>

@@ -137,14 +137,14 @@ const ScenariosExtension = (props) => {
                 <>
                   <button
                     onClick={() => setShowPreview(!showPreview)}
-                    className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-secondary transition-colors outline-none"
+                    className="text-secondary flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium transition-colors outline-none"
                   >
                     <Play size={12} />
                     {showPreview ? "Edit" : "Preview"}
                   </button>
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="flex items-center gap-1.5 rounded-lg bg-neutral-700 px-3 py-1.5 text-xs font-medium text-secondary transition-colors outline-none"
+                    className="text-secondary flex items-center gap-1.5 rounded-lg bg-neutral-700 px-3 py-1.5 text-xs font-medium transition-colors outline-none"
                   >
                     <Save size={12} />
                     Done
@@ -216,7 +216,7 @@ const ScenariosExtension = (props) => {
                         setCurrentScenarioId(scenario.id);
                         props.updateAttributes({ currentScenarioId: scenario.id });
                       }}
-                      className={`rounded px-2 py-1 text-xs font-medium ${scenario.id === currentScenarioId ? "bg-emerald-500 text-secondary" : "bg-neutral-200 text-neutral-700 hover:bg-neutral-300"}`}
+                      className={`rounded px-2 py-1 text-xs font-medium ${scenario.id === currentScenarioId ? "text-secondary bg-emerald-500" : "bg-neutral-200 text-neutral-700 hover:bg-neutral-300"}`}
                     >
                       {scenario.id === currentScenarioId ? "Start" : "Set Start"}
                     </button>
@@ -329,7 +329,7 @@ const ScenariosExtension = (props) => {
                 <h4 className="mb-2 font-bold text-neutral-900">Scenario Complete!</h4>
                 <button
                   onClick={() => setPreviewCurrentId(currentScenarioId)}
-                  className="rounded-lg bg-neutral-700 px-4 py-2 text-sm text-secondary"
+                  className="text-secondary rounded-lg bg-neutral-700 px-4 py-2 text-sm"
                 >
                   <RotateCcw size={14} className="mr-1 inline" />
                   Start Over
@@ -403,7 +403,7 @@ const ScenariosExtension = (props) => {
               </p>
               <button
                 onClick={resetScenario}
-                className="inline-flex items-center gap-2 rounded-lg bg-neutral-700 px-4 py-2 text-sm font-medium text-secondary hover:bg-neutral-800"
+                className="text-secondary inline-flex items-center gap-2 rounded-lg bg-neutral-700 px-4 py-2 text-sm font-medium hover:bg-neutral-800"
               >
                 <RotateCcw size={16} />
                 Start Over

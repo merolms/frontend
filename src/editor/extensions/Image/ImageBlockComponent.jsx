@@ -163,7 +163,7 @@ function ImageBlockComponent(props) {
                   className="rounded-lg bg-black/50 p-2 transition-colors outline-none hover:bg-black/70"
                   title="Expand image"
                 >
-                  <Expand className="h-4 w-4 text-secondary" />
+                  <Expand className="text-secondary h-4 w-4" />
                 </button>
               </div>
             </div>

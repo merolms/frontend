@@ -1,4 +1,18 @@
-import { Loader, Search, UserPlus, Users, X, ArrowUpDown, Trash2, TrendingUp, CheckCircle, Clock, Users as UsersIcon, Download, Upload } from "lucide-react";
+import {
+  Loader,
+  Search,
+  UserPlus,
+  Users,
+  X,
+  ArrowUpDown,
+  Trash2,
+  TrendingUp,
+  CheckCircle,
+  Clock,
+  Users as UsersIcon,
+  Download,
+  Upload,
+} from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { useToast } from "@/app/context/ToastContext";
@@ -29,7 +43,7 @@ const TabButton = ({ active, onClick, children }) => (
     onClick={onClick}
     className={`px-4 py-2 text-xs font-medium transition-colors ${
       active
-        ? "text-primary border-b-2 border-primary"
+        ? "text-primary border-primary border-b-2"
         : "text-text-muted hover:text-text-primary border-b-2 border-transparent"
     }`}
   >
@@ -92,7 +106,11 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
         limit: enrollmentPageSize,
       });
       // Handle response structure - could be direct array or object with enrollments property
-      const enrollmentsArray = Array.isArray(data) ? data : (Array.isArray(data?.enrollments) ? data.enrollments : []);
+      const enrollmentsArray = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.enrollments)
+          ? data.enrollments
+          : [];
       setEnrollments(enrollmentsArray);
       setTotalEnrollments(data?.total || data?.count || enrollmentsArray.length);
     } catch (err) {
@@ -131,7 +149,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
     if (selectedUsers.length === 0 || enrolling.user) return;
 
     const enrolledUserIds = getEnrolledUserIds();
-    const validUsers = selectedUsers.filter(id => !enrolledUserIds.has(id));
+    const validUsers = selectedUsers.filter((id) => !enrolledUserIds.has(id));
 
     if (validUsers.length === 0) {
       addToast("All selected users are already enrolled", "error");
@@ -140,7 +158,9 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
 
     try {
       setEnrolling((s) => ({ ...s, user: true }));
-      const promises = validUsers.map(userId => adminEnrollUserInCourse(parseInt(courseId), userId));
+      const promises = validUsers.map((userId) =>
+        adminEnrollUserInCourse(parseInt(courseId), userId)
+      );
       await Promise.all(promises);
       setSelectedUsers([]);
       setUserSearchQuery("");
@@ -182,7 +202,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
     if (selectedTeams.length === 0 || enrolling.team) return;
 
     const enrolledTeamIds = getEnrolledTeamIds();
-    const validTeams = selectedTeams.filter(id => !enrolledTeamIds.has(id));
+    const validTeams = selectedTeams.filter((id) => !enrolledTeamIds.has(id));
 
     if (validTeams.length === 0) {
       addToast("All selected teams are already enrolled", "error");
@@ -191,7 +211,9 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
 
     try {
       setEnrolling((s) => ({ ...s, team: true }));
-      const promises = validTeams.map(teamId => adminEnrollTeamInCourse(parseInt(courseId), teamId));
+      const promises = validTeams.map((teamId) =>
+        adminEnrollTeamInCourse(parseInt(courseId), teamId)
+      );
       await Promise.all(promises);
       setSelectedTeams([]);
       setTeamSearchQuery("");
@@ -243,21 +265,15 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
   };
 
   // Debounced search functions
-  const debouncedSearchUsers = useCallback(
-    (query) => {
-      const timer = setTimeout(() => handleSearchUsers(query), 300);
-      return () => clearTimeout(timer);
-    },
-    []
-  );
+  const debouncedSearchUsers = useCallback((query) => {
+    const timer = setTimeout(() => handleSearchUsers(query), 300);
+    return () => clearTimeout(timer);
+  }, []);
 
-  const debouncedSearchTeams = useCallback(
-    (query) => {
-      const timer = setTimeout(() => handleSearchTeams(query), 300);
-      return () => clearTimeout(timer);
-    },
-    []
-  );
+  const debouncedSearchTeams = useCallback((query) => {
+    const timer = setTimeout(() => handleSearchTeams(query), 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   const getEnrolledUserIds = () => {
     const ids = new Set();
@@ -287,9 +303,10 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
     // Apply search filter
     if (enrollmentSearchQuery.trim()) {
       const query = enrollmentSearchQuery.toLowerCase();
-      filtered = filtered.filter((e) =>
-        (e.userName || "").toLowerCase().includes(query) ||
-        `User ${e.userId}`.toLowerCase().includes(query)
+      filtered = filtered.filter(
+        (e) =>
+          (e.userName || "").toLowerCase().includes(query) ||
+          `User ${e.userId}`.toLowerCase().includes(query)
       );
     }
 
@@ -315,14 +332,15 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
   // Calculate statistics
   const getEnrollmentStats = () => {
     const total = enrollments.length;
-    const active = enrollments.filter(e => e.status === "active").length;
-    const completed = enrollments.filter(e => e.status === "completed").length;
-    const dropped = enrollments.filter(e => e.status === "dropped").length;
-    const teamEnrollments = enrollments.filter(e => e.teamId).length;
+    const active = enrollments.filter((e) => e.status === "active").length;
+    const completed = enrollments.filter((e) => e.status === "completed").length;
+    const dropped = enrollments.filter((e) => e.status === "dropped").length;
+    const teamEnrollments = enrollments.filter((e) => e.teamId).length;
     const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
-    const avgProgress = total > 0 
-      ? Math.round(enrollments.reduce((sum, e) => sum + (e.progressPercent || 0), 0) / total) 
-      : 0;
+    const avgProgress =
+      total > 0
+        ? Math.round(enrollments.reduce((sum, e) => sum + (e.progressPercent || 0), 0) / total)
+        : 0;
 
     return { total, active, completed, dropped, teamEnrollments, completionRate, avgProgress };
   };
@@ -332,13 +350,13 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
     const stats = getEnrollmentStats();
     const csvContent = [
       ["User ID", "User Name", "Status", "Progress %", "Enrolled Date", "Team ID"],
-      ...enrollments.map(e => [
+      ...enrollments.map((e) => [
         e.userId || "",
         e.userName || "",
         e.status || "",
         e.progressPercent || 0,
         e.enrolledAt ? new Date(e.enrolledAt * 1000).toLocaleDateString() : "",
-        e.teamId || ""
+        e.teamId || "",
       ]),
       [],
       ["Statistics"],
@@ -348,14 +366,19 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
       ["Dropped", stats.dropped],
       ["Team Enrollments", stats.teamEnrollments],
       ["Completion Rate", `${stats.completionRate}%`],
-      ["Average Progress", `${stats.avgProgress}%`]
-    ].map(row => row.join(",")).join("\n");
+      ["Average Progress", `${stats.avgProgress}%`],
+    ]
+      .map((row) => row.join(","))
+      .join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute("download", `course_${courseId}_enrollments_${new Date().toISOString().split("T")[0]}.csv`);
+    link.setAttribute(
+      "download",
+      `course_${courseId}_enrollments_${new Date().toISOString().split("T")[0]}.csv`
+    );
     link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
@@ -372,13 +395,13 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
     reader.onload = async (event) => {
       try {
         const text = event.target.result;
-        const lines = text.split("\n").filter(line => line.trim());
-        const headers = lines[0].split(",").map(h => h.trim().toLowerCase());
-        
+        const lines = text.split("\n").filter((line) => line.trim());
+        const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
+
         // Find user ID or email column
-        const userIdIndex = headers.findIndex(h => h.includes("user") && h.includes("id"));
-        const emailIndex = headers.findIndex(h => h.includes("email"));
-        
+        const userIdIndex = headers.findIndex((h) => h.includes("user") && h.includes("id"));
+        const emailIndex = headers.findIndex((h) => h.includes("email"));
+
         if (userIdIndex === -1 && emailIndex === -1) {
           addToast("CSV must contain 'User ID' or 'Email' column", "error");
           return;
@@ -386,7 +409,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
 
         const usersToEnroll = [];
         for (let i = 1; i < lines.length; i++) {
-          const values = lines[i].split(",").map(v => v.trim());
+          const values = lines[i].split(",").map((v) => v.trim());
           if (userIdIndex !== -1 && values[userIdIndex]) {
             usersToEnroll.push(parseInt(values[userIdIndex]));
           } else if (emailIndex !== -1 && values[emailIndex]) {
@@ -403,7 +426,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
 
         // Bulk enroll users
         const enrolledUserIds = getEnrolledUserIds();
-        const validUsers = usersToEnroll.filter(id => !enrolledUserIds.has(id));
+        const validUsers = usersToEnroll.filter((id) => !enrolledUserIds.has(id));
 
         if (validUsers.length === 0) {
           addToast("All users in CSV are already enrolled", "error");
@@ -411,7 +434,9 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
         }
 
         setEnrolling((s) => ({ ...s, user: true }));
-        const promises = validUsers.map(userId => adminEnrollUserInCourse(parseInt(courseId), userId));
+        const promises = validUsers.map((userId) =>
+          adminEnrollUserInCourse(parseInt(courseId), userId)
+        );
         await Promise.all(promises);
         await loadEnrollments();
         addToast(`${validUsers.length} users enrolled from CSV`, "success");
@@ -518,14 +543,18 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                 <CheckCircle size={12} className="text-green-500" />
                 <span className="text-text-muted text-[10px]">Completed</span>
               </div>
-              <p className="text-text-primary text-lg font-bold">{getEnrollmentStats().completed}</p>
+              <p className="text-text-primary text-lg font-bold">
+                {getEnrollmentStats().completed}
+              </p>
             </div>
             <div className="border-border bg-bg-surface/50 rounded-lg border p-3">
               <div className="mb-1 flex items-center gap-2">
                 <TrendingUp size={12} className="text-purple-500" />
                 <span className="text-text-muted text-[10px]">Completion Rate</span>
               </div>
-              <p className="text-text-primary text-lg font-bold">{getEnrollmentStats().completionRate}%</p>
+              <p className="text-text-primary text-lg font-bold">
+                {getEnrollmentStats().completionRate}%
+              </p>
             </div>
           </div>
           <div className="mt-3 grid grid-cols-2 gap-3">
@@ -534,14 +563,18 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                 <Users size={12} className="text-orange-500" />
                 <span className="text-text-muted text-[10px]">Team Enrollments</span>
               </div>
-              <p className="text-text-primary text-lg font-bold">{getEnrollmentStats().teamEnrollments}</p>
+              <p className="text-text-primary text-lg font-bold">
+                {getEnrollmentStats().teamEnrollments}
+              </p>
             </div>
             <div className="border-border bg-bg-surface/50 rounded-lg border p-3">
               <div className="mb-1 flex items-center gap-2">
                 <TrendingUp size={12} className="text-cyan-500" />
                 <span className="text-text-muted text-[10px]">Avg Progress</span>
               </div>
-              <p className="text-text-primary text-lg font-bold">{getEnrollmentStats().avgProgress}%</p>
+              <p className="text-text-primary text-lg font-bold">
+                {getEnrollmentStats().avgProgress}%
+              </p>
             </div>
           </div>
         </div>
@@ -584,15 +617,15 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                   className="h-9 pl-9 text-sm"
                 />
               </div>
-              
+
               {/* User Selection List with Checkboxes */}
-              <div className="max-h-48 overflow-y-auto border rounded-md bg-secondary">
+              <div className="bg-secondary max-h-48 overflow-y-auto rounded-md border">
                 {users
                   .filter((u) => !getEnrolledUserIds().has(u.id))
                   .map((u) => (
                     <div
                       key={u.id}
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-bg-surface-active border-b last:border-b-0"
+                      className="hover:bg-bg-surface-active flex items-center gap-3 border-b px-3 py-2 last:border-b-0"
                     >
                       <input
                         type="checkbox"
@@ -601,10 +634,10 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                           if (e.target.checked) {
                             setSelectedUsers([...selectedUsers, u.id]);
                           } else {
-                            setSelectedUsers(selectedUsers.filter(id => id !== u.id));
+                            setSelectedUsers(selectedUsers.filter((id) => id !== u.id));
                           }
                         }}
-                        className="h-4 w-4 rounded border-border"
+                        className="border-border h-4 w-4 rounded"
                       />
                       <div className="flex-1">
                         <p className="text-text-primary text-sm font-medium">
@@ -615,7 +648,9 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                     </div>
                   ))}
                 {users.filter((u) => !getEnrolledUserIds().has(u.id)).length === 0 && (
-                  <div className="text-text-muted px-3 py-4 text-sm text-center">No eligible users</div>
+                  <div className="text-text-muted px-3 py-4 text-center text-sm">
+                    No eligible users
+                  </div>
                 )}
               </div>
 
@@ -667,13 +702,13 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
               </div>
 
               {/* Team Selection List with Checkboxes */}
-              <div className="max-h-48 overflow-y-auto border rounded-md bg-secondary">
+              <div className="bg-secondary max-h-48 overflow-y-auto rounded-md border">
                 {(teams || [])
                   .filter((t) => !getEnrolledTeamIds().has(t.id))
                   .map((t) => (
                     <div
                       key={t.id}
-                      className="flex items-center gap-3 px-3 py-2 hover:bg-bg-surface-active border-b last:border-b-0"
+                      className="hover:bg-bg-surface-active flex items-center gap-3 border-b px-3 py-2 last:border-b-0"
                     >
                       <input
                         type="checkbox"
@@ -682,10 +717,10 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                           if (e.target.checked) {
                             setSelectedTeams([...selectedTeams, t.id]);
                           } else {
-                            setSelectedTeams(selectedTeams.filter(id => id !== t.id));
+                            setSelectedTeams(selectedTeams.filter((id) => id !== t.id));
                           }
                         }}
-                        className="h-4 w-4 rounded border-border"
+                        className="border-border h-4 w-4 rounded"
                       />
                       <div className="flex-1">
                         <p className="text-text-primary text-sm font-medium">
@@ -695,7 +730,9 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                     </div>
                   ))}
                 {teams.filter((t) => !getEnrolledTeamIds().has(t.id)).length === 0 && (
-                  <div className="text-text-muted px-3 py-4 text-sm text-center">No eligible teams</div>
+                  <div className="text-text-muted px-3 py-4 text-center text-sm">
+                    No eligible teams
+                  </div>
                 )}
               </div>
 
@@ -746,7 +783,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                 </Select>
               </div>
             </div>
-            
+
             {/* Search and Sort */}
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
@@ -774,7 +811,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
               </Select>
             </div>
           </div>
-          
+
           <div className="space-y-1.5">
             {getFilteredAndSortedEnrollments().map((enr) => (
               <div
@@ -783,7 +820,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
               >
                 <div className="flex items-center gap-2.5">
                   <div
-                    className="flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold text-secondary shadow-sm"
+                    className="text-secondary flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold shadow-sm"
                     style={{
                       background:
                         enr.status === "completed"
@@ -801,9 +838,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                     </p>
                     <p className="text-text-muted text-[10px]">
                       Enrolled{" "}
-                      {enr.enrolledAt
-                        ? new Date(enr.enrolledAt * 1000).toLocaleDateString()
-                        : "—"}
+                      {enr.enrolledAt ? new Date(enr.enrolledAt * 1000).toLocaleDateString() : "—"}
                     </p>
                   </div>
                 </div>
@@ -835,7 +870,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                   <Button
                     size="xs"
                     variant="ghost"
-                    className="h-6 w-6 p-0 text-text-muted hover:text-error"
+                    className="text-text-muted hover:text-error h-6 w-6 p-0"
                     onClick={() => {
                       // TODO: Implement remove enrollment functionality
                       addToast("Remove enrollment feature coming soon", "info");

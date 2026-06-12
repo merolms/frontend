@@ -7,7 +7,8 @@ import { apiDelete, apiGet, apiPost, apiPut, apiUpload } from "@/app/services/ht
 // Backend now sends camelCase: imageUrl, authorId, categoryId, lessonCount
 // Frontend uses: coverImage, authorId, categoryId, lessonCount
 
-const DEFAULT_COURSE_IMAGE = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop";
+const DEFAULT_COURSE_IMAGE =
+  "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop";
 
 const normalizeCourse = (c) => ({
   id: c.id,

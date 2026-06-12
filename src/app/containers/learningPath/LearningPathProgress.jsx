@@ -50,12 +50,13 @@ const LearningPathProgressPage = () => {
 
   const progress = enrollment?.progress || 0;
   const isCompleted = enrollment?.status === "completed" || progress >= 100;
-  
+
   // Calculate additional metrics
-  const totalDuration = path?.courses?.reduce((acc, c) => {
-    const duration = parseInt(c.duration) || 0;
-    return acc + duration;
-  }, 0) || 0;
+  const totalDuration =
+    path?.courses?.reduce((acc, c) => {
+      const duration = parseInt(c.duration) || 0;
+      return acc + duration;
+    }, 0) || 0;
   const completedDuration = completedCourses.reduce((acc, c) => {
     const duration = parseInt(c.duration) || 0;
     return acc + duration;
@@ -117,23 +118,31 @@ const LearningPathProgressPage = () => {
           </div>
         </div>
         <ProgressBar progress={progress} size="lg" color={isCompleted ? "#22C55E" : "#6366F1"} />
-        
+
         {/* Milestone markers */}
         <div className="mt-4 flex items-center justify-between text-[10px]">
           <div className="flex flex-col items-center gap-1">
-            <div className={`h-2 w-2 rounded-full ${progress >= 25 ? "bg-primary" : "bg-bg-surface-active"}`} />
+            <div
+              className={`h-2 w-2 rounded-full ${progress >= 25 ? "bg-primary" : "bg-bg-surface-active"}`}
+            />
             <span className="text-text-muted">25%</span>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <div className={`h-2 w-2 rounded-full ${progress >= 50 ? "bg-primary" : "bg-bg-surface-active"}`} />
+            <div
+              className={`h-2 w-2 rounded-full ${progress >= 50 ? "bg-primary" : "bg-bg-surface-active"}`}
+            />
             <span className="text-text-muted">50%</span>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <div className={`h-2 w-2 rounded-full ${progress >= 75 ? "bg-primary" : "bg-bg-surface-active"}`} />
+            <div
+              className={`h-2 w-2 rounded-full ${progress >= 75 ? "bg-primary" : "bg-bg-surface-active"}`}
+            />
             <span className="text-text-muted">75%</span>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <div className={`h-2 w-2 rounded-full ${progress >= 100 ? "bg-success" : "bg-bg-surface-active"}`} />
+            <div
+              className={`h-2 w-2 rounded-full ${progress >= 100 ? "bg-success" : "bg-bg-surface-active"}`}
+            />
             <span className="text-text-muted">100%</span>
           </div>
         </div>
@@ -175,17 +184,26 @@ const LearningPathProgressPage = () => {
           <div className="mt-4 flex items-center gap-2">
             <span className="text-text-muted text-[10px]">Achievements:</span>
             {streak >= 1 && (
-              <div className="bg-warning/10 text-warning flex h-6 w-6 items-center justify-center rounded-full" title="First Milestone">
+              <div
+                className="bg-warning/10 text-warning flex h-6 w-6 items-center justify-center rounded-full"
+                title="First Milestone"
+              >
                 <Target size={12} />
               </div>
             )}
             {streak >= 2 && (
-              <div className="bg-primary/10 text-primary flex h-6 w-6 items-center justify-center rounded-full" title="Halfway There">
+              <div
+                className="bg-primary/10 text-primary flex h-6 w-6 items-center justify-center rounded-full"
+                title="Halfway There"
+              >
                 <Target size={12} />
               </div>
             )}
             {streak >= 3 && (
-              <div className="bg-success/10 text-success flex h-6 w-6 items-center justify-center rounded-full" title="Almost There">
+              <div
+                className="bg-success/10 text-success flex h-6 w-6 items-center justify-center rounded-full"
+                title="Almost There"
+              >
                 <Target size={12} />
               </div>
             )}
@@ -248,7 +266,7 @@ const LearningPathProgressPage = () => {
                 </div>
                 <button
                   onClick={() => navigate(`/courses/${course.courseId}`)}
-                  className="bg-primary hover:bg-primary-hover rounded-md px-3 py-1 text-xs text-secondary"
+                  className="bg-primary hover:bg-primary-hover text-secondary rounded-md px-3 py-1 text-xs"
                 >
                   {idx === 0 ? "Start" : "View"} →
                 </button>

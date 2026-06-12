@@ -98,7 +98,7 @@ const RoleBasedSidebar = () => {
                 />
               ) : (
                 <div
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium text-secondary"
+                  className="text-secondary flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium"
                   style={{ background: "var(--primary)" }}
                 >
                   {user.firstName?.[0] || "U"}

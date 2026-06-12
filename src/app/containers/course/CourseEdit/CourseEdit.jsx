@@ -28,7 +28,15 @@ const CourseEdit = () => {
   const [unsplashOpen, setUnsplashOpen] = useState(false);
   const [coverUploading, setCoverUploading] = useState(false);
 
-  const initialForm = course ? { title: course.title || "", description: course.description || "", category: course.categoryID || null, coverImage: course.coverImage || course.imageURL || "", duration: course.duration || "" } : form;
+  const initialForm = course
+    ? {
+        title: course.title || "",
+        description: course.description || "",
+        category: course.categoryID || null,
+        coverImage: course.coverImage || course.imageURL || "",
+        duration: course.duration || "",
+      }
+    : form;
   const { updateForm, clearDirty } = useUnsavedChanges(form, initialForm, setForm);
 
   const handleCoverUpload = async (e) => {
@@ -278,7 +286,7 @@ const CourseEdit = () => {
                     <button
                       type="button"
                       onClick={() => updateForm((p) => ({ ...p, coverImage: "" }))}
-                      className="bg-error absolute top-1 right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded text-secondary hover:opacity-80"
+                      className="bg-error text-secondary absolute top-1 right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded hover:opacity-80"
                     >
                       <X size={10} />
                     </button>

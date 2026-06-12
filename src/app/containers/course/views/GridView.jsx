@@ -39,7 +39,7 @@ const CourseCard = memo(({ course, navigate }) => {
       role="button"
       tabIndex={0}
       aria-label={`View course: ${course.title}`}
-      className="border-border bg-bg-surface flex h-full cursor-pointer flex-col overflow-hidden rounded-md border shadow-sm transition-shadow hover:shadow-md focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+      className="border-border bg-bg-surface focus-visible:ring-primary flex h-full cursor-pointer flex-col overflow-hidden rounded-md border shadow-sm transition-shadow hover:shadow-md focus-visible:ring-2 focus-visible:outline-none"
       onClick={() => navigate(`/courses/${course.id}`)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -50,7 +50,12 @@ const CourseCard = memo(({ course, navigate }) => {
     >
       {/* Image */}
       {slide ? (
-        <img src={slide} alt={`Cover image for ${course.title}`} className="h-40 w-full object-cover" loading="lazy" />
+        <img
+          src={slide}
+          alt={`Cover image for ${course.title}`}
+          className="h-40 w-full object-cover"
+          loading="lazy"
+        />
       ) : (
         <div className="bg-bg-surface-active flex h-40 w-full items-center justify-center">
           <BookOpen size={48} className="text-text-muted" />
@@ -123,7 +128,7 @@ const GridView = ({ courses, navigate, loading, onRefresh }) => {
         action={
           <button
             onClick={() => navigate?.("/courses/create")}
-            className="bg-primary hover:bg-primary-hover mt-4 rounded-md px-4 py-2 text-sm text-secondary"
+            className="bg-primary hover:bg-primary-hover text-secondary mt-4 rounded-md px-4 py-2 text-sm"
           >
             Create Course
           </button>

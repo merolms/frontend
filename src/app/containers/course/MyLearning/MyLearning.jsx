@@ -271,7 +271,10 @@ const MyLearning = () => {
                         <span
                           className="text-xs font-bold"
                           style={{
-                            color: enrollment.status === "completed" ? "hsl(var(--success))" : "hsl(var(--primary))",
+                            color:
+                              enrollment.status === "completed"
+                                ? "hsl(var(--success))"
+                                : "hsl(var(--primary))",
                           }}
                         >
                           {enrollment.progressPercent || 0}%
@@ -279,7 +282,11 @@ const MyLearning = () => {
                       </div>
                       <ProgressBar
                         progress={enrollment.progressPercent || 0}
-                        color={enrollment.status === "completed" ? "hsl(var(--success))" : "hsl(var(--primary))"}
+                        color={
+                          enrollment.status === "completed"
+                            ? "hsl(var(--success))"
+                            : "hsl(var(--primary))"
+                        }
                       />
                     </div>
 

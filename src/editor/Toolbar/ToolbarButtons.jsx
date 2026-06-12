@@ -121,7 +121,7 @@ export const ToolbarButtons = React.memo(({ editor }) => {
   };
 
   return (
-    <div className="bg-background sticky top-0 z-50 p-1 w-full">
+    <div className="bg-background sticky top-0 z-50 w-full p-1">
       {/* Menu Bar */}
       <div className="flex w-full flex-row justify-between">
         <div className="flex flex-row flex-wrap gap-2">

@@ -2,6 +2,7 @@ import {
   BarChart3,
   BookOpen,
   CalendarDays,
+  ClipboardCheck,
   GraduationCap,
   Home,
   LogOut,
@@ -20,6 +21,7 @@ const navItems = [
   { path: "/", label: "Dashboard", icon: Home },
   { path: "/courses", label: "Courses", icon: BookOpen },
   { path: "/learning-paths", label: "Learning Paths", icon: GraduationCap },
+  { path: "/assignments", label: "Assignments", icon: ClipboardCheck },
   { path: "/events", label: "Events", icon: CalendarDays },
   { path: "/progress", label: "Progress", icon: BarChart3 },
   { path: "/categories", label: "Categories", icon: Tags },
@@ -97,7 +99,7 @@ export default function SideBar() {
                 />
               ) : (
                 <div
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium text-secondary"
+                  className="text-secondary flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium"
                   style={{ background: "var(--primary)" }}
                 >
                   {user.firstName?.[0] || "U"}

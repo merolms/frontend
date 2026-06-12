@@ -8,6 +8,7 @@ import {
   Shield,
   Tags,
   Users,
+  ClipboardCheck
 } from "lucide-react";
 
 /**
@@ -20,6 +21,8 @@ const NAV_GROUPS = {
     { path: "/admin/dashboard", label: "Dashboard", icon: Home },
     { path: "/courses", label: "Courses", icon: BookOpen },
     { path: "/learning-paths", label: "Learning Paths", icon: GraduationCap },
+    { path: "/assignments", label: "Assignments", icon: ClipboardCheck },
+
     { path: "/admin/categories", label: "Categories", icon: Tags },
     { path: "/admin/events", label: "Events", icon: CalendarDays },
     { path: "/admin/users", label: "Users", icon: Users },
@@ -31,6 +34,8 @@ const NAV_GROUPS = {
     { path: "/instructor/dashboard", label: "Dashboard", icon: Home },
     { path: "/courses", label: "My Courses", icon: BookOpen },
     { path: "/learning-paths", label: "Learning Paths", icon: GraduationCap },
+    { path: "/assignments", label: "Assignments", icon: ClipboardCheck },
+
     { path: "/my-learning", label: "My Learning", icon: BookOpen },
     { path: "/progress", label: "My Progress", icon: BarChart3 },
   ],
@@ -38,6 +43,7 @@ const NAV_GROUPS = {
     { path: "/my-learning", label: "Dashboard", icon: Home },
     { path: "/courses", label: "My Courses", icon: BookOpen },
     { path: "/learning-paths", label: "Learning Paths", icon: GraduationCap },
+    { path: "/assignments", label: "Assignments", icon: ClipboardCheck },
 
     { path: "/teams", label: "My Teams", icon: Network },
     { path: "/progress", label: "My Progress", icon: BarChart3 },
@@ -46,6 +52,7 @@ const NAV_GROUPS = {
     { path: "/my-learning", label: "My Learning", icon: Home },
     { path: "/courses", label: "Browse Courses", icon: BookOpen },
     { path: "/learning-paths", label: "Learning Paths", icon: GraduationCap },
+    { path: "/assignments", label: "Assignments", icon: ClipboardCheck },
 
     { path: "/progress", label: "My Progress", icon: BarChart3 },
   ],

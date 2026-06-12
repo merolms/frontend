@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { thunk } from "redux-thunk";
 
 import authReducer from "@/redux/slices/authSlice";
+import assignmentReducer from "@/redux/slices/assignmentSlice";
 import courseBuilderReducer from "@/redux/slices/courseBuilderSlice";
 import enrollmentReducer from "@/redux/slices/enrollmentSlice";
 import learningPathReducer from "@/redux/slices/learningPathSlice";
@@ -14,6 +15,7 @@ const store = configureStore({
     learningPaths: learningPathReducer,
     enrollments: enrollmentReducer,
     courseBuilder: courseBuilderReducer,
+    assignments: assignmentReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ thunk }).concat(thunk),
   devTools: import.meta.env.DEV,

@@ -59,7 +59,9 @@ const CoursePreview = () => {
       if (!lesson || lesson.id === selectedLesson?.id) return;
       navigate(`/courses/${id}/preview/${lesson.id}`, { replace: true });
       const content = await loadLessonContent(lesson);
-      const hasContent = Array.isArray(content) ? content.length > 0 : (content?.content?.length || 0) > 0;
+      const hasContent = Array.isArray(content)
+        ? content.length > 0
+        : (content?.content?.length || 0) > 0;
       setSelectedLesson({ ...lesson, _content: hasContent ? JSON.stringify(content) : "" });
     },
     [id, lessons, selectedLesson, navigate, loadLessonContent]

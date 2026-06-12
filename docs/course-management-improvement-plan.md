@@ -10,30 +10,37 @@ Lifecycle covered: **Discover → Create → Edit → Build → Preview → Publ
 ## P0 — Correctness bugs (fix first; features silently broken today)
 
 ### P0.1 CourseBuilder never saves lesson content to the lesson record
+
 `CourseBuilder.jsx:274` — the `updateLesson(...)` call is commented out; Save only writes to the autosave endpoint. If autosave data is ever lost/expired, lesson content is gone, and any consumer reading `lesson.content` (instead of autosave) sees stale/empty content.
 **Fix:** on explicit Save, persist content via `updateLesson` AND autosave; treat autosave as recovery only. Effort: S.
 
 ### P0.2 Course list filters/sort/search are decorative
+
 `Course.jsx` + `courseService.fetchCourses` — search/status/category/sort are in the URL but never sent to the API; only `start`/`limit` go through. Users believe they filtered; they didn't (beyond the current page).
 **Fix:** pass `search`, `status`, `category`, `sort` through `fetchCourses` query string (backend already supports fulltext search — migration 18 added fulltext indexes; verify which params `GET /courses` accepts and align). Add 300ms debounced search. Effort: M.
 
 ### P0.3 Category filter uses hardcoded mock list
+
 `Course.jsx` uses `mockCategories` (5 hardcoded strings); real categories never appear.
 **Fix:** load via `fetchCategories()` (already real API, already used in CourseCreate). Effort: S.
 
 ### P0.4 CoursePreview content double-parse / wrong format
+
 `CoursePreview.jsx` reads `snapshot.content` (still a JSON string) and passes raw DB blocks to the editor without converting to document format (`blocksToDoc` lives un-exported in CourseBuilder). Preview can render blank/broken.
 **Fix:** extract a shared `parseLessonContent(snapshot|blocks)` util (e.g. `src/editor/utils/content.js`), reuse in CourseBuilder, CoursePreview, CourseViewer (same parse chain is hand-rolled in all three). Effort: M.
 
 ### P0.5 CourseEdit category can submit a name string instead of an ID
+
 `CourseEdit.jsx` initializes `form.category = data.categoryID || data.category`; the fallback is a display name and breaks the update payload.
 **Fix:** use `categoryID` only; if absent, leave unset. Effort: S.
 
 ### P0.6 Category management filters break pagination
+
 `CategoryManagement.jsx` filters/sorts client-side on one server page; `totalPages` uses the unfiltered count.
 **Fix:** either pass search/status/sort to the API or fetch-all-then-paginate client-side — not the current hybrid. Effort: M.
 
 ### P0.7 Route guards check the wrong permission
+
 `Routes.jsx` — `instructorPlus` routes (create/edit/builder/preview) check `courses.view`, so anyone who can view can reach authoring routes (backend may still reject, but the UI shouldn't offer it).
 **Fix:** `/courses/create` → `courses.create`; `/courses/:id/edit|builder|preview` → `courses.edit` / `courses.lessons.manage`. Effort: S.
 
@@ -42,31 +49,38 @@ Lifecycle covered: **Discover → Create → Edit → Build → Preview → Publ
 ## P1 — High-value UX gaps
 
 ### P1.1 Archived courses are a dead end
+
 ArchiveModal promises "can be restored later"; no restore path exists anywhere.
 **Fix:** add `RestoreModal` + "Restore to Draft" action on CourseDetail when status is Archived; hide "Publish" while Archived (today both buttons show — confusing). `updateCourse({status:"DRAFT"})` already works. Effort: S.
 
 ### P1.2 Tags and duration are un-editable
+
 Both fields exist in the model and render on CourseDetail, but CourseCreate/CourseEdit have no inputs for them.
 **Fix:** add a tag input (chip-style, reuse Badge) and duration field to both forms; check `GET/PUT /courses` tag payload shape first. Effort: M.
 
 ### P1.3 No status control in CourseEdit
+
 `form.status` is loaded but never rendered; publishing requires a round-trip via CourseDetail modals.
 **Fix:** show current status as a read-only badge in CourseEdit with a link/hint to the detail-page actions (keep the guarded modals as the single mutation path). Effort: S.
 
 ### P1.4 Learner resume + lazy content loading in CourseViewer
+
 - Always opens lesson 0; should resume at first incomplete lesson (completions are already fetched).
 - Loads ALL lesson autosaves upfront (N parallel requests).
-**Fix:** initial `activeIndex` = first lesson not in `lessonCompletionStatus`; fetch content on demand per lesson with a small cache. Effort: M.
+  **Fix:** initial `activeIndex` = first lesson not in `lessonCompletionStatus`; fetch content on demand per lesson with a small cache. Effort: M.
 
 ### P1.5 Mark-course-complete is a serial waterfall
+
 `handleMarkCourseComplete` awaits each lesson in a for-loop.
 **Fix:** `Promise.all` the un-completed lessons, single toast + one `loadEnrollment()`. Effort: S.
 
 ### P1.6 MyLearning has no error state
+
 API failure shows the "No courses found / Browse" empty state — actively misleading.
 **Fix:** error banner + retry button (pattern already exists in `Course.jsx`); depend on `user?.id` not `user` in the effect. Effort: S.
 
 ### P1.7 Cover image: file upload
+
 Create/Edit accept only URL or Unsplash. Backend has media upload (RustFS) already.
 **Fix:** add upload tab using the existing media upload endpoint; replace the DOM-mutation `onError` fallback with state. Effort: M.
 
@@ -100,12 +114,12 @@ Create/Edit accept only URL or Unsplash. Backend has media upload (RustFS) alrea
 
 ## Suggested execution order
 
-| Sprint | Items | Theme |
-|---|---|---|
-| 1 | P0.1–P0.7 | Stop silent breakage (1–2 days) |
-| 2 | P1.1, P1.3, P1.5, P1.6, P2.3, P2.6 | Quick wins, visible polish (1 day) |
-| 3 | P1.2, P1.4, P1.7 | Authoring + learner experience (2–3 days) |
-| 4 | P2.1, P2.2, P2.4, P2.5, P2.7–P2.10 | Code health sweep (1–2 days) |
-| 5 | P3.x | Backend-dependent / product calls |
+| Sprint | Items                              | Theme                                     |
+| ------ | ---------------------------------- | ----------------------------------------- |
+| 1      | P0.1–P0.7                          | Stop silent breakage (1–2 days)           |
+| 2      | P1.1, P1.3, P1.5, P1.6, P2.3, P2.6 | Quick wins, visible polish (1 day)        |
+| 3      | P1.2, P1.4, P1.7                   | Authoring + learner experience (2–3 days) |
+| 4      | P2.1, P2.2, P2.4, P2.5, P2.7–P2.10 | Code health sweep (1–2 days)              |
+| 5      | P3.x                               | Backend-dependent / product calls         |
 
 Each sprint should end with: lint clean on touched files, `bun run build` green, and a manual pass of the affected flow.

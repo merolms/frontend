@@ -254,10 +254,10 @@ function QuizBlockComponent(props) {
                             !submitted &&
                             !isSelected &&
                             "bg-neutral-100 text-neutral-600",
-                          !isEditable && !submitted && isSelected && "bg-blue-400 text-secondary",
-                          submitted && isCorrectAnswer && "bg-emerald-400 text-secondary",
-                          isIncorrectSelection && "bg-red-400 text-secondary",
-                          isEditable && isCorrectAnswer && "bg-emerald-400 text-secondary",
+                          !isEditable && !submitted && isSelected && "text-secondary bg-blue-400",
+                          submitted && isCorrectAnswer && "text-secondary bg-emerald-400",
+                          isIncorrectSelection && "text-secondary bg-red-400",
+                          isEditable && isCorrectAnswer && "text-secondary bg-emerald-400",
                           isEditable && !isCorrectAnswer && "bg-neutral-100 text-neutral-600"
                         )}
                       >

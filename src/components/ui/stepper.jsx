@@ -7,7 +7,9 @@ const Stepper = ({ steps, current, className }) => (
         <div className="flex items-center gap-1.5">
           <div
             className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold ${
-              i + 1 <= current ? "bg-primary text-secondary" : "bg-bg-surface-active text-text-muted"
+              i + 1 <= current
+                ? "bg-primary text-secondary"
+                : "bg-bg-surface-active text-text-muted"
             }`}
           >
             {i + 1}

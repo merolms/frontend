@@ -7,7 +7,7 @@ export default function ToolTip({ content, children }) {
         <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
         <TooltipPrimitive.Portal>
           <TooltipPrimitive.Content
-            className="z-50 rounded-md bg-neutral-900 px-2 py-1 text-xs text-secondary shadow-md"
+            className="text-secondary z-50 rounded-md bg-neutral-900 px-2 py-1 text-xs shadow-md"
             sideOffset={5}
           >
             {content}

@@ -284,7 +284,9 @@ const LearningPathForm = () => {
     if (selectedCourses.size === 0) return;
     setForm((p) => ({
       ...p,
-      courses: p.courses.filter((c) => !selectedCourses.has(c.id)).map((c, i) => ({ ...c, order: i + 1 })),
+      courses: p.courses
+        .filter((c) => !selectedCourses.has(c.id))
+        .map((c, i) => ({ ...c, order: i + 1 })),
     }));
     setSelectedCourses(new Set());
     addToast(`${selectedCourses.size} course(s) removed`, "success");
@@ -324,7 +326,10 @@ const LearningPathForm = () => {
     if (!form.description.trim()) e.description = "Description is required";
     if (form.description.length > 500) e.description = "Description must be 500 characters or less";
     if (!form.category) e.category = "Category is required";
-    if (form.estimatedDuration && !/^\d+\s*(week|month|year|days|months|years|weeks)s?$/i.test(form.estimatedDuration)) {
+    if (
+      form.estimatedDuration &&
+      !/^\d+\s*(week|month|year|days|months|years|weeks)s?$/i.test(form.estimatedDuration)
+    ) {
       e.estimatedDuration = "Invalid format (e.g., '6 weeks', '3 months')";
     }
     if (form.courses.length === 0) e.courses = "Add at least one course";
@@ -335,7 +340,7 @@ const LearningPathForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    
+
     // Check for duplicate title on create
     if (!isEdit) {
       const isDuplicate = await checkDuplicateTitle();
@@ -345,7 +350,7 @@ const LearningPathForm = () => {
         return;
       }
     }
-    
+
     setSaving(true);
     setApiError(null);
     try {
@@ -369,11 +374,13 @@ const LearningPathForm = () => {
 
   const filteredCourses = availableCourses
     .filter((c) => {
-      const matchesSearch = !courseSearch.trim() || 
-        c.title.toLowerCase().includes(courseSearch.toLowerCase()) || 
+      const matchesSearch =
+        !courseSearch.trim() ||
+        c.title.toLowerCase().includes(courseSearch.toLowerCase()) ||
         (c.description || "").toLowerCase().includes(courseSearch.toLowerCase());
       const matchesCategory = coursePickerCategory === "all" || c.category === coursePickerCategory;
-      const matchesDifficulty = coursePickerDifficulty === "all" || c.difficulty === coursePickerDifficulty;
+      const matchesDifficulty =
+        coursePickerDifficulty === "all" || c.difficulty === coursePickerDifficulty;
       return matchesSearch && matchesCategory && matchesDifficulty;
     })
     .filter((c) => !selectedIds.has(c.id));
@@ -418,7 +425,7 @@ const LearningPathForm = () => {
                 {showTemplatePicker ? "Hide Templates" : "Show Templates"}
               </Button>
             </div>
-            
+
             {showTemplatePicker && (
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 {learningPathTemplates.map((template) => (
@@ -426,16 +433,17 @@ const LearningPathForm = () => {
                     key={template.id}
                     type="button"
                     onClick={() => applyTemplate(template)}
-                    className="border-border bg-bg-surface-hover hover:bg-bg-surface-active border rounded-lg p-4 text-left transition-colors"
+                    className="border-border bg-bg-surface-hover hover:bg-bg-surface-active rounded-lg border p-4 text-left transition-colors"
                   >
                     <div className="mb-2 flex items-center gap-2">
-                      <div
-                        className="h-6 w-6 rounded"
-                        style={{ background: template.color }}
-                      />
-                      <span className="text-text-primary text-xs font-semibold">{template.name}</span>
+                      <div className="h-6 w-6 rounded" style={{ background: template.color }} />
+                      <span className="text-text-primary text-xs font-semibold">
+                        {template.name}
+                      </span>
                     </div>
-                    <p className="text-text-muted mb-2 line-clamp-2 text-[11px]">{template.description}</p>
+                    <p className="text-text-muted mb-2 line-clamp-2 text-[11px]">
+                      {template.description}
+                    </p>
                     <div className="flex items-center gap-2 text-[10px]">
                       <span className="text-text-secondary">{template.category}</span>
                       <span className="text-text-muted">·</span>
@@ -501,7 +509,9 @@ const LearningPathForm = () => {
                 {errors.description && (
                   <p className="text-error text-[11px]">{errors.description}</p>
                 )}
-                <p className="text-text-muted text-[10px]">{form.description.length}/500 characters</p>
+                <p className="text-text-muted text-[10px]">
+                  {form.description.length}/500 characters
+                </p>
               </div>
             </div>
 
@@ -515,7 +525,9 @@ const LearningPathForm = () => {
                   onChange={(e) => handleChange("versionNotes", e.target.value)}
                   maxLength={200}
                 />
-                <p className="text-text-muted mt-0.5 text-[10px]">{form.versionNotes.length}/200 characters</p>
+                <p className="text-text-muted mt-0.5 text-[10px]">
+                  {form.versionNotes.length}/200 characters
+                </p>
               </div>
             )}
 
@@ -546,7 +558,9 @@ const LearningPathForm = () => {
                 </label>
               </div>
               <p className="text-text-muted mt-1 text-[10px]">
-                {form.isPublic ? "Anyone can view this learning path" : "Only you can view this learning path"}
+                {form.isPublic
+                  ? "Anyone can view this learning path"
+                  : "Only you can view this learning path"}
               </p>
             </div>
 
@@ -642,12 +656,7 @@ const LearningPathForm = () => {
             <div className="flex items-center gap-2">
               {form.courses.length > 0 && (
                 <>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={selectAllCourses}
-                  >
+                  <Button type="button" variant="outline" size="sm" onClick={selectAllCourses}>
                     {selectedCourses.size === form.courses.length ? (
                       <Check size={14} className="mr-1" />
                     ) : null}
@@ -710,7 +719,7 @@ const LearningPathForm = () => {
                   className="pl-3"
                 />
               </div>
-              
+
               {/* Filters */}
               <div className="mb-3 flex gap-2">
                 <Select
@@ -759,14 +768,14 @@ const LearningPathForm = () => {
                     onClick={() => addCourse(course)}
                     className="hover:bg-bg-surface-active flex w-full items-center gap-3 rounded-md p-2 text-left"
                   >
-                    <div className="bg-bg-surface border-border flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border overflow-hidden">
+                    <div className="bg-bg-surface border-border flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-md border">
                       {course.coverImage ? (
                         <img
                           src={course.coverImage}
                           alt={course.title}
                           className="h-full w-full object-cover"
                           onError={(e) => {
-                            e.target.style.display = 'none';
+                            e.target.style.display = "none";
                             e.target.parentElement.innerHTML = `<div class="flex items-center justify-center h-full w-full"><BookOpen size={16} className="text-text-muted" /></div>`;
                           }}
                         />
@@ -779,7 +788,8 @@ const LearningPathForm = () => {
                         {course.title}
                       </p>
                       <p className="text-text-muted text-[10px]">
-                        {course.lessons || course.totalLessons || 0} lessons · {course.duration || "—"}
+                        {course.lessons || course.totalLessons || 0} lessons ·{" "}
+                        {course.duration || "—"}
                       </p>
                     </div>
                     <Plus size={14} className="text-text-muted flex-shrink-0" />
@@ -794,7 +804,7 @@ const LearningPathForm = () => {
               {hasMoreCourses && (
                 <button
                   type="button"
-                  onClick={() => setCoursePickerPage(p => p + 1)}
+                  onClick={() => setCoursePickerPage((p) => p + 1)}
                   className="text-primary hover:text-primary-hover mt-2 w-full rounded-md py-2 text-xs font-medium transition-colors"
                 >
                   Load More Courses ({filteredCourses.length - paginatedCourses.length} remaining)
@@ -814,7 +824,9 @@ const LearningPathForm = () => {
                 <div
                   key={course.id}
                   className={`border-border bg-bg-surface-hover flex items-center gap-3 rounded-lg border p-3 transition-all duration-200 ${
-                    selectedCourses.has(course.id) ? "ring-2 ring-primary/20 shadow-md" : "hover:shadow-sm"
+                    selectedCourses.has(course.id)
+                      ? "ring-primary/20 shadow-md ring-2"
+                      : "hover:shadow-sm"
                   }`}
                   style={{ borderLeft: `3px solid ${form.color}` }}
                 >
@@ -823,13 +835,13 @@ const LearningPathForm = () => {
                     type="checkbox"
                     checked={selectedCourses.has(course.id)}
                     onChange={() => toggleCourseSelection(course.id)}
-                    className="h-4 w-4 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary transition-transform hover:scale-110"
+                    className="text-primary focus:ring-primary h-4 w-4 cursor-pointer rounded border-gray-300 transition-transform hover:scale-110"
                     aria-label={`Select ${course.title}`}
                   />
 
                   {/* Step number */}
                   <div
-                    className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold text-secondary transition-transform hover:scale-110"
+                    className="text-secondary flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold transition-transform hover:scale-110"
                     style={{ background: form.color }}
                   >
                     {idx + 1}
@@ -893,7 +905,7 @@ const LearningPathForm = () => {
                   <React.Fragment key={course.id}>
                     <div className="bg-bg-surface border-border flex flex-shrink-0 items-center gap-1.5 rounded-md border px-2 py-1">
                       <div
-                        className="flex h-4 w-4 items-center justify-center rounded-full text-[8px] font-bold text-secondary"
+                        className="text-secondary flex h-4 w-4 items-center justify-center rounded-full text-[8px] font-bold"
                         style={{ background: form.color }}
                       >
                         {idx + 1}

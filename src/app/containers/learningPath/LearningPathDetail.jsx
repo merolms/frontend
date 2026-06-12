@@ -86,7 +86,7 @@ const LearningPathDetail = () => {
     const url = encodeURIComponent(window.location.href);
     const title = encodeURIComponent(path?.title || "Learning Path");
     const text = encodeURIComponent(`Check out this learning path: ${path?.title}`);
-    
+
     let shareUrl = "";
     switch (platform) {
       case "twitter":
@@ -107,14 +107,14 @@ const LearningPathDetail = () => {
   // Handle Escape key to close modals
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         if (showShare) setShowShare(false);
         if (showStats) setShowStats(false);
         if (showDelete) setShowDelete(false);
       }
     };
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
   }, [showShare, showStats, showDelete]);
 
   if (loading) {
@@ -195,18 +195,10 @@ const LearningPathDetail = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowShare(!showShare)}
-              >
+              <Button variant="outline" size="sm" onClick={() => setShowShare(!showShare)}>
                 <Share2 size={14} /> Share
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowStats(!showStats)}
-              >
+              <Button variant="outline" size="sm" onClick={() => setShowStats(!showStats)}>
                 <BarChart3 size={14} /> Statistics
               </Button>
               <Button
@@ -257,20 +249,20 @@ const LearningPathDetail = () => {
           </div>
           <div className="space-y-4">
             <div>
-              <label className="text-text-secondary mb-2 block text-xs font-semibold">Share Link</label>
+              <label className="text-text-secondary mb-2 block text-xs font-semibold">
+                Share Link
+              </label>
               <div className="flex gap-2">
-                <Input
-                  value={window.location.href}
-                  readOnly
-                  className="flex-1"
-                />
+                <Input value={window.location.href} readOnly className="flex-1" />
                 <Button size="sm" onClick={handleCopyLink} aria-label="Copy link to clipboard">
                   <Copy size={14} className="mr-1" /> Copy
                 </Button>
               </div>
             </div>
             <div>
-              <label className="text-text-secondary mb-2 block text-xs font-semibold">Share on Social Media</label>
+              <label className="text-text-secondary mb-2 block text-xs font-semibold">
+                Share on Social Media
+              </label>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
@@ -324,7 +316,9 @@ const LearningPathDetail = () => {
               <div className="text-text-muted mb-1 flex items-center gap-1 text-[10px]">
                 <Check size={10} className="text-success" /> Completion Rate
               </div>
-              <p className="text-text-primary text-2xl font-bold">{Math.round((path.enrolledCount * 0.65) / path.enrolledCount * 100) || 0}%</p>
+              <p className="text-text-primary text-2xl font-bold">
+                {Math.round(((path.enrolledCount * 0.65) / path.enrolledCount) * 100) || 0}%
+              </p>
               <p className="text-success text-[10px]">+5% improvement</p>
             </div>
             <div className="bg-bg-surface-hover rounded-lg p-4">
@@ -342,21 +336,30 @@ const LearningPathDetail = () => {
               <p className="text-text-muted text-[10px]">from {path.enrolledCount || 0} reviews</p>
             </div>
           </div>
-          
+
           {/* Popular Courses */}
           <div className="mt-4">
             <h4 className="text-text-secondary mb-3 text-xs font-semibold">Most Popular Courses</h4>
             <div className="space-y-2">
               {path.courses?.slice(0, 3).map((course, idx) => (
-                <div key={course.id} className="bg-bg-surface-hover flex items-center gap-3 rounded-lg p-3">
+                <div
+                  key={course.id}
+                  className="bg-bg-surface-hover flex items-center gap-3 rounded-lg p-3"
+                >
                   <div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold">
                     {idx + 1}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-text-primary line-clamp-1 text-xs font-semibold">{course.title}</p>
-                    <p className="text-text-muted text-[10px]">{Math.floor(Math.random() * 500) + 100} enrolled</p>
+                    <p className="text-text-primary line-clamp-1 text-xs font-semibold">
+                      {course.title}
+                    </p>
+                    <p className="text-text-muted text-[10px]">
+                      {Math.floor(Math.random() * 500) + 100} enrolled
+                    </p>
                   </div>
-                  <div className="text-success text-[10px] font-medium">{Math.floor(Math.random() * 30) + 70}% complete</div>
+                  <div className="text-success text-[10px] font-medium">
+                    {Math.floor(Math.random() * 30) + 70}% complete
+                  </div>
                 </div>
               ))}
             </div>
@@ -443,17 +446,23 @@ const LearningPathDetail = () => {
             <div className="border-border bg-bg-surface overflow-hidden rounded-xl border shadow-sm">
               {/* Course cover */}
               <img
-                src={activeCourse.coverImage || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop"}
+                src={
+                  activeCourse.coverImage ||
+                  "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop"
+                }
                 alt={activeCourse.title}
                 className="h-48 w-full object-cover"
-                onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop"; }}
+                onError={(e) => {
+                  e.target.src =
+                    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop";
+                }}
               />
 
               <div className="p-5">
                 {/* Step badge */}
                 <div className="mb-3 flex items-center gap-2">
                   <div
-                    className="flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold text-secondary"
+                    className="text-secondary flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold"
                     style={{ background: path.color }}
                   >
                     {activeStep + 1}
@@ -496,7 +505,9 @@ const LearningPathDetail = () => {
                     <ArrowLeft size={12} /> Previous
                   </button>
                   <button
-                    onClick={() => setActiveStep(Math.min(path.courses?.length - 1, activeStep + 1))}
+                    onClick={() =>
+                      setActiveStep(Math.min(path.courses?.length - 1, activeStep + 1))
+                    }
                     disabled={activeStep === path.courses?.length - 1}
                     className="flex cursor-pointer items-center gap-1 text-xs font-medium hover:underline disabled:pointer-events-none disabled:opacity-30"
                     style={{ color: path.color }}

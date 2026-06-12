@@ -113,7 +113,7 @@ const FlipcardExtension = (props) => {
           {/* Front */}
           <div
             className={cn(
-              "flipcard-front nice-shadow flex flex-col items-center justify-center rounded-xl border-2 p-6 text-center text-secondary",
+              "flipcard-front nice-shadow text-secondary flex flex-col items-center justify-center rounded-xl border-2 p-6 text-center",
               getCardColor(color, false)
             )}
           >
@@ -127,7 +127,7 @@ const FlipcardExtension = (props) => {
                   value={question}
                   onChange={handleQuestionChange}
                   onBlur={() => setIsEditingQuestion(false)}
-                  className="h-20 w-full resize-none rounded-lg border-none bg-white/20 p-2 text-center text-secondary placeholder-white/70 backdrop-blur-sm outline-none"
+                  className="text-secondary h-20 w-full resize-none rounded-lg border-none bg-white/20 p-2 text-center placeholder-white/70 backdrop-blur-sm outline-none"
                   placeholder="Enter question"
                 />
               ) : (
@@ -163,7 +163,7 @@ const FlipcardExtension = (props) => {
           {/* Back */}
           <div
             className={cn(
-              "flipcard-back nice-shadow flex flex-col items-center justify-center rounded-xl border-2 p-6 text-center text-secondary",
+              "flipcard-back nice-shadow text-secondary flex flex-col items-center justify-center rounded-xl border-2 p-6 text-center",
               getCardColor(color, true)
             )}
           >
@@ -177,7 +177,7 @@ const FlipcardExtension = (props) => {
                   value={answer}
                   onChange={handleAnswerChange}
                   onBlur={() => setIsEditingAnswer(false)}
-                  className="h-20 w-full resize-none rounded-lg border-none bg-white/20 p-2 text-center text-secondary placeholder-white/70 backdrop-blur-sm outline-none"
+                  className="text-secondary h-20 w-full resize-none rounded-lg border-none bg-white/20 p-2 text-center placeholder-white/70 backdrop-blur-sm outline-none"
                   placeholder="Enter answer"
                 />
               ) : (
@@ -223,7 +223,7 @@ const FlipcardExtension = (props) => {
                 className={cn(
                   "rounded-md p-1.5 text-xs transition-colors",
                   alignment === val
-                    ? "bg-neutral-700 text-secondary"
+                    ? "text-secondary bg-neutral-700"
                     : "bg-neutral-200 text-neutral-600 hover:bg-neutral-300"
                 )}
                 title={`Align ${val}`}
@@ -240,7 +240,7 @@ const FlipcardExtension = (props) => {
               className={cn(
                 "rounded-md p-1.5 text-xs transition-colors",
                 size === "small"
-                  ? "bg-neutral-700 text-secondary"
+                  ? "text-secondary bg-neutral-700"
                   : "bg-neutral-200 text-neutral-600 hover:bg-neutral-300"
               )}
               title="Small"
@@ -255,7 +255,7 @@ const FlipcardExtension = (props) => {
               className={cn(
                 "rounded-md p-1.5 text-xs transition-colors",
                 size === "medium"
-                  ? "bg-neutral-700 text-secondary"
+                  ? "text-secondary bg-neutral-700"
                   : "bg-neutral-200 text-neutral-600 hover:bg-neutral-300"
               )}
               title="Medium"
@@ -270,7 +270,7 @@ const FlipcardExtension = (props) => {
               className={cn(
                 "rounded-md p-1.5 text-xs transition-colors",
                 size === "large"
-                  ? "bg-neutral-700 text-secondary"
+                  ? "text-secondary bg-neutral-700"
                   : "bg-neutral-200 text-neutral-600 hover:bg-neutral-300"
               )}
               title="Large"

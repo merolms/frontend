@@ -39,7 +39,12 @@ const CourseCreate = () => {
   const [coverUploading, setCoverUploading] = useState(false);
   const [coverError, setCoverError] = useState(false);
 
-  const { updateForm, clearDirty } = useUnsavedChanges(form, { title: "", description: "", category: null, coverImage: "", duration: "" }, setForm, { draftKey: DRAFT_KEY });
+  const { updateForm, clearDirty } = useUnsavedChanges(
+    form,
+    { title: "", description: "", category: null, coverImage: "", duration: "" },
+    setForm,
+    { draftKey: DRAFT_KEY }
+  );
 
   const handleCoverUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -243,7 +248,7 @@ const CourseCreate = () => {
                         setCoverError(false);
                         updateForm((p) => ({ ...p, coverImage: "" }));
                       }}
-                      className="bg-error absolute top-1 right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded text-secondary hover:opacity-80"
+                      className="bg-error text-secondary absolute top-1 right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded hover:opacity-80"
                     >
                       <X size={10} />
                     </button>

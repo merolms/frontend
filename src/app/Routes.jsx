@@ -4,6 +4,11 @@ import ForgotPassword from "@/app/containers/auth/ForgotPassword/ForgotPassword"
 import Login from "@/app/containers/auth/Login/Login";
 import ResetPassword from "@/app/containers/auth/ResetPassword/ResetPassword";
 import Unauthorized from "@/app/containers/auth/Unauthorized/Unauthorized";
+import AssignmentContainer from "@/app/containers/assignment/Assignment";
+import AssignmentCreate from "@/app/containers/assignment/AssignmentCreate";
+import AssignmentDetail from "@/app/containers/assignment/AssignmentDetail";
+import AssignmentGrade from "@/app/containers/assignment/AssignmentGrade";
+import AssignmentSubmit from "@/app/containers/assignment/AssignmentSubmit";
 import CategoryManagement from "@/app/containers/category/CategoryManagement/CategoryManagement";
 import CourseContainer from "@/app/containers/course/Course";
 import CourseBuilder from "@/app/containers/course/CourseBuilder/CourseBuilder";
@@ -140,6 +145,11 @@ const sharedRoutes = [
   anyAuth(<CourseViewer />, "/courses/:id/learn", ["courses.view"]),
   anyAuth(<LearningPathList />, "/learning-paths", ["courses.view"]),
   anyAuth(<LearningPathDetail />, "/learning-paths/:id", ["courses.view"]),
+  anyAuth(<AssignmentContainer />, "/assignments"),
+  anyAuth(<AssignmentDetail />, "/assignments/:id"),
+  anyAuth(<AssignmentCreate />, "/assignments/create"),
+  anyAuth(<AssignmentSubmit />, "/assignments/:id/submit"),
+  anyAuth(<AssignmentGrade />, "/assignments/:id/grade"),
   anyAuth(<MyLearning />, "/my-learning"),
   anyAuth(<LearningPathProgress />, "/my-learning/:learningPathId"),
   anyAuth(<Profile />, "/profile"),
