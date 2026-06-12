@@ -824,6 +824,7 @@ const LearningPathForm = () => {
                     checked={selectedCourses.has(course.id)}
                     onChange={() => toggleCourseSelection(course.id)}
                     className="h-4 w-4 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary transition-transform hover:scale-110"
+                    aria-label={`Select ${course.title}`}
                   />
 
                   {/* Step number */}
@@ -856,6 +857,7 @@ const LearningPathForm = () => {
                       onClick={() => moveCourse(idx, "up")}
                       disabled={idx === 0}
                       className="hover:bg-bg-surface flex h-7 w-7 cursor-pointer items-center justify-center rounded transition-all hover:scale-110 disabled:opacity-30 disabled:hover:scale-100"
+                      aria-label="Move course up"
                     >
                       <ChevronUp size={14} />
                     </button>
@@ -864,6 +866,7 @@ const LearningPathForm = () => {
                       onClick={() => moveCourse(idx, "down")}
                       disabled={idx === form.courses.length - 1}
                       className="hover:bg-bg-surface flex h-7 w-7 cursor-pointer items-center justify-center rounded transition-all hover:scale-110 disabled:opacity-30 disabled:hover:scale-100"
+                      aria-label="Move course down"
                     >
                       <ChevronDown size={14} />
                     </button>
@@ -871,6 +874,7 @@ const LearningPathForm = () => {
                       type="button"
                       onClick={() => removeCourse(course.id)}
                       className="text-error hover:bg-error/10 flex h-7 w-7 cursor-pointer items-center justify-center rounded transition-all hover:scale-110"
+                      aria-label="Remove course"
                     >
                       <Trash2 size={14} />
                     </button>

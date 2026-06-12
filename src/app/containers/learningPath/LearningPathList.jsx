@@ -25,15 +25,26 @@ const difficultyColors = {
   "Beginner to Advanced": "purple",
 };
 
-const LearningPathCard = ({ path, navigate, onExport, onBookmark, isBookmarked }) => {
+const LearningPathCard = ({ path, navigate, onExport, onBookmark, isBookmarked, exporting }) => {
   const gradientStyle = {
     background: `linear-gradient(135deg, ${path.color}22 0%, ${path.color}44 100%)`,
     borderLeft: `4px solid ${path.color}`,
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      navigate(`/learning-paths/${path.id}`);
+    }
+  };
+
   return (
     <div
-      className="border-border bg-bg-surface group cursor-pointer overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+      className="border-border bg-bg-surface group cursor-pointer overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 focus-within:ring-2 focus-within:ring-primary/50"
+      tabIndex={0}
+      role="button"
+      onKeyDown={handleKeyDown}
+      aria-label={`View learning path: ${path.title}`}
     >
       {/* Header with gradient */}
       <div className="relative p-5 pb-3" style={gradientStyle}>
@@ -65,6 +76,8 @@ const LearningPathCard = ({ path, navigate, onExport, onBookmark, isBookmarked }
               }}
               className="text-text-muted hover:text-primary transition-colors"
               title={isBookmarked ? "Remove bookmark" : "Bookmark learning path"}
+              aria-label={isBookmarked ? "Remove bookmark" : "Bookmark learning path"}
+              aria-pressed={isBookmarked}
             >
               {isBookmarked ? <BookmarkCheck size={16} className="text-primary" /> : <Bookmark size={16} />}
             </button>
@@ -73,10 +86,12 @@ const LearningPathCard = ({ path, navigate, onExport, onBookmark, isBookmarked }
                 e.stopPropagation();
                 onExport(path);
               }}
-              className="text-text-muted hover:text-primary transition-colors"
+              className="text-text-muted hover:text-primary transition-colors disabled:opacity-50"
               title="Export learning path"
+              aria-label="Export learning path"
+              disabled={exporting}
             >
-              <Download size={16} />
+              {exporting ? <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" /> : <Download size={16} />}
             </button>
           </div>
         </div>
@@ -150,6 +165,7 @@ const LearningPathList = () => {
   const [total, setTotal] = useState(0);
   const [categories, setCategories] = useState(["All Categories"]);
   const [bookmarkedPaths, setBookmarkedPaths] = useState(new Set());
+  const [exporting, setExporting] = useState(false);
 
   const page = parseInt(searchParams.get("page")) || 1;
   const search = searchParams.get("search") || "";
@@ -227,6 +243,7 @@ const LearningPathList = () => {
   };
 
   const handleExportPath = (path) => {
+    setExporting(true);
     const exportData = {
       title: path.title,
       description: path.description,
@@ -246,9 +263,11 @@ const LearningPathList = () => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    setTimeout(() => setExporting(false), 500);
   };
 
   const handleExportAll = () => {
+    setExporting(true);
     const exportData = {
       paths: paths,
       exportedAt: new Date().toISOString(),
@@ -263,6 +282,7 @@ const LearningPathList = () => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    setTimeout(() => setExporting(false), 500);
   };
 
   const handleImport = (e) => {
@@ -319,8 +339,14 @@ const LearningPathList = () => {
                 variant="outline"
                 size="sm"
                 onClick={handleExportAll}
+                disabled={exporting}
               >
-                <Download size={14} /> Export All
+                {exporting ? (
+                  <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full mr-1" />
+                ) : (
+                  <Download size={14} className="mr-1" />
+                )}
+                Export All
               </Button>
             </>
           )}
@@ -379,13 +405,14 @@ const LearningPathList = () => {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               className="pl-8"
+              aria-label="Search learning paths"
             />
           </div>
           <Select
             value={category || "all"}
             onValueChange={(v) => updateParams({ category: v === "all" ? "" : v, page: 1 })}
           >
-            <SelectTrigger className="w-40">
+            <SelectTrigger className="w-40" aria-label="Filter by category">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
@@ -464,6 +491,7 @@ const LearningPathList = () => {
                 onExport={handleExportPath}
                 onBookmark={toggleBookmark}
                 isBookmarked={bookmarkedPaths.has(path.id)}
+                exporting={exporting}
               />
             ))}
           </div>

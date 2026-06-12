@@ -104,6 +104,19 @@ const LearningPathDetail = () => {
     window.open(shareUrl, "_blank", "width=600,height=400");
   };
 
+  // Handle Escape key to close modals
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        if (showShare) setShowShare(false);
+        if (showStats) setShowStats(false);
+        if (showDelete) setShowDelete(false);
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [showShare, showStats, showDelete]);
+
   if (loading) {
     return (
       <DashboardLayout title="Learning Path" subtitle="Loading...">
@@ -237,6 +250,7 @@ const LearningPathDetail = () => {
             <button
               onClick={() => setShowShare(false)}
               className="text-text-muted hover:text-text-primary"
+              aria-label="Close share modal"
             >
               <X size={16} />
             </button>
@@ -250,7 +264,7 @@ const LearningPathDetail = () => {
                   readOnly
                   className="flex-1"
                 />
-                <Button size="sm" onClick={handleCopyLink}>
+                <Button size="sm" onClick={handleCopyLink} aria-label="Copy link to clipboard">
                   <Copy size={14} className="mr-1" /> Copy
                 </Button>
               </div>
@@ -263,6 +277,7 @@ const LearningPathDetail = () => {
                   size="sm"
                   onClick={() => handleSocialShare("twitter")}
                   className="flex-1"
+                  aria-label="Share on Twitter"
                 >
                   Twitter
                 </Button>
@@ -271,6 +286,7 @@ const LearningPathDetail = () => {
                   size="sm"
                   onClick={() => handleSocialShare("linkedin")}
                   className="flex-1"
+                  aria-label="Share on LinkedIn"
                 >
                   LinkedIn
                 </Button>
@@ -279,6 +295,7 @@ const LearningPathDetail = () => {
                   size="sm"
                   onClick={() => handleSocialShare("facebook")}
                   className="flex-1"
+                  aria-label="Share on Facebook"
                 >
                   Facebook
                 </Button>
