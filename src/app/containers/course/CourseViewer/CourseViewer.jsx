@@ -282,7 +282,7 @@ const CourseViewer = () => {
   }
 
   // Determine if course is enrollable
-  const isPublished = course.status === "Published";
+  const isPublished = course.status === "published";
   const isAdmin = hasPermission(user, "courses.publish"); // admin/instructor can see all
 
   // Not enrolled — show enroll prompt (only for published courses, or admins)
@@ -312,12 +312,12 @@ const CourseViewer = () => {
             <BookOpen size={48} style={{ color: t("text-muted"), marginBottom: 16 }} />
             <h2 style={{ color: t("text-primary"), margin: "0 0 8px" }}>{course.title}</h2>
             <p style={{ color: t("text-muted"), fontSize: 14, marginBottom: 8 }}>
-              {course.status === "DRAFT"
+              {course.status === "draft"
                 ? "This course is not yet available. It is currently being prepared."
                 : "This course is no longer available for enrollment."}
             </p>
-            <Badge variant={course.status === "DRAFT" ? "gray" : "orange"}>
-              {course.status === "DRAFT" ? "Draft" : "Archived"}
+            <Badge variant={course.status === "draft" ? "gray" : "orange"}>
+              {course.status === "draft" ? "Draft" : "Archived"}
             </Badge>
           </div>
         </div>

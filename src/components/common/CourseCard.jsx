@@ -59,7 +59,7 @@ const CourseCard = ({
         {showStatus && course.status && (
           <span
             className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-              course.status === "Published"
+              course.status === "published"
                 ? "bg-success/10 text-success"
                 : "bg-warning/10 text-warning"
             }`}

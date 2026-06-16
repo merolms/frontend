@@ -82,11 +82,12 @@ export const parseBlocks = (content) => {
 
 /**
  * Save an autosave snapshot for a lesson.
- * snapshot should be a JSON string.
+ * POST /lessons/{id}/blocks body: LessonBlockRequest { lessonId, snapshot }
+ * Returns Response { data: { id, lessonId, userId, snapshot, createdAt } }
  */
 export const saveLessonBlocks = async (lessonId, snapshot) => {
   try {
-    return await apiPost(`/lessons/${lessonId}/blocks`, { snapshot });
+    return await apiPost(`/lessons/${lessonId}/blocks`, { lessonId, snapshot });
   } catch (error) {
     console.error("Error saving autosave:", error);
     throw error;
@@ -95,6 +96,7 @@ export const saveLessonBlocks = async (lessonId, snapshot) => {
 
 /**
  * Fetch the latest autosave for a lesson.
+ * GET /lessons/{id}/blocks returns Response { data: { id, lessonId, userId, snapshot, createdAt } }
  */
 export const fetchLessonBlocks = async (lessonId) => {
   try {
@@ -117,6 +119,7 @@ export const fetchLessonBlocks = async (lessonId) => {
 
 /**
  * Fetch a single block by ID.
+ * GET /blocks/{id} returns Response { data: Block }
  */
 export const fetchBlockById = async (blockId) => {
   try {
@@ -129,6 +132,7 @@ export const fetchBlockById = async (blockId) => {
 
 /**
  * Update a block.
+ * PUT /blocks/{id} returns Response { data: Block }
  */
 export const updateBlock = async (blockId, blockData) => {
   try {
@@ -141,6 +145,7 @@ export const updateBlock = async (blockId, blockData) => {
 
 /**
  * Delete a block.
+ * DELETE /blocks/{id} returns 204 No Content
  */
 export const deleteBlock = async (blockId) => {
   try {
@@ -153,6 +158,7 @@ export const deleteBlock = async (blockId) => {
 
 /**
  * Reorder blocks within a lesson.
+ * PUT /lessons/{id}/blocks/reorder body: { blockIds: integer[] }
  */
 export const reorderBlocks = async (lessonId, blockIds) => {
   try {
@@ -165,6 +171,7 @@ export const reorderBlocks = async (lessonId, blockIds) => {
 
 /**
  * Fetch version history for a block.
+ * GET /blocks/{id}/versions returns Response { data: BlockVersion[] }
  */
 export const fetchBlockVersions = async (blockId) => {
   try {
@@ -177,6 +184,7 @@ export const fetchBlockVersions = async (blockId) => {
 
 /**
  * Restore a block to a previous version.
+ * POST /blocks/{id}/restore body: { versionId }
  */
 export const restoreBlockVersion = async (blockId, versionId) => {
   try {
@@ -191,6 +199,7 @@ export const restoreBlockVersion = async (blockId, versionId) => {
 
 /**
  * Upload a media file for a lesson.
+ * POST /lessons/{id}/media returns Response { data: { url, ... } }
  * Returns the full URL to the uploaded file.
  */
 export const uploadBlockMedia = async (lessonId, blockId, file) => {
@@ -212,6 +221,8 @@ export const uploadBlockMedia = async (lessonId, blockId, file) => {
 
 /**
  * Generate AI content for a block.
+ * POST /ai/generate body: AIGenerationRequest { blockType, lessonId, prompt, context }
+ * Returns Response { data: { content, ... } }
  */
 export const generateAIContent = async (lessonId, blockType, prompt, context = "") => {
   try {

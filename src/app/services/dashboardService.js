@@ -1,34 +1,20 @@
 // Dashboard API Service
+// GET /stats returns Response { data: StatsResponse }
+// StatsResponse = { course_count, user_count, team_count, category_count }
+
+import { apiGet } from "@/app/services/http";
 
 export const fetchDashboardStats = async () => {
   try {
-    const body = await fetchStatsEnvelope();
+    const data = await apiGet("/stats");
     return {
-      totalCourses: body.courseCount || body.course_count || 0,
-      totalUsers: body.userCount || body.user_count || 0,
-      totalTeams: body.teamCount || body.team_count || 0,
-      totalCategories: body.categoryCount || body.category_count || 0,
+      totalCourses: data?.course_count || data?.courseCount || 0,
+      totalUsers: data?.user_count || data?.userCount || 0,
+      totalTeams: data?.team_count || data?.teamCount || 0,
+      totalCategories: data?.category_count || data?.categoryCount || 0,
     };
   } catch (error) {
     console.error("Error fetching dashboard stats:", error);
     throw error;
   }
 };
-
-async function fetchStatsEnvelope() {
-  try {
-    const token = localStorage.getItem("auth_token");
-    const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:9090";
-    const headers = {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
-    const res = await fetch(`${API_BASE}/stats`, { headers });
-    if (!res.ok) throw new Error("Failed to fetch stats: " + res.status);
-    const body = await res.json();
-    return body.data || body;
-  } catch (error) {
-    console.error("Error fetching stats envelope:", error);
-    throw error;
-  }
-}

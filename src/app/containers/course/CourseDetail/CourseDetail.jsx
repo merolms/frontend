@@ -197,9 +197,9 @@ const CourseDetail = () => {
   };
 
   const statusConfig = {
-    Published: { color: "green", text: "Published" },
-    DRAFT: { color: "gray", text: "Draft" },
-    Archived: { color: "orange", text: "Archived" },
+    published: { color: "green", text: "Published" },
+    draft: { color: "gray", text: "Draft" },
+    archived: { color: "orange", text: "Archived" },
   };
 
   if (loading) {
@@ -341,26 +341,26 @@ const CourseDetail = () => {
                 <LogOut size={14} /> Drop
               </Button>
             )}
-            {!enrollment && user && course.status === "Published" && (
+            {!enrollment && user && course.status === "published" && (
               <Button size="sm" variant="primary" onClick={handleEnroll} disabled={actionLoading}>
                 <Plus size={14} /> Enroll Now
               </Button>
             )}
-            {course.status === "DRAFT" && (
+            {course.status === "draft" && (
               <PermissionGuard permissions={["courses.publish"]}>
                 <Button size="sm" variant="ghost" onClick={() => setActiveModal("publish")}>
                   <Check size={14} /> Publish
                 </Button>
               </PermissionGuard>
             )}
-            {course.status === "Published" && (
+            {course.status === "published" && (
               <PermissionGuard permissions={["courses.publish"]}>
                 <Button size="sm" variant="ghost" onClick={() => setActiveModal("archive")}>
                   <Archive size={14} /> Archive
                 </Button>
               </PermissionGuard>
             )}
-            {course.status === "Archived" && (
+            {course.status === "archived" && (
               <PermissionGuard permissions={["courses.publish"]}>
                 <Button size="sm" variant="ghost" onClick={() => setActiveModal("restore")}>
                   <ArchiveRestore size={14} /> Restore

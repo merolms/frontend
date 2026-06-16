@@ -1,242 +1,322 @@
-// Events Service — Mock data for now
+// Events Service
+// Real API integration matching swagger endpoints.
+//
+// Endpoints:
+//   GET    /events?start=0&limit=10          — Organization events
+//   POST   /events                           — Create event
+//   GET    /events/{id}                      — Get event by ID
+//   PUT    /events/{id}                      — Update event
+//   DELETE /events/{id}                      — Delete event
+//   GET    /events/course/{courseId}         — Get events by course
+//   GET    /events/time-range                — Get events in time range
+//   GET    /events/type/{type}               — Get events by type
+//   GET    /events/upcoming                  — Get upcoming events
+//   GET    /events/user                      — Get user events
+//   GET    /events/user/attendees            — Get events where user is attendee
+//   GET    /events/{eventId}/attendees       — Get event attendees
+//   POST   /events/{eventId}/attendees       — Add attendee
+//   GET    /events/{eventId}/attendees/count — Get attendee count
+//   PUT    /events/{eventId}/attendees/{userId} — Update attendee status
+//   DELETE /events/{eventId}/attendees/{userId} — Remove attendee
+//   GET    /events/{id}/stats                — Get event statistics
 
-let mockEvents = [
-  {
-    id: 1,
-    title: "React Advanced Patterns Workshop",
-    description:
-      "Deep dive into advanced React patterns including compound components, render props, and custom hooks.",
-    type: "workshop",
-    color: "#6366F1",
-    startDate: "2025-07-15T10:00:00",
-    endDate: "2025-07-15T14:00:00",
-    location: "Virtual — Zoom",
-    instructor: "Jane Smith",
-    maxAttendees: 50,
-    enrolledCount: 32,
-    status: "upcoming",
-    tags: ["react", "javascript", "advanced"],
-    createdAt: "2025-06-01",
-    updatedAt: "2025-06-10",
-  },
-  {
-    id: 2,
-    title: "Data Science Career Fair",
-    description: "Meet top employers in the data science field. Bring your resume and portfolio.",
-    type: "career",
-    color: "#8B5CF6",
-    startDate: "2025-07-18T09:00:00",
-    endDate: "2025-07-18T17:00:00",
-    location: "Main Hall, Building A",
-    instructor: null,
-    maxAttendees: 200,
-    enrolledCount: 145,
-    status: "upcoming",
-    tags: ["career", "networking", "data-science"],
-    createdAt: "2025-06-05",
-    updatedAt: "2025-06-12",
-  },
-  {
-    id: 3,
-    title: "Python for Beginners — Live Session",
-    description: "Interactive live coding session covering Python fundamentals.",
-    type: "live_class",
-    color: "#22C55E",
-    startDate: "2025-07-12T15:00:00",
-    endDate: "2025-07-12T17:00:00",
-    location: "Virtual — Google Meet",
-    instructor: "Bob Wilson",
-    maxAttendees: 100,
-    enrolledCount: 78,
-    status: "upcoming",
-    tags: ["python", "beginner", "live"],
-    createdAt: "2025-06-08",
-    updatedAt: "2025-06-08",
-  },
-  {
-    id: 4,
-    title: "UI/UX Design Review Session",
-    description:
-      "Bring your designs for peer review and expert feedback from industry professionals.",
-    type: "review",
-    color: "#EC4899",
-    startDate: "2025-07-20T11:00:00",
-    endDate: "2025-07-20T13:00:00",
-    location: "Design Lab, Room 302",
-    instructor: "Diana Prince",
-    maxAttendees: 30,
-    enrolledCount: 22,
-    status: "upcoming",
-    tags: ["ui", "ux", "design", "review"],
-    createdAt: "2025-06-10",
-    updatedAt: "2025-06-15",
-  },
-  {
-    id: 5,
-    title: "Team Alpha Sprint Planning",
-    description: "Q3 sprint planning session for the Alpha engineering team.",
-    type: "meeting",
-    color: "#F59E0B",
-    startDate: "2025-07-14T09:00:00",
-    endDate: "2025-07-14T11:00:00",
-    location: "Conference Room B",
-    instructor: null,
-    maxAttendees: 15,
-    enrolledCount: 12,
-    status: "upcoming",
-    tags: ["meeting", "agile", "team"],
-    createdAt: "2025-06-12",
-    updatedAt: "2025-06-12",
-  },
-  {
-    id: 6,
-    title: "Kubernetes Deep Dive",
-    description:
-      "Hands-on workshop covering Kubernetes architecture, deployment strategies, and monitoring.",
-    type: "workshop",
-    color: "#06B6D4",
-    startDate: "2025-07-22T13:00:00",
-    endDate: "2025-07-22T17:00:00",
-    location: "Virtual — Teams",
-    instructor: "John Doe",
-    maxAttendees: 40,
-    enrolledCount: 35,
-    status: "upcoming",
-    tags: ["kubernetes", "devops", "cloud"],
-    createdAt: "2025-06-15",
-    updatedAt: "2025-06-18",
-  },
-  {
-    id: 7,
-    title: "Graduation Ceremony — Summer 2025",
-    description: "Celebrate the achievements of our summer cohort graduates.",
-    type: "ceremony",
-    color: "#EF4444",
-    startDate: "2025-07-25T16:00:00",
-    endDate: "2025-07-25T19:00:00",
-    location: "Grand Auditorium",
-    instructor: null,
-    maxAttendees: 500,
-    enrolledCount: 380,
-    status: "upcoming",
-    tags: ["ceremony", "graduation", "celebration"],
-    createdAt: "2025-05-20",
-    updatedAt: "2025-06-20",
-  },
-  {
-    id: 8,
-    title: "Study Group — Machine Learning",
-    description: "Weekly study group working through the ML fundamentals course together.",
-    type: "study_group",
-    color: "#10B981",
-    startDate: "2025-07-16T18:00:00",
-    endDate: "2025-07-16T20:00:00",
-    location: "Library, Study Room 5",
-    instructor: null,
-    maxAttendees: 20,
-    enrolledCount: 14,
-    status: "upcoming",
-    tags: ["study-group", "machine-learning", "peer-learning"],
-    createdAt: "2025-06-18",
-    updatedAt: "2025-06-18",
-  },
-];
+import { apiDelete, apiGet, apiPost, apiPut } from "@/app/services/http";
 
-let nextId = 9;
+// ==================== EVENTS ====================
 
+/**
+ * Get organization events
+ * GET /events?start=0&limit=10 returns Response { data: Event[] }
+ */
 export const fetchEvents = async (params = {}) => {
-  await new Promise((r) => setTimeout(r, 300));
-  let results = [...mockEvents];
-
-  if (params.search) {
-    const q = params.search.toLowerCase();
-    results = results.filter(
-      (e) =>
-        e.title.toLowerCase().includes(q) ||
-        e.description.toLowerCase().includes(q) ||
-        (e.instructor || "").toLowerCase().includes(q) ||
-        e.tags.some((t) => t.includes(q))
-    );
+  try {
+    const queryParams = new URLSearchParams();
+    if (params.start !== undefined) queryParams.set("start", params.start);
+    if (params.limit !== undefined) queryParams.set("limit", params.limit);
+    const data = await apiGet(`/events?${queryParams}`);
+    const events = Array.isArray(data) ? data : [];
+    return { events, total: events.length };
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    throw error;
   }
-  if (params.type && params.type !== "all") {
-    results = results.filter((e) => e.type === params.type);
-  }
-  if (params.status && params.status !== "all") {
-    results = results.filter((e) => e.status === params.status);
-  }
-  if (params.startDate) {
-    results = results.filter((e) => e.startDate >= params.startDate);
-  }
-  if (params.endDate) {
-    results = results.filter((e) => e.startDate <= params.endDate);
-  }
-
-  // Sort by start date
-  results.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-
-  const page = params.page || 1;
-  const limit = params.limit || 10;
-  const total = results.length;
-  const totalPages = Math.ceil(total / limit);
-  const start = (page - 1) * limit;
-  const events = results.slice(start, start + limit);
-
-  return { events, total, page, limit, totalPages };
 };
 
+/**
+ * Get event by ID
+ * GET /events/{id} returns Response { data: Event }
+ */
 export const fetchEventById = async (id) => {
-  await new Promise((r) => setTimeout(r, 200));
-  return mockEvents.find((e) => e.id === parseInt(id)) || null;
+  try {
+    return await apiGet(`/events/${id}`);
+  } catch (error) {
+    console.error("Error fetching event:", error);
+    throw error;
+  }
 };
 
-export const fetchEventsForMonth = async (year, month) => {
-  await new Promise((r) => setTimeout(r, 200));
-  return mockEvents.filter((e) => {
-    const d = new Date(e.startDate);
-    return d.getFullYear() === year && d.getMonth() === month;
-  });
-};
-
-export const fetchUpcomingEvents = async (limit = 5) => {
-  await new Promise((r) => setTimeout(r, 200));
-  const now = new Date().toISOString();
-  return mockEvents
-    .filter((e) => e.startDate >= now)
-    .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
-    .slice(0, limit);
-};
-
+/**
+ * Create event
+ * POST /events body: CreateEventRequest returns Response { data: Event }
+ */
 export const createEvent = async (data) => {
-  await new Promise((r) => setTimeout(r, 500));
-  const newEvent = {
-    id: nextId++,
-    ...data,
-    enrolledCount: 0,
-    status: "upcoming",
-    createdAt: new Date().toISOString().split("T")[0],
-    updatedAt: new Date().toISOString().split("T")[0],
-  };
-  mockEvents.push(newEvent);
-  return newEvent;
+  try {
+    const body = {
+      title: data.title,
+      description: data.description || "",
+      startTime: data.startDate ? new Date(data.startDate).getTime() / 1000 : null,
+      endTime: data.endDate ? new Date(data.endDate).getTime() / 1000 : null,
+      eventType: data.type || "workshop",
+      location: data.location || "",
+      maxAttendees: data.maxAttendees || 0,
+      meetingUrl: data.meetingUrl || "",
+      courseId: data.courseId || null,
+      timezone: data.timezone || "UTC",
+      isRecurring: data.isRecurring || false,
+      recurrenceRule: data.recurrenceRule || "",
+      organizationId: data.organizationId || 1,
+    };
+    return await apiPost("/events", body);
+  } catch (error) {
+    console.error("Error creating event:", error);
+    throw error;
+  }
 };
 
+/**
+ * Update event
+ * PUT /events/{id} body: UpdateEventRequest returns Response { data: Event }
+ */
 export const updateEvent = async (id, data) => {
-  await new Promise((r) => setTimeout(r, 500));
-  const index = mockEvents.findIndex((e) => e.id === parseInt(id));
-  if (index === -1) throw new Error("Event not found");
-  mockEvents[index] = {
-    ...mockEvents[index],
-    ...data,
-    updatedAt: new Date().toISOString().split("T")[0],
-  };
-  return mockEvents[index];
+  try {
+    const body = {};
+    if (data.title !== undefined) body.title = data.title;
+    if (data.description !== undefined) body.description = data.description;
+    if (data.startDate !== undefined) body.startTime = new Date(data.startDate).getTime() / 1000;
+    if (data.endDate !== undefined) body.endTime = new Date(data.endDate).getTime() / 1000;
+    if (data.type !== undefined) body.eventType = data.type;
+    if (data.location !== undefined) body.location = data.location;
+    if (data.maxAttendees !== undefined) body.maxAttendees = data.maxAttendees;
+    if (data.meetingUrl !== undefined) body.meetingUrl = data.meetingUrl;
+    if (data.timezone !== undefined) body.timezone = data.timezone;
+    if (data.isRecurring !== undefined) body.isRecurring = data.isRecurring;
+    if (data.recurrenceRule !== undefined) body.recurrenceRule = data.recurrenceRule;
+    return await apiPut(`/events/${id}`, body);
+  } catch (error) {
+    console.error("Error updating event:", error);
+    throw error;
+  }
 };
 
+/**
+ * Delete event
+ * DELETE /events/{id} returns 204 No Content
+ */
 export const deleteEvent = async (id) => {
-  await new Promise((r) => setTimeout(r, 300));
-  mockEvents = mockEvents.filter((e) => e.id !== parseInt(id));
-  return true;
+  try {
+    await apiDelete(`/events/${id}`);
+  } catch (error) {
+    console.error("Error deleting event:", error);
+    throw error;
+  }
 };
+
+/**
+ * Get events for a specific month (convenience wrapper)
+ * Uses GET /events/time-range internally
+ */
+export const fetchEventsForMonth = async (year, month) => {
+  try {
+    const start = new Date(year, month, 1).getTime() / 1000;
+    const end = new Date(year, month + 1, 0, 23, 59, 59).getTime() / 1000;
+    return await fetchEventsByTimeRange(start, end);
+  } catch (error) {
+    console.error("Error fetching events for month:", error);
+    throw error;
+  }
+};
+
+/**
+ * Get events by course
+ * GET /events/course/{courseId} returns Response { data: Event[] }
+ */
+export const fetchEventsByCourse = async (courseId) => {
+  try {
+    const data = await apiGet(`/events/course/${courseId}`);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching course events:", error);
+    throw error;
+  }
+};
+
+/**
+ * Get events in time range
+ * GET /events/time-range?start=...&end=... returns Response { data: Event[] }
+ */
+export const fetchEventsByTimeRange = async (start, end) => {
+  try {
+    const queryParams = new URLSearchParams();
+    if (start) queryParams.set("start", start);
+    if (end) queryParams.set("end", end);
+    const data = await apiGet(`/events/time-range?${queryParams}`);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching events by time range:", error);
+    throw error;
+  }
+};
+
+/**
+ * Get events by type
+ * GET /events/type/{type} returns Response { data: Event[] }
+ */
+export const fetchEventsByType = async (type) => {
+  try {
+    const data = await apiGet(`/events/type/${type}`);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching events by type:", error);
+    throw error;
+  }
+};
+
+/**
+ * Get upcoming events
+ * GET /events/upcoming?start=0&limit=10 returns Response { data: Event[] }
+ */
+export const fetchUpcomingEvents = async (limit = 10) => {
+  try {
+    const data = await apiGet(`/events/upcoming?limit=${limit}`);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching upcoming events:", error);
+    throw error;
+  }
+};
+
+/**
+ * Get events for the authenticated user
+ * GET /events/user?start=0&limit=10 returns Response { data: Event[] }
+ */
+export const fetchUserEvents = async (params = {}) => {
+  try {
+    const queryParams = new URLSearchParams();
+    if (params.start !== undefined) queryParams.set("start", params.start);
+    if (params.limit !== undefined) queryParams.set("limit", params.limit);
+    const data = await apiGet(`/events/user?${queryParams}`);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching user events:", error);
+    throw error;
+  }
+};
+
+/**
+ * Get events where user is an attendee
+ * GET /events/user/attendees?start=0&limit=10 returns Response { data: Event[] }
+ */
+export const fetchUserAttendeeEvents = async (params = {}) => {
+  try {
+    const queryParams = new URLSearchParams();
+    if (params.start !== undefined) queryParams.set("start", params.start);
+    if (params.limit !== undefined) queryParams.set("limit", params.limit);
+    const data = await apiGet(`/events/user/attendees?${queryParams}`);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching user attendee events:", error);
+    throw error;
+  }
+};
+
+// ==================== ATTENDEES ====================
+
+/**
+ * Get event attendees
+ * GET /events/{eventId}/attendees?start=0&limit=10 returns Response { data: EventAttendee[] }
+ */
+export const fetchEventAttendees = async (eventId, params = {}) => {
+  try {
+    const queryParams = new URLSearchParams();
+    if (params.start !== undefined) queryParams.set("start", params.start);
+    if (params.limit !== undefined) queryParams.set("limit", params.limit);
+    const data = await apiGet(`/events/${eventId}/attendees?${queryParams}`);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching event attendees:", error);
+    throw error;
+  }
+};
+
+/**
+ * Add attendee to event
+ * POST /events/{eventId}/attendees body: CreateEventAttendeeRequest returns Response
+ */
+export const addEventAttendee = async (eventId, userId, status = "invited") => {
+  try {
+    return await apiPost(`/events/${eventId}/attendees`, { eventId, userId, status });
+  } catch (error) {
+    console.error("Error adding attendee:", error);
+    throw error;
+  }
+};
+
+/**
+ * Get attendee count
+ * GET /events/{eventId}/attendees/count returns Response { data: { count } }
+ */
+export const getEventAttendeeCount = async (eventId) => {
+  try {
+    const data = await apiGet(`/events/${eventId}/attendees/count`);
+    return data?.count || 0;
+  } catch (error) {
+    console.error("Error fetching attendee count:", error);
+    throw error;
+  }
+};
+
+/**
+ * Update attendee status
+ * PUT /events/{eventId}/attendees/{userId} body: UpdateEventAttendeeRequest returns Response
+ */
+export const updateAttendeeStatus = async (eventId, userId, status) => {
+  try {
+    return await apiPut(`/events/${eventId}/attendees/${userId}`, { status });
+  } catch (error) {
+    console.error("Error updating attendee status:", error);
+    throw error;
+  }
+};
+
+/**
+ * Remove attendee from event
+ * DELETE /events/{eventId}/attendees/{userId} returns 204 No Content
+ */
+export const removeEventAttendee = async (eventId, userId) => {
+  try {
+    await apiDelete(`/events/${eventId}/attendees/${userId}`);
+  } catch (error) {
+    console.error("Error removing attendee:", error);
+    throw error;
+  }
+};
+
+// ==================== STATS ====================
+
+/**
+ * Get event statistics
+ * GET /events/{id}/stats returns Response { data: { ... } }
+ */
+export const fetchEventStats = async (id) => {
+  try {
+    return await apiGet(`/events/${id}/stats`);
+  } catch (error) {
+    console.error("Error fetching event stats:", error);
+    throw error;
+  }
+};
+
+// ==================== HELPERS ====================
 
 export const getEventTypes = () => [
   { value: "all", label: "All Types" },

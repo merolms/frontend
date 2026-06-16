@@ -6,11 +6,11 @@ import { apiDelete, apiGet, apiPost, apiPut } from "@/app/services/http";
 import { t } from "@/styles/theme";
 
 // ==================== CATEGORIES ====================
-// GET /categories?start=0&limit=10  → returns Summaries { total, data: Category[] }
-// GET /categories/{id}             → returns Response { data: Category }
-// POST /categories                 → body: Category, returns Response { data: Category }
-// PUT /categories/{id}             → body: Category, returns Response { data: Category }
-// DELETE /categories/{id}          → returns Response { data: "Category deleted successfully" }
+// GET /categories?start=0&limit=10  -> returns Summaries { total, data: Category[] }
+// GET /categories/{id}             -> returns Response { data: Category }
+// POST /categories                 -> body: Category, returns Response { data: Category }
+// PUT /categories/{id}             -> body: Category, returns Response { data: Category }
+// DELETE /categories/{id}          -> returns Response
 
 export const fetchCategories = async (params = {}) => {
   try {
@@ -18,11 +18,7 @@ export const fetchCategories = async (params = {}) => {
     if (params.start !== undefined) queryParams.set("start", params.start);
     if (params.limit !== undefined) queryParams.set("limit", params.limit);
     const data = await apiGet(`/categories?${queryParams}`);
-    // Backend returns Summaries { total, data: [...] } for list
-    if (data && Array.isArray(data.data)) {
-      return data.data;
-    }
-    // Fallback for direct array response
+    // apiGet unwraps to data. For list endpoints, data is the array.
     return Array.isArray(data) ? data : [];
   } catch (error) {
     console.error("Error fetching categories:", error);
@@ -35,25 +31,9 @@ export const fetchCategoriesWithPagination = async (params = {}) => {
     const queryParams = new URLSearchParams();
     if (params.start !== undefined) queryParams.set("start", params.start);
     if (params.limit !== undefined) queryParams.set("limit", params.limit);
-    const token = localStorage.getItem("auth_token");
-    const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:9090";
-    const url = `/categories?${queryParams}`;
-    const res = await fetch(`${API_BASE}${url}`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-    if (!res.ok) throw new Error("Failed to fetch categories: " + res.status);
-    const body = await res.json();
-    const envelope = body.data || body;
-    const list = Array.isArray(envelope.data)
-      ? envelope.data
-      : Array.isArray(envelope)
-        ? envelope
-        : [];
-    const total = envelope.total !== undefined ? envelope.total : list.length;
-    return { categories: list, total };
+    const data = await apiGet(`/categories?${queryParams}`);
+    const list = Array.isArray(data) ? data : [];
+    return { categories: list, total: list.length };
   } catch (error) {
     console.error("Error fetching categories:", error);
     throw error;
@@ -119,7 +99,6 @@ export const deleteCategory = async (id) => {
 
 export const toggleCategoryStatus = async (id) => {
   try {
-    // Fetch current category, toggle status, update
     const cat = await fetchCategoryById(id);
     const newStatus = cat.status === 1 ? 0 : 1;
     return await updateCategory(id, { ...cat, status: newStatus });

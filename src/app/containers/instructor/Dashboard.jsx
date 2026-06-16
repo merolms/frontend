@@ -43,8 +43,8 @@ const InstructorDashboard = () => {
     }
   };
 
-  const publishedCourses = courses.filter((c) => c.status === "Published");
-  const draftCourses = courses.filter((c) => c.status === "DRAFT");
+  const publishedCourses = courses.filter((c) => c.status === "published");
+  const draftCourses = courses.filter((c) => c.status === "draft");
 
   return (
     <DashboardLayout
@@ -95,7 +95,7 @@ const InstructorDashboard = () => {
               </div>
               <div className="mt-2 flex items-center gap-2">
                 <span
-                  className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${course.status === "Published" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}
+                  className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${course.status === "published" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}
                 >
                   {course.status}
                 </span>

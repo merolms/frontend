@@ -233,12 +233,13 @@ export const login = async (email, password) => {
 
 /**
  * Register a new user account.
- * Backend POST /auth/register returns { token, user }.
+ * Backend POST /auth/register returns Response { data: UserResponse }.
+ * Note: No token is returned — user must login after registration.
  */
 export const register = async (userData) => {
   try {
     const data = await apiPost("/auth/register", userData);
-    return { user: data.user, token: data.token };
+    return { user: data };
   } catch (error) {
     console.error("Error registering:", error);
     throw error;
@@ -329,7 +330,9 @@ const normalizeRolePermissions = (role) => {
     ...role,
     permissions: Array.isArray(role.permissions)
       ? role.permissions
-      : (role.permissions || "").split(",").filter(Boolean),
+      : typeof role.permissions === "string"
+        ? role.permissions.split(",").filter(Boolean)
+        : [],
   };
 };
 

@@ -6,48 +6,21 @@ import { apiDelete, apiGet, apiPost, apiPut } from "@/app/services/http";
 import { t } from "@/styles/theme";
 
 // ==================== TEAMS ====================
-// GET /teams?start=0&limit=10  → returns Team[] (array in data)
-// GET /teams/{id}             → returns Team (single object in data)
-// POST /teams                 → body: { name, description, color, status }, returns Team
-// PUT /teams/{id}             → body: Team, returns Team
-// DELETE /teams/{id}          → returns "Team deleted successfully"
+// GET /teams?start=0&limit=10  -> returns Response { data: Team[] }
+// GET /teams/{id}             -> returns Response { data: Team }
+// POST /teams                 -> body: Team, returns Response { data: Team }
+// PUT /teams/{id}             -> body: Team, returns Response { data: Team }
+// DELETE /teams/{id}          -> returns Response
 
 export const fetchTeams = async (params = {}) => {
   try {
     const queryParams = new URLSearchParams();
     if (params.start !== undefined) queryParams.set("start", params.start);
     if (params.limit !== undefined) queryParams.set("limit", params.limit);
-    const token = localStorage.getItem("auth_token");
-    const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:9090";
-    const headers = {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
 
-    const url = `/teams?${queryParams}`;
-    const [res, statRes] = await Promise.all([
-      fetch(`${API_BASE}${url}`, { headers }),
-      fetch(`${API_BASE}/teams/stat`, { headers }),
-    ]);
-
-    if (!res.ok) throw new Error("Failed to fetch teams: " + res.status);
-    const body = await res.json();
-    const envelope = body.data || body;
-    const list = Array.isArray(envelope.data)
-      ? envelope.data
-      : Array.isArray(envelope)
-        ? envelope
-        : [];
-
-    let total = list.length;
-    if (statRes.ok) {
-      const statBody = await statRes.json();
-      if (statBody.data && typeof statBody.data.count === "number") {
-        total = statBody.data.count;
-      }
-    }
-
-    return { teams: list, total };
+    const data = await apiGet(`/teams?${queryParams}`);
+    const list = Array.isArray(data) ? data : [];
+    return { teams: list, total: list.length };
   } catch (error) {
     console.error("Error fetching teams:", error);
     throw error;
@@ -104,9 +77,9 @@ export const deleteTeam = async (id) => {
 };
 
 // ==================== TEAM MEMBERS ====================
-// GET /teams/{id}/members       → returns TeamMember[] (array in data)
-// POST /teams/{id}/members      → body: { userId }, returns "Member added successfully"
-// DELETE /teams/{id}/members/{userId} → returns "Member removed successfully"
+// GET /teams/{id}/members       -> returns Response { data: UserResponse[] }
+// POST /teams/{id}/members      -> body: { userId }, returns Response
+// DELETE /teams/{id}/members/{userId} -> returns Response
 
 export const fetchTeamMembers = async (teamId) => {
   try {
@@ -118,17 +91,9 @@ export const fetchTeamMembers = async (teamId) => {
   }
 };
 
-export const addMemberToTeam = async (teamId, userData) => {
+export const addMemberToTeam = async (teamId, userId) => {
   try {
-    const body = {
-      userId: userData.id,
-      teamId: parseInt(teamId, 10),
-      userName: `${userData.firstName || ""} ${userData.lastName || ""}`.trim(),
-      userEmail: userData.email || "",
-      role: userData.role || "Student",
-      avatar: userData.avatar || "",
-    };
-    return await apiPost(`/teams/${teamId}/members`, body);
+    return await apiPost(`/teams/${teamId}/members`, { userId });
   } catch (error) {
     console.error("Error adding member:", error);
     throw error;
@@ -145,7 +110,7 @@ export const removeMemberFromTeam = async (teamId, userId) => {
 };
 
 // ==================== USERS (for member assignment) ====================
-// GET /users?start=0&limit=100  → returns UserResponse[]
+// GET /users?start=0&limit=100  -> returns Response { data: User[] }
 
 export const fetchUsers = async (params = {}) => {
   try {

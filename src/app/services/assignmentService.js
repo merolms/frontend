@@ -4,8 +4,14 @@
 import { apiDelete, apiGet, apiPost, apiPut } from "@/app/services/http";
 
 // ==================== FIELD MAPPING ====================
-// Backend uses snake_case: lesson_id, max_points, due_date
-// Frontend uses camelCase: lessonId, maxPoints, dueDate
+// Backend uses camelCase per swagger: lessonId, maxPoints, dueDate, etc.
+// Backend timestamps: createdAt, updatedAt, submittedAt, gradedAt (integer unix)
+
+const tsToIso = (ts) => {
+  if (!ts) return null;
+  const ms = ts > 1e12 ? ts : ts * 1000;
+  return new Date(ms).toISOString();
+};
 
 const normalizeAssignment = (a) => ({
   id: a.id,
@@ -15,18 +21,18 @@ const normalizeAssignment = (a) => ({
   instructions: a.instructions || "",
   maxPoints: a.maxPoints || 100,
   passingPoints: a.passingPoints || 0,
-  dueDate: a.dueDate ? new Date(a.dueDate * 1000).toISOString() : null,
+  dueDate: tsToIso(a.dueDate),
   allowLate: a.allowLate || false,
   latePenalty: a.latePenalty || 0,
   maxSubmissions: a.maxSubmissions || 1,
   audienceType: a.audienceType || "COURSE",
-  status: a.status || "DRAFT",
-  publishedAt: a.publishedAt ? new Date(a.publishedAt * 1000).toISOString() : null,
+  status: a.status !== undefined && a.status !== null ? String(a.status) : "0",
+  publishedAt: tsToIso(a.publishedAt),
   publishedBy: a.publishedBy,
-  deletedAt: a.deletedAt ? new Date(a.deletedAt * 1000).toISOString() : null,
+  deletedAt: tsToIso(a.deletedAt),
   deletedBy: a.deletedBy,
-  createdAt: a.createdAt ? new Date(a.createdAt * 1000).toISOString() : "",
-  updatedAt: a.updatedAt ? new Date(a.updatedAt * 1000).toISOString() : "",
+  createdAt: tsToIso(a.createdAt) || "",
+  updatedAt: tsToIso(a.updatedAt) || "",
   submissions: (a.submissions || []).map(normalizeSubmission),
   attachments: (a.attachments || []).map(normalizeAttachment),
 });
@@ -42,8 +48,8 @@ const normalizeSubmission = (s) => ({
   score: s.score,
   feedback: s.feedback || "",
   gradedBy: s.gradedBy,
-  gradedAt: s.gradedAt ? new Date(s.gradedAt * 1000).toISOString() : null,
-  submittedAt: s.submittedAt ? new Date(s.submittedAt * 1000).toISOString() : "",
+  gradedAt: tsToIso(s.gradedAt),
+  submittedAt: tsToIso(s.submittedAt) || "",
   late: s.late || false,
   attemptNumber: s.attemptNumber || 1,
   submissionType: s.submissionType || "USER",
@@ -55,7 +61,7 @@ const normalizeAttachment = (a) => ({
   id: a.id,
   assignmentId: a.assignmentId,
   mediaId: a.mediaId,
-  createdAt: a.createdAt ? new Date(a.createdAt * 1000).toISOString() : "",
+  createdAt: tsToIso(a.createdAt) || "",
 });
 
 const normalizeEnrollment = (e) => ({
@@ -63,7 +69,7 @@ const normalizeEnrollment = (e) => ({
   assignmentId: e.assignmentId,
   userId: e.userId,
   enrolledBy: e.enrolledBy,
-  enrolledAt: e.enrolledAt ? new Date(e.enrolledAt * 1000).toISOString() : "",
+  enrolledAt: tsToIso(e.enrolledAt) || "",
 });
 
 const normalizeTeamEnrollment = (e) => ({
@@ -71,93 +77,96 @@ const normalizeTeamEnrollment = (e) => ({
   assignmentId: e.assignmentId,
   teamId: e.teamId,
   enrolledBy: e.enrolledBy,
-  enrolledAt: e.enrolledAt ? new Date(e.enrolledAt * 1000).toISOString() : "",
+  enrolledAt: tsToIso(e.enrolledAt) || "",
 });
 
 // ==================== ASSIGNMENTS ====================
 
 /**
  * Get paginated list of all assignments
+ * GET /assignments?start=0&limit=10 returns Response { data: Assignment[] }
  */
 export const getAssignments = async (params = {}) => {
   const { start = 0, limit = 10 } = params;
-  const { request } = await import("@/app/services/http");
-  const response = await request(`/assignments?start=${start}&limit=${limit}`);
-  console.log("Response message", response)
-  const assignments = Array.isArray(response) ? response : [];
-  console.log("assignment", assignments)
+  const data = await apiGet(`/assignments?start=${start}&limit=${limit}`);
+  const assignments = Array.isArray(data) ? data : [];
   return {
     assignments: assignments.map(normalizeAssignment),
-    total: response.total || 0,
+    total: assignments.length,
   };
 };
 
 /**
  * Get assignments by lesson ID
+ * GET /assignments/lessons/{lessonId}/assignments returns Response { data: Assignment[] }
  */
 export const getAssignmentsByLesson = async (lessonId) => {
-  const response = await apiGet(`/assignments/lessons/${lessonId}/assignments`);
-  const assignments = Array.isArray(response) ? response : response?.data || [];
+  const data = await apiGet(`/assignments/lessons/${lessonId}/assignments`);
+  const assignments = Array.isArray(data) ? data : [];
   return assignments.map(normalizeAssignment);
 };
 
 /**
  * Get assignment by ID
+ * GET /assignments/{id} returns Response { data: Assignment }
  */
 export const getAssignmentById = async (assignmentId) => {
-  const response = await apiGet(`/assignments/${assignmentId}`);
-  return normalizeAssignment(response);
+  const data = await apiGet(`/assignments/${assignmentId}`);
+  return normalizeAssignment(data);
 };
 
 /**
  * Create assignment
+ * POST /assignments or POST /assignments/lessons/{lessonId}/assignments
+ * Returns Response { data: Assignment }
  */
 export const createAssignment = async (lessonId, assignmentData) => {
   const payload = {
     title: assignmentData.title,
     description: assignmentData.description,
     instructions: assignmentData.instructions,
-    max_points: assignmentData.maxPoints || 100,
-    passing_points: assignmentData.passingPoints || 0,
-    due_date: assignmentData.dueDate ? new Date(assignmentData.dueDate).getTime() / 1000 : null,
-    allow_late: assignmentData.allowLate || false,
-    late_penalty: assignmentData.latePenalty || 0,
-    max_submissions: assignmentData.maxSubmissions || 1,
-    audience_type: assignmentData.audienceType || "COURSE",
+    maxPoints: assignmentData.maxPoints || 100,
+    passingPoints: assignmentData.passingPoints || 0,
+    dueDate: assignmentData.dueDate ? new Date(assignmentData.dueDate).getTime() / 1000 : null,
+    allowLate: assignmentData.allowLate || false,
+    latePenalty: assignmentData.latePenalty || 0,
+    maxSubmissions: assignmentData.maxSubmissions || 1,
+    audienceType: assignmentData.audienceType || "COURSE",
   };
-  // Only include lesson_id if it's a valid number
   if (lessonId && !isNaN(parseInt(lessonId))) {
-    payload.lesson_id = parseInt(lessonId);
+    payload.lessonId = parseInt(lessonId);
   }
   const endpoint = lessonId && !isNaN(parseInt(lessonId))
     ? `/assignments/lessons/${lessonId}/assignments`
     : `/assignments`;
-  const response = await apiPost(endpoint, payload);
-  return normalizeAssignment(response);
+  const data = await apiPost(endpoint, payload);
+  return normalizeAssignment(data);
 };
 
 /**
  * Update assignment
+ * PUT /assignments/{id} returns Response { data: Assignment }
  */
 export const updateAssignment = async (assignmentId, assignmentData) => {
   const payload = {
     title: assignmentData.title,
     description: assignmentData.description,
     instructions: assignmentData.instructions,
-    max_points: assignmentData.maxPoints,
-    passing_points: assignmentData.passingPoints,
-    due_date: assignmentData.dueDate ? new Date(assignmentData.dueDate).getTime() / 1000 : null,
-    allow_late: assignmentData.allowLate,
-    late_penalty: assignmentData.latePenalty,
-    max_submissions: assignmentData.maxSubmissions,
-    audience_type: assignmentData.audienceType,
+    maxPoints: assignmentData.maxPoints,
+    passingPoints: assignmentData.passingPoints,
+    dueDate: assignmentData.dueDate ? new Date(assignmentData.dueDate).getTime() / 1000 : null,
+    allowLate: assignmentData.allowLate,
+    latePenalty: assignmentData.latePenalty,
+    maxSubmissions: assignmentData.maxSubmissions,
+    audienceType: assignmentData.audienceType,
   };
-  const response = await apiPut(`/assignments/${assignmentId}`, payload);
-  return normalizeAssignment(response);
+  const data = await apiPut(`/assignments/${assignmentId}`, payload);
+  return normalizeAssignment(data);
 };
 
 /**
  * Delete assignment (soft delete)
+ * DELETE /assignments/{id} returns 204 No Content
  */
 export const deleteAssignment = async (assignmentId) => {
   await apiDelete(`/assignments/${assignmentId}`);
@@ -165,28 +174,31 @@ export const deleteAssignment = async (assignmentId) => {
 
 /**
  * Publish assignment
+ * POST /assignments/{id}/publish returns Response { data: Assignment }
  */
 export const publishAssignment = async (assignmentId) => {
-  const response = await apiPost(`/assignments/${assignmentId}/publish`);
-  return normalizeAssignment(response);
+  const data = await apiPost(`/assignments/${assignmentId}/publish`);
+  return normalizeAssignment(data);
 };
 
 // ==================== SUBMISSIONS ====================
 
 /**
  * Submit individual assignment
+ * POST /assignments/{id}/submit returns Response { data: Submission }
  */
 export const submitAssignment = async (assignmentId, submissionData) => {
   const payload = {
     content: submissionData.content,
     attachmentURLs: submissionData.attachmentURLs,
   };
-  const response = await apiPost(`/assignments/${assignmentId}/submit`, payload);
-  return normalizeSubmission(response);
+  const data = await apiPost(`/assignments/${assignmentId}/submit`, payload);
+  return normalizeSubmission(data);
 };
 
 /**
  * Submit team assignment
+ * POST /assignments/{id}/submit-team returns Response { data: Submission }
  */
 export const submitTeamAssignment = async (assignmentId, teamId, submissionData) => {
   const payload = {
@@ -194,73 +206,81 @@ export const submitTeamAssignment = async (assignmentId, teamId, submissionData)
     content: submissionData.content,
     attachmentURLs: submissionData.attachmentURLs,
   };
-  const response = await apiPost(`/assignments/${assignmentId}/submit-team`, payload);
-  return normalizeSubmission(response);
+  const data = await apiPost(`/assignments/${assignmentId}/submit-team`, payload);
+  return normalizeSubmission(data);
 };
 
 /**
  * Get submissions for assignment
+ * GET /assignments/{id}/submissions returns Response { data: Submission[] }
  */
 export const getSubmissions = async (assignmentId) => {
-  const response = await apiGet(`/assignments/${assignmentId}/submissions`);
-  const submissions = Array.isArray(response) ? response : response?.data || [];
+  const data = await apiGet(`/assignments/${assignmentId}/submissions`);
+  const submissions = Array.isArray(data) ? data : [];
   return submissions.map(normalizeSubmission);
 };
 
 /**
  * Get submission by ID
+ * GET /assignments/submissions/{id} returns Response { data: Submission }
  */
 export const getSubmissionById = async (submissionId) => {
-  const response = await apiGet(`/assignments/submissions/${submissionId}`);
-  return normalizeSubmission(response);
+  const data = await apiGet(`/assignments/submissions/${submissionId}`);
+  return normalizeSubmission(data);
 };
 
 /**
  * Grade submission
+ * PUT /assignments/submissions/{id}/grade returns Response { data: Submission }
  */
 export const gradeSubmission = async (submissionId, gradingData) => {
   const payload = {
     score: gradingData.score,
     feedback: gradingData.feedback,
   };
-  const response = await apiPut(`/assignments/submissions/${submissionId}/grade`, payload);
-  return normalizeSubmission(response);
+  const data = await apiPut(`/assignments/submissions/${submissionId}/grade`, payload);
+  return normalizeSubmission(data);
 };
 
 /**
  * Grade team submission
+ * PUT /assignments/submissions/{id}/grade-team returns Response { data: Submission }
  */
 export const gradeTeamSubmission = async (submissionId, gradingData) => {
   const payload = {
     score: gradingData.score,
     feedback: gradingData.feedback,
   };
-  const response = await apiPut(`/assignments/submissions/${submissionId}/grade-team`, payload);
-  return normalizeSubmission(response);
+  const data = await apiPut(`/assignments/submissions/${submissionId}/grade-team`, payload);
+  return normalizeSubmission(data);
 };
 
 // ==================== ATTACHMENTS ====================
 
 /**
  * Get assignment attachments
+ * GET /assignments/{id}/attachments returns Response { data: AssignmentAttachment[] }
  */
 export const getAttachments = async (assignmentId) => {
-  const response = await apiGet(`/assignments/${assignmentId}/attachments`);
-  const attachments = Array.isArray(response) ? response : response?.data || [];
+  const data = await apiGet(`/assignments/${assignmentId}/attachments`);
+  const attachments = Array.isArray(data) ? data : [];
   return attachments.map(normalizeAttachment);
 };
 
 /**
  * Add attachment to assignment
+ * POST /assignments/{id}/attachments body: { mediaId }
+ * Returns Response { data: AssignmentAttachment }
  */
 export const addAttachment = async (assignmentId, mediaId) => {
   const payload = { mediaId };
-  const response = await apiPost(`/assignments/${assignmentId}/attachments`, payload);
-  return normalizeAttachment(response);
+  const data = await apiPost(`/assignments/${assignmentId}/attachments`, payload);
+  return normalizeAttachment(data);
 };
 
 /**
  * Delete attachment
+ * DELETE /assignments/attachments/{id} returns 204 No Content
  */
 export const deleteAttachment = async (attachmentId) => {
   await apiDelete(`/assignments/attachments/${attachmentId}`);
@@ -270,15 +290,18 @@ export const deleteAttachment = async (attachmentId) => {
 
 /**
  * Enroll user in assignment
+ * POST /assignments/{id}/enroll-user body: { userId }
+ * Returns Response { data: AssignmentEnrollment }
  */
 export const enrollUser = async (assignmentId, userId) => {
   const payload = { userId };
-  const response = await apiPost(`/assignments/${assignmentId}/enroll-user`, payload);
-  return normalizeEnrollment(response);
+  const data = await apiPost(`/assignments/${assignmentId}/enroll-user`, payload);
+  return normalizeEnrollment(data);
 };
 
 /**
  * Remove user enrollment
+ * DELETE /assignments/{id}/enroll-user/{userId} returns 204 No Content
  */
 export const removeUserEnrollment = async (assignmentId, userId) => {
   await apiDelete(`/assignments/${assignmentId}/enroll-user/${userId}`);
@@ -286,24 +309,28 @@ export const removeUserEnrollment = async (assignmentId, userId) => {
 
 /**
  * Get enrolled users
+ * GET /assignments/{id}/enrolled-users returns Response { data: AssignmentEnrollment[] }
  */
 export const getEnrolledUsers = async (assignmentId) => {
-  const response = await apiGet(`/assignments/${assignmentId}/enrolled-users`);
-  const enrollments = Array.isArray(response) ? response : response?.data || [];
+  const data = await apiGet(`/assignments/${assignmentId}/enrolled-users`);
+  const enrollments = Array.isArray(data) ? data : [];
   return enrollments.map(normalizeEnrollment);
 };
 
 /**
  * Enroll team in assignment
+ * POST /assignments/{id}/enroll-team body: { teamId }
+ * Returns Response { data: AssignmentTeamEnrollment }
  */
 export const enrollTeam = async (assignmentId, teamId) => {
   const payload = { teamId };
-  const response = await apiPost(`/assignments/${assignmentId}/enroll-team`, payload);
-  return normalizeTeamEnrollment(response);
+  const data = await apiPost(`/assignments/${assignmentId}/enroll-team`, payload);
+  return normalizeTeamEnrollment(data);
 };
 
 /**
  * Remove team enrollment
+ * DELETE /assignments/{id}/enroll-team/{teamId} returns 204 No Content
  */
 export const removeTeamEnrollment = async (assignmentId, teamId) => {
   await apiDelete(`/assignments/${assignmentId}/enroll-team/${teamId}`);
@@ -311,9 +338,10 @@ export const removeTeamEnrollment = async (assignmentId, teamId) => {
 
 /**
  * Get enrolled teams
+ * GET /assignments/{id}/enrolled-teams returns Response { data: AssignmentTeamEnrollment[] }
  */
 export const getEnrolledTeams = async (assignmentId) => {
-  const response = await apiGet(`/assignments/${assignmentId}/enrolled-teams`);
-  const enrollments = Array.isArray(response) ? response : response?.data || [];
+  const data = await apiGet(`/assignments/${assignmentId}/enrolled-teams`);
+  const enrollments = Array.isArray(data) ? data : [];
   return enrollments.map(normalizeTeamEnrollment);
 };

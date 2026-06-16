@@ -165,14 +165,14 @@ const CourseEdit = () => {
               <span className="text-text-muted text-xs">Status</span>
               <Badge
                 variant={
-                  form.status === "Published"
+                  form.status === "published"
                     ? "green"
-                    : form.status === "Archived"
+                    : form.status === "archived"
                       ? "orange"
                       : "gray"
                 }
               >
-                {form.status === "DRAFT" ? "Draft" : form.status || "Draft"}
+                {form.status === "draft" ? "Draft" : form.status || "Draft"}
               </Badge>
               <span className="text-text-muted text-[11px]">
                 Use the course detail page to publish, archive, or restore.

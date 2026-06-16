@@ -129,33 +129,6 @@ export const enrollInLearningPathAPI = async (learningPathId) => {
   }
 };
 
-export const adminEnrollUserInLearningPath = async (learningPathId, userId) => {
-  try {
-    return await apiPost(`/learning-paths/${learningPathId}/admin/enroll-user`, { userId });
-  } catch (error) {
-    console.error("Error enrolling user in learning path:", error);
-    throw error;
-  }
-};
-
-export const adminEnrollTeamInLearningPath = async (learningPathId, teamId) => {
-  try {
-    return await apiPost(`/learning-paths/${learningPathId}/admin/enroll-team`, { teamId });
-  } catch (error) {
-    console.error("Error enrolling team in learning path:", error);
-    throw error;
-  }
-};
-
-export const getLearningPathEnrollments = async (learningPathId) => {
-  try {
-    return await apiGet(`/learning-paths/${learningPathId}/admin/enrollments`);
-  } catch (error) {
-    console.error("Error fetching learning path enrollments:", error);
-    return [];
-  }
-};
-
 const ENROLLMENT_KEY = "meroedu_enrollments";
 
 const getStored = () => {
