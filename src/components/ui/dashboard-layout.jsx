@@ -117,9 +117,9 @@ export default function DashboardLayout({ children, title, subtitle }) {
         {/* Top bar */}
         <div className="border-border bg-bg-surface sticky top-0 z-10 flex h-20 items-center justify-between border-b px-6">
           {/* Left: page title */}
-          <div>
-            <h1 className="page-title">{pageTitle}</h1>
-            {subtitle && <p className="page-subtitle">{subtitle}</p>}
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">{pageTitle}</h1>
+            {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
           </div>
 
           {/* Right: notifications + user */}
@@ -247,7 +247,9 @@ export default function DashboardLayout({ children, title, subtitle }) {
           </div>
         </div>
         {/* Content */}
-        <div className="dashboard-content">{children}</div>
+        <div className="flex-1 p-8 pt-6">
+          <div className="mx-auto max-w-7xl">{children}</div>
+        </div>
       </div>
     </div>
   );

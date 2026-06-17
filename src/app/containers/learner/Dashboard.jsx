@@ -37,7 +37,7 @@ const LearnerDashboard = () => {
       subtitle="Track your learning progress and continue where you left off"
     >
       {/* Stats */}
-      <div className="mb-6 grid grid-cols-4 gap-4">
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard title="Enrolled" value={enrollments.length} icon={BookOpen} color="primary" />
         <StatCard
           title="In Progress"
@@ -55,8 +55,8 @@ const LearnerDashboard = () => {
       </div>
 
       {/* Continue Learning */}
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-text-primary text-sm font-semibold">Continue Learning</h3>
+      <div className="mb-6 flex items-center justify-between">
+        <h3 className="text-xl font-bold tracking-tight text-foreground">Continue Learning</h3>
       </div>
 
       {isLoading ? (
@@ -77,26 +77,26 @@ const LearnerDashboard = () => {
           {activeEnrollments.map((enrollment) => (
             <div
               key={enrollment.id}
-              className="border-border bg-bg-surface cursor-pointer rounded-xl border p-4 shadow-sm transition-all hover:shadow-md"
+              className="group border-border bg-card cursor-pointer rounded-xl border p-5 shadow-sm transition-all hover:shadow-md hover:border-primary/20"
               onClick={() => navigate(`/courses/${enrollment.courseId}/learn`)}
             >
               <div className="min-w-0 flex-1">
-                <h4 className="text-text-primary truncate text-sm font-semibold">
+                <h4 className="text-foreground truncate text-base font-bold group-hover:text-primary transition-colors">
                   {enrollment.courseTitle}
                 </h4>
-                <p className="text-text-muted text-[11px]">{enrollment.category}</p>
-                <div className="mt-2">
-                  <div className="mb-1 flex items-center justify-between">
-                    <span className="text-text-muted text-[11px]">
+                <p className="text-muted-foreground text-xs font-medium">{enrollment.category}</p>
+                <div className="mt-4">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-muted-foreground text-xs font-medium">
                       {enrollment.progress || 0}% complete
                     </span>
                   </div>
                   <ProgressBar progress={enrollment.progress || 0} size="sm" />
                 </div>
               </div>
-              <button className="bg-primary hover:bg-primary-hover text-secondary mt-3 flex-shrink-0 rounded-md px-3 py-1.5 text-xs">
-                Continue
-              </button>
+              <Button className="mt-5 w-full" variant="primary" size="sm">
+                Continue Learning
+              </Button>
             </div>
           ))}
         </div>

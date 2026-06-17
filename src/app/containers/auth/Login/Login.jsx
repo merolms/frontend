@@ -18,7 +18,7 @@ const demoAccounts = [
 ];
 
 const inputCls =
-  "flex h-9 w-full rounded-lg border border-border bg-bg-surface px-3 py-2 text-sm text-text-primary shadow-sm placeholder:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-transparent";
+  "flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -40,25 +40,24 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-bg-primary flex min-h-screen items-center justify-center p-4">
+    <div className="bg-background flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="border-border bg-bg-surface space-y-6 rounded-xl border p-8 shadow-sm">
+        <div className="border-border bg-card space-y-6 rounded-xl border p-8 shadow-sm">
           {/* Brand */}
-          <div className="space-y-2 text-center">
-            <div
-              className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl"
-              style={{ background: "var(--primary-light)" }}
-            >
-              <GraduationCap size={32} className="text-primary" />
+          <div className="space-y-3 text-center">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md">
+              <GraduationCap size={32} />
             </div>
-            <h1 className="text-text-primary text-2xl font-bold">MeroEdu</h1>
-            <p className="text-text-muted text-sm">Learning Management System</p>
+            <h1 className="text-foreground text-3xl font-bold tracking-tight">MeroEdu</h1>
+            <p className="text-muted-foreground text-sm font-medium">Learning Management System</p>
           </div>
 
-          <h2 className="text-text-primary text-center text-lg font-semibold">Sign In</h2>
-          <p className="text-text-muted -mt-4 text-center text-sm">
-            Enter your credentials to access your account.
-          </p>
+          <div className="space-y-1 text-center">
+            <h2 className="text-foreground text-xl font-bold tracking-tight">Sign In</h2>
+            <p className="text-muted-foreground text-sm font-medium">
+              Enter your credentials to access your account.
+            </p>
+          </div>
 
           {error && (
             <div
@@ -119,15 +118,22 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="bg-primary hover:bg-primary-hover text-secondary h-10 w-full cursor-pointer rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground h-10 w-full cursor-pointer rounded-lg text-sm font-bold shadow-sm transition-all active:scale-[0.98] disabled:opacity-50"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
-          <div className="space-y-2">
-            <p className="text-text-muted text-center text-xs">Demo Accounts</p>
-            <div className="space-y-1.5">
+          <div className="space-y-3">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-2 text-muted-foreground font-semibold">Demo Accounts</span>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-2">
               {demoAccounts.map((acct) => (
                 <button
                   key={acct.role}
@@ -136,15 +142,12 @@ const Login = () => {
                     setEmail(acct.email);
                     setPassword(acct.password);
                   }}
-                  className="border-border hover:bg-bg-surface-hover flex w-full items-center justify-between rounded-lg border px-3 py-2 text-xs transition-colors"
+                  className="border-border hover:bg-accent hover:text-accent-foreground flex w-full items-center justify-between rounded-lg border px-4 py-2.5 text-xs font-medium transition-all hover:border-primary/20"
                 >
-                  <span
-                    className={`rounded px-2 py-0.5 text-xs font-medium`}
-                    style={{ background: "var(--primary-light)", color: "var(--primary)" }}
-                  >
+                  <span className="bg-primary/10 text-primary rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
                     {acct.label}
                   </span>
-                  <span className="text-text-muted">{acct.email}</span>
+                  <span className="text-muted-foreground">{acct.email}</span>
                 </button>
               ))}
             </div>

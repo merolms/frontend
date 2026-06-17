@@ -145,8 +145,8 @@ const CourseContainer = () => {
       </div>
 
       {/* Filters */}
-      <Paper className="mb-4 p-3">
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="mb-6 p-1 border-b border-border pb-6">
+        <div className="flex flex-wrap items-center gap-3">
           <form className="flex flex-1 items-center gap-2" onSubmit={handleSearch}>
             <div className="relative flex-1">
               <Search
@@ -208,17 +208,19 @@ const CourseContainer = () => {
               ))}
             </SelectContent>
           </Select>
-          <Button variant="default" size="sm" onClick={handleClear}>
-            Clear
+          <Button variant="outline" size="sm" onClick={handleClear}>
+            Clear Filters
           </Button>
-          <ViewModeSwitcher
-            value={viewMode}
-            onChange={(mode) => updateParams({ view: mode, page: 1 })}
-          />
+          <div className="ml-auto">
+            <ViewModeSwitcher
+              value={viewMode}
+              onChange={(mode) => updateParams({ view: mode, page: 1 })}
+            />
+          </div>
         </div>
 
         {(status || category || search) && (
-          <div className="mt-2 flex items-center gap-2">
+          <div className="mt-4 flex items-center gap-2">
             <span className="text-text-muted text-xs">Filters:</span>
             {search && (
               <Badge
@@ -243,11 +245,11 @@ const CourseContainer = () => {
             )}
           </div>
         )}
-      </Paper>
+      </div>
 
       {/* Error */}
       {error && !isLoading && (
-        <Paper p="md" className="mb-4">
+        <div className="mb-6 rounded-xl border border-destructive/20 bg-destructive/5 p-6">
           <FormErrorBanner message={error?.message || "Failed to load courses"} />
           <Button
             size="xs"
@@ -258,7 +260,7 @@ const CourseContainer = () => {
           >
             Retry
           </Button>
-        </Paper>
+        </div>
       )}
 
       {/* Empty */}

@@ -62,9 +62,17 @@ const RoleBasedSidebar = () => {
                 to={item.path}
                 title={item.label}
                 aria-label={item.label}
-                className={active ? "sidebar-nav-item-active" : "sidebar-nav-item"}
+                className={cn(
+                  "relative flex h-10 w-10 items-center justify-center rounded-lg transition-all",
+                  active
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                )}
               >
-                <Icon size={18} />
+                <Icon size={20} />
+                {active && (
+                  <span className="absolute -left-2 h-6 w-1 rounded-r-full bg-primary" />
+                )}
               </Link>
             );
           })}
