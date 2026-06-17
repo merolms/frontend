@@ -25,28 +25,33 @@ const CourseCard = ({
 
   return (
     <div
-      className="border-border bg-bg-surface flex cursor-pointer items-center gap-4 rounded-xl border p-4 shadow-sm transition-all hover:shadow-md"
+      className="group border-border bg-card flex cursor-pointer items-center gap-5 rounded-xl border p-5 shadow-sm transition-all hover:shadow-md hover:border-primary/20"
       onClick={onClick}
     >
-      <img
-        src={course.coverImage || DEFAULT_COURSE_IMAGE}
-        alt={course.title}
-        className="h-16 w-24 flex-shrink-0 rounded-lg object-cover"
-        onError={(e) => {
-          e.target.src = DEFAULT_COURSE_IMAGE;
-        }}
-      />
+      <div className="relative h-16 w-24 flex-shrink-0 overflow-hidden rounded-lg">
+        <img
+          src={course.coverImage || DEFAULT_COURSE_IMAGE}
+          alt={course.title}
+          className="h-full w-full object-cover transition-transform group-hover:scale-110"
+          onError={(e) => {
+            e.target.src = DEFAULT_COURSE_IMAGE;
+          }}
+        />
+        <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
+      </div>
       <div className="min-w-0 flex-1">
-        <h4 className="text-text-primary truncate text-sm font-semibold">{course.title}</h4>
-        <p className="text-text-muted text-[11px]">
+        <h4 className="text-foreground truncate text-base font-bold group-hover:text-primary transition-colors">
+          {course.title}
+        </h4>
+        <p className="text-muted-foreground text-xs font-medium">
           {course.category} • {course.totalLessons} lessons
         </p>
         {course.progress !== undefined && (
-          <div className="mt-2">
-            <div className="mb-1 flex items-center justify-between">
-              <span className="text-text-muted text-[11px]">{course.progress}% complete</span>
+          <div className="mt-3">
+            <div className="mb-1.5 flex items-center justify-between">
+              <span className="text-muted-foreground text-xs font-medium">{course.progress}% complete</span>
             </div>
-            <div className="bg-bg-surface-active h-1.5 w-full rounded-full">
+            <div className="bg-secondary h-1.5 w-full rounded-full">
               <div
                 className="bg-primary h-1.5 rounded-full transition-all"
                 style={{ width: `${course.progress}%` }}
@@ -55,13 +60,13 @@ const CourseCard = ({
           </div>
         )}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         {showStatus && course.status && (
           <span
-            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+            className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
               course.status === "published"
-                ? "bg-success/10 text-success"
-                : "bg-warning/10 text-warning"
+                ? "border-green-500/20 bg-green-500/10 text-green-600"
+                : "border-orange-500/20 bg-orange-500/10 text-orange-600"
             }`}
           >
             {course.status}
@@ -73,15 +78,15 @@ const CourseCard = ({
               e.stopPropagation();
               onEdit(course);
             }}
-            className="text-text-muted hover:text-primary text-xs"
+            className="text-muted-foreground hover:text-primary p-2 transition-colors"
           >
             Edit
           </button>
         )}
         {actionLabel && (
-          <button className="bg-primary hover:bg-primary-hover text-secondary flex-shrink-0 rounded-md px-3 py-1.5 text-xs">
+          <Button size="sm" variant="primary" className="flex-shrink-0">
             {actionLabel}
-          </button>
+          </Button>
         )}
       </div>
     </div>
