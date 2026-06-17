@@ -1,9 +1,9 @@
 import { BookOpen, CheckCircle, Clock, TrendingUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { fetchEnrollments } from "@/app/services/enrollmentService";
+import { useMyEnrollments } from "@/hooks/queries/useEnrollments";
 import LoadingState from "@/components/common/LoadingState";
 import StatCard from "@/components/common/StatCard";
 import EmptyState from "@/components/common/EmptyState";
@@ -20,24 +20,9 @@ const LearnerDashboard = () => {
   usePageTitle("Dashboard");
   const navigate = useNavigate();
   const user = useSelector((s) => s.auth.user);
-  const [enrollments, setEnrollments] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadEnrollments();
-  }, [user?.id]);
-
-  const loadEnrollments = async () => {
-    try {
-      setLoading(true);
-      const data = await fetchEnrollments({ userId: user?.id, sort: "recent" });
-      setEnrollments(data || []);
-    } catch (err) {
-      console.error("Failed to load enrollments:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // TanStack Query hook for fetching user's enrollments
+  const { data: enrollments = [], isLoading } = useMyEnrollments(100);
 
   const activeEnrollments = enrollments.filter((e) => e.status === "active");
   const completedEnrollments = enrollments.filter((e) => e.status === "completed");
@@ -74,7 +59,7 @@ const LearnerDashboard = () => {
         <h3 className="text-text-primary text-sm font-semibold">Continue Learning</h3>
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <LoadingState count={3} height="h-32" />
       ) : activeEnrollments.length === 0 ? (
         <EmptyState

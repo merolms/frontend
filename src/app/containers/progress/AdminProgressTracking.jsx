@@ -1,7 +1,8 @@
 import { Award, BarChart3, Search, TrendingUp, Users } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+import { useQuery } from "@tanstack/react-query";
 import { fetchEnrollments } from "@/app/services/enrollmentService";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,8 +20,6 @@ import {
 const AdminProgressTracking = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [enrollments, setEnrollments] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
 
@@ -30,40 +29,39 @@ const AdminProgressTracking = () => {
   const statusFilter = searchParams.get("status") || "";
   const [searchInput, setSearchInput] = useState(search);
 
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await fetchEnrollments({ sort: "recent" });
-      let filtered = data || [];
+  // TanStack Query for fetching all enrollments
+  const { data: allEnrollments = [], isLoading } = useQuery({
+    queryKey: ["enrollments", "admin", "all"],
+    queryFn: () => fetchEnrollments({ sort: "recent" }),
+  });
 
-      if (search) {
-        const q = search.toLowerCase();
-        filtered = filtered.filter(
-          (e) =>
-            (e.userName || "").toLowerCase().includes(q) ||
-            (e.courseTitle || "").toLowerCase().includes(q) ||
-            (e.category || "").toLowerCase().includes(q)
-        );
-      }
-      if (courseFilter) filtered = filtered.filter((e) => e.courseId === parseInt(courseFilter));
-      if (statusFilter) filtered = filtered.filter((e) => e.status === statusFilter);
+  // Client-side filtering and pagination
+  const filteredEnrollments = useCallback(() => {
+    let filtered = [...allEnrollments];
 
-      const totalCount = filtered.length;
-      const pages = Math.ceil(totalCount / 10) || 1;
-      const start = (page - 1) * 10;
-      setEnrollments(filtered.slice(start, start + 10));
-      setTotalPages(pages);
-      setTotal(totalCount);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
+    if (search) {
+      const q = search.toLowerCase();
+      filtered = filtered.filter(
+        (e) =>
+          (e.userName || "").toLowerCase().includes(q) ||
+          (e.courseTitle || "").toLowerCase().includes(q) ||
+          (e.category || "").toLowerCase().includes(q)
+      );
     }
-  }, [search, courseFilter, statusFilter, page]);
+    if (courseFilter) filtered = filtered.filter((e) => e.courseId === parseInt(courseFilter));
+    if (statusFilter) filtered = filtered.filter((e) => e.status === statusFilter);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    const totalCount = filtered.length;
+    const pages = Math.ceil(totalCount / 10) || 1;
+    const start = (page - 1) * 10;
+
+    setTotal(totalCount);
+    setTotalPages(pages);
+
+    return filtered.slice(start, start + 10);
+  }, [allEnrollments, search, courseFilter, statusFilter, page]);
+
+  const enrollments = filteredEnrollments();
 
   const updateParams = (updates) => {
     const p = new URLSearchParams(searchParams);
@@ -76,21 +74,21 @@ const AdminProgressTracking = () => {
   };
 
   // Aggregate stats
-  const allEnrollments = enrollments;
-  const totalLearners = new Set(allEnrollments.map((e) => e.userId)).size;
-  const completedCount = allEnrollments.filter((e) => e.status === "completed").length;
-  const activeCount = allEnrollments.filter((e) => e.status === "active").length;
+  const allEnrollmentsList = allEnrollments;
+  const totalLearners = new Set(allEnrollmentsList.map((e) => e.userId)).size;
+  const completedCount = allEnrollmentsList.filter((e) => e.status === "completed").length;
+  const activeCount = allEnrollmentsList.filter((e) => e.status === "active").length;
   const avgProgress =
-    allEnrollments.length > 0
+    allEnrollmentsList.length > 0
       ? Math.round(
-          allEnrollments.reduce((s, e) => s + (e.progress || 0), 0) / allEnrollments.length
+          allEnrollmentsList.reduce((s, e) => s + (e.progress || 0), 0) / allEnrollmentsList.length
         )
       : 0;
 
   // Unique courses
   const courses = [
     ...new Map(
-      allEnrollments.map((e) => [e.courseId, { id: e.courseId, title: e.courseTitle }])
+      allEnrollmentsList.map((e) => [e.courseId, { id: e.courseId, title: e.courseTitle }])
     ).values(),
   ];
 
@@ -219,42 +217,39 @@ const AdminProgressTracking = () => {
       </div>
 
       {/* Table */}
-      <div className="border-border bg-bg-surface overflow-hidden rounded-xl border shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-border bg-bg-surface-hover border-b">
-                <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">Learner</th>
-                <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">Course</th>
-                <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">Status</th>
-                <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">
-                  Progress
-                </th>
-                <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">Lessons</th>
-                <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">
-                  Last Active
-                </th>
-                <th className="text-text-muted px-4 py-3 text-center text-xs font-medium">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-border divide-y">
-              {loading ? (
-                [...Array(5)].map((_, i) => (
-                  <tr key={i}>
-                    <td colSpan={7} className="px-4 py-4">
-                      <div className="bg-bg-surface-active h-10 animate-pulse rounded" />
+      {isLoading ? (
+        <div className="border-border bg-bg-surface flex items-center justify-center rounded-xl border p-12">
+          <div className="text-text-muted text-sm">Loading...</div>
+        </div>
+      ) : (
+        <div className="border-border bg-bg-surface overflow-hidden rounded-xl border shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-border bg-bg-surface-hover border-b">
+                  <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">Learner</th>
+                  <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">Course</th>
+                  <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">Status</th>
+                  <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">
+                    Progress
+                  </th>
+                  <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">Lessons</th>
+                  <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">
+                    Last Active
+                  </th>
+                  <th className="text-text-muted px-4 py-3 text-center text-xs font-medium">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-border divide-y">
+                {enrollments.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="text-text-muted px-4 py-8 text-center">
+                      No enrollments found
                     </td>
                   </tr>
-                ))
-              ) : enrollments.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="text-text-muted px-4 py-8 text-center">
-                    No enrollments found
-                  </td>
-                </tr>
-              ) : (
+                ) : (
                 enrollments.map((enrollment) => (
                   <tr key={enrollment.id} className="hover:bg-bg-surface-hover transition-colors">
                     <td className="px-4 py-3">
@@ -326,19 +321,20 @@ const AdminProgressTracking = () => {
                   </tr>
                 ))
               )}
-            </tbody>
-          </table>
-        </div>
-        {totalPages > 1 && (
-          <div className="border-border bg-bg-surface-hover/30 flex justify-center border-t py-3">
-            <Pagination
-              total={totalPages}
-              value={page}
-              onChange={(p) => updateParams({ page: p })}
-            />
+              </tbody>
+            </table>
           </div>
-        )}
-      </div>
+          {totalPages > 1 && (
+            <div className="border-border bg-bg-surface-hover/30 flex justify-center border-t py-3">
+              <Pagination
+                total={totalPages}
+                value={page}
+                onChange={(p) => updateParams({ page: p })}
+              />
+            </div>
+          )}
+        </div>
+      )}
     </DashboardLayout>
   );
 };

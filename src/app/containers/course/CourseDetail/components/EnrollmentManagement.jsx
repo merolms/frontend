@@ -17,12 +17,11 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useToast } from "@/app/context/ToastContext";
 import {
-  adminEnrollTeamInCourse,
-  adminEnrollUserInCourse,
-  getCourseEnrollments,
-} from "@/app/services/enrollmentService";
-import { fetchTeams } from "@/app/services/teamService";
-import { fetchUsers } from "@/app/services/userService";
+  useAdminEnrollUser,
+  useAdminEnrollTeam,
+} from "@/hooks/queries/useEnrollments";
+import { useUsers, useTeams } from "@/hooks/queries/useEntities";
+import { getCourseEnrollments } from "@/app/services/enrollmentService";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
@@ -54,8 +53,6 @@ const TabButton = ({ active, onClick, children }) => (
 const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => {
   const { addToast } = useToast();
   const [enrollments, setEnrollments] = useState(initialEnrollments || []);
-  const [users, setUsers] = useState([]);
-  const [teams, setTeams] = useState([]);
   const [selectedUser, setSelectedUser] = useState("");
   const [selectedTeam, setSelectedTeam] = useState("");
   const [enrolling, setEnrolling] = useState({ user: false, team: false });
@@ -71,32 +68,25 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
   const [enrollmentSearchQuery, setEnrollmentSearchQuery] = useState("");
   const [enrollmentSortBy, setEnrollmentSortBy] = useState("date");
 
-  // Calculate start index for pagination
-  const getStartIndex = (page, pageSize) => (page - 1) * pageSize;
+  // TanStack Query hooks
+  const { data: usersData = [] } = useUsers({ start: 0, limit: 20 });
+  const { data: teamsData = [] } = useTeams({ start: 0, limit: 50 });
+  const enrollUserMutation = useAdminEnrollUser();
+  const enrollTeamMutation = useAdminEnrollTeam();
 
-  // Load initial users and teams on mount
-  useEffect(() => {
-    const loadInitialData = async () => {
-      try {
-        const [usersData, teamsData] = await Promise.all([
-          fetchUsers({ start: 0, limit: 20 }).catch(() => ({ users: [], total: 0 })),
-          fetchTeams({ start: 0, limit: 50 }).catch(() => ({ teams: [], total: 0 })),
-        ]);
-        setUsers(Array.isArray(usersData?.users) ? usersData.users : []);
-        setTeams(Array.isArray(teamsData?.teams) ? teamsData.teams : []);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    loadInitialData();
-  }, []);
+  // Handle different response formats
+  const users = Array.isArray(usersData) ? usersData : usersData?.users || [];
+  const teams = Array.isArray(teamsData) ? teamsData : teamsData?.teams || [];
 
-  // Reload enrollments when page changes
+  // Load enrollments when page changes
   useEffect(() => {
     if (courseId) {
       loadEnrollments();
     }
   }, [enrollmentPage, courseId]);
+
+  // Calculate start index for pagination
+  const getStartIndex = (page, pageSize) => (page - 1) * pageSize;
 
   const loadEnrollments = async () => {
     try {
@@ -133,7 +123,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
 
     try {
       setEnrolling((s) => ({ ...s, user: true }));
-      await adminEnrollUserInCourse(parseInt(courseId), parseInt(selectedUser));
+      await enrollUserMutation.mutateAsync({ courseId: parseInt(courseId), userId: parseInt(selectedUser) });
       setSelectedUser("");
       setUserSearchQuery("");
       await loadEnrollments();
@@ -159,7 +149,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
     try {
       setEnrolling((s) => ({ ...s, user: true }));
       const promises = validUsers.map((userId) =>
-        adminEnrollUserInCourse(parseInt(courseId), userId)
+        enrollUserMutation.mutateAsync({ courseId: parseInt(courseId), userId })
       );
       await Promise.all(promises);
       setSelectedUsers([]);
@@ -186,7 +176,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
 
     try {
       setEnrolling((s) => ({ ...s, team: true }));
-      await adminEnrollTeamInCourse(parseInt(courseId), parseInt(selectedTeam));
+      await enrollTeamMutation.mutateAsync({ courseId: parseInt(courseId), teamId: parseInt(selectedTeam) });
       setSelectedTeam("");
       setTeamSearchQuery("");
       await loadEnrollments();

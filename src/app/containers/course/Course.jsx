@@ -5,8 +5,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
 import { hasPermission } from "@/app/services/authService";
-import { fetchCategories } from "@/app/services/categoryService";
 import { useCourses } from "@/hooks/queries/useCourses";
+import { useCategories } from "@/hooks/queries/useEntities";
 import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import { Badge } from "@/components/ui/badge";
@@ -58,7 +58,6 @@ const CourseContainer = () => {
   const viewMode = searchParams.get("view") || "grid";
 
   const [searchInput, setSearchInput] = useState(search);
-  const [categories, setCategories] = useState([]);
 
   // ─── TanStack Query: replaces manual useState + useEffect + fetch ───
   const limit = viewMode === "list" ? 10 : viewMode === "compact" ? 15 : 8;
@@ -71,15 +70,11 @@ const CourseContainer = () => {
     limit,
   });
 
+  const { data: categories = [] } = useCategories({ start: 0, limit: 100 });
+
   const courses = data?.courses ?? [];
   const totalPages = data?.totalPages ?? 1;
   const total = data?.total ?? 0;
-
-  useEffect(() => {
-    fetchCategories({ start: 0, limit: 100 })
-      .then((list) => setCategories(Array.isArray(list) ? list : []))
-      .catch(() => setCategories([]));
-  }, []);
 
   const categoryOptions = [
     { value: "all", label: "All Categories" },

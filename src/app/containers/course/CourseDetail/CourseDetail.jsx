@@ -73,6 +73,7 @@ const CourseDetail = () => {
   const { data: lessons = [] } = useCourseLessons(id);
   const { data: enrollment } = useEnrollmentStatus(id, { enabled: !!user });
   const { data: enrollments = [] } = useCourseEnrollments(id, { enabled: canManageEnrollments });
+  const enrollmentsSafe = enrollments || [];
   const { data: lessonCompletionCounts = {} } = useLessonCompletionCounts(id, { enabled: canManageEnrollments });
 
   usePageTitle(course?.title ? `${course.title} — Course` : "Course Details");
@@ -259,7 +260,7 @@ const CourseDetail = () => {
               <div className="text-center text-white">
                 <User size={20} className="mx-auto mb-1" style={{ color: t("primary") }} />
                 <div className="text-lg font-bold">
-                  {canManageEnrollments ? enrollments.length : "—"}
+                  {canManageEnrollments ? enrollmentsSafe.length : "—"}
                 </div>
                 <div className="text-[11px] text-white/60">Enrolled</div>
               </div>
@@ -355,7 +356,7 @@ const CourseDetail = () => {
                   <TabsTrigger value="overview">Overview</TabsTrigger>
                   <TabsTrigger value="lessons">Lessons ({lessons.length})</TabsTrigger>
                   <PermissionGuard permissions={["courses.enrollment.manage"]}>
-                    <TabsTrigger value="enrollment">Enrollment ({enrollments.length})</TabsTrigger>
+                    <TabsTrigger value="enrollment">Enrollment ({enrollmentsSafe.length})</TabsTrigger>
                   </PermissionGuard>
                 </TabsList>
                 <TabsContent value="overview" className="space-y-4">
@@ -383,7 +384,7 @@ const CourseDetail = () => {
                   )}
 
                   {/* Enrollment Summary */}
-                  {canManageEnrollments && enrollments.length > 0 && (
+                  {canManageEnrollments && enrollmentsSafe.length > 0 && (
                     <div>
                       <h3 className="text-text-primary mb-2 flex items-center gap-1.5 text-sm font-semibold">
                         <Users size={14} style={{ color: t("primary") }} /> Enrollment
@@ -391,19 +392,19 @@ const CourseDetail = () => {
                       <div className="grid grid-cols-3 gap-3">
                         <div className="border-border bg-bg-surface rounded-lg border px-3 py-2 text-center">
                           <div className="text-text-primary text-lg font-bold">
-                            {enrollments.length}
+                            {enrollmentsSafe.length}
                           </div>
                           <div className="text-text-muted text-[10px]">Total Enrolled</div>
                         </div>
                         <div className="border-border bg-bg-surface rounded-lg border px-3 py-2 text-center">
                           <div className="text-success text-lg font-bold">
-                            {enrollments.filter((e) => e.status === "active").length}
+                            {enrollmentsSafe.filter((e) => e.status === "active").length}
                           </div>
                           <div className="text-text-muted text-[10px]">Active</div>
                         </div>
                         <div className="border-border bg-bg-surface rounded-lg border px-3 py-2 text-center">
                           <div className="text-accent text-lg font-bold">
-                            {enrollments.filter((e) => e.status === "completed").length}
+                            {enrollmentsSafe.filter((e) => e.status === "completed").length}
                           </div>
                           <div className="text-text-muted text-[10px]">Completed</div>
                         </div>
@@ -414,8 +415,8 @@ const CourseDetail = () => {
                           <span className="text-text-muted text-[11px]">Average Progress</span>
                           <span className="text-text-primary text-[11px] font-semibold">
                             {Math.round(
-                              enrollments.reduce((sum, e) => sum + (e.progressPercent ?? 0), 0) /
-                                enrollments.length
+                              enrollmentsSafe.reduce((sum, e) => sum + (e.progressPercent ?? 0), 0) /
+                                enrollmentsSafe.length
                             )}
                             %
                           </span>
@@ -424,7 +425,7 @@ const CourseDetail = () => {
                           <div
                             className="bg-primary h-full rounded-full transition-all"
                             style={{
-                              width: `${Math.round(enrollments.reduce((sum, e) => sum + (e.progressPercent ?? 0), 0) / enrollments.length)}%`,
+                              width: `${Math.round(enrollmentsSafe.reduce((sum, e) => sum + (e.progressPercent ?? 0), 0) / enrollmentsSafe.length)}%`,
                             }}
                           />
                         </div>
@@ -527,7 +528,7 @@ const CourseDetail = () => {
                 <TabsContent value="enrollment">
                   <EnrollmentManagement
                     courseId={parseInt(id)}
-                    enrollments={enrollments}
+                    enrollments={enrollmentsSafe}
                     completionCounts={lessonCompletionCounts}
                   />
                 </TabsContent>
@@ -550,7 +551,7 @@ const CourseDetail = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-text-muted text-xs">Enrolled</span>
                   <span className="text-text-primary text-sm font-semibold">
-                    {canManageEnrollments ? enrollments.length : "—"}
+                    {canManageEnrollments ? enrollmentsSafe.length : "—"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">

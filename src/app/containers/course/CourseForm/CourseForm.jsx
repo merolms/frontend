@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { ImageIcon, Trash2 } from "lucide-react";
 
 import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
-import { fetchCategories } from "@/app/services/categoryService";
+import { useCategories } from "@/hooks/queries/useEntities";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -53,17 +54,15 @@ const CourseForm = ({
     coverImage: "",
     ...initialData,
   });
-  const [categoryOptions, setCategoryOptions] = useState([]);
   const [errors, setErrors] = useState({});
   const [unsplashOpen, setUnsplashOpen] = useState(false);
 
+  const { data: categories = [] } = useCategories({ status: "active" });
+
+  const categoryOptions = categories.map((c) => ({ value: c.name, label: c.name }));
+
   useEffect(() => {
     if (initialData) setFormData({ ...initialData });
-    fetchCategories({ status: "active" })
-      .then((cats) => {
-        setCategoryOptions(cats.map((c) => ({ value: c.name, label: c.name })));
-      })
-      .catch(() => {});
   }, [initialData]);
 
   const validate = () => {

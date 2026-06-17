@@ -8,11 +8,11 @@ import {
   Play,
   TrendingUp,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { getMyEnrollments } from "@/app/services/enrollmentService";
+import { useMyEnrollments } from "@/hooks/queries/useEnrollments";
 import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import LoadingState from "@/components/common/LoadingState";
@@ -33,28 +33,11 @@ const MyLearning = () => {
   usePageTitle("My Learning");
   const navigate = useNavigate();
   const user = useSelector((s) => s.auth.user);
-  const [enrollments, setEnrollments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("recent");
 
-  useEffect(() => {
-    loadEnrollments();
-  }, [user?.id]);
-
-  const loadEnrollments = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await getMyEnrollments();
-      setEnrollments(data);
-    } catch (err) {
-      setError(err.message || "Failed to load your courses.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // TanStack Query hook for fetching user's enrollments
+  const { data: enrollments = [], isLoading, error: queryError } = useMyEnrollments(100);
 
   const filtered = (
     statusFilter === "all" ? enrollments : enrollments.filter((e) => e.status === statusFilter)
@@ -179,14 +162,11 @@ const MyLearning = () => {
       </div>
 
       {/* Course list */}
-      {loading ? (
+      {isLoading ? (
         <LoadingState count={4} height="h-32" />
-      ) : error ? (
+      ) : queryError ? (
         <div className="space-y-3">
-          <FormErrorBanner message={error} />
-          <Button size="sm" onClick={loadEnrollments}>
-            Retry
-          </Button>
+          <FormErrorBanner message={queryError.message} />
         </div>
       ) : filtered.length === 0 ? (
         <EmptyState

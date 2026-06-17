@@ -1,17 +1,16 @@
 import { Folder, Pencil, Plus, Search, ToggleLeft, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import { useToast } from "@/app/context/ToastContext";
 import {
-  createCategory,
-  deleteCategory,
-  fetchCategoriesWithPagination,
-  toggleCategoryStatus,
-  updateCategory,
-} from "@/app/services/categoryService";
+  useCategories,
+  useCreateCategory,
+  useUpdateCategory,
+  useDeleteCategory,
+} from "@/hooks/queries/useEntities";
 import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import LoadingState from "@/components/common/LoadingState";
@@ -32,8 +31,6 @@ import { t } from "@/styles/theme";
 
 import CategoryForm from "../components/CategoryForm";
 
-export { deleteCategory, fetchCategoriesWithPagination, toggleCategoryStatus };
-
 const statusOptions = [
   { value: "all", label: "All Status" },
   { value: "1", label: "Active" },
@@ -48,9 +45,6 @@ const sortOptions = [
 const CategoryManagement = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -61,31 +55,24 @@ const CategoryManagement = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [editingCat, setEditingCat] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const [actionLoading, setActionLoading] = useState(false);
+  const [filteredCategories, setFilteredCategories] = useState([]);
   const limit = 10;
 
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const hasFilters = Boolean(search || statusFilter || sort);
+  // Fetch all categories for client-side filtering
+  const { data: allCategories = [], isLoading, error, refetch } = useCategories({ start: 0, limit: 500 });
 
-      if (!hasFilters) {
-        // Plain browsing — server-side pagination
-        const start = (page - 1) * limit;
-        const { categories: data, total: totalCount } = await fetchCategoriesWithPagination({
-          start,
-          limit,
-        });
-        setCategories(data);
-        setTotal(totalCount);
-        setTotalPages(Math.ceil(totalCount / limit) || 1);
-        return;
-      }
+  // Mutation hooks
+  const createMutation = useCreateCategory();
+  const updateMutation = useUpdateCategory();
+  const deleteMutation = useDeleteCategory();
 
-      // The API only supports start/limit, so filters must operate on the
-      // whole dataset: fetch a wide window, then filter/sort/paginate locally.
-      let { categories: data } = await fetchCategoriesWithPagination({ start: 0, limit: 500 });
+  // Client-side filtering, sorting, and pagination
+  useEffect(() => {
+    const hasFilters = Boolean(search || statusFilter || sort);
+    let data = [...allCategories];
+
+    if (hasFilters) {
+      // Apply filters
       if (search) {
         const q = search.toLowerCase();
         data = data.filter(
@@ -101,19 +88,17 @@ const CategoryManagement = () => {
       else if (sort === "recent") data.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
 
       const filteredTotal = data.length;
-      setCategories(data.slice((page - 1) * limit, page * limit));
+      setFilteredCategories(data.slice((page - 1) * limit, page * limit));
       setTotal(filteredTotal);
       setTotalPages(Math.ceil(filteredTotal / limit) || 1);
-    } catch (err) {
-      setError(err.message || "Failed to load categories");
-    } finally {
-      setLoading(false);
+    } else {
+      // Server-side pagination for plain browsing
+      const start = (page - 1) * limit;
+      setFilteredCategories(data.slice(start, start + limit));
+      setTotal(data.length);
+      setTotalPages(Math.ceil(data.length / limit) || 1);
     }
-  }, [search, statusFilter, sort, page]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  }, [allCategories, search, statusFilter, sort, page]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -130,48 +115,40 @@ const CategoryManagement = () => {
   };
 
   const handleFormSubmit = async (formData) => {
-    setActionLoading(true);
     try {
       if (editingCat) {
-        await updateCategory(editingCat.id, formData);
+        await updateMutation.mutateAsync({ id: editingCat.id, data: formData });
         addToast(`Category "${formData.name}" updated`, "success");
       } else {
-        await createCategory(formData);
+        await createMutation.mutateAsync(formData);
         addToast(`Category "${formData.name}" created`, "success");
       }
       setFormOpen(false);
       setEditingCat(null);
-      await fetchData();
     } catch (err) {
       throw err;
-    } finally {
-      setActionLoading(false);
     }
   };
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
     try {
-      setActionLoading(true);
-      await deleteCategory(deleteTarget.id);
+      await deleteMutation.mutateAsync(deleteTarget.id);
       setDeleteTarget(null);
       addToast(`Category "${deleteTarget.name}" deleted`, "success");
-      await fetchData();
     } catch (err) {
       addToast(err.message || "Failed to delete category.", "error");
-    } finally {
-      setActionLoading(false);
     }
   };
 
   const handleToggleStatus = async (cat) => {
     try {
-      await toggleCategoryStatus(cat.id);
+      const newStatus = cat.status === 1 ? 0 : 1;
+      await updateMutation.mutateAsync({ id: cat.id, data: { status: newStatus } });
       addToast(
-        `Category "${cat.name}" ${cat.status === 1 ? "deactivated" : "activated"}`,
+        `Category "${cat.name}" ${newStatus === 1 ? "activated" : "deactivated"}`,
         "success"
       );
-      await fetchData();
     } catch (err) {
       addToast(err.message || "Failed to update category status.", "error");
     }
@@ -193,7 +170,7 @@ const CategoryManagement = () => {
         {/* Action bar */}
         <div className="mb-4 flex items-center justify-end">
           <PermissionGuard permissions={["category.create"]}>
-            <Button size="sm" onClick={handleCreate}>
+            <Button size="sm" onClick={handleCreate} disabled={isLoading}>
               <Plus size={14} /> New Category
             </Button>
           </PermissionGuard>
@@ -263,9 +240,9 @@ const CategoryManagement = () => {
 
         {/* Table */}
         <Paper className="overflow-hidden">
-          {loading ? (
+          {isLoading ? (
             <LoadingState count={5} height="h-12" className="p-4" />
-          ) : categories.length === 0 ? (
+          ) : filteredCategories.length === 0 ? (
             <EmptyState
               icon={<Folder size={48} className="text-text-muted" />}
               title="No categories found"
@@ -303,7 +280,7 @@ const CategoryManagement = () => {
                 </tr>
               </thead>
               <tbody className="divide-border divide-y">
-                {categories.map((cat) => (
+                {filteredCategories.map((cat) => (
                   <tr
                     key={cat.id}
                     className={`hover:bg-bg-surface-hover transition-colors ${cat.status === 0 ? "opacity-60" : ""}`}
@@ -386,7 +363,7 @@ const CategoryManagement = () => {
               setFormOpen(false);
               setEditingCat(null);
             }}
-            loading={actionLoading}
+            loading={editingCat ? updateMutation.isPending : createMutation.isPending}
           />
         )}
         <DeleteModal
@@ -395,7 +372,7 @@ const CategoryManagement = () => {
           onCancel={() => setDeleteTarget(null)}
           itemName={deleteTarget?.name}
           itemType="category"
-          loading={actionLoading}
+          loading={deleteMutation.isPending}
         />
       </DashboardLayout>
     </>

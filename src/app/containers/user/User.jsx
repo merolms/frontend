@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import { useToast } from "@/app/context/ToastContext";
 import { fetchRoles } from "@/app/services/authService";
-import { deleteUser, fetchUsers } from "@/app/services/userService";
+import { useUsers, useDeleteUser } from "@/hooks/queries/useEntities";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -64,7 +64,6 @@ const UserContainer = () => {
   const { addToast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -79,6 +78,54 @@ const UserContainer = () => {
   const sort = searchParams.get("sort") || "";
   const [searchInput, setSearchInput] = useState(search);
 
+  // TanStack Query hooks
+  const { data: usersResult, isLoading: usersLoading, error: usersError, refetch } = useUsers({
+    start: (page - 1) * limit,
+    limit,
+    sort,
+  });
+  const deleteMutation = useDeleteUser();
+
+  // Process data with client-side filtering
+  useEffect(() => {
+    const processData = () => {
+      if (!usersResult) return;
+      
+      try {
+        const result = usersResult;
+        let filtered = Array.isArray(result?.users) ? result.users : Array.isArray(result) ? result : [];
+        if (roleFilter) filtered = filtered.filter((u) => u.role === roleFilter);
+        if (statusFilter) filtered = filtered.filter((u) => String(u.status) === statusFilter);
+        if (search) {
+          const q = search.toLowerCase();
+          filtered = filtered.filter(
+            (u) =>
+              (u.firstName || "").toLowerCase().includes(q) ||
+              (u.lastName || "").toLowerCase().includes(q) ||
+              (u.email || "").toLowerCase().includes(q)
+          );
+        }
+        setUsers(filtered);
+        setTotal(result?.total || result?.length || 0);
+        setTotalPages(Math.ceil((result?.total || result?.length || 0) / limit) || 1);
+      } catch (err) {
+        setError(err.message || "Failed to load users");
+      }
+    };
+
+    processData();
+  }, [usersResult, roleFilter, statusFilter, search, limit, page, sort]);
+
+  // Update error state from query
+  useEffect(() => {
+    if (usersError) {
+      setError(usersError.message || "Failed to load users");
+    }
+  }, [usersError]);
+
+  const loading = usersLoading;
+
+  // Load roles
   useEffect(() => {
     const loadRoles = async () => {
       try {
@@ -93,39 +140,6 @@ const UserContainer = () => {
     };
     loadRoles();
   }, []);
-
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const params = { start: (page - 1) * limit, limit };
-      if (sort) params.sort = sort;
-      const result = await fetchUsers(params);
-      let filtered = Array.isArray(result.users) ? result.users : [];
-      if (roleFilter) filtered = filtered.filter((u) => u.role === roleFilter);
-      if (statusFilter) filtered = filtered.filter((u) => String(u.status) === statusFilter);
-      if (search) {
-        const q = search.toLowerCase();
-        filtered = filtered.filter(
-          (u) =>
-            (u.firstName || "").toLowerCase().includes(q) ||
-            (u.lastName || "").toLowerCase().includes(q) ||
-            (u.email || "").toLowerCase().includes(q)
-        );
-      }
-      setUsers(filtered);
-      setTotal(result.total);
-      setTotalPages(Math.ceil(result.total / limit) || 1);
-    } catch (err) {
-      setError(err.message || "Failed to load users");
-    } finally {
-      setLoading(false);
-    }
-  }, [search, roleFilter, statusFilter, sort, page]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
 
   const updateParams = (updates) => {
     const newParams = new URLSearchParams(searchParams);
@@ -150,10 +164,10 @@ const UserContainer = () => {
     if (!deleteTarget) return;
     try {
       setActionLoading(true);
-      await deleteUser(deleteTarget.id);
+      await deleteMutation.mutateAsync(deleteTarget.id);
       setDeleteTarget(null);
       addToast(`${deleteTarget.firstName} ${deleteTarget.lastName} deleted`, "error");
-      fetchData();
+      refetch();
     } catch (err) {
       console.error(err);
     } finally {

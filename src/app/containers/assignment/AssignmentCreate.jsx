@@ -2,7 +2,7 @@ import { Lightbulb, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { createAssignment } from "@/app/services/assignmentService";
+import { useCreateAssignment } from "@/hooks/queries/useAssignments";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import FormActions from "@/components/forms/FormActions";
 import FormField from "@/components/forms/FormField";
@@ -43,8 +43,10 @@ const AssignmentCreate = () => {
     };
   });
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
+
+  // TanStack Query mutation hook
+  const createMutation = useCreateAssignment();
 
   const { updateForm, clearDirty } = useUnsavedChanges(
     formData,
@@ -76,17 +78,14 @@ const AssignmentCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    setLoading(true);
     setApiError(null);
     try {
-      const assignment = await createAssignment(lessonId, formData);
+      const assignment = await createMutation.mutateAsync({ lessonId, data: formData });
       clearDirty();
       addToast("Assignment created successfully!", "success");
       navigate(`/assignments/${assignment.id}`);
     } catch (err) {
       setApiError(err.message || "Failed to create assignment. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -249,8 +248,8 @@ const AssignmentCreate = () => {
 
               <FormActions
                 onCancel={() => navigate("/assignments")}
-                loading={loading}
-                submitLabel={loading ? "Creating..." : "Create Assignment"}
+                loading={createMutation.isPending}
+                submitLabel={createMutation.isPending ? "Creating..." : "Create Assignment"}
               />
             </form>
           </div>

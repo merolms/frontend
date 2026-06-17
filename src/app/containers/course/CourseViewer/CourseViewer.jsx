@@ -6,14 +6,14 @@ import { useParams } from "react-router-dom";
 import { useToast } from "@/app/context/ToastContext";
 import CourseCompletionCelebration from "@/components/CourseCompletionCelebration";
 import { Badge } from "@/components/ui/badge";
-import { fetchCourseById, fetchLessons } from "@/app/services/courseService";
+import { useCourse, useCourseLessons } from "@/hooks/queries/useCourses";
 import {
-  enrollInCourseAPI,
-  getCourseProgress,
-  getEnrollmentStatus,
-  getMyLessonCompletions,
-  markLessonCompleteAPI,
-} from "@/app/services/enrollmentService";
+  useEnrollmentStatus,
+  useCourseProgress,
+  useMyLessonCompletions,
+  useEnrollInCourse,
+  useMarkLessonComplete,
+} from "@/hooks/queries/useEnrollments";
 import { hasPermission } from "@/app/services/authService";
 import { ReaderLayout } from "@/components/layouts/ReaderLayout";
 import MeroEduEditor from "@/editor/Editor";
@@ -27,75 +27,51 @@ const CourseViewer = () => {
   const { addToast } = useToast();
   const user = useSelector((s) => s.auth.user);
 
-  const [course, setCourse] = useState(null);
-  const [lessons, setLessons] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [lessonContents, setLessonContents] = useState({});
   const lessonContentsRef = useRef({});
-  const [enrollment, setEnrollment] = useState(null);
   const [lessonCompletionStatus, setLessonCompletionStatus] = useState({});
-  const [enrolling, setEnrolling] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const hasCelebratedRef = useRef(false);
 
-  const loadEnrollment = useCallback(async () => {
-    try {
-      const status = await getEnrollmentStatus(id);
-      if (status) {
-        setEnrollment(status);
-        try {
-          const [progress, completions] = await Promise.all([
-            getCourseProgress(id),
-            getMyLessonCompletions(id),
-          ]);
-          if (progress) setEnrollment(progress);
-          // Mark exactly the lessons the user completed, keyed by lesson id
-          const newStatus = {};
-          completions.forEach((c) => {
-            newStatus[c.lessonId] = true;
-          });
-          setLessonCompletionStatus(newStatus);
-          return newStatus;
-        } catch {
-          /* ok */
-        }
-      }
-    } catch (err) {
-      if (err?.status === 401 || err?.status === 403) throw err;
-    }
-    return {};
-  }, [id]);
+  // TanStack Query hooks
+  const { data: course, isLoading: courseLoading, error: courseError } = useCourse(id);
+  const { data: lessons = [], isLoading: lessonsLoading } = useCourseLessons(id);
+  const { data: enrollment } = useEnrollmentStatus(id, { enabled: !!user?.id });
+  const { data: progress } = useCourseProgress(id, { enabled: !!user?.id });
+  const { data: completions = [] } = useMyLessonCompletions(id, { enabled: !!user?.id });
 
-  const loadData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const [c, l] = await Promise.all([fetchCourseById(id), fetchLessons(id)]);
-      setCourse(c);
-      const sorted = (l || []).sort(
-        (a, b) => (a.sortOrder || a.sort_order || 0) - (b.sortOrder || b.sort_order || 0)
-      );
-      setLessons(sorted);
+  const enrollMutation = useEnrollInCourse();
+  const markCompleteMutation = useMarkLessonComplete(id);
 
-      // Load enrollment first so we can resume at the right lesson
-      const completion = user?.id ? await loadEnrollment() : {};
+  const loading = courseLoading || lessonsLoading;
+  const error = courseError?.message;
 
-      // Resume at the first incomplete lesson (fall back to the first lesson)
-      const firstIncomplete = sorted.findIndex((ls) => !completion[ls.id]);
-      setActiveIndex(firstIncomplete >= 0 ? firstIncomplete : 0);
-      // Content for the active (and adjacent) lessons is loaded lazily by effect
-    } catch (err) {
-      setError(err.message || "Failed to load course.");
-    } finally {
-      setLoading(false);
-    }
-  }, [id, user?.id, loadEnrollment]);
+  // Sort lessons by order
+  const sortedLessons = [...lessons].sort(
+    (a, b) => (a.sortOrder || a.sort_order || 0) - (b.sortOrder || b.sort_order || 0)
+  );
 
+  // Build completion status from completions data
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    if (completions.length > 0) {
+      const newStatus = {};
+      completions.forEach((c) => {
+        newStatus[c.lessonId] = true;
+      });
+      setLessonCompletionStatus(newStatus);
+    }
+  }, [completions]);
+
+  // Set initial active lesson to first incomplete
+  useEffect(() => {
+    if (sortedLessons.length > 0) {
+      const firstIncomplete = sortedLessons.findIndex((ls) => !lessonCompletionStatus[ls.id]);
+      setActiveIndex(firstIncomplete >= 0 ? firstIncomplete : 0);
+    }
+  }, [sortedLessons, lessonCompletionStatus]);
+
+
 
   // Lazy-load lesson content on demand, cached in a ref to avoid refetching.
   const ensureLessonContent = useCallback(async (lesson) => {
@@ -118,15 +94,11 @@ const CourseViewer = () => {
       addToast("Please log in to enroll.", "error");
       return;
     }
-    setEnrolling(true);
     try {
-      const result = await enrollInCourseAPI(id);
-      setEnrollment(result);
+      await enrollMutation.mutateAsync(id);
       addToast("Successfully enrolled!", "success");
     } catch (err) {
       addToast(err.message || "Failed to enroll.", "error");
-    } finally {
-      setEnrolling(false);
     }
   };
 
@@ -137,17 +109,16 @@ const CourseViewer = () => {
     }
     if (!enrollment) {
       try {
-        setEnrollment(await enrollInCourseAPI(id));
+        await enrollMutation.mutateAsync(id);
       } catch (err) {
         addToast(err.message || "Failed to enroll.", "error");
         return;
       }
     }
     try {
-      await markLessonCompleteAPI(lessonId);
+      await markCompleteMutation.mutateAsync({ lessonId, timeSpentSeconds: 0 });
       setLessonCompletionStatus((prev) => ({ ...prev, [lessonId]: true }));
       addToast("Lesson marked complete!", "success");
-      await loadEnrollment();
     } catch (err) {
       addToast(err.message || "Failed.", "error");
     }
@@ -155,10 +126,12 @@ const CourseViewer = () => {
 
   const handleMarkCourseComplete = async () => {
     if (!user?.id) return;
-    const remaining = lessons.filter((lesson) => !lessonCompletionStatus[lesson.id]);
+    const remaining = sortedLessons.filter((lesson) => !lessonCompletionStatus[lesson.id]);
     if (remaining.length === 0) return;
     try {
-      await Promise.all(remaining.map((lesson) => markLessonCompleteAPI(lesson.id)));
+      await Promise.all(remaining.map((lesson) => 
+        markCompleteMutation.mutateAsync({ lessonId: lesson.id, timeSpentSeconds: 0 })
+      ));
       setLessonCompletionStatus((prev) => {
         const next = { ...prev };
         remaining.forEach((lesson) => {
@@ -167,7 +140,6 @@ const CourseViewer = () => {
         return next;
       });
       addToast("Congratulations! Course completed!", "success");
-      await loadEnrollment();
     } catch (err) {
       addToast(err.message || "Failed.", "error");
     }
@@ -175,12 +147,12 @@ const CourseViewer = () => {
 
   const goToLesson = useCallback(
     (idx) => {
-      if (idx >= 0 && idx < lessons.length) setActiveIndex(idx);
+      if (idx >= 0 && idx < sortedLessons.length) setActiveIndex(idx);
     },
-    [lessons.length]
+    [sortedLessons.length]
   );
 
-  const activeLesson = lessons[activeIndex];
+  const activeLesson = sortedLessons[activeIndex];
   const activeContent = activeLesson ? lessonContents[activeLesson.id] : null;
 
   // Keyboard navigation: left/right arrows to move between lessons
@@ -193,7 +165,7 @@ const CourseViewer = () => {
 
       if (e.key === "ArrowRight") {
         e.preventDefault();
-        if (activeIndex < lessons.length - 1) goToLesson(activeIndex + 1);
+        if (activeIndex < sortedLessons.length - 1) goToLesson(activeIndex + 1);
       } else if (e.key === "ArrowLeft") {
         e.preventDefault();
         if (activeIndex > 0) goToLesson(activeIndex - 1);
@@ -201,38 +173,38 @@ const CourseViewer = () => {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeIndex, lessons.length, goToLesson]);
+  }, [activeIndex, sortedLessons.length, goToLesson]);
 
   // Load content for the active lesson and prefetch the next one
   useEffect(() => {
-    const current = lessons[activeIndex];
+    const current = sortedLessons[activeIndex];
     if (current) ensureLessonContent(current);
-    const next = lessons[activeIndex + 1];
+    const next = sortedLessons[activeIndex + 1];
     if (next) ensureLessonContent(next);
-  }, [activeIndex, lessons, ensureLessonContent]);
+  }, [activeIndex, sortedLessons, ensureLessonContent]);
 
   // Auto-mark current lesson complete when user navigates to it
   useEffect(() => {
     if (!user?.id || !enrollment) return;
-    const lesson = lessons[activeIndex];
+    const lesson = sortedLessons[activeIndex];
     if (!lesson || lessonCompletionStatus[lesson.id]) return;
     // Mark lesson complete (best-effort; ignore errors silently)
-    markLessonCompleteAPI(lesson.id)
+    markCompleteMutation.mutate({ lessonId: lesson.id, timeSpentSeconds: 0 })
       .then(() => {
         setLessonCompletionStatus((prev) => ({ ...prev, [lesson.id]: true }));
       })
       .catch(() => {});
-  }, [activeIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [activeIndex, sortedLessons, enrollment, user?.id, markCompleteMutation, lessonCompletionStatus]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-mark course complete when all lessons are done
   useEffect(() => {
-    if (!user?.id || !enrollment || lessons.length === 0) return;
-    const allDone = lessons.every((l) => lessonCompletionStatus[l.id]);
+    if (!user?.id || !enrollment || sortedLessons.length === 0) return;
+    const allDone = sortedLessons.every((l) => lessonCompletionStatus[l.id]);
     if (!allDone) return;
     // Mark any remaining lessons complete, then reload enrollment
-    const remaining = lessons.filter((l) => !lessonCompletionStatus[l.id]);
+    const remaining = sortedLessons.filter((l) => !lessonCompletionStatus[l.id]);
     if (remaining.length > 0) {
-      Promise.all(remaining.map((l) => markLessonCompleteAPI(l.id)))
+      Promise.all(remaining.map((l) => markCompleteMutation.mutateAsync({ lessonId: l.id, timeSpentSeconds: 0 })))
         .then(() => {
           setLessonCompletionStatus((prev) => {
             const next = { ...prev };
@@ -242,7 +214,6 @@ const CourseViewer = () => {
             return next;
           });
           addToast("Congratulations! Course completed!", "success");
-          return loadEnrollment();
         })
         .catch(() => {});
     }
@@ -251,7 +222,7 @@ const CourseViewer = () => {
       hasCelebratedRef.current = true;
       setShowCelebration(true);
     }
-  }, [lessonCompletionStatus]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lessonCompletionStatus, sortedLessons, enrollment, user?.id, markCompleteMutation]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) {
     return (
@@ -351,10 +322,10 @@ const CourseViewer = () => {
           </p>
           <button
             onClick={handleEnroll}
-            disabled={enrolling || !isPublished}
+            disabled={enrollMutation.isPending || !isPublished}
             className="bg-primary hover:bg-primary-hover text-secondary rounded-md px-6 py-2 text-sm font-medium disabled:opacity-50"
           >
-            {enrolling ? "Enrolling…" : !isPublished ? "Enrollment Closed" : "Enroll Now"}
+            {enrollMutation.isPending ? "Enrolling…" : !isPublished ? "Enrollment Closed" : "Enroll Now"}
           </button>
         </div>
       </div>
@@ -365,7 +336,7 @@ const CourseViewer = () => {
     <>
       <ReaderLayout
         course={course}
-        lessons={lessons}
+        lessons={sortedLessons}
         activeIndex={activeIndex}
         onGoToLesson={goToLesson}
         enrollment={enrollment}

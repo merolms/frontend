@@ -4,7 +4,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import TeamMemberAssignModal from "@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal";
-import { deleteTeam, fetchTeamMembers, fetchTeams } from "@/app/services/teamService";
+import { useTeams, useTeamMembers, useDeleteTeam } from "@/hooks/queries/useEntities";
+import { fetchTeamMembers } from "@/app/services/teamService";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -39,7 +40,6 @@ const TeamContainer = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [teams, setTeams] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -55,54 +55,68 @@ const TeamContainer = () => {
 
   const limit = 8;
 
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const params = { start: (page - 1) * limit, limit };
-      if (sort) params.sort = sort;
-      const result = await fetchTeams(params);
-      const teamList = Array.isArray(result.teams) ? result.teams : [];
-      let filtered = teamList;
-      if (statusFilter) filtered = filtered.filter((t) => String(t.status) === statusFilter);
-      if (search) {
-        const q = search.toLowerCase();
-        filtered = filtered.filter(
-          (t) =>
-            (t.name || "").toLowerCase().includes(q) ||
-            (t.description || "").toLowerCase().includes(q)
-        );
-      }
-      const teamsWithMembers = await Promise.all(
-        filtered.map(async (team) => {
-          try {
-            const members = await fetchTeamMembers(team.id);
-            return {
-              ...team,
-              memberCount: members.length,
-              memberAvatars: members.slice(0, AVATAR_COUNT).map((m) => ({
-                avatar: m.avatar || "https://i.pravatar.cc/150?img=1",
-                userName: m.userName || "Unknown",
-              })),
-            };
-          } catch {
-            return { ...team, memberCount: 0, memberAvatars: [] };
-          }
-        })
-      );
-      setTeams(teamsWithMembers);
-      setTotal(result.total);
-      setTotalPages(Math.ceil(result.total / limit) || 1);
-    } catch (err) {
-      setError(err.message || "Failed to load teams");
-    } finally {
-      setLoading(false);
-    }
-  }, [search, statusFilter, sort, page]);
+  // TanStack Query hook for teams
+  const { data: teamsResult, isLoading: teamsLoading, error: teamsError, refetch } = useTeams({
+    start: (page - 1) * limit,
+    limit,
+    sort,
+  });
+
+  const deleteMutation = useDeleteTeam();
+
+  const loading = teamsLoading;
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (teamsError) {
+      setError(teamsError.message || "Failed to load teams");
+    }
+  }, [teamsError]);
+
+  // Update fetchData to use TanStack Query data
+  useEffect(() => {
+    const processData = async () => {
+      if (!teamsResult) return;
+      
+      try {
+        setError(null);
+        const teamList = Array.isArray(teamsResult?.teams) ? teamsResult.teams : Array.isArray(teamsResult) ? teamsResult : [];
+        let filtered = teamList;
+        if (statusFilter) filtered = filtered.filter((t) => String(t.status) === statusFilter);
+        if (search) {
+          const q = search.toLowerCase();
+          filtered = filtered.filter(
+            (t) =>
+              (t.name || "").toLowerCase().includes(q) ||
+              (t.description || "").toLowerCase().includes(q)
+          );
+        }
+        const teamsWithMembers = await Promise.all(
+          filtered.map(async (team) => {
+            try {
+              const members = await fetchTeamMembers(team.id);
+              return {
+                ...team,
+                memberCount: members.length,
+                memberAvatars: members.slice(0, AVATAR_COUNT).map((m) => ({
+                  avatar: m.avatar || "https://i.pravatar.cc/150?img=1",
+                  userName: m.userName || "Unknown",
+                })),
+              };
+            } catch {
+              return { ...team, memberCount: 0, memberAvatars: [] };
+            }
+          })
+        );
+        setTeams(teamsWithMembers);
+        setTotal(teamsResult?.total || teamsResult?.length || 0);
+        setTotalPages(Math.ceil((teamsResult?.total || teamsResult?.length || 0) / limit) || 1);
+      } catch (err) {
+        setError(err.message || "Failed to load teams");
+      }
+    };
+
+    processData();
+  }, [teamsResult, statusFilter, search, limit, page, sort]);
 
   const updateParams = (updates) => {
     const newParams = new URLSearchParams(searchParams);
@@ -123,9 +137,11 @@ const TeamContainer = () => {
     if (!deleteTarget) return;
     try {
       setActionLoading(true);
-      await deleteTeam(deleteTarget.id);
+      await deleteMutation.mutateAsync(deleteTarget.id);
       setDeleteTarget(null);
-      fetchData();
+      // The deleteMutation should handle cache invalidation automatically
+      // But we still need to trigger the member data refresh
+      refetch();
     } catch (err) {
       console.error(err);
     } finally {

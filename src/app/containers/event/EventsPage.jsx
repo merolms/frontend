@@ -4,12 +4,12 @@ import { useNavigate } from "react-router-dom";
 
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import {
-  fetchEvents,
   formatEventDate,
   formatEventTime,
   getEventStatus,
   getEventTypes,
 } from "@/app/services/eventService";
+import { useEvents, useDeleteEvent } from "@/hooks/queries/useEvents";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
@@ -129,7 +129,6 @@ const EventsPage = () => {
   const navigate = useNavigate();
   const [view, setView] = useState("calendar"); // 'calendar' | 'list'
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -145,24 +144,32 @@ const EventsPage = () => {
 
   const eventTypes = getEventTypes();
 
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await fetchEvents({ search, type: typeFilter, page, limit: 8 });
-      setEvents(data.events);
-      setTotalPages(data.totalPages);
-      setTotal(data.total);
-    } catch (err) {
-      setError("Failed to load events.");
-    } finally {
-      setLoading(false);
-    }
-  }, [search, typeFilter, page]);
+  // TanStack Query hooks
+  const { data: eventsResult, isLoading: eventsLoading, error: eventsError, refetch } = useEvents({
+    search,
+    type: typeFilter,
+    page,
+    limit: 8,
+  });
+  const deleteMutation = useDeleteEvent();
 
+  // Process data
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (eventsResult) {
+      setEvents(eventsResult?.events || []);
+      setTotalPages(eventsResult?.totalPages || 1);
+      setTotal(eventsResult?.total || 0);
+    }
+  }, [eventsResult]);
+
+  // Update error state from query
+  useEffect(() => {
+    if (eventsError) {
+      setError("Failed to load events.");
+    }
+  }, [eventsError]);
+
+  const loading = eventsLoading;
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -192,10 +199,9 @@ const EventsPage = () => {
     if (!deleteTarget) return;
     try {
       setActionLoading(true);
-      const { deleteEvent } = await import("@/app/services/eventService");
-      await deleteEvent(deleteTarget.id);
+      await deleteMutation.mutateAsync(deleteTarget.id);
       setDeleteTarget(null);
-      fetchData();
+      refetch();
     } catch (err) {
       setError("Failed to delete event.");
     } finally {
