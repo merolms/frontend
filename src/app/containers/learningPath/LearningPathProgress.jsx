@@ -1,11 +1,8 @@
 import { ArrowLeft, BookOpen, CheckCircle, Clock, Flame, Play, Target, Trophy } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import {
-  fetchLearningPathById,
-  fetchLearningPathProgress,
-} from "@/app/services/learningPathService";
+import { useLearningPath, useLearningPathProgress } from "@/hooks/queries/useEntities.js";
 import EmptyState from "@/components/common/EmptyState";
 import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import DashboardLayout from "@/components/ui/dashboard-layout";
@@ -14,54 +11,17 @@ const LearningPathProgressPage = () => {
   const navigate = useNavigate();
   const { learningPathId } = useParams();
 
-  const [path, setPath] = useState(null);
-  const [enrollment, setEnrollment] = useState(null);
-  const [completedCourses, setCompletedCourses] = useState([]);
-  const [remainingCourses, setRemainingCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data: path, isLoading, error: pathError } = useLearningPath(learningPathId);
+  const { data: progressData, isLoading: progressLoading, error: progressError } = useLearningPathProgress(learningPathId);
 
-  const loadData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const [pathData, progressData] = await Promise.all([
-        fetchLearningPathById(learningPathId),
-        fetchLearningPathProgress(learningPathId),
-      ]);
-      if (!pathData) {
-        setError("Learning path not found.");
-        return;
-      }
-      setPath(pathData);
-      setEnrollment(progressData?.enrollment || progressData || null);
-      setCompletedCourses(progressData?.completedCourses || []);
-      setRemainingCourses(progressData?.remainingCourses || []);
-    } catch (err) {
-      setError(err.message || "Failed to load progress.");
-    } finally {
-      setLoading(false);
-    }
-  }, [learningPathId]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  const completedCourses = progressData?.completedCourses || [];
+  const remainingCourses = progressData?.remainingCourses || [];
+  const enrollment = progressData?.enrollment || progressData || null;
+  const loading = isLoading || progressLoading;
+  const error = pathError?.message || progressError?.message || null;
 
   const progress = enrollment?.progress || 0;
   const isCompleted = enrollment?.status === "completed" || progress >= 100;
-
-  // Calculate additional metrics
-  const totalDuration =
-    path?.courses?.reduce((acc, c) => {
-      const duration = parseInt(c.duration) || 0;
-      return acc + duration;
-    }, 0) || 0;
-  const completedDuration = completedCourses.reduce((acc, c) => {
-    const duration = parseInt(c.duration) || 0;
-    return acc + duration;
-  }, 0);
-  const remainingDuration = totalDuration - completedDuration;
   const streak = completedCourses.length >= 3 ? Math.floor(completedCourses.length / 3) : 0;
 
   if (loading) {

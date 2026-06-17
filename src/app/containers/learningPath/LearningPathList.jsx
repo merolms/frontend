@@ -12,7 +12,7 @@ import {
   Upload,
   Users,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { useLearningPaths, useLearningPathCategories } from "@/hooks/queries/useEntities.js";
@@ -441,7 +441,7 @@ const LearningPathList = () => {
       </Paper>
 
       {/* Grid */}
-      {loading ? (
+      {isLoading ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
             <div

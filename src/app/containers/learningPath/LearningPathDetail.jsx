@@ -16,11 +16,11 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useToast } from "@/app/context/ToastContext";
-import { deleteLearningPath, fetchLearningPathById } from "@/app/services/learningPathService";
+import { useLearningPath, useDeleteLearningPath } from "@/hooks/queries/useEntities.js";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
@@ -37,43 +37,24 @@ const LearningPathDetail = () => {
   const { id } = useParams();
   const { addToast } = useToast();
 
-  const [path, setPath] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data: path, isLoading, error } = useLearningPath(id);
+  const deleteMutation = useDeleteLearningPath();
+
   const [activeStep, setActiveStep] = useState(0);
   const [showDelete, setShowDelete] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [showShare, setShowShare] = useState(false);
 
-  const loadData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await fetchLearningPathById(id);
-      if (!data) {
-        setError("Learning path not found.");
-        return;
-      }
-      setPath(data);
-    } catch (err) {
-      setError("Failed to load learning path.");
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  const handleDelete = async () => {
-    try {
-      await deleteLearningPath(id);
-      addToast("Learning path deleted", "success");
-      navigate("/learning-paths");
-    } catch (err) {
-      setError("Failed to delete learning path.");
-    }
+  const handleDelete = () => {
+    deleteMutation.mutate(id, {
+      onSuccess: () => {
+        addToast("Learning path deleted", "success");
+        navigate("/learning-paths");
+      },
+      onError: () => {
+        addToast("Failed to delete learning path.", "error");
+      },
+    });
   };
 
   const handleCopyLink = () => {
@@ -117,7 +98,7 @@ const LearningPathDetail = () => {
     return () => window.removeEventListener("keydown", handleEscape);
   }, [showShare, showStats, showDelete]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <DashboardLayout title="Learning Path" subtitle="Loading...">
         <div className="animate-pulse space-y-4">
