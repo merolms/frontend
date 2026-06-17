@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 import SideBar from "@/app/containers/SideBar/SideBar";
-import { fetchCourseById, fetchLessons } from "@/app/services/courseService";
+import { useCourse, useCourseLessons } from "@/hooks/queries/useCourses";
 import { ReaderLayout } from "@/components/layouts/ReaderLayout";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,37 +21,45 @@ const CoursePreview = () => {
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
   const [selectedLesson, setSelectedLesson] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // ─── TanStack Query: replaces Promise.all + manual state ───
+  const { data: courseData, isLoading: courseLoading, error: courseError } = useCourse(id);
+  const { data: lessonsData = [], isLoading: lessonsLoading } = useCourseLessons(id);
+  const loading = courseLoading || lessonsLoading;
 
   const loadLessonContent = useCallback((lesson) => loadLessonDoc(lesson.id), []);
 
+  // Sync course data
   useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        const [c, l] = await Promise.all([fetchCourseById(id), fetchLessons(id)]);
-        setCourse(c);
-        const sorted = (l || []).sort(
-          (a, b) => (a.sortOrder || a.sort_order || 0) - (b.sortOrder || b.sort_order || 0)
-        );
-        setLessons(sorted);
-        if (sorted.length > 0) {
-          const target = lessonId
-            ? sorted.find((x) => String(x.id) === String(lessonId)) || sorted[0]
-            : sorted[0];
-          const doc = await loadLessonContent(target);
+    if (courseData) setCourse(courseData);
+  }, [courseData]);
+
+  // Load lessons and select initial lesson when data arrives
+  useEffect(() => {
+    if (!lessonsData.length) return;
+    try {
+      const sorted = [...lessonsData].sort(
+        (a, b) => (a.sortOrder || a.sort_order || 0) - (b.sortOrder || b.sort_order || 0)
+      );
+      setLessons(sorted);
+
+      if (sorted.length > 0) {
+        const target = lessonId
+          ? sorted.find((x) => String(x.id) === String(lessonId)) || sorted[0]
+          : sorted[0];
+        loadLessonContent(target).then((doc) => {
           const hasContent = Array.isArray(doc) ? doc.length > 0 : (doc?.content?.length || 0) > 0;
           const content = hasContent ? JSON.stringify(doc) : "";
           setSelectedLesson({ ...target, _content: content });
-        }
-      } catch (err) {
-        setError(err.message || "Failed to load course.");
-      } finally {
-        setLoading(false);
+        });
       }
-    })();
-  }, [id, lessonId, loadLessonContent]);
+    } catch (err) {
+      setError(err.message || "Failed to load course.");
+    }
+  }, [lessonsData, lessonId, loadLessonContent]);
+
+  const displayError = courseError?.message || error;
 
   const handleSelectLesson = useCallback(
     async (idx) => {
@@ -110,12 +118,12 @@ const CoursePreview = () => {
     );
   }
 
-  if (error) {
+  if (displayError) {
     return (
       <div style={{ display: "flex", height: "100vh" }}>
         <SideBar />
         <div style={{ flex: 1, padding: 24 }}>
-          <p style={{ color: "var(--error)" }}>{error}</p>
+          <p style={{ color: "var(--error)" }}>{displayError}</p>
         </div>
       </div>
     );

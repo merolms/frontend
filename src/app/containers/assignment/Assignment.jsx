@@ -6,7 +6,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import { hasPermission } from "@/app/services/authService";
-import { fetchAssignmentsByLesson } from "@/redux/slices/assignmentSlice";
 import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import LoadingState from "@/components/common/LoadingState";

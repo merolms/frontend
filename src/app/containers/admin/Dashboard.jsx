@@ -1,8 +1,7 @@
 import { BarChart3, BookOpen, TrendingUp, Users } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { fetchDashboardStats } from "@/app/services/dashboardService";
+import { useDashboardStats } from "@/hooks/queries/useEntities";
 import LoadingState from "@/components/common/LoadingState";
 import StatCard from "@/components/common/StatCard";
 import DashboardLayout from "@/components/ui/dashboard-layout";
@@ -15,28 +14,13 @@ import { usePageTitle } from "@/hooks";
 const AdminDashboard = () => {
   usePageTitle("Admin Dashboard");
   const navigate = useNavigate();
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadStats();
-  }, []);
-
-  const loadStats = async () => {
-    try {
-      setLoading(true);
-      const data = await fetchDashboardStats();
-      setStats(data);
-    } catch (err) {
-      console.error("Failed to load stats:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // ─── TanStack Query: replaces useEffect + manual state ───
+  const { data: stats, isLoading } = useDashboardStats();
 
   return (
     <DashboardLayout title="Admin Dashboard" subtitle="System overview and management">
-      {loading ? (
+      {isLoading ? (
         <LoadingState count={4} height="h-24" />
       ) : (
         <>

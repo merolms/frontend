@@ -1,10 +1,9 @@
 import { BookOpen, Plus, TrendingUp, Users } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { fetchCourses } from "@/app/services/courseService";
-import { fetchDashboardStats } from "@/app/services/dashboardService";
+import { useCourses } from "@/hooks/queries/useCourses";
+import { useDashboardStats } from "@/hooks/queries/useEntities";
 import Can from "@/components/auth/Can";
 import LoadingState from "@/components/common/LoadingState";
 import StatCard from "@/components/common/StatCard";
@@ -19,29 +18,15 @@ const InstructorDashboard = () => {
   usePageTitle("Instructor Dashboard");
   const navigate = useNavigate();
   const user = useSelector((s) => s.auth.user);
-  const [courses, setCourses] = useState([]);
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadData();
-  }, [user?.id]);
+  // ─── TanStack Query: replaces useEffect + Promise.all + manual state ───
+  const { data: coursesData, isLoading: coursesLoading } = useCourses({
+    search: "", page: 1, limit: 10,
+  });
+  const { data: stats, isLoading: statsLoading } = useDashboardStats();
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const [coursesData, statsData] = await Promise.all([
-        fetchCourses({ search: "", page: 1, limit: 10 }),
-        fetchDashboardStats().catch(() => null),
-      ]);
-      setCourses(coursesData?.courses || []);
-      setStats(statsData);
-    } catch (err) {
-      console.error("Failed to load dashboard:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const courses = coursesData?.courses || [];
+  const loading = coursesLoading || statsLoading;
 
   const publishedCourses = courses.filter((c) => c.status === "published");
   const draftCourses = courses.filter((c) => c.status === "draft");

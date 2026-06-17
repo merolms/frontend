@@ -5,7 +5,9 @@ import { useNavigate } from "react-router-dom";
 
 import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
 import { useToast } from "@/app/context/ToastContext";
-import { fetchCategories } from "@/app/services/categoryService";
+import { uploadCourseImage } from "@/app/services/courseService";
+import { useCategories } from "@/hooks/queries/useEntities";
+import { useCreateCourse } from "@/hooks/queries/useCourses";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import FormActions from "@/components/forms/FormActions";
 import FormField from "@/components/forms/FormField";
@@ -21,6 +23,7 @@ const CourseCreate = () => {
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.user);
   const { addToast } = useToast();
+
   const [form, setForm] = useState(() => {
     try {
       const saved = localStorage.getItem(DRAFT_KEY);
@@ -30,14 +33,16 @@ const CourseCreate = () => {
     }
     return { title: "", description: "", category: null, coverImage: "", duration: "" };
   });
-  const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [unsplashOpen, setUnsplashOpen] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [coverUploading, setCoverUploading] = useState(false);
   const [coverError, setCoverError] = useState(false);
+
+  // ─── TanStack Query: categories + create mutation ───
+  const { data: categories = [] } = useCategories({ start: 0, limit: 100 });
+  const createMutation = useCreateCourse();
 
   const { updateForm, clearDirty } = useUnsavedChanges(
     form,
@@ -52,7 +57,6 @@ const CourseCreate = () => {
     if (!file) return;
     setCoverUploading(true);
     try {
-      const { uploadCourseImage } = await import("@/app/services/courseService");
       const presignUrl = await uploadCourseImage(file);
       setCoverError(false);
       updateForm((p) => ({ ...p, coverImage: presignUrl }));
@@ -62,14 +66,6 @@ const CourseCreate = () => {
       setCoverUploading(false);
     }
   };
-
-  useEffect(() => {
-    fetchCategories()
-      .then((cats) => {
-        setCategories(cats.map((c) => ({ value: c.id, label: c.name })));
-      })
-      .catch(() => {});
-  }, []);
 
   const validate = () => {
     const e = {};
@@ -84,11 +80,9 @@ const CourseCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    setLoading(true);
     setApiError(null);
     try {
-      const { createCourse } = await import("@/app/services/courseService");
-      const course = await createCourse({
+      const course = await createMutation.mutateAsync({
         ...form,
         authorID: currentUser?.id ?? null,
       });
@@ -97,8 +91,6 @@ const CourseCreate = () => {
       navigate(`/courses/${course.id}`);
     } catch (err) {
       setApiError(err.message || "Failed to create course. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -173,8 +165,8 @@ const CourseCreate = () => {
                 >
                   <option value="">Select a category</option>
                   {categories.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
+                    <option key={o.id} value={o.id}>
+                      {o.name}
                     </option>
                   ))}
                 </select>
@@ -207,7 +199,7 @@ const CourseCreate = () => {
                   />
                   <label
                     className={`border-border text-text-secondary hover:bg-bg-surface-active flex h-8 items-center rounded-md border px-3 text-xs ${
-                      coverUploading || loading ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+                      coverUploading || createMutation.isLoading ? "cursor-not-allowed opacity-60" : "cursor-pointer"
                     }`}
                   >
                     {coverUploading ? "Uploading…" : "Upload"}
@@ -215,14 +207,14 @@ const CourseCreate = () => {
                       type="file"
                       accept="image/*"
                       onChange={handleCoverUpload}
-                      disabled={coverUploading || loading}
+                      disabled={coverUploading || createMutation.isLoading}
                       className="hidden"
                     />
                   </label>
                   <button
                     type="button"
                     onClick={() => setUnsplashOpen(true)}
-                    disabled={loading}
+                    disabled={createMutation.isLoading}
                     className="border-border text-text-secondary hover:bg-bg-surface-active h-8 cursor-pointer rounded-md border px-3 text-xs"
                   >
                     Unsplash
@@ -258,8 +250,8 @@ const CourseCreate = () => {
 
               <FormActions
                 onCancel={() => navigate("/courses")}
-                loading={loading}
-                submitLabel={loading ? "Creating..." : "Create Course"}
+                loading={createMutation.isLoading}
+                submitLabel={createMutation.isLoading ? "Creating..." : "Create Course"}
               />
             </form>
           </div>

@@ -15,7 +15,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { fetchLearningPaths, getLearningPathCategories } from "@/app/services/learningPathService";
+import { useLearningPaths, useLearningPathCategories } from "@/hooks/queries/useEntities.js";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
@@ -182,43 +182,22 @@ const LearningPathList = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [paths, setPaths] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [categories, setCategories] = useState(["All Categories"]);
-  const [bookmarkedPaths, setBookmarkedPaths] = useState(new Set());
-  const [exporting, setExporting] = useState(false);
-
   const page = parseInt(searchParams.get("page")) || 1;
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category") || "";
   const showBookmarked = searchParams.get("bookmarked") === "true";
   const [searchInput, setSearchInput] = useState(search);
 
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const [data, cats] = await Promise.all([
-        fetchLearningPaths({ search, category, page, limit: 6 }),
-        getLearningPathCategories(),
-      ]);
-      setPaths(data.paths);
-      setTotalPages(data.totalPages);
-      setTotal(data.total);
-      setCategories(cats);
-    } catch (err) {
-      setError("Failed to load learning paths.");
-    } finally {
-      setLoading(false);
-    }
-  }, [search, category, page]);
+  const { data, isLoading, error } = useLearningPaths({ search, category, page, limit: 6 });
+  const { data: catsData } = useLearningPathCategories();
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  const paths = data?.paths ?? [];
+  const totalPages = data?.totalPages ?? 1;
+  const total = data?.total ?? 0;
+  const categories = catsData ?? ["All Categories"];
+
+  const [bookmarkedPaths, setBookmarkedPaths] = useState(new Set());
+  const [exporting, setExporting] = useState(false);
 
   // Load bookmarks from localStorage
   useEffect(() => {

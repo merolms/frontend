@@ -1,9 +1,11 @@
 import { Lightbulb, Network, Pencil, Plus, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
-import { fetchCategories } from "@/app/services/categoryService";
+import { uploadCourseImage } from "@/app/services/courseService";
+import { useCategories } from "@/hooks/queries/useEntities";
+import { useCourse, useUpdateCourse } from "@/hooks/queries/useCourses";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import LoadingState from "@/components/common/LoadingState";
 import FormActions from "@/components/forms/FormActions";
@@ -18,25 +20,38 @@ const CourseEdit = () => {
   usePageTitle("Edit Course");
   const navigate = useNavigate();
   const { id } = useParams();
-  const [course, setCourse] = useState(null);
-  const [categories, setCategories] = useState([]);
-  const [form, setForm] = useState({ title: "", description: "", category: null, coverImage: "" });
-  const [fetching, setFetching] = useState(true);
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [unsplashOpen, setUnsplashOpen] = useState(false);
   const [coverUploading, setCoverUploading] = useState(false);
+  const [formInitialized, setFormInitialized] = useState(false);
 
-  const initialForm = course
-    ? {
-        title: course.title || "",
-        description: course.description || "",
-        category: course.categoryID || null,
-        coverImage: course.coverImage || course.imageURL || "",
-        duration: course.duration || "",
-      }
-    : form;
+  // ─── TanStack Query: course data + categories + update mutation ───
+  const { data: course, isLoading: fetching, error: courseError } = useCourse(id);
+  const { data: categories = [] } = useCategories({ start: 0, limit: 100 });
+  const updateMutation = useUpdateCourse();
+
+  const [form, setForm] = useState({
+    title: "", description: "", category: null, coverImage: "", duration: "", status: "draft",
+  });
+
+  // Sync form when course data loads
+  if (course && !formInitialized) {
+    setForm({
+      title: course.title || "",
+      description: course.description || "",
+      category: course.categoryID || null,
+      coverImage: course.coverImage || course.imageURL || "",
+      duration: course.duration || "",
+      status: course.status || "draft",
+    });
+    setFormInitialized(true);
+  }
+
+  // Use course error as apiError if we haven't loaded yet
+  const displayError = courseError?.message || apiError;
+
+  const initialForm = form;
   const { updateForm, clearDirty } = useUnsavedChanges(form, initialForm, setForm);
 
   const handleCoverUpload = async (e) => {
@@ -45,7 +60,6 @@ const CourseEdit = () => {
     if (!file) return;
     setCoverUploading(true);
     try {
-      const { uploadCourseImage } = await import("@/app/services/courseService");
       const presignUrl = await uploadCourseImage(file);
       updateForm((p) => ({ ...p, coverImage: presignUrl }));
     } catch (err) {
@@ -54,37 +68,6 @@ const CourseEdit = () => {
       setCoverUploading(false);
     }
   };
-
-  useEffect(() => {
-    fetchCategories()
-      .then((cats) => {
-        setCategories(cats.map((c) => ({ value: c.id, label: c.name })));
-      })
-      .catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const { fetchCourseById } = await import("@/app/services/courseService");
-        const data = await fetchCourseById(id);
-        setCourse(data);
-        setForm({
-          title: data.title || "",
-          description: data.description || "",
-          category: data.categoryID || null,
-          coverImage: data.coverImage || data.imageURL || "",
-          duration: data.duration || "",
-          status: data.status || "draft",
-        });
-      } catch (err) {
-        setApiError(err.message || "Failed to load course data.");
-      } finally {
-        setFetching(false);
-      }
-    };
-    load();
-  }, [id]);
 
   const validate = () => {
     const e = {};
@@ -99,17 +82,13 @@ const CourseEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    setLoading(true);
     setApiError(null);
     try {
-      const { updateCourse } = await import("@/app/services/courseService");
-      await updateCourse(id, form);
+      await updateMutation.mutateAsync({ id, data: form });
       clearDirty();
       navigate(`/courses/${id}`);
     } catch (err) {
       setApiError(err.message || "Failed to update course. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -124,10 +103,10 @@ const CourseEdit = () => {
     );
   }
 
-  if (apiError && !course) {
+  if (displayError && !course) {
     return (
       <DashboardLayout>
-        <FormErrorBanner message={apiError} />
+        <FormErrorBanner message={displayError} />
         <button
           onClick={() => navigate("/courses")}
           className="text-primary text-sm hover:underline"
@@ -180,8 +159,8 @@ const CourseEdit = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-3">
-              {apiError && <FormErrorBanner message={apiError} />}
-              {Object.keys(errors).length > 0 && !apiError && (
+              {displayError && <FormErrorBanner message={displayError} />}
+              {Object.keys(errors).length > 0 && !displayError && (
                 <FormErrorBanner message="Please fix the errors below." />
               )}
 
@@ -255,7 +234,7 @@ const CourseEdit = () => {
                   />
                   <label
                     className={`border-border text-text-secondary hover:bg-bg-surface-active flex h-8 items-center rounded-md border px-3 text-xs ${
-                      coverUploading || loading ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+                      coverUploading || updateMutation.isLoading ? "cursor-not-allowed opacity-60" : "cursor-pointer"
                     }`}
                   >
                     {coverUploading ? "Uploading…" : "Upload"}
@@ -263,14 +242,14 @@ const CourseEdit = () => {
                       type="file"
                       accept="image/*"
                       onChange={handleCoverUpload}
-                      disabled={coverUploading || loading}
+                      disabled={coverUploading || updateMutation.isLoading}
                       className="hidden"
                     />
                   </label>
                   <button
                     type="button"
                     onClick={() => setUnsplashOpen(true)}
-                    disabled={loading}
+                    disabled={updateMutation.isLoading}
                     className="border-border text-text-secondary hover:bg-bg-surface-active h-8 cursor-pointer rounded-md border px-3 text-xs"
                   >
                     Unsplash
@@ -296,8 +275,8 @@ const CourseEdit = () => {
 
               <FormActions
                 onCancel={() => navigate(`/courses/${id}`)}
-                loading={loading}
-                submitLabel={loading ? "Saving..." : "Save Changes"}
+                loading={updateMutation.isLoading}
+                submitLabel={updateMutation.isLoading ? "Saving..." : "Save Changes"}
               />
             </form>
           </div>
