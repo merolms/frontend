@@ -5,7 +5,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import RoleBadge from "@/components/common/RoleBadge";
 import { logoutUser } from "@/redux/slices/authSlice";
 import { getUserNavItems } from "@/utils/navConfig";
-
+import { cn } from "@/lib/utils";
 /**
  * RoleBasedSidebar — Icon-only sidebar with hover tooltips.
  * Shows icons only; label appears as tooltip on hover.
