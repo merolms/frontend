@@ -5,26 +5,37 @@
 // - Throws ApiError on non-2xx responses
 // - Calls onAuthError callback on 401/403 responses
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:9090";
+const API_BASE: string = (import.meta as any).env.VITE_API_BASE || "http://localhost:9090";
+
+export type AuthErrorHandler = (message: string, status: number) => void;
 
 // Optional callback for auth errors (set by the Redux store)
-let onAuthError = null;
+let onAuthError: AuthErrorHandler | null = null;
 
 /**
  * Set a callback to be called when a 401 or 403 response is received.
  * The callback should clear auth state and redirect to login.
  */
-export const setAuthErrorHandler = (handler) => {
+export const setAuthErrorHandler = (handler: AuthErrorHandler): void => {
   onAuthError = handler;
 };
 
 class ApiError extends Error {
-  constructor(message, status, data) {
+  status: number;
+  data: any;
+
+  constructor(message: string, status: number, data?: any) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.data = data;
   }
+}
+
+interface ApiResponse<T = any> {
+  message: string;
+  data: T;
+  errorMessage?: string;
 }
 
 /**
@@ -33,12 +44,12 @@ class ApiError extends Error {
  * @param {RequestInit} options - fetch options
  * @returns {Promise<any>} The `data` field from the backend response envelope
  */
-async function request(path, options = {}) {
+async function request<T = any>(path: string, options: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem("auth_token");
 
-  const headers = {
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...options.headers,
+    ...(options.headers as Record<string, string>),
   };
 
   if (token) {
@@ -50,7 +61,7 @@ async function request(path, options = {}) {
     headers,
   });
 
-  const body = await response.json().catch(() => ({ message: "Server error" }));
+  const body: ApiResponse<T> = await response.json().catch(() => ({ message: "Server error", data: null as unknown as T }));
 
   // Handle auth errors globally
   if (response.status === 401 || response.status === 403) {
@@ -74,22 +85,24 @@ async function request(path, options = {}) {
 }
 
 // Convenience helpers
-export const apiGet = (path) => request(path, { method: "GET" });
+export const apiGet = <T = any>(path: string): Promise<T> => request<T>(path, { method: "GET" });
 
-export const apiPost = (path, data) =>
-  request(path, { method: "POST", body: JSON.stringify(data) });
+export const apiPost = <T = any>(path: string, data: any): Promise<T> =>
+  request<T>(path, { method: "POST", body: JSON.stringify(data) });
 
-export const apiPut = (path, data) => request(path, { method: "PUT", body: JSON.stringify(data) });
+export const apiPut = <T = any>(path: string, data: any): Promise<T> => 
+  request<T>(path, { method: "PUT", body: JSON.stringify(data) });
 
-export const apiDelete = (path) => request(path, { method: "DELETE" });
+export const apiDelete = <T = any>(path: string): Promise<T> => 
+  request<T>(path, { method: "DELETE" });
 
-export const apiPatch = (path, data) =>
-  request(path, { method: "PATCH", body: JSON.stringify(data) });
+export const apiPatch = <T = any>(path: string, data: any): Promise<T> =>
+  request<T>(path, { method: "PATCH", body: JSON.stringify(data) });
 
 // Multipart file upload — does NOT set Content-Type so the browser adds the boundary
-export const apiUpload = async (path, formData) => {
+export const apiUpload = async <T = any>(path: string, formData: FormData): Promise<T> => {
   const token = localStorage.getItem("auth_token");
-  const headers = {};
+  const headers: Record<string, string> = {};
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
@@ -98,7 +111,7 @@ export const apiUpload = async (path, formData) => {
     body: formData,
     headers,
   });
-  const body = await response.json().catch(() => ({ message: "Server error" }));
+  const body: ApiResponse<T> = await response.json().catch(() => ({ message: "Server error", data: null as unknown as T }));
   if (response.status === 401 || response.status === 403) {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("auth_user");
@@ -118,4 +131,4 @@ export const apiUpload = async (path, formData) => {
 export { API_BASE, ApiError, request };
 
 // Expose API_BASE for services that construct query strings
-export const getApiBase = () => API_BASE;
+export const getApiBase = (): string => API_BASE;
