@@ -17,7 +17,7 @@ import {
   User,
   Users,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -32,20 +32,20 @@ import {
 import { useToast } from "@/app/context/ToastContext";
 import { hasPermission } from "@/app/services/authService";
 import {
-  archiveCourse,
-  deleteCourse,
-  fetchCourseById,
-  fetchLessons,
-  publishCourse,
-  restoreCourse,
-} from "@/app/services/courseService";
+  useCourse,
+  useCourseLessons,
+  usePublishCourse,
+  useArchiveCourse,
+  useRestoreCourse,
+  useDeleteCourse,
+} from "@/hooks/queries/useCourses";
 import {
-  dropCourseAPI,
-  enrollInCourseAPI,
-  getCourseEnrollments,
-  getEnrollmentStatus,
-  getLessonCompletionCounts,
-} from "@/app/services/enrollmentService";
+  useEnrollmentStatus,
+  useEnrollInCourse,
+  useDropCourse,
+  useCourseEnrollments,
+  useLessonCompletionCounts,
+} from "@/hooks/queries/useEnrollments";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import LoadingState from "@/components/common/LoadingState";
 import { Badge } from "@/components/ui/badge";
@@ -63,51 +63,27 @@ const CourseDetail = () => {
   const { id } = useParams();
   const user = useSelector((s) => s.auth.user);
   const { addToast } = useToast();
-  const [course, setCourse] = useState(null);
-  usePageTitle(course?.title ? `${course.title} — Course` : "Course Details");
-  const [lessons, setLessons] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [actionLoading, setActionLoading] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
-  const [enrollment, setEnrollment] = useState(null);
-  const [enrollments, setEnrollments] = useState([]);
-  const [lessonCompletionCounts, setLessonCompletionCounts] = useState({});
-  const [error, setError] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const canManageEnrollments = hasPermission(user, "courses.edit");
 
-  const loadData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const [courseData, lessonsData, enrollmentData] = await Promise.all([
-        fetchCourseById(id),
-        fetchLessons(id),
-        user ? getEnrollmentStatus(parseInt(id)) : Promise.resolve(null),
-      ]);
-      setCourse(courseData);
-      setLessons(lessonsData || []);
-      setEnrollment(enrollmentData);
+  // ─── TanStack Query: replaces manual useState + useEffect + Promise.all ───
+  const { data: course, isLoading, error } = useCourse(id);
+  const { data: lessons = [] } = useCourseLessons(id);
+  const { data: enrollment } = useEnrollmentStatus(id, { enabled: !!user });
+  const { data: enrollments = [] } = useCourseEnrollments(id, { enabled: canManageEnrollments });
+  const { data: lessonCompletionCounts = {} } = useLessonCompletionCounts(id, { enabled: canManageEnrollments });
 
-      // Admin-only analytics — calling these without permission would 403
-      if (canManageEnrollments) {
-        const [enrollmentsData, counts] = await Promise.all([
-          getCourseEnrollments(parseInt(id)).catch(() => []),
-          getLessonCompletionCounts(parseInt(id)),
-        ]);
-        setEnrollments(Array.isArray(enrollmentsData) ? enrollmentsData : []);
-        setLessonCompletionCounts(counts);
-      }
-    } catch (err) {
-      setError(err.message || "Failed to load course");
-    } finally {
-      setLoading(false);
-    }
-  }, [id, user, canManageEnrollments]);
+  usePageTitle(course?.title ? `${course.title} — Course` : "Course Details");
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  // ─── Mutations ──────────────────────────────────────────
+  const publishMutation = usePublishCourse();
+  const archiveMutation = useArchiveCourse();
+  const restoreMutation = useRestoreCourse();
+  const deleteMutation = useDeleteCourse();
+  const enrollMutation = useEnrollInCourse();
+  const dropMutation = useDropCourse();
 
   const handleEnroll = async () => {
     if (!user) {
@@ -116,8 +92,7 @@ const CourseDetail = () => {
     }
     try {
       setActionLoading(true);
-      const result = await enrollInCourseAPI(parseInt(id));
-      setEnrollment(result);
+      const result = await enrollMutation.mutateAsync(parseInt(id));
       addToast("Successfully enrolled! Redirecting to course...", "success");
       setTimeout(() => navigate(`/courses/${id}/learn`), 1500);
     } catch (err) {
@@ -130,8 +105,7 @@ const CourseDetail = () => {
   const handleDrop = async () => {
     try {
       setActionLoading(true);
-      const result = await dropCourseAPI(parseInt(id));
-      setEnrollment(result);
+      await dropMutation.mutateAsync(parseInt(id));
       addToast("Course dropped", "success");
     } catch (err) {
       addToast(err.message || "Failed to drop course", "error");
@@ -144,8 +118,7 @@ const CourseDetail = () => {
   const handlePublish = async () => {
     try {
       setActionLoading(true);
-      const updated = await publishCourse(id);
-      setCourse(updated);
+      await publishMutation.mutateAsync(id);
       addToast("Course published successfully!", "success");
     } catch (err) {
       addToast(err.message || "Failed to publish course", "error");
@@ -158,8 +131,7 @@ const CourseDetail = () => {
   const handleArchive = async () => {
     try {
       setActionLoading(true);
-      const updated = await archiveCourse(id);
-      setCourse(updated);
+      await archiveMutation.mutateAsync(id);
       addToast("Course archived", "success");
     } catch (err) {
       addToast(err.message || "Failed to archive course", "error");
@@ -172,8 +144,7 @@ const CourseDetail = () => {
   const handleRestore = async () => {
     try {
       setActionLoading(true);
-      const updated = await restoreCourse(id);
-      setCourse(updated);
+      await restoreMutation.mutateAsync(id);
       addToast("Course restored to Draft", "success");
     } catch (err) {
       addToast(err.message || "Failed to restore course", "error");
@@ -186,7 +157,7 @@ const CourseDetail = () => {
   const handleDelete = async () => {
     try {
       setActionLoading(true);
-      await deleteCourse(id);
+      await deleteMutation.mutateAsync(id);
       addToast("Course deleted", "success");
       navigate("/courses");
     } catch (err) {
@@ -202,7 +173,7 @@ const CourseDetail = () => {
     archived: { color: "orange", text: "Archived" },
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <DashboardLayout>
         <LoadingState variant="spinner" centered className="py-20" />
@@ -213,7 +184,7 @@ const CourseDetail = () => {
   if (error || !course) {
     return (
       <DashboardLayout>
-        <FormErrorBanner message={error || "Course not found"} />
+        <FormErrorBanner message={error?.message || "Course not found"} />
         <Button size="sm" onClick={() => navigate("/courses")}>
           Back to Courses
         </Button>
@@ -221,7 +192,7 @@ const CourseDetail = () => {
     );
   }
 
-  const status = statusConfig[course.status] || statusConfig.DRAFT;
+  const status = statusConfig[course.status] || statusConfig.draft;
 
   return (
     <>
@@ -500,182 +471,143 @@ const CourseDetail = () => {
                       </div>
                       <div className="space-y-2">
                         <div className="flex items-start gap-2">
-                          <List size={14} className="mt-0.5" style={{ color: t("primary") }} />
+                          <List size={14} className="mt-0.5" style={{ color: t("accent") }} />
                           <div>
                             <div className="text-text-primary text-xs font-semibold">Lessons</div>
                             <div className="text-text-muted text-xs">
-                              {course?.totalLessons || 0}
+                              {course?.totalLessons || 0} lessons
                             </div>
                           </div>
                         </div>
                         <div className="flex items-start gap-2">
-                          <BookOpen size={14} className="mt-0.5" style={{ color: t("accent") }} />
+                          <Star size={14} className="mt-0.5" style={{ color: t("warning") }} />
                           <div>
-                            <div className="text-text-primary text-xs font-semibold">Created</div>
-                            <div className="text-text-muted text-xs">
-                              {course?.createdAt || "N/A"}
-                            </div>
+                            <div className="text-text-primary text-xs font-semibold">Rating</div>
+                            <div className="text-text-muted text-xs">—</div>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Check size={14} className="mt-0.5" style={{ color: t("success") }} />
+                          <div>
+                            <div className="text-text-primary text-xs font-semibold">Status</div>
+                            <div className="text-text-muted text-xs">{status.text}</div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </TabsContent>
-                <TabsContent value="lessons">
+                <TabsContent value="lessons" className="space-y-3">
                   {lessons.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-12 text-center">
-                      <BookOpen size={48} className="text-text-muted mb-3" />
-                      <p className="text-text-primary text-sm font-medium">No lessons yet</p>
-                      <p className="text-text-muted mt-1 text-xs">
-                        Start building your course by adding the first lesson.
-                      </p>
+                    <div className="text-text-muted py-8 text-center text-sm">
+                      No lessons yet. Open the builder to add lessons.
                     </div>
                   ) : (
-                    <div className="space-y-2">
-                      {lessons.map((lesson, index) => {
-                        const completionCount = lessonCompletionCounts[lesson.id] || 0;
-                        const enrollCount = enrollments.length;
-                        const completionPct =
-                          enrollCount > 0 ? Math.round((completionCount / enrollCount) * 100) : 0;
-                        return (
-                          <div
-                            key={lesson.id}
-                            className="hover:bg-bg-surface-hover flex items-center gap-3 rounded-lg p-2 transition-colors"
-                          >
-                            <div className="bg-primary-light text-primary flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold">
-                              {index + 1}
-                            </div>
-                            <div className="flex-1">
-                              <div className="text-text-primary text-xs font-semibold">
-                                {lesson.title}
-                              </div>
-                              {canManageEnrollments && enrollCount > 0 && (
-                                <div className="mt-1 flex items-center gap-2">
-                                  <div className="bg-bg-surface-active h-1 w-full overflow-hidden rounded-full">
-                                    <div
-                                      className="bg-primary h-full rounded-full transition-all"
-                                      style={{ width: `${completionPct}%` }}
-                                    />
-                                  </div>
-                                  <span className="text-text-muted text-[10px]">
-                                    {completionCount}/{enrollCount} completed
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-2">
-                              {lesson.duration && <Badge variant="teal">{lesson.duration}</Badge>}
-                              {canManageEnrollments && completionCount > 0 && (
-                                <Badge variant="green" className="text-[10px]">
-                                  {completionPct}%
-                                </Badge>
-                              )}
-                            </div>
+                    lessons.map((lesson, idx) => (
+                      <div
+                        key={lesson.id}
+                        className="border-border bg-bg-surface flex items-center gap-3 rounded-lg border p-3"
+                      >
+                        <div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold">
+                          {idx + 1}
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-text-primary text-sm font-semibold">
+                            {lesson.title}
                           </div>
-                        );
-                      })}
-                    </div>
+                          <div className="text-text-muted text-xs">
+                            {lesson.type} {lesson.duration ? `· ${lesson.duration}` : ""}
+                          </div>
+                        </div>
+                        <Badge variant="gray">{lesson.status}</Badge>
+                      </div>
+                    ))
                   )}
                 </TabsContent>
                 <TabsContent value="enrollment">
-                  <PermissionGuard permissions={["courses.enrollment.manage"]}>
-                    <EnrollmentManagement courseId={id} enrollments={enrollments} />
-                  </PermissionGuard>
+                  <EnrollmentManagement
+                    courseId={parseInt(id)}
+                    enrollments={enrollments}
+                    completionCounts={lessonCompletionCounts}
+                  />
                 </TabsContent>
               </Tabs>
             </Paper>
           </div>
 
+          {/* Sidebar */}
           <div className="col-span-5 space-y-4">
+            {/* Quick Stats */}
             <Paper className="p-4">
-              <h3 className="text-text-primary mb-3 flex items-center gap-1 text-sm font-semibold">
-                <List size={14} style={{ color: t("primary") }} /> Course Content
-              </h3>
-              {lessons.length === 0 ? (
-                <div className="flex flex-col items-center py-6 text-center">
-                  <BookOpen size={28} className="text-text-muted" />
-                  <p className="text-text-muted mt-2 text-xs">No lessons added yet.</p>
+              <h3 className="text-text-primary mb-3 text-sm font-semibold">Quick Stats</h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-text-muted text-xs">Total Lessons</span>
+                  <span className="text-text-primary text-sm font-semibold">
+                    {course.totalLessons}
+                  </span>
                 </div>
-              ) : (
-                <div className="space-y-1">
-                  {lessons.map((lesson, index) => (
-                    <div
-                      key={lesson.id}
-                      className="hover:bg-bg-surface-hover flex items-center gap-2 rounded-md p-1.5 transition-colors"
-                    >
-                      <div className="text-text-muted w-4 text-[11px] font-medium">{index + 1}</div>
-                      <div className="flex-1">
-                        <div className="text-text-primary text-xs font-medium">{lesson.title}</div>
-                        {lesson.duration && (
-                          <div className="text-text-muted flex items-center gap-1 text-[11px]">
-                            <Clock size={9} /> {lesson.duration}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                <div className="flex items-center justify-between">
+                  <span className="text-text-muted text-xs">Enrolled</span>
+                  <span className="text-text-primary text-sm font-semibold">
+                    {canManageEnrollments ? enrollments.length : "—"}
+                  </span>
                 </div>
-              )}
+                <div className="flex items-center justify-between">
+                  <span className="text-text-muted text-xs">Status</span>
+                  <Badge
+                    variant={
+                      status.color === "green" ? "green" : status.color === "orange" ? "orange" : "gray"
+                    }
+                  >
+                    {status.text}
+                  </Badge>
+                </div>
+              </div>
             </Paper>
 
+            {/* Recent Activity */}
             <Paper className="p-4">
-              <h3 className="text-text-primary mb-3 text-sm font-semibold">Quick Info</h3>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Star size={12} />
-                  <div>
-                    <div className="text-text-primary text-xs font-semibold">Created</div>
-                    <div className="text-text-muted text-xs">{course.createdAt}</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Star size={12} />
-                  <div>
-                    <div className="text-text-primary text-xs font-semibold">Last Updated</div>
-                    <div className="text-text-muted text-xs">{course.updatedAt}</div>
-                  </div>
-                </div>
+              <h3 className="text-text-primary mb-3 text-sm font-semibold">Recent Activity</h3>
+              <div className="text-text-muted py-4 text-center text-xs">
+                No recent activity
               </div>
             </Paper>
           </div>
         </div>
-
-        <PublishModal
-          open={activeModal === "publish"}
-          onConfirm={handlePublish}
-          onCancel={() => setActiveModal(null)}
-          courseTitle={course.title}
-          loading={actionLoading}
-        />
-        <ArchiveModal
-          open={activeModal === "archive"}
-          onConfirm={handleArchive}
-          onCancel={() => setActiveModal(null)}
-          courseTitle={course.title}
-          loading={actionLoading}
-        />
-        <RestoreModal
-          open={activeModal === "restore"}
-          onConfirm={handleRestore}
-          onCancel={() => setActiveModal(null)}
-          courseTitle={course.title}
-          loading={actionLoading}
-        />
-        <DeleteModal
-          open={activeModal === "delete"}
-          onConfirm={handleDelete}
-          onCancel={() => setActiveModal(null)}
-          itemName={course.title}
-          loading={actionLoading}
-        />
-        <DropModal
-          open={activeModal === "drop"}
-          onConfirm={handleDrop}
-          onCancel={() => setActiveModal(null)}
-          courseTitle={course.title}
-          loading={actionLoading}
-        />
       </DashboardLayout>
+
+      {/* Modals */}
+      <PublishModal
+        open={activeModal === "publish"}
+        onClose={() => setActiveModal(null)}
+        onConfirm={handlePublish}
+        loading={publishMutation.isLoading}
+      />
+      <ArchiveModal
+        open={activeModal === "archive"}
+        onClose={() => setActiveModal(null)}
+        onConfirm={handleArchive}
+        loading={archiveMutation.isLoading}
+      />
+      <RestoreModal
+        open={activeModal === "restore"}
+        onClose={() => setActiveModal(null)}
+        onConfirm={handleRestore}
+        loading={restoreMutation.isLoading}
+      />
+      <DeleteModal
+        open={activeModal === "delete"}
+        onClose={() => setActiveModal(null)}
+        onConfirm={handleDelete}
+        loading={deleteMutation.isLoading}
+      />
+      <DropModal
+        open={activeModal === "drop"}
+        onClose={() => setActiveModal(null)}
+        onConfirm={handleDrop}
+        loading={dropMutation.isLoading}
+      />
     </>
   );
 };

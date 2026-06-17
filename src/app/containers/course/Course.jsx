@@ -6,7 +6,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
 import { hasPermission } from "@/app/services/authService";
 import { fetchCategories } from "@/app/services/categoryService";
-import { fetchCourses } from "@/app/services/courseService";
+import { useCourses } from "@/hooks/queries/useCourses";
 import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import { Badge } from "@/components/ui/badge";
@@ -31,9 +31,9 @@ import ViewModeSwitcher from "./views/ViewModeSwitcher";
 
 const statusOptions = [
   { value: "all", label: "All" },
-  { value: "Published", label: "Published" },
-  { value: "DRAFT", label: "Draft" },
-  { value: "Archived", label: "Archived" },
+  { value: "published", label: "Published" },
+  { value: "draft", label: "Draft" },
+  { value: "archived", label: "Archived" },
 ];
 
 const sortOptions = [
@@ -46,16 +46,10 @@ const CourseContainer = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const user = useSelector((s) => s.auth.user);
 
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
-
   const isAdmin = hasPermission(user, "courses.publish");
 
   // Non-admin users (learner, team lead) only see published courses by default
-  const defaultStatus = isAdmin ? "" : "Published";
+  const defaultStatus = isAdmin ? "" : "published";
   const page = parseInt(searchParams.get("page")) || 1;
   const search = searchParams.get("search") || "";
   const status = searchParams.get("status") || defaultStatus;
@@ -65,6 +59,21 @@ const CourseContainer = () => {
 
   const [searchInput, setSearchInput] = useState(search);
   const [categories, setCategories] = useState([]);
+
+  // ─── TanStack Query: replaces manual useState + useEffect + fetch ───
+  const limit = viewMode === "list" ? 10 : viewMode === "compact" ? 15 : 8;
+  const { data, isLoading, error, isFetching, refetch } = useCourses({
+    search,
+    status,
+    category,
+    sort,
+    page,
+    limit,
+  });
+
+  const courses = data?.courses ?? [];
+  const totalPages = data?.totalPages ?? 1;
+  const total = data?.total ?? 0;
 
   useEffect(() => {
     fetchCategories({ start: 0, limit: 100 })
@@ -76,33 +85,6 @@ const CourseContainer = () => {
     { value: "all", label: "All Categories" },
     ...categories.map((cat) => ({ value: cat.name, label: cat.name })),
   ];
-
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const limit = viewMode === "list" ? 10 : viewMode === "compact" ? 15 : 8;
-      const data = await fetchCourses({ search, status, category, sort, page, limit });
-      setCourses(data.courses);
-      setTotalPages(data.totalPages);
-      setTotal(data.total);
-    } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || err.message || "Failed to load courses. Please try again.";
-      setError(errorMessage);
-      console.error("Error fetching courses:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [search, status, category, sort, page, viewMode]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const refreshList = useCallback(() => {
-    fetchData();
-  }, [fetchData]);
 
   const updateParams = (updates) => {
     const newParams = new URLSearchParams(searchParams);
@@ -134,7 +116,7 @@ const CourseContainer = () => {
   };
 
   const renderView = () => {
-    const props = { courses, navigate, loading, onRefresh: refreshList };
+    const props = { courses, navigate, loading: isLoading, onRefresh: refetch };
     switch (viewMode) {
       case "table":
         return <TableView {...props} />;
@@ -151,9 +133,11 @@ const CourseContainer = () => {
     <DashboardLayout
       title="Courses"
       subtitle={
-        loading
+        isLoading
           ? "Loading..."
-          : `${total} course${total !== 1 ? "s" : ""} total${totalPages > 1 ? ` · Page ${page} of ${totalPages}` : ""}`
+          : `${total} course${total !== 1 ? "s" : ""}${
+              totalPages > 1 ? ` · Page ${page} of ${totalPages}` : ""
+            }${isFetching ? " (refreshing...)" : ""}`
       }
     >
       {/* Action bar */}
@@ -183,7 +167,7 @@ const CourseContainer = () => {
             </div>
           </form>
           <Select
-            value={status || (isAdmin ? "all" : "Published")}
+            value={status || (isAdmin ? "all" : "published")}
             onValueChange={(v) => updateParams({ status: v === "all" ? "" : v, page: 1 })}
           >
             <SelectTrigger className="w-32">
@@ -191,7 +175,7 @@ const CourseContainer = () => {
             </SelectTrigger>
             <SelectContent>
               {statusOptions
-                .filter((o) => isAdmin || (o.value !== "DRAFT" && o.value !== "Archived"))
+                .filter((o) => isAdmin || (o.value !== "draft" && o.value !== "archived"))
                 .map((o) => (
                   <SelectItem key={o.value} value={o.value}>
                     {o.label}
@@ -267,14 +251,14 @@ const CourseContainer = () => {
       </Paper>
 
       {/* Error */}
-      {error && !loading && (
+      {error && !isLoading && (
         <Paper p="md" className="mb-4">
-          <FormErrorBanner message={error} />
+          <FormErrorBanner message={error?.message || "Failed to load courses"} />
           <Button
             size="xs"
             variant="default"
             leftSection={<RefreshCw size={12} />}
-            onClick={fetchData}
+            onClick={() => refetch()}
             className="mt-2"
           >
             Retry
@@ -283,7 +267,7 @@ const CourseContainer = () => {
       )}
 
       {/* Empty */}
-      {!error && courses.length === 0 && !loading ? (
+      {!error && courses.length === 0 && !isLoading ? (
         <EmptyState
           icon={<BookOpen size={48} className="text-text-muted" />}
           title="No courses found"

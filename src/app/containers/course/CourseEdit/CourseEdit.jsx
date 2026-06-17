@@ -75,7 +75,7 @@ const CourseEdit = () => {
           category: data.categoryID || null,
           coverImage: data.coverImage || data.imageURL || "",
           duration: data.duration || "",
-          status: data.status || "DRAFT",
+          status: data.status || "draft",
         });
       } catch (err) {
         setApiError(err.message || "Failed to load course data.");

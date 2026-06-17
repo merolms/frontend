@@ -235,7 +235,7 @@ export const markCourseImportant = async (id) => {
 // Restore an archived course back to Draft so it can be edited/republished.
 export const restoreCourse = async (id) => {
   try {
-    const data = await apiPut(`/courses/${id}`, { status: 0 });
+    const data = await apiPut(`/courses/${id}`, { status: "Draft" });
     return normalizeCourse(data);
   } catch (error) {
     console.error("Error restoring course:", error);
@@ -381,7 +381,7 @@ let mockCourses = [
       "Learn the fundamentals of React including components, state, hooks, and building modern web applications.",
     category: "Programming",
     tags: ["react", "javascript", "frontend"],
-    status: "Published",
+    status: "published",
     author: "John Doe",
     coverImage: "https://picsum.photos/seed/react/400/250",
     images: [
@@ -402,7 +402,7 @@ let mockCourses = [
       "Master CSS Grid, Flexbox, animations, and modern layout techniques for responsive web design.",
     category: "Design",
     tags: ["css", "design", "frontend"],
-    status: "Published",
+    status: "published",
     author: "Jane Smith",
     coverImage: "https://picsum.photos/seed/css/400/250",
     images: ["https://picsum.photos/seed/css1/400/250", "https://picsum.photos/seed/css2/400/250"],
@@ -419,7 +419,7 @@ let mockCourses = [
       "Comprehensive introduction to Python for data analysis, visualization, and machine learning.",
     category: "Data Science",
     tags: ["python", "data", "machine-learning"],
-    status: "DRAFT",
+    status: "draft",
     author: "Bob Wilson",
     coverImage: "https://picsum.photos/seed/python/400/250",
     images: [
@@ -500,7 +500,7 @@ export const mockCreateCourse = (courseData) => {
   const newCourse = {
     ...courseData,
     id: Date.now(),
-    status: "DRAFT",
+    status: "draft",
     enrolledUsers: 0,
     totalLessons: 0,
     createdAt: new Date().toISOString().split("T")[0],
@@ -529,7 +529,7 @@ export const mockDeleteCourse = (id) => {
 export const mockPublishCourse = (id) => {
   const course = mockCourses.find((c) => c.id === parseInt(id));
   if (!course) return Promise.reject(new Error("Course not found"));
-  course.status = "Published";
+  course.status = "published";
   course.updatedAt = new Date().toISOString().split("T")[0];
   return Promise.resolve(course);
 };
@@ -537,7 +537,7 @@ export const mockPublishCourse = (id) => {
 export const mockArchiveCourse = (id) => {
   const course = mockCourses.find((c) => c.id === parseInt(id));
   if (!course) return Promise.reject(new Error("Course not found"));
-  course.status = "Archived";
+  course.status = "archived";
   course.updatedAt = new Date().toISOString().split("T")[0];
   return Promise.resolve(course);
 };
