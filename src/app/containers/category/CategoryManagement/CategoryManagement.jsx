@@ -62,9 +62,9 @@ const CategoryManagement = () => {
   const {
     data: allCategories = [],
     isLoading,
-    error,
+    error: queryError,
     refetch,
-  } = useCategories({ start: 0, limit: 500 });
+  } = useCategories({ start: 0, limit: 10 });
 
   // Mutation hooks
   const createMutation = useCreateCategory();
@@ -130,6 +130,7 @@ const CategoryManagement = () => {
       }
       setFormOpen(false);
       setEditingCat(null);
+      refetch();
     } catch (err) {
       throw err;
     }
@@ -141,6 +142,7 @@ const CategoryManagement = () => {
       await deleteMutation.mutateAsync(deleteTarget.id);
       setDeleteTarget(null);
       addToast(`Category "${deleteTarget.name}" deleted`, "success");
+      refetch();
     } catch (err) {
       addToast(err.message || "Failed to delete category.", "error");
     }
@@ -154,6 +156,7 @@ const CategoryManagement = () => {
         `Category "${cat.name}" ${newStatus === 1 ? "activated" : "deactivated"}`,
         "success"
       );
+      refetch();
     } catch (err) {
       addToast(err.message || "Failed to update category status.", "error");
     }
@@ -182,7 +185,7 @@ const CategoryManagement = () => {
         </div>
 
         {/* Error */}
-        {error && <FormErrorBanner message={error} />}
+        {queryError && <FormErrorBanner message={queryError?.message || "Failed to load categories"} />}
 
         {/* Filters */}
         <Paper className="mb-4 p-3">
