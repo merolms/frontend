@@ -32,7 +32,12 @@ const CourseEdit = () => {
   const updateMutation = useUpdateCourse();
 
   const [form, setForm] = useState({
-    title: "", description: "", category: null, coverImage: "", duration: "", status: "draft",
+    title: "",
+    description: "",
+    category: null,
+    coverImage: "",
+    duration: "",
+    status: "draft",
   });
 
   // Sync form when course data loads
@@ -234,7 +239,9 @@ const CourseEdit = () => {
                   />
                   <label
                     className={`border-border text-text-secondary hover:bg-bg-surface-active flex h-8 items-center rounded-md border px-3 text-xs ${
-                      coverUploading || updateMutation.isLoading ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+                      coverUploading || updateMutation.isLoading
+                        ? "cursor-not-allowed opacity-60"
+                        : "cursor-pointer"
                     }`}
                   >
                     {coverUploading ? "Uploading…" : "Upload"}

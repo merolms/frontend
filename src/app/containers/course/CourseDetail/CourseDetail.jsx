@@ -74,7 +74,9 @@ const CourseDetail = () => {
   const { data: enrollment } = useEnrollmentStatus(id, { enabled: !!user });
   const { data: enrollments = [] } = useCourseEnrollments(id, { enabled: canManageEnrollments });
   const enrollmentsSafe = enrollments || [];
-  const { data: lessonCompletionCounts = {} } = useLessonCompletionCounts(id, { enabled: canManageEnrollments });
+  const { data: lessonCompletionCounts = {} } = useLessonCompletionCounts(id, {
+    enabled: canManageEnrollments,
+  });
 
   usePageTitle(course?.title ? `${course.title} — Course` : "Course Details");
 
@@ -356,7 +358,9 @@ const CourseDetail = () => {
                   <TabsTrigger value="overview">Overview</TabsTrigger>
                   <TabsTrigger value="lessons">Lessons ({lessons.length})</TabsTrigger>
                   <PermissionGuard permissions={["courses.enrollment.manage"]}>
-                    <TabsTrigger value="enrollment">Enrollment ({enrollmentsSafe.length})</TabsTrigger>
+                    <TabsTrigger value="enrollment">
+                      Enrollment ({enrollmentsSafe.length})
+                    </TabsTrigger>
                   </PermissionGuard>
                 </TabsList>
                 <TabsContent value="overview" className="space-y-4">
@@ -415,8 +419,10 @@ const CourseDetail = () => {
                           <span className="text-text-muted text-[11px]">Average Progress</span>
                           <span className="text-text-primary text-[11px] font-semibold">
                             {Math.round(
-                              enrollmentsSafe.reduce((sum, e) => sum + (e.progressPercent ?? 0), 0) /
-                                enrollmentsSafe.length
+                              enrollmentsSafe.reduce(
+                                (sum, e) => sum + (e.progressPercent ?? 0),
+                                0
+                              ) / enrollmentsSafe.length
                             )}
                             %
                           </span>
@@ -558,7 +564,11 @@ const CourseDetail = () => {
                   <span className="text-text-muted text-xs">Status</span>
                   <Badge
                     variant={
-                      status.color === "green" ? "green" : status.color === "orange" ? "orange" : "gray"
+                      status.color === "green"
+                        ? "green"
+                        : status.color === "orange"
+                          ? "orange"
+                          : "gray"
                     }
                   >
                     {status.text}
@@ -570,9 +580,7 @@ const CourseDetail = () => {
             {/* Recent Activity */}
             <Paper className="p-4">
               <h3 className="text-text-primary mb-3 text-sm font-semibold">Recent Activity</h3>
-              <div className="text-text-muted py-4 text-center text-xs">
-                No recent activity
-              </div>
+              <div className="text-text-muted py-4 text-center text-xs">No recent activity</div>
             </Paper>
           </div>
         </div>

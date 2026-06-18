@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:9090";
+const API_BASE = import.meta.env.VITE_API_BASE || "http://192.168.1.67:9090";
 
 /**
  * Returns a URL with ?token=<jwt> for same-origin media URLs.

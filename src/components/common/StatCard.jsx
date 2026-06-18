@@ -33,7 +33,9 @@ const StatCard = memo(({ title, value, icon: Icon, color = "primary", className 
         </div>
         <div>
           <p className="text-foreground text-3xl font-bold tracking-tight">{value}</p>
-          <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider">{title}</p>
+          <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+            {title}
+          </p>
         </div>
       </div>
     </div>

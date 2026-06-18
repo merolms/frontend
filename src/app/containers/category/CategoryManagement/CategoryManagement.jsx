@@ -59,7 +59,12 @@ const CategoryManagement = () => {
   const limit = 10;
 
   // Fetch all categories for client-side filtering
-  const { data: allCategories = [], isLoading, error, refetch } = useCategories({ start: 0, limit: 500 });
+  const {
+    data: allCategories = [],
+    isLoading,
+    error,
+    refetch,
+  } = useCategories({ start: 0, limit: 500 });
 
   // Mutation hooks
   const createMutation = useCreateCategory();

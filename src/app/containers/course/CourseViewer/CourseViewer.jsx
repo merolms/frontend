@@ -71,8 +71,6 @@ const CourseViewer = () => {
     }
   }, [sortedLessons, lessonCompletionStatus]);
 
-
-
   // Lazy-load lesson content on demand, cached in a ref to avoid refetching.
   const ensureLessonContent = useCallback(async (lesson) => {
     const lid = lesson?.id;
@@ -129,9 +127,11 @@ const CourseViewer = () => {
     const remaining = sortedLessons.filter((lesson) => !lessonCompletionStatus[lesson.id]);
     if (remaining.length === 0) return;
     try {
-      await Promise.all(remaining.map((lesson) => 
-        markCompleteMutation.mutateAsync({ lessonId: lesson.id, timeSpentSeconds: 0 })
-      ));
+      await Promise.all(
+        remaining.map((lesson) =>
+          markCompleteMutation.mutateAsync({ lessonId: lesson.id, timeSpentSeconds: 0 })
+        )
+      );
       setLessonCompletionStatus((prev) => {
         const next = { ...prev };
         remaining.forEach((lesson) => {
@@ -189,12 +189,20 @@ const CourseViewer = () => {
     const lesson = sortedLessons[activeIndex];
     if (!lesson || lessonCompletionStatus[lesson.id]) return;
     // Mark lesson complete (best-effort; ignore errors silently)
-    markCompleteMutation.mutate({ lessonId: lesson.id, timeSpentSeconds: 0 })
+    markCompleteMutation
+      .mutate({ lessonId: lesson.id, timeSpentSeconds: 0 })
       .then(() => {
         setLessonCompletionStatus((prev) => ({ ...prev, [lesson.id]: true }));
       })
       .catch(() => {});
-  }, [activeIndex, sortedLessons, enrollment, user?.id, markCompleteMutation, lessonCompletionStatus]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    activeIndex,
+    sortedLessons,
+    enrollment,
+    user?.id,
+    markCompleteMutation,
+    lessonCompletionStatus,
+  ]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-mark course complete when all lessons are done
   useEffect(() => {
@@ -204,7 +212,11 @@ const CourseViewer = () => {
     // Mark any remaining lessons complete, then reload enrollment
     const remaining = sortedLessons.filter((l) => !lessonCompletionStatus[l.id]);
     if (remaining.length > 0) {
-      Promise.all(remaining.map((l) => markCompleteMutation.mutateAsync({ lessonId: l.id, timeSpentSeconds: 0 })))
+      Promise.all(
+        remaining.map((l) =>
+          markCompleteMutation.mutateAsync({ lessonId: l.id, timeSpentSeconds: 0 })
+        )
+      )
         .then(() => {
           setLessonCompletionStatus((prev) => {
             const next = { ...prev };
@@ -325,7 +337,11 @@ const CourseViewer = () => {
             disabled={enrollMutation.isPending || !isPublished}
             className="bg-primary hover:bg-primary-hover text-secondary rounded-md px-6 py-2 text-sm font-medium disabled:opacity-50"
           >
-            {enrollMutation.isPending ? "Enrolling…" : !isPublished ? "Enrollment Closed" : "Enroll Now"}
+            {enrollMutation.isPending
+              ? "Enrolling…"
+              : !isPublished
+                ? "Enrollment Closed"
+                : "Enroll Now"}
           </button>
         </div>
       </div>

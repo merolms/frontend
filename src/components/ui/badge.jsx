@@ -9,13 +9,14 @@ const Badge = React.forwardRef(
       <span
         ref={ref}
         className={cn(
-          "inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+          "focus:ring-ring inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none",
           {
-            "border-transparent bg-primary text-primary-foreground": variant === "default",
-            "border-transparent bg-secondary text-secondary-foreground": variant === "secondary",
-            "border-transparent bg-destructive text-destructive-foreground": variant === "destructive",
-            "border-transparent bg-success text-success-foreground": variant === "green",
-            "border-transparent bg-warning text-warning-foreground": variant === "orange",
+            "bg-primary text-primary-foreground border-transparent": variant === "default",
+            "bg-secondary text-secondary-foreground border-transparent": variant === "secondary",
+            "bg-destructive text-destructive-foreground border-transparent":
+              variant === "destructive",
+            "bg-success text-success-foreground border-transparent": variant === "green",
+            "bg-warning text-warning-foreground border-transparent": variant === "orange",
             "border-border text-foreground": variant === "outline",
           },
           className

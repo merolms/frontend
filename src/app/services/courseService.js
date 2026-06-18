@@ -268,7 +268,7 @@ const normalizeLesson = (l) => {
     id: l.id,
     courseId: l.courseId,
     title: l.title || "",
-    duration: l.durationMinutes != null ? String(l.durationMinutes) : (l.duration || ""),
+    duration: l.durationMinutes != null ? String(l.durationMinutes) : l.duration || "",
     contentFormat: l.contentFormat || "",
     type: l.lessonType || l.type || "text",
     status: l.status !== undefined && l.status !== null ? String(l.status) : "0",

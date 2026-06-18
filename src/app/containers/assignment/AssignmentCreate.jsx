@@ -110,7 +110,8 @@ const AssignmentCreate = () => {
               Create New Assignment
             </h2>
             <p className="text-text-muted text-xs">
-              Fill in the assignment details below. Assignments can be created independently or linked to a specific lesson.
+              Fill in the assignment details below. Assignments can be created independently or
+              linked to a specific lesson.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-3">
@@ -179,7 +180,9 @@ const AssignmentCreate = () => {
                     min="0"
                     placeholder="60"
                     value={formData.passingPoints}
-                    onChange={(e) => updateForm((p) => ({ ...p, passingPoints: parseInt(e.target.value) || 0 }))}
+                    onChange={(e) =>
+                      updateForm((p) => ({ ...p, passingPoints: parseInt(e.target.value) || 0 }))
+                    }
                     className={inputCls}
                   />
                 </FormField>
@@ -201,7 +204,7 @@ const AssignmentCreate = () => {
                     type="checkbox"
                     checked={formData.allowLate}
                     onChange={(e) => updateForm((p) => ({ ...p, allowLate: e.target.checked }))}
-                    className="h-4 w-4 rounded border-border"
+                    className="border-border h-4 w-4 rounded"
                   />
                   <span className="text-text-primary text-xs">Allow Late Submissions</span>
                 </label>
@@ -214,8 +217,10 @@ const AssignmentCreate = () => {
                       min="0"
                       max="100"
                       value={formData.latePenalty}
-                      onChange={(e) => updateForm((p) => ({ ...p, latePenalty: parseInt(e.target.value) || 0 }))}
-                      className="w-20 h-8 px-3 rounded-md border border-border bg-bg-surface text-xs text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                      onChange={(e) =>
+                        updateForm((p) => ({ ...p, latePenalty: parseInt(e.target.value) || 0 }))
+                      }
+                      className="border-border bg-bg-surface text-text-primary focus-visible:ring-primary h-8 w-20 rounded-md border px-3 text-xs focus-visible:ring-2 focus-visible:outline-none"
                     />
                   </div>
                 )}
@@ -228,7 +233,9 @@ const AssignmentCreate = () => {
                   min="0"
                   placeholder="1"
                   value={formData.maxSubmissions}
-                  onChange={(e) => updateForm((p) => ({ ...p, maxSubmissions: parseInt(e.target.value) || 1 }))}
+                  onChange={(e) =>
+                    updateForm((p) => ({ ...p, maxSubmissions: parseInt(e.target.value) || 1 }))
+                  }
                   className={inputCls}
                 />
               </FormField>

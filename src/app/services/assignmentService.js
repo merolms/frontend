@@ -136,9 +136,10 @@ export const createAssignment = async (lessonId, assignmentData) => {
   if (lessonId && !isNaN(parseInt(lessonId))) {
     payload.lessonId = parseInt(lessonId);
   }
-  const endpoint = lessonId && !isNaN(parseInt(lessonId))
-    ? `/assignments/lessons/${lessonId}/assignments`
-    : `/assignments`;
+  const endpoint =
+    lessonId && !isNaN(parseInt(lessonId))
+      ? `/assignments/lessons/${lessonId}/assignments`
+      : `/assignments`;
   const data = await apiPost(endpoint, payload);
   return normalizeAssignment(data);
 };

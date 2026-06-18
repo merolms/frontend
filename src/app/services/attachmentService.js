@@ -25,7 +25,7 @@ export const uploadAttachment = async (file, courseId, title = "") => {
 // GET /attachments/download?file=<uuid>
 // Returns the file download URL
 export const getDownloadUrl = (fileUuid) => {
-  const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:9090";
+  const API_BASE = import.meta.env.VITE_API_BASE || "http://192.168.1.67:9090";
   return `${API_BASE}/attachments/download?file=${encodeURIComponent(fileUuid)}`;
 };
 

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { t } from "@/styles/theme";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:9090";
+const API_BASE = import.meta.env.VITE_API_BASE || "http://192.168.1.67:9090";
 
 /**
  * Build a stream URL with ?token= for auth — same pattern as VideoBlockComponent.

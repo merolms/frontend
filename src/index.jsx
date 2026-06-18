@@ -19,13 +19,13 @@ import store from "@/redux/store";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 30_000,           // 30 seconds — data is "fresh" for 30s
-      retry: 1,                     // Retry failed requests once
-      refetchOnWindowFocus: true,   // Refetch when user returns to tab
-      refetchOnReconnect: true,     // Refetch when network reconnects
+      staleTime: 30_000, // 30 seconds — data is "fresh" for 30s
+      retry: 1, // Retry failed requests once
+      refetchOnWindowFocus: true, // Refetch when user returns to tab
+      refetchOnReconnect: true, // Refetch when network reconnects
     },
     mutations: {
-      retry: 0,                     // Don't retry mutations (POST/PUT/DELETE)
+      retry: 0, // Don't retry mutations (POST/PUT/DELETE)
     },
   },
 });

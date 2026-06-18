@@ -45,7 +45,7 @@ const Login = () => {
         <div className="border-border bg-card space-y-6 rounded-xl border p-8 shadow-sm">
           {/* Brand */}
           <div className="space-y-3 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md">
+            <div className="bg-primary text-primary-foreground mx-auto flex h-14 w-14 items-center justify-center rounded-xl shadow-md">
               <GraduationCap size={32} />
             </div>
             <h1 className="text-foreground text-3xl font-bold tracking-tight">MeroEdu</h1>
@@ -127,10 +127,12 @@ const Login = () => {
           <div className="space-y-3">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border" />
+                <span className="border-border w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground font-semibold">Demo Accounts</span>
+                <span className="bg-card text-muted-foreground px-2 font-semibold">
+                  Demo Accounts
+                </span>
               </div>
             </div>
             <div className="grid grid-cols-1 gap-2">
@@ -142,9 +144,9 @@ const Login = () => {
                     setEmail(acct.email);
                     setPassword(acct.password);
                   }}
-                  className="border-border hover:bg-accent hover:text-accent-foreground flex w-full items-center justify-between rounded-lg border px-4 py-2.5 text-xs font-medium transition-all hover:border-primary/20"
+                  className="border-border hover:bg-accent hover:text-accent-foreground hover:border-primary/20 flex w-full items-center justify-between rounded-lg border px-4 py-2.5 text-xs font-medium transition-all"
                 >
-                  <span className="bg-primary/10 text-primary rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                  <span className="bg-primary/10 text-primary rounded px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase">
                     {acct.label}
                   </span>
                   <span className="text-muted-foreground">{acct.email}</span>

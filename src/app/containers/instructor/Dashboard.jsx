@@ -21,7 +21,9 @@ const InstructorDashboard = () => {
 
   // ─── TanStack Query: replaces useEffect + Promise.all + manual state ───
   const { data: coursesData, isLoading: coursesLoading } = useCourses({
-    search: "", page: 1, limit: 10,
+    search: "",
+    page: 1,
+    limit: 10,
   });
   const { data: stats, isLoading: statsLoading } = useDashboardStats();
 

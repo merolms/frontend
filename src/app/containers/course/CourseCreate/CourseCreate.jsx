@@ -199,7 +199,9 @@ const CourseCreate = () => {
                   />
                   <label
                     className={`border-border text-text-secondary hover:bg-bg-surface-active flex h-8 items-center rounded-md border px-3 text-xs ${
-                      coverUploading || createMutation.isLoading ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+                      coverUploading || createMutation.isLoading
+                        ? "cursor-not-allowed opacity-60"
+                        : "cursor-pointer"
                     }`}
                   >
                     {coverUploading ? "Uploading…" : "Upload"}

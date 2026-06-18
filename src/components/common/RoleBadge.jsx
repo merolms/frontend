@@ -20,7 +20,8 @@ const RoleBadge = ({ role, size = "md" }) => {
   const colorClasses = {
     red: "bg-red-500/10 text-red-600 border border-red-500/20 uppercase tracking-wider font-bold",
     blue: "bg-blue-500/10 text-blue-600 border border-blue-500/20 uppercase tracking-wider font-bold",
-    purple: "bg-purple-500/10 text-purple-600 border border-purple-500/20 uppercase tracking-wider font-bold",
+    purple:
+      "bg-purple-500/10 text-purple-600 border border-purple-500/20 uppercase tracking-wider font-bold",
     teal: "bg-teal-500/10 text-teal-600 border border-teal-500/20 uppercase tracking-wider font-bold",
     gray: "bg-gray-500/10 text-gray-600 border border-gray-500/20 uppercase tracking-wider font-bold",
   };

@@ -145,7 +145,12 @@ const EventsPage = () => {
   const eventTypes = getEventTypes();
 
   // TanStack Query hooks
-  const { data: eventsResult, isLoading: eventsLoading, error: eventsError, refetch } = useEvents({
+  const {
+    data: eventsResult,
+    isLoading: eventsLoading,
+    error: eventsError,
+    refetch,
+  } = useEvents({
     search,
     type: typeFilter,
     page,
@@ -220,7 +225,7 @@ const EventsPage = () => {
       }
       setShowForm(false);
       setEditingEvent(null);
-      fetchData();
+      refetch();
     } catch (err) {
       console.error(err);
     }

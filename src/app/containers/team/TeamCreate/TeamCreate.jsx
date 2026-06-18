@@ -7,6 +7,7 @@ import { useToast } from "@/app/context/ToastContext";
 import { createTeam } from "@/app/services/teamService";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import { t } from "@/styles/theme";
 
 const TeamCreate = () => {
   const navigate = useNavigate();

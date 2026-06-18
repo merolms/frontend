@@ -227,13 +227,21 @@ const AdminProgressTracking = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-border bg-bg-surface-hover border-b">
-                  <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">Learner</th>
-                  <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">Course</th>
-                  <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">Status</th>
+                  <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">
+                    Learner
+                  </th>
+                  <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">
+                    Course
+                  </th>
+                  <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">
+                    Status
+                  </th>
                   <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">
                     Progress
                   </th>
-                  <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">Lessons</th>
+                  <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">
+                    Lessons
+                  </th>
                   <th className="text-text-muted px-4 py-3 text-left text-xs font-medium">
                     Last Active
                   </th>
@@ -250,77 +258,79 @@ const AdminProgressTracking = () => {
                     </td>
                   </tr>
                 ) : (
-                enrollments.map((enrollment) => (
-                  <tr key={enrollment.id} className="hover:bg-bg-surface-hover transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="text-secondary flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold"
-                          style={{ background: "#6366F1" }}
-                        >
-                          {(enrollment.userName || "U")[0]}
-                        </div>
-                        <span className="text-text-primary text-xs font-medium">
-                          {enrollment.userName}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="min-w-0">
-                        <p className="text-text-primary line-clamp-1 text-xs font-medium">
-                          {enrollment.courseTitle}
-                        </p>
-                        <p className="text-text-muted text-[10px]">{enrollment.category}</p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <Badge
-                        variant={
-                          enrollment.status === "completed"
-                            ? "green"
-                            : enrollment.status === "dropped"
-                              ? "red"
-                              : "blue"
-                        }
-                        className="text-[10px]"
-                      >
-                        {enrollment.status}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex min-w-[100px] items-center gap-2">
-                        <div className="bg-bg-surface-active h-1.5 flex-1 overflow-hidden rounded-full">
+                  enrollments.map((enrollment) => (
+                    <tr key={enrollment.id} className="hover:bg-bg-surface-hover transition-colors">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
                           <div
-                            className="h-full rounded-full transition-all"
-                            style={{
-                              width: `${enrollment.progress || 0}%`,
-                              background: getProgressColor(enrollment.progress || 0),
-                            }}
-                          />
+                            className="text-secondary flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold"
+                            style={{ background: "#6366F1" }}
+                          >
+                            {(enrollment.userName || "U")[0]}
+                          </div>
+                          <span className="text-text-primary text-xs font-medium">
+                            {enrollment.userName}
+                          </span>
                         </div>
-                        <span
-                          className="w-8 text-right text-[11px] font-semibold"
-                          style={{ color: getProgressColor(enrollment.progress || 0) }}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="min-w-0">
+                          <p className="text-text-primary line-clamp-1 text-xs font-medium">
+                            {enrollment.courseTitle}
+                          </p>
+                          <p className="text-text-muted text-[10px]">{enrollment.category}</p>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge
+                          variant={
+                            enrollment.status === "completed"
+                              ? "green"
+                              : enrollment.status === "dropped"
+                                ? "red"
+                                : "blue"
+                          }
+                          className="text-[10px]"
                         >
-                          {enrollment.progress || 0}%
-                        </span>
-                      </div>
-                    </td>
-                    <td className="text-text-muted px-4 py-3 text-xs">
-                      {enrollment.completedLessons?.length || 0}/{enrollment.totalLessons || 0}
-                    </td>
-                    <td className="text-text-muted px-4 py-3 text-xs">{enrollment.lastAccessed}</td>
-                    <td className="px-4 py-3 text-center">
-                      <button
-                        onClick={() => navigate(`/courses/${enrollment.courseId}`)}
-                        className="text-primary cursor-pointer text-[11px] hover:underline"
-                      >
-                        View →
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
+                          {enrollment.status}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex min-w-[100px] items-center gap-2">
+                          <div className="bg-bg-surface-active h-1.5 flex-1 overflow-hidden rounded-full">
+                            <div
+                              className="h-full rounded-full transition-all"
+                              style={{
+                                width: `${enrollment.progress || 0}%`,
+                                background: getProgressColor(enrollment.progress || 0),
+                              }}
+                            />
+                          </div>
+                          <span
+                            className="w-8 text-right text-[11px] font-semibold"
+                            style={{ color: getProgressColor(enrollment.progress || 0) }}
+                          >
+                            {enrollment.progress || 0}%
+                          </span>
+                        </div>
+                      </td>
+                      <td className="text-text-muted px-4 py-3 text-xs">
+                        {enrollment.completedLessons?.length || 0}/{enrollment.totalLessons || 0}
+                      </td>
+                      <td className="text-text-muted px-4 py-3 text-xs">
+                        {enrollment.lastAccessed}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <button
+                          onClick={() => navigate(`/courses/${enrollment.courseId}`)}
+                          className="text-primary cursor-pointer text-[11px] hover:underline"
+                        >
+                          View →
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

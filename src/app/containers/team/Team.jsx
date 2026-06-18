@@ -56,7 +56,12 @@ const TeamContainer = () => {
   const limit = 8;
 
   // TanStack Query hook for teams
-  const { data: teamsResult, isLoading: teamsLoading, error: teamsError, refetch } = useTeams({
+  const {
+    data: teamsResult,
+    isLoading: teamsLoading,
+    error: teamsError,
+    refetch,
+  } = useTeams({
     start: (page - 1) * limit,
     limit,
     sort,
@@ -76,10 +81,14 @@ const TeamContainer = () => {
   useEffect(() => {
     const processData = async () => {
       if (!teamsResult) return;
-      
+
       try {
         setError(null);
-        const teamList = Array.isArray(teamsResult?.teams) ? teamsResult.teams : Array.isArray(teamsResult) ? teamsResult : [];
+        const teamList = Array.isArray(teamsResult?.teams)
+          ? teamsResult.teams
+          : Array.isArray(teamsResult)
+            ? teamsResult
+            : [];
         let filtered = teamList;
         if (statusFilter) filtered = filtered.filter((t) => String(t.status) === statusFilter);
         if (search) {
@@ -298,7 +307,7 @@ const TeamContainer = () => {
           open={!!assignTeam}
           onClose={() => setAssignTeam(null)}
           team={assignTeam}
-          onUpdated={fetchData}
+          onUpdated={refetch}
         />
       )}
       <DeleteModal

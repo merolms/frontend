@@ -56,7 +56,7 @@ const LearnerDashboard = () => {
 
       {/* Continue Learning */}
       <div className="mb-6 flex items-center justify-between">
-        <h3 className="text-xl font-bold tracking-tight text-foreground">Continue Learning</h3>
+        <h3 className="text-foreground text-xl font-bold tracking-tight">Continue Learning</h3>
       </div>
 
       {isLoading ? (
@@ -77,11 +77,11 @@ const LearnerDashboard = () => {
           {activeEnrollments.map((enrollment) => (
             <div
               key={enrollment.id}
-              className="group border-border bg-card cursor-pointer rounded-xl border p-5 shadow-sm transition-all hover:shadow-md hover:border-primary/20"
+              className="group border-border bg-card hover:border-primary/20 cursor-pointer rounded-xl border p-5 shadow-sm transition-all hover:shadow-md"
               onClick={() => navigate(`/courses/${enrollment.courseId}/learn`)}
             >
               <div className="min-w-0 flex-1">
-                <h4 className="text-foreground truncate text-base font-bold group-hover:text-primary transition-colors">
+                <h4 className="text-foreground group-hover:text-primary truncate text-base font-bold transition-colors">
                   {enrollment.courseTitle}
                 </h4>
                 <p className="text-muted-foreground text-xs font-medium">{enrollment.category}</p>

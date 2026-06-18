@@ -115,7 +115,7 @@ frontend/
 
 ### Centralized HTTP Client: `src/app/services/http.js`
 
-- **Base URL:** `http://localhost:9090` (env: VITE_API_BASE)
+- **Base URL:** `http://192.168.1.67:9090` (env: VITE_API_BASE)
 - **Authentication:** JWT stored in localStorage, injected in Authorization header
 - **Response Format:** Backend returns `{ message: "...", data: {...} }` — extracts `data` field
 - **Error Handling:** Returns ApiError with status and parsed body.data
@@ -200,7 +200,7 @@ npm run lint     # ESLint check
 
 ## Environment Variables
 
-- `VITE_API_BASE` - Backend API URL (default: http://localhost:9090)
+- `VITE_API_BASE` - Backend API URL (default: http://192.168.1.67:9090)
 
 ## Build Output
 

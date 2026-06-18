@@ -12,7 +12,11 @@ const LearningPathProgressPage = () => {
   const { learningPathId } = useParams();
 
   const { data: path, isLoading, error: pathError } = useLearningPath(learningPathId);
-  const { data: progressData, isLoading: progressLoading, error: progressError } = useLearningPathProgress(learningPathId);
+  const {
+    data: progressData,
+    isLoading: progressLoading,
+    error: progressError,
+  } = useLearningPathProgress(learningPathId);
 
   const completedCourses = progressData?.completedCourses || [];
   const remainingCourses = progressData?.remainingCourses || [];

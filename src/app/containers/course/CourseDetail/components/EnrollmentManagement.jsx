@@ -16,12 +16,14 @@ import {
 import { useCallback, useEffect, useState } from "react";
 
 import { useToast } from "@/app/context/ToastContext";
-import {
-  useAdminEnrollUser,
-  useAdminEnrollTeam,
-} from "@/hooks/queries/useEnrollments";
+import { useAdminEnrollUser, useAdminEnrollTeam } from "@/hooks/queries/useEnrollments";
 import { useUsers, useTeams } from "@/hooks/queries/useEntities";
-import { getCourseEnrollments } from "@/app/services/enrollmentService";
+import { fetchUsers, fetchTeams } from "@/app/services/teamService";
+import {
+  getCourseEnrollments,
+  adminEnrollUserInCourse,
+  adminEnrollTeamInCourse,
+} from "@/app/services/enrollmentService";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
@@ -67,6 +69,8 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
   const [selectedTeams, setSelectedTeams] = useState([]);
   const [enrollmentSearchQuery, setEnrollmentSearchQuery] = useState("");
   const [enrollmentSortBy, setEnrollmentSortBy] = useState("date");
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [filteredTeams, setFilteredTeams] = useState([]);
 
   // TanStack Query hooks
   const { data: usersData = [] } = useUsers({ start: 0, limit: 20 });
@@ -123,7 +127,10 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
 
     try {
       setEnrolling((s) => ({ ...s, user: true }));
-      await enrollUserMutation.mutateAsync({ courseId: parseInt(courseId), userId: parseInt(selectedUser) });
+      await enrollUserMutation.mutateAsync({
+        courseId: parseInt(courseId),
+        userId: parseInt(selectedUser),
+      });
       setSelectedUser("");
       setUserSearchQuery("");
       await loadEnrollments();
@@ -176,7 +183,10 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
 
     try {
       setEnrolling((s) => ({ ...s, team: true }));
-      await enrollTeamMutation.mutateAsync({ courseId: parseInt(courseId), teamId: parseInt(selectedTeam) });
+      await enrollTeamMutation.mutateAsync({
+        courseId: parseInt(courseId),
+        teamId: parseInt(selectedTeam),
+      });
       setSelectedTeam("");
       setTeamSearchQuery("");
       await loadEnrollments();
@@ -221,7 +231,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
       // Reset to all teams when search is empty
       try {
         const data = await fetchTeams({ start: 0, limit: 100 });
-        setTeams(Array.isArray(data?.teams) ? data.teams : []);
+        setFilteredTeams(Array.isArray(data?.teams) ? data.teams : []);
       } catch (err) {
         console.error(err);
       }
@@ -229,7 +239,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
     }
     try {
       const data = await fetchTeams({ search: query, start: 0, limit: 100 });
-      setTeams(Array.isArray(data?.teams) ? data.teams : []);
+      setFilteredTeams(Array.isArray(data?.teams) ? data.teams : []);
     } catch (err) {
       console.error(err);
     }
@@ -240,7 +250,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
       // Reset to all users when search is empty
       try {
         const data = await fetchUsers({ start: 0, limit: 100 });
-        setUsers(Array.isArray(data?.users) ? data.users : []);
+        setFilteredUsers(Array.isArray(data?.users) ? data.users : []);
       } catch (err) {
         console.error(err);
       }
@@ -248,7 +258,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
     }
     try {
       const data = await fetchUsers({ search: query, start: 0, limit: 100 });
-      setUsers(Array.isArray(data?.users) ? data.users : []);
+      setFilteredUsers(Array.isArray(data?.users) ? data.users : []);
     } catch (err) {
       console.error(err);
     }

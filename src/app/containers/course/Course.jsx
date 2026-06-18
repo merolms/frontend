@@ -145,7 +145,7 @@ const CourseContainer = () => {
       </div>
 
       {/* Filters */}
-      <div className="mb-6 p-1 border-b border-border pb-6">
+      <div className="border-border mb-6 border-b p-1 pb-6">
         <div className="flex flex-wrap items-center gap-3">
           <form className="flex flex-1 items-center gap-2" onSubmit={handleSearch}>
             <div className="relative flex-1">
@@ -249,7 +249,7 @@ const CourseContainer = () => {
 
       {/* Error */}
       {error && !isLoading && (
-        <div className="mb-6 rounded-xl border border-destructive/20 bg-destructive/5 p-6">
+        <div className="border-destructive/20 bg-destructive/5 mb-6 rounded-xl border p-6">
           <FormErrorBanner message={error?.message || "Failed to load courses"} />
           <Button
             size="xs"

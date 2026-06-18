@@ -118,8 +118,8 @@ export default function DashboardLayout({ children, title, subtitle }) {
         <div className="border-border bg-bg-surface sticky top-0 z-10 flex h-20 items-center justify-between border-b px-6">
           {/* Left: page title */}
           <div className="flex flex-col">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">{pageTitle}</h1>
-            {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+            <h1 className="text-foreground text-2xl font-bold tracking-tight">{pageTitle}</h1>
+            {subtitle && <p className="text-muted-foreground text-sm">{subtitle}</p>}
           </div>
 
           {/* Right: notifications + user */}

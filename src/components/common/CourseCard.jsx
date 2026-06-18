@@ -25,7 +25,7 @@ const CourseCard = ({
 
   return (
     <div
-      className="group border-border bg-card flex cursor-pointer items-center gap-5 rounded-xl border p-5 shadow-sm transition-all hover:shadow-md hover:border-primary/20"
+      className="group border-border bg-card hover:border-primary/20 flex cursor-pointer items-center gap-5 rounded-xl border p-5 shadow-sm transition-all hover:shadow-md"
       onClick={onClick}
     >
       <div className="relative h-16 w-24 flex-shrink-0 overflow-hidden rounded-lg">
@@ -40,7 +40,7 @@ const CourseCard = ({
         <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
       </div>
       <div className="min-w-0 flex-1">
-        <h4 className="text-foreground truncate text-base font-bold group-hover:text-primary transition-colors">
+        <h4 className="text-foreground group-hover:text-primary truncate text-base font-bold transition-colors">
           {course.title}
         </h4>
         <p className="text-muted-foreground text-xs font-medium">
@@ -49,7 +49,9 @@ const CourseCard = ({
         {course.progress !== undefined && (
           <div className="mt-3">
             <div className="mb-1.5 flex items-center justify-between">
-              <span className="text-muted-foreground text-xs font-medium">{course.progress}% complete</span>
+              <span className="text-muted-foreground text-xs font-medium">
+                {course.progress}% complete
+              </span>
             </div>
             <div className="bg-secondary h-1.5 w-full rounded-full">
               <div
@@ -63,7 +65,7 @@ const CourseCard = ({
       <div className="flex items-center gap-3">
         {showStatus && course.status && (
           <span
-            className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+            className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase ${
               course.status === "published"
                 ? "border-green-500/20 bg-green-500/10 text-green-600"
                 : "border-orange-500/20 bg-orange-500/10 text-orange-600"

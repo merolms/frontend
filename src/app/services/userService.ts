@@ -66,7 +66,9 @@ export const fetchUserById = async (id: number | string): Promise<User> => {
 };
 
 // POST /users is not in the backend — user creation goes through POST /auth/register
-export const createUser = async (userData: Partial<User> & { password?: string }): Promise<User> => {
+export const createUser = async (
+  userData: Partial<User> & { password?: string }
+): Promise<User> => {
   try {
     const data = await apiPost<User>("/auth/register", {
       firstName: userData.firstName,

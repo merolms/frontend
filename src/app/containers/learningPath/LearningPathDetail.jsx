@@ -15,6 +15,7 @@ import {
   Trash2,
   TrendingUp,
   Users,
+  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";

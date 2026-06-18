@@ -70,9 +70,7 @@ const RoleBasedSidebar = () => {
                 )}
               >
                 <Icon size={20} />
-                {active && (
-                  <span className="absolute -left-2 h-6 w-1 rounded-r-full bg-primary" />
-                )}
+                {active && <span className="bg-primary absolute -left-2 h-6 w-1 rounded-r-full" />}
               </Link>
             );
           })}

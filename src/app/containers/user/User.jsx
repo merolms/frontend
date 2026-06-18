@@ -79,7 +79,12 @@ const UserContainer = () => {
   const [searchInput, setSearchInput] = useState(search);
 
   // TanStack Query hooks
-  const { data: usersResult, isLoading: usersLoading, error: usersError, refetch } = useUsers({
+  const {
+    data: usersResult,
+    isLoading: usersLoading,
+    error: usersError,
+    refetch,
+  } = useUsers({
     start: (page - 1) * limit,
     limit,
     sort,
@@ -90,10 +95,14 @@ const UserContainer = () => {
   useEffect(() => {
     const processData = () => {
       if (!usersResult) return;
-      
+
       try {
         const result = usersResult;
-        let filtered = Array.isArray(result?.users) ? result.users : Array.isArray(result) ? result : [];
+        let filtered = Array.isArray(result?.users)
+          ? result.users
+          : Array.isArray(result)
+            ? result
+            : [];
         if (roleFilter) filtered = filtered.filter((u) => u.role === roleFilter);
         if (statusFilter) filtered = filtered.filter((u) => String(u.status) === statusFilter);
         if (search) {

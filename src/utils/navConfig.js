@@ -8,7 +8,7 @@ import {
   Shield,
   Tags,
   Users,
-  ClipboardCheck
+  ClipboardCheck,
 } from "lucide-react";
 
 /**
@@ -28,7 +28,9 @@ const NAV_GROUPS = {
     { path: "/admin/users", label: "Users", icon: Users },
     { path: "/admin/teams", label: "Teams", icon: Network },
     { path: "/admin/roles", label: "Roles", icon: Shield },
-    { path: "/admin/progress", label: "Progress", icon: BarChart3 },
+    { path: "/my-learning", label: "My Learning", icon: BookOpen },
+
+    { path: "/progress", label: "Progress", icon: BarChart3 },
   ],
   Instructor: [
     { path: "/instructor/dashboard", label: "Dashboard", icon: Home },

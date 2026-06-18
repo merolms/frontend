@@ -5,7 +5,7 @@
 // - Throws ApiError on non-2xx responses
 // - Calls onAuthError callback on 401/403 responses
 
-const API_BASE: string = (import.meta as any).env.VITE_API_BASE || "http://localhost:9090";
+const API_BASE: string = (import.meta as any).env.VITE_API_BASE || "http://192.168.1.67:9090";
 
 export type AuthErrorHandler = (message: string, status: number) => void;
 
@@ -61,7 +61,9 @@ async function request<T = any>(path: string, options: RequestInit = {}): Promis
     headers,
   });
 
-  const body: ApiResponse<T> = await response.json().catch(() => ({ message: "Server error", data: null as unknown as T }));
+  const body: ApiResponse<T> = await response
+    .json()
+    .catch(() => ({ message: "Server error", data: null as unknown as T }));
 
   // Handle auth errors globally
   if (response.status === 401 || response.status === 403) {
@@ -90,10 +92,10 @@ export const apiGet = <T = any>(path: string): Promise<T> => request<T>(path, { 
 export const apiPost = <T = any>(path: string, data: any): Promise<T> =>
   request<T>(path, { method: "POST", body: JSON.stringify(data) });
 
-export const apiPut = <T = any>(path: string, data: any): Promise<T> => 
+export const apiPut = <T = any>(path: string, data: any): Promise<T> =>
   request<T>(path, { method: "PUT", body: JSON.stringify(data) });
 
-export const apiDelete = <T = any>(path: string): Promise<T> => 
+export const apiDelete = <T = any>(path: string): Promise<T> =>
   request<T>(path, { method: "DELETE" });
 
 export const apiPatch = <T = any>(path: string, data: any): Promise<T> =>
@@ -111,7 +113,9 @@ export const apiUpload = async <T = any>(path: string, formData: FormData): Prom
     body: formData,
     headers,
   });
-  const body: ApiResponse<T> = await response.json().catch(() => ({ message: "Server error", data: null as unknown as T }));
+  const body: ApiResponse<T> = await response
+    .json()
+    .catch(() => ({ message: "Server error", data: null as unknown as T }));
   if (response.status === 401 || response.status === 403) {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("auth_user");

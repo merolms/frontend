@@ -48,7 +48,7 @@ const RichTextEditor = ({ value, onChange, placeholder = "Enter content...", row
   return (
     <div className="border-border bg-bg-surface rounded-md border">
       {/* Toolbar */}
-      <div className="border-border border-b bg-bg-surface-hover flex gap-1 p-2">
+      <div className="border-border bg-bg-surface-hover flex gap-1 border-b p-2">
         <Button
           type="button"
           variant="ghost"
@@ -79,7 +79,7 @@ const RichTextEditor = ({ value, onChange, placeholder = "Enter content...", row
         >
           <Underline size={14} />
         </Button>
-        <div className="w-px bg-border mx-1" />
+        <div className="bg-border mx-1 w-px" />
         <Button
           type="button"
           variant="ghost"
@@ -104,7 +104,7 @@ const RichTextEditor = ({ value, onChange, placeholder = "Enter content...", row
 
       {/* Editor */}
       <EditorContent editor={editor} />
-      
+
       <style>{`
         .ProseMirror:focus {
           outline: none;

@@ -1,4 +1,4 @@
-import { BookOpen, Pencil, Plus, Search, ToggleLeft, Trash2,RefreshCw } from "lucide-react";
+import { BookOpen, Pencil, Plus, Search, ToggleLeft, Trash2, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -287,7 +287,7 @@ const AssignmentContainer = () => {
                 {assignments.map((assignment) => (
                   <tr
                     key={assignment.id}
-                    className={`hover:bg-bg-surface-hover transition-colors cursor-pointer ${
+                    className={`hover:bg-bg-surface-hover cursor-pointer transition-colors ${
                       assignment.status === "DRAFT" ? "opacity-60" : ""
                     }`}
                     onClick={() => navigate(`/assignments/${assignment.id}`)}
@@ -302,13 +302,11 @@ const AssignmentContainer = () => {
                         )}
                       </div>
                     </td>
-                    <td className="text-text-muted px-4 py-3 text-xs line-clamp-2">
+                    <td className="text-text-muted line-clamp-2 px-4 py-3 text-xs">
                       {assignment.description || "—"}
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <Badge variant="blue">
-                        {assignment.maxPoints} pts
-                      </Badge>
+                      <Badge variant="blue">{assignment.maxPoints} pts</Badge>
                     </td>
                     <td className="px-4 py-3">
                       <Badge
@@ -316,8 +314,8 @@ const AssignmentContainer = () => {
                           assignment.status === "PUBLISHED"
                             ? "green"
                             : assignment.status === "CLOSED"
-                            ? "red"
-                            : "gray"
+                              ? "red"
+                              : "gray"
                         }
                       >
                         {assignment.status}
@@ -342,9 +340,7 @@ const AssignmentContainer = () => {
                         <button
                           className="border-border hover:bg-bg-surface-active text-text-secondary flex h-7 w-7 items-center justify-center rounded-md border"
                           onClick={() => handleToggleStatus(assignment)}
-                          title={
-                            assignment.status === "PUBLISHED" ? "Unpublish" : "Publish"
-                          }
+                          title={assignment.status === "PUBLISHED" ? "Unpublish" : "Publish"}
                         >
                           <ToggleLeft size={12} />
                         </button>
