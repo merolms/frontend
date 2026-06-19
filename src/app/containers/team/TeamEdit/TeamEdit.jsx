@@ -1,10 +1,10 @@
 import { AlertCircle, ChevronRight, Loader, Pencil } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import TeamForm from "@/app/containers/team/TeamForm/TeamForm";
 import { useToast } from "@/app/context/ToastContext";
-import { fetchTeamById, updateTeam } from "@/app/services/teamService";
+import { useTeam, useUpdateTeam } from "@/hooks/queries/useEntities";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
@@ -14,37 +14,18 @@ const TeamEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { addToast } = useToast();
-  const [loading, setLoading] = useState(false);
-  const [fetching, setFetching] = useState(true);
-  const [team, setTeam] = useState(null);
+  const { data: team, isLoading: fetching } = useTeam(id);
+  const updateMutation = useUpdateTeam();
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const loadTeam = async () => {
-      try {
-        setFetching(true);
-        const data = await fetchTeamById(id);
-        setTeam(data);
-      } catch (err) {
-        setError("Failed to load team data.");
-      } finally {
-        setFetching(false);
-      }
-    };
-    loadTeam();
-  }, [id]);
 
   const handleSubmit = async (formData) => {
     try {
-      setLoading(true);
       setError(null);
-      const updated = await updateTeam(id, formData);
+      const updated = await updateMutation.mutateAsync({ id, data: formData });
       addToast(`Team "${formData.name}" updated successfully`, "success");
       navigate(`/teams/${updated.id}`);
     } catch (err) {
       setError("Failed to update team. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -96,7 +77,7 @@ const TeamEdit = () => {
           initialData={team}
           onSubmit={handleSubmit}
           onCancel={() => navigate(`/teams/${id}`)}
-          loading={loading}
+          loading={updateMutation.isPending}
           submitLabel="Save Changes"
         />
       </Paper>

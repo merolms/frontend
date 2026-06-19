@@ -73,38 +73,38 @@ const CategoryManagement = () => {
   const deleteMutation = useDeleteCategory();
 
   // Client-side filtering, sorting, and pagination
-  useEffect(() => {
-    const hasFilters = Boolean(search || statusFilter || sort);
-    let data = [...allCategories];
+  // useEffect(() => {
+  //   const hasFilters = Boolean(search || statusFilter || sort);
+  //   let data = [...allCategories];
 
-    if (hasFilters) {
-      // Apply filters
-      if (search) {
-        const q = search.toLowerCase();
-        data = data.filter(
-          (c) =>
-            (c.name || "").toLowerCase().includes(q) ||
-            (c.description || "").toLowerCase().includes(q)
-        );
-      }
-      if (statusFilter) {
-        data = data.filter((c) => String(c.status) === statusFilter);
-      }
-      if (sort === "name") data.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-      else if (sort === "recent") data.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+  //   if (hasFilters) {
+  //     // Apply filters
+  //     if (search) {
+  //       const q = search.toLowerCase();
+  //       data = data.filter(
+  //         (c) =>
+  //           (c.name || "").toLowerCase().includes(q) ||
+  //           (c.description || "").toLowerCase().includes(q)
+  //       );
+  //     }
+  //     if (statusFilter) {
+  //       data = data.filter((c) => String(c.status) === statusFilter);
+  //     }
+  //     if (sort === "name") data.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+  //     else if (sort === "recent") data.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
 
-      const filteredTotal = data.length;
-      setFilteredCategories(data.slice((page - 1) * limit, page * limit));
-      setTotal(filteredTotal);
-      setTotalPages(Math.ceil(filteredTotal / limit) || 1);
-    } else {
-      // Server-side pagination for plain browsing
-      const start = (page - 1) * limit;
-      setFilteredCategories(data.slice(start, start + limit));
-      setTotal(data.length);
-      setTotalPages(Math.ceil(data.length / limit) || 1);
-    }
-  }, [allCategories, search, statusFilter, sort, page]);
+  //     const filteredTotal = data.length;
+  //     setFilteredCategories(data.slice((page - 1) * limit, page * limit));
+  //     setTotal(filteredTotal);
+  //     setTotalPages(Math.ceil(filteredTotal / limit) || 1);
+  //   } else {
+  //     // Server-side pagination for plain browsing
+  //     const start = (page - 1) * limit;
+  //     setFilteredCategories(data.slice(start, start + limit));
+  //     setTotal(data.length);
+  //     setTotalPages(Math.ceil(data.length / limit) || 1);
+  //   }
+  // }, [allCategories, search, statusFilter, sort, page]);
 
   const handleSearch = (e) => {
     e.preventDefault();

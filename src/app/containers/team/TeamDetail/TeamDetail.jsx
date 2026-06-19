@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import TeamMemberAssignModal from "@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal";
 import { useToast } from "@/app/context/ToastContext";
-import { deleteTeam, fetchTeamById, fetchTeamMembers } from "@/app/services/teamService";
+import { useTeam, useTeamMembers, useDeleteTeam } from "@/hooks/queries/useEntities";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,41 +17,20 @@ const TeamDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { addToast } = useToast();
-  const [team, setTeam] = useState(null);
-  const [members, setMembers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: team, isLoading: loading } = useTeam(id);
+  const { data: members } = useTeamMembers(id);
+  const deleteMutation = useDeleteTeam();
   const [error, setError] = useState(null);
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const [actionLoading, setActionLoading] = useState(false);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const [tData, mData] = await Promise.all([fetchTeamById(id), fetchTeamMembers(id)]);
-      setTeam(tData);
-      setMembers(mData || []);
-    } catch (err) {
-      setError(err.message || "Failed to load team");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadData();
-  }, [id]);
 
   const handleDelete = async () => {
     try {
-      setActionLoading(true);
-      await deleteTeam(id);
+      await deleteMutation.mutateAsync(id);
       addToast(`Team "${team?.name}" deleted`, "error");
       navigate("/teams");
     } catch (err) {
       console.error(err);
-    } finally {
-      setActionLoading(false);
     }
   };
 

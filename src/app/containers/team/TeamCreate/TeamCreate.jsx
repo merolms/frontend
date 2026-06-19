@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import TeamForm from "@/app/containers/team/TeamForm/TeamForm";
 import { useToast } from "@/app/context/ToastContext";
-import { createTeam } from "@/app/services/teamService";
+import { useCreateTeam } from "@/hooks/queries/useEntities";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { t } from "@/styles/theme";
@@ -12,18 +12,15 @@ import { t } from "@/styles/theme";
 const TeamCreate = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
-  const [loading, setLoading] = useState(false);
+  const createMutation = useCreateTeam();
 
   const handleSubmit = async (formData) => {
     try {
-      setLoading(true);
-      const team = await createTeam(formData);
+      const team = await createMutation.mutateAsync(formData);
       addToast(`Team "${team.name}" created successfully`, "success");
       navigate(`/teams/${team.id}`);
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -45,7 +42,7 @@ const TeamCreate = () => {
         <p className="text-text-muted mb-4 text-xs">
           Set up a new team and start assigning members.
         </p>
-        <TeamForm onSubmit={handleSubmit} onCancel={() => navigate("/teams")} loading={loading} />
+        <TeamForm onSubmit={handleSubmit} onCancel={() => navigate("/teams")} loading={createMutation.isPending} />
       </Paper>
     </DashboardLayout>
   );

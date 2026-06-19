@@ -1,22 +1,18 @@
-// Team API Service
-// Handles all API calls related to teams and team members
-// Backend response envelope: { message: "success", data: ... }
+// Team API Service - Reduced
+// Only contains helper functions that aren't available in orval or for specific use cases
+// All team CRUD operations have been migrated to orval-generated hooks
 
-import { apiDelete, apiGet, apiPost, apiPut } from "@/app/services/http";
-import { t } from "@/styles/theme";
+import { apiGet } from "@/app/services/http";
 
-// ==================== TEAMS ====================
-// GET /teams?start=0&limit=10  -> returns Response { data: Team[] }
-// GET /teams/{id}             -> returns Response { data: Team }
-// POST /teams                 -> body: Team, returns Response { data: Team }
-// PUT /teams/{id}             -> body: Team, returns Response { data: Team }
-// DELETE /teams/{id}          -> returns Response
-
+// ==================== TEAMS (helper for Promise.all) ====================
+// This function is kept for manual fetching in Promise.all contexts
+// For most use cases, use useTeams hook from useEntities.js
 export const fetchTeams = async (params = {}) => {
   try {
     const queryParams = new URLSearchParams();
     if (params.start !== undefined) queryParams.set("start", params.start);
     if (params.limit !== undefined) queryParams.set("limit", params.limit);
+    if (params.search) queryParams.set("search", params.search);
 
     const data = await apiGet(`/teams?${queryParams}`);
     const list = Array.isArray(data) ? data : [];
@@ -27,60 +23,9 @@ export const fetchTeams = async (params = {}) => {
   }
 };
 
-export const fetchTeamById = async (id) => {
-  try {
-    return await apiGet(`/teams/${id}`);
-  } catch (error) {
-    console.error("Error fetching team:", error);
-    throw error;
-  }
-};
-
-export const createTeam = async (teamData) => {
-  try {
-    const body = {
-      name: teamData.name || "",
-      description: teamData.description || "",
-      color: teamData.color || t("accent"),
-      status: teamData.status !== undefined ? teamData.status : 1,
-    };
-    return await apiPost("/teams", body);
-  } catch (error) {
-    console.error("Error creating team:", error);
-    throw error;
-  }
-};
-
-export const updateTeam = async (id, teamData) => {
-  try {
-    const body = {
-      id: parseInt(id),
-      name: teamData.name || "",
-      description: teamData.description || "",
-      color: teamData.color || t("accent"),
-      status: teamData.status !== undefined ? teamData.status : 1,
-    };
-    return await apiPut(`/teams/${id}`, body);
-  } catch (error) {
-    console.error("Error updating team:", error);
-    throw error;
-  }
-};
-
-export const deleteTeam = async (id) => {
-  try {
-    await apiDelete(`/teams/${id}`);
-  } catch (error) {
-    console.error("Error deleting team:", error);
-    throw error;
-  }
-};
-
-// ==================== TEAM MEMBERS ====================
-// GET /teams/{id}/members       -> returns Response { data: UserResponse[] }
-// POST /teams/{id}/members      -> body: { userId }, returns Response
-// DELETE /teams/{id}/members/{userId} -> returns Response
-
+// ==================== TEAM MEMBERS (helper for Promise.all) ====================
+// This function is kept for manual fetching in Promise.all contexts
+// For most use cases, use useTeamMembers hook from useEntities.js
 export const fetchTeamMembers = async (teamId) => {
   try {
     const data = await apiGet(`/teams/${teamId}/members`);
@@ -91,25 +36,8 @@ export const fetchTeamMembers = async (teamId) => {
   }
 };
 
-export const addMemberToTeam = async (teamId, userId) => {
-  try {
-    return await apiPost(`/teams/${teamId}/members`, { userId });
-  } catch (error) {
-    console.error("Error adding member:", error);
-    throw error;
-  }
-};
-
-export const removeMemberFromTeam = async (teamId, userId) => {
-  try {
-    await apiDelete(`/teams/${teamId}/members/${userId}`);
-  } catch (error) {
-    console.error("Error removing member:", error);
-    throw error;
-  }
-};
-
 // ==================== USERS (for member assignment) ====================
+// These functions are kept because orval doesn't have the available-users endpoint
 // GET /users?start=0&limit=100  -> returns Response { data: User[] }
 
 export const fetchUsers = async (params = {}) => {

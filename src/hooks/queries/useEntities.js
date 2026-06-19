@@ -3,15 +3,19 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { queryKeys } from "@/lib/queryKeys";
+// Migrated to orval-generated hooks for teams
 import {
-  fetchTeams,
-  fetchTeamById,
-  createTeam,
-  updateTeam,
-  deleteTeam,
-  fetchTeamMembers,
-  addMemberToTeam,
-  removeMemberFromTeam,
+  useTeamGetAll,
+  useTeamGetByID,
+  useTeamCreate,
+  useTeamUpdate,
+  useTeamDelete,
+  useGetMembers,
+  useAddMember,
+  useRemoveMember,
+} from "@/app/api/orval";
+// Keep user fetching for now - available-users endpoint missing in orval
+import {
   fetchUsers as fetchTeamUsers,
   getAvailableUsers,
 } from "@/app/services/teamService";
@@ -47,75 +51,135 @@ import {
 // Migrated to orval-generated hooks
 import { useStatsGet } from "@/app/api/orval";
 
-// ─── Team Hooks ────────────────────────────────────────────
+// ─── Team Hooks (Orval-generated) ────────────────────────
 
 export const useTeams = (params = {}) => {
-  return useQuery({
-    queryKey: queryKeys.teams.list(params),
-    queryFn: () => fetchTeams(params),
-  });
+  // Convert params to orval format
+  const orvalParams = {};
+  if (params.start !== undefined) orvalParams.start = params.start;
+  if (params.limit !== undefined) orvalParams.limit = params.limit;
+
+  const result = useTeamGetAll(orvalParams);
+
+  // Transform data to match expected format
+  return {
+    ...result,
+    data: result.data?.data ? { teams: result.data.data, total: result.data.data.length } : { teams: [], total: 0 },
+  };
 };
 
 export const useTeam = (id) => {
-  return useQuery({
-    queryKey: queryKeys.teams.detail(id),
-    queryFn: () => fetchTeamById(id),
+  const result = useTeamGetByID(id);
+
+  return {
+    ...result,
     enabled: !!id,
-  });
+  };
 };
 
 export const useTeamMembers = (teamId) => {
-  return useQuery({
-    queryKey: queryKeys.teams.members(teamId),
-    queryFn: () => fetchTeamMembers(teamId),
+  const result = useGetMembers(teamId);
+
+  return {
+    ...result,
+    data: result.data?.data || [],
     enabled: !!teamId,
-  });
+  };
 };
 
 export const useCreateTeam = () => {
   const qc = useQueryClient();
-  return useMutation({
-    mutationFn: createTeam,
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.teams.all }),
-  });
+  const orvalMutation = useTeamCreate();
+
+  return {
+    ...orvalMutation,
+    mutate: async (data) => {
+      // Orval expects { data: DomainTeam }
+      return orvalMutation.mutateAsync({ data });
+    },
+    mutateAsync: async (data) => {
+      return orvalMutation.mutateAsync({ data });
+    },
+  };
 };
 
 export const useUpdateTeam = () => {
   const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, data }) => updateTeam(id, data),
-    onSuccess: (data) => {
-      qc.setQueryData(queryKeys.teams.detail(data.id), data);
-      qc.invalidateQueries({ queryKey: queryKeys.teams.all });
+  const orvalMutation = useTeamUpdate();
+
+  return {
+    ...orvalMutation,
+    mutate: async ({ id, data }) => {
+      // Orval expects { id: number; data: DomainTeam }
+      return orvalMutation.mutateAsync({ id, data });
     },
-  });
+    mutateAsync: async ({ id, data }) => {
+      return orvalMutation.mutateAsync({ id, data });
+    },
+  };
 };
 
 export const useDeleteTeam = () => {
   const qc = useQueryClient();
-  return useMutation({
-    mutationFn: deleteTeam,
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.teams.all }),
-  });
+  const orvalMutation = useTeamDelete();
+
+  return {
+    ...orvalMutation,
+    mutate: async (id) => {
+      // Orval expects { id: number }
+      return orvalMutation.mutateAsync({ id });
+    },
+    mutateAsync: async (id) => {
+      return orvalMutation.mutateAsync({ id });
+    },
+  };
 };
 
 export const useAddTeamMember = () => {
   const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ teamId, userId }) => addMemberToTeam(teamId, userId),
-    onSuccess: (_, { teamId }) => {
-      qc.invalidateQueries({ queryKey: queryKeys.teams.members(teamId) });
+  const orvalMutation = useAddMember();
+
+  return {
+    ...orvalMutation,
+    mutate: async ({ teamId, userId }) => {
+      // Orval expects { id: number; data: DomainTeamMember }
+      return orvalMutation.mutateAsync({ id: teamId, data: { userId } });
     },
-  });
+    mutateAsync: async ({ teamId, userId }) => {
+      return orvalMutation.mutateAsync({ id: teamId, data: { userId } });
+    },
+  };
 };
 
 export const useRemoveTeamMember = () => {
   const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ teamId, userId }) => removeMemberFromTeam(teamId, userId),
-    onSuccess: (_, { teamId }) => {
-      qc.invalidateQueries({ queryKey: queryKeys.teams.members(teamId) });
+  const orvalMutation = useRemoveMember();
+
+  return {
+    ...orvalMutation,
+    mutate: async ({ teamId, userId }) => {
+      // Orval expects { id: number; userId: number }
+      return orvalMutation.mutateAsync({ id: teamId, userId });
     },
+    mutateAsync: async ({ teamId, userId }) => {
+      return orvalMutation.mutateAsync({ id: teamId, userId });
+    },
+  };
+};
+
+// Keep the user fetching hooks as-is since orval doesn't have available-users endpoint
+export const useFetchTeamUsers = (params = {}) => {
+  return useQuery({
+    queryKey: ["teamUsers", params],
+    queryFn: () => fetchTeamUsers(params),
+  });
+};
+
+export const useAvailableUsers = (teamId) => {
+  return useQuery({
+    queryKey: ["availableUsers", teamId],
+    queryFn: () => getAvailableUsers(teamId),
+    enabled: !!teamId,
   });
 };
 

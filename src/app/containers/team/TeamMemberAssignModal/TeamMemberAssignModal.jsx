@@ -12,10 +12,13 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useToast } from "@/app/context/ToastContext";
 import {
-  addMemberToTeam,
+  useAddTeamMember,
+  useRemoveTeamMember,
+  useFetchTeamUsers,
+} from "@/hooks/queries/useEntities";
+import {
   fetchTeamMembers,
   fetchUsers,
-  removeMemberFromTeam,
 } from "@/app/services/teamService";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -43,6 +46,8 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [memberIds, setMemberIds] = useState(new Set());
   const { addToast } = useToast();
+  const addMutation = useAddTeamMember();
+  const removeMutation = useRemoveTeamMember();
 
   useEffect(() => {
     if (open && team) {
@@ -214,7 +219,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
     try {
       markBusy(key, true);
       setError(null);
-      await addMemberToTeam(team.id, user);
+      await addMutation.mutateAsync({ teamId: team.id, userId: user.id });
       const newMember = {
         userID: user.id,
         userId: user.id,
@@ -256,7 +261,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
     try {
       markBusy(key, true);
       setError(null);
-      await removeMemberFromTeam(team.id, userId);
+      await removeMutation.mutateAsync({ teamId: team.id, userId });
       setMembers((prev) => prev.filter((m) => (m.userID || m.userId) !== userId));
       addToast(`${member.userName || "Member"} removed from team`, "error");
       if (onUpdated) onUpdated();
