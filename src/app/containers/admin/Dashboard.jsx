@@ -28,25 +28,25 @@ const AdminDashboard = () => {
           <div className="mb-6 grid grid-cols-4 gap-4">
             <StatCard
               title="Total Courses"
-              value={stats?.totalCourses || 0}
+              value={stats.courseCount || 0}
               icon={BookOpen}
               color="primary"
             />
             <StatCard
               title="Total Users"
-              value={stats?.totalUsers || 0}
+              value={stats.userCount || 0}
               icon={Users}
               color="success"
             />
             <StatCard
               title="Teams"
-              value={stats?.totalTeams || 0}
+              value={stats.teamCount || 0}
               icon={TrendingUp}
               color="accent"
             />
             <StatCard
               title="Categories"
-              value={stats?.totalCategories || 0}
+              value={stats.categoryCount || 0}
               icon={BarChart3}
               color="warning"
             />

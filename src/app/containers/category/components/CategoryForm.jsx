@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { getCategoryColorOptions, getCategoryIconOptions } from "@/app/services/categoryService";
+import { getCategoryColorOptions, getCategoryIconOptions } from "@/app/utils/categoryUtils";
 import FormActions from "@/components/forms/FormActions";
 import FormField from "@/components/forms/FormField";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";

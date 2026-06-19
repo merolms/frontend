@@ -1,7 +1,8 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-import { fetchEventsForMonth } from "@/app/services/eventService";
+import { getMonthTimeRange } from "@/app/utils/eventUtils";
+import { useGetEventsInTimeRange } from "@/app/api/orval";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = [
@@ -21,26 +22,13 @@ const MONTHS = [
 
 const Calendar = ({ onDateClick, onEventClick, selectedDate }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(false);
-
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchEventsForMonth(year, month);
-        setEvents(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [year, month]);
+  
+  const { start, end } = getMonthTimeRange(year, month);
+  
+  const { data: eventsData, isLoading: loading } = useGetEventsInTimeRange({ start, end });
+  const events = eventsData?.data || [];
 
   const calendarDays = useMemo(() => {
     const firstDay = new Date(year, month, 1).getDay();

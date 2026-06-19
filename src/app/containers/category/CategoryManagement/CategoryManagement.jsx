@@ -11,6 +11,7 @@ import {
   useUpdateCategory,
   useDeleteCategory,
 } from "@/hooks/queries/useEntities";
+import { prepareCategoryData } from "@/app/utils/categoryUtils";
 import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import LoadingState from "@/components/common/LoadingState";
@@ -121,11 +122,12 @@ const CategoryManagement = () => {
 
   const handleFormSubmit = async (formData) => {
     try {
+      const preparedData = prepareCategoryData(formData);
       if (editingCat) {
-        await updateMutation.mutateAsync({ id: editingCat.id, data: formData });
+        await updateMutation.mutateAsync({ id: editingCat.id, data: preparedData });
         addToast(`Category "${formData.name}" updated`, "success");
       } else {
-        await createMutation.mutateAsync(formData);
+        await createMutation.mutateAsync(preparedData);
         addToast(`Category "${formData.name}" created`, "success");
       }
       setFormOpen(false);

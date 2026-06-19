@@ -22,14 +22,13 @@ import {
   updateUser,
   deleteUser,
 } from "@/app/services/userService";
+// Migrated to orval-generated hooks
 import {
-  fetchCategories,
-  fetchCategoryById,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-  toggleCategoryStatus,
-} from "@/app/services/categoryService";
+  useCategoryGetAll,
+  useCategoryCreate,
+  useCategoryUpdate,
+  useCategoryDelete,
+} from "@/app/api/orval";
 import {
   fetchLearningPaths,
   fetchLearningPathById,
@@ -45,7 +44,8 @@ import {
   adminEnrollTeamInLearningPath,
   getLearningPathEnrollments,
 } from "@/app/services/learningPathService";
-import { fetchDashboardStats } from "@/app/services/dashboardService";
+// Migrated to orval-generated hooks
+import { useStatsGet } from "@/app/api/orval";
 
 // ─── Team Hooks ────────────────────────────────────────────
 
@@ -160,48 +160,86 @@ export const useDeleteUser = () => {
   });
 };
 
-// ─── Category Hooks ────────────────────────────────────────
+// ─── Category Hooks (Orval-generated) ────────────────────
 
 export const useCategories = (params = {}) => {
-  return useQuery({
-    queryKey: queryKeys.categories.list(params),
-    queryFn: () => fetchCategories(params),
-  });
+  // Convert params to orval format if needed
+  const orvalParams = {};
+  if (params.start !== undefined) orvalParams.start = params.start;
+  if (params.limit !== undefined) orvalParams.limit = params.limit;
+  
+  const result = useCategoryGetAll(orvalParams);
+  
+  // Orval returns the full response, we need to extract the data
+  // The custom fetcher handles the { message, data } envelope unwrapping
+  return {
+    ...result,
+    data: result.data?.data || [], // Extract categories array from response
+  };
 };
 
 export const useCategory = (id) => {
+  // For single category, we need to implement using the base query
+  // Orval doesn't have a specific get by ID hook, so we'll use the getAll with filter
+  // This is a limitation - we may need to add a custom hook or use the base function
+  const qc = useQueryClient();
   return useQuery({
     queryKey: queryKeys.categories.detail(id),
-    queryFn: () => fetchCategoryById(id),
+    queryFn: async () => {
+      // Fallback to manual implementation since orval doesn't have get by ID
+      const { apiGet } = await import("@/app/services/http");
+      return apiGet(`/categories/${id}`);
+    },
     enabled: !!id,
   });
 };
 
 export const useCreateCategory = () => {
   const qc = useQueryClient();
-  return useMutation({
-    mutationFn: createCategory,
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.categories.all }),
-  });
+  const orvalMutation = useCategoryCreate();
+  
+  return {
+    ...orvalMutation,
+    mutate: async (data) => {
+      // Orval expects { data: DomainCategory }
+      return orvalMutation.mutateAsync({ data });
+    },
+    mutateAsync: async (data) => {
+      return orvalMutation.mutateAsync({ data });
+    },
+  };
 };
 
 export const useUpdateCategory = () => {
   const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, data }) => updateCategory(id, data),
-    onSuccess: (data) => {
-      qc.setQueryData(queryKeys.categories.detail(data.id), data);
-      qc.invalidateQueries({ queryKey: queryKeys.categories.all });
+  const orvalMutation = useCategoryUpdate();
+  
+  return {
+    ...orvalMutation,
+    mutate: async ({ id, data }) => {
+      // Orval expects { id: number; data: DomainCategory }
+      return orvalMutation.mutateAsync({ id, data });
     },
-  });
+    mutateAsync: async ({ id, data }) => {
+      return orvalMutation.mutateAsync({ id, data });
+    },
+  };
 };
 
 export const useDeleteCategory = () => {
   const qc = useQueryClient();
-  return useMutation({
-    mutationFn: deleteCategory,
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.categories.all }),
-  });
+  const orvalMutation = useCategoryDelete();
+  
+  return {
+    ...orvalMutation,
+    mutate: async (id) => {
+      // Orval expects { id: number }
+      return orvalMutation.mutateAsync({ id });
+    },
+    mutateAsync: async (id) => {
+      return orvalMutation.mutateAsync({ id });
+    },
+  };
 };
 
 // ─── Learning Path Hooks ───────────────────────────────────
@@ -271,12 +309,13 @@ export const useEnrollInLearningPath = () => {
   });
 };
 
-// ─── Dashboard Stats ───────────────────────────────────────
+// ─── Dashboard Stats (Orval-generated) ───────────────────
 
 export const useDashboardStats = () => {
-  return useQuery({
-    queryKey: queryKeys.stats.dashboard(),
-    queryFn: fetchDashboardStats,
-    staleTime: 60_000, // 1 minute — stats don't change rapidly
+  const result = useStatsGet({
+    query: {
+      staleTime: 60_000, // 1 minute — stats don't change rapidly
+    },
   });
+  return result;
 };

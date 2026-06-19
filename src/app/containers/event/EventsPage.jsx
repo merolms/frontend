@@ -8,8 +8,8 @@ import {
   formatEventTime,
   getEventStatus,
   getEventTypes,
-} from "@/app/services/eventService";
-import { useEvents, useDeleteEvent } from "@/hooks/queries/useEvents";
+} from "@/app/utils/eventUtils";
+import { useEvents, useDeleteEvent, useUpdateEvent, useCreateEvent } from "@/hooks/queries/useEvents";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
@@ -157,6 +157,8 @@ const EventsPage = () => {
     limit: 8,
   });
   const deleteMutation = useDeleteEvent();
+  const createMutation = useCreateEvent();
+  const updateMutation = useUpdateEvent();
 
   // Process data
   useEffect(() => {
@@ -217,11 +219,9 @@ const EventsPage = () => {
   const handleFormSubmit = async (data) => {
     try {
       if (editingEvent) {
-        const { updateEvent } = await import("@/app/services/eventService");
-        await updateEvent(editingEvent.id, data);
+        await updateMutation.mutateAsync({ id: editingEvent.id, data });
       } else {
-        const { createEvent } = await import("@/app/services/eventService");
-        await createEvent(data);
+        await createMutation.mutateAsync(data);
       }
       setShowForm(false);
       setEditingEvent(null);

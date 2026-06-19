@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { getEventColors, getEventTypes } from "@/app/services/eventService";
+import { getEventColors, getEventTypes } from "@/app/utils/eventUtils";
 import FormActions from "@/components/forms/FormActions";
 import FormField from "@/components/forms/FormField";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";

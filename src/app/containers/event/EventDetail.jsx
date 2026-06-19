@@ -3,12 +3,11 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
-  deleteEvent,
-  fetchEventById,
   formatEventDate,
   formatEventTime,
   getEventStatus,
-} from "@/app/services/eventService";
+} from "@/app/utils/eventUtils";
+import { useEvent, useDeleteEvent, useUpdateEvent } from "@/hooks/queries/useEvents";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
@@ -29,35 +28,18 @@ const statusColors = { upcoming: "blue", ongoing: "green", completed: "gray" };
 const EventDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [event, setEvent] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
 
-  const loadData = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await fetchEventById(id);
-      if (!data) {
-        setError("Event not found.");
-        return;
-      }
-      setEvent(data);
-    } catch (err) {
-      setError("Failed to load event.");
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  // Use orval hook for fetching event
+  const { data: event, isLoading: loading, error: queryError } = useEvent(id);
+  const deleteMutation = useDeleteEvent();
+  const updateMutation = useUpdateEvent();
 
   const handleDelete = async () => {
     try {
-      await deleteEvent(id);
+      await deleteMutation.mutateAsync(id);
       navigate("/events");
     } catch (err) {
       setError("Failed to delete event.");
@@ -66,10 +48,8 @@ const EventDetail = () => {
 
   const handleFormSubmit = async (data) => {
     try {
-      const { updateEvent } = await import("@/app/services/eventService");
-      await updateEvent(id, data);
+      await updateMutation.mutateAsync({ id, data });
       setShowForm(false);
-      loadData();
     } catch (err) {
       console.error(err);
     }
