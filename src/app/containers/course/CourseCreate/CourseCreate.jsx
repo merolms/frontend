@@ -16,7 +16,7 @@ import { usePageTitle } from "@/hooks";
 import { useUnsavedChanges } from "@/hooks";
 import { t } from "@/styles/theme";
 
-const DRAFT_KEY = "course_create_draft";
+const draft_KEY = "course_create_draft";
 
 const CourseCreate = () => {
   usePageTitle("Create Course");
@@ -26,7 +26,7 @@ const CourseCreate = () => {
 
   const [form, setForm] = useState(() => {
     try {
-      const saved = localStorage.getItem(DRAFT_KEY);
+      const saved = localStorage.getItem(draft_KEY);
       if (saved) return JSON.parse(saved);
     } catch {
       /* ignore */
@@ -48,7 +48,7 @@ const CourseCreate = () => {
     form,
     { title: "", description: "", category: null, coverImage: "", duration: "" },
     setForm,
-    { draftKey: DRAFT_KEY }
+    { draftKey: draft_KEY }
   );
 
   const handleCoverUpload = async (e) => {

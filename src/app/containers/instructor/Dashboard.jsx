@@ -42,12 +42,12 @@ const InstructorDashboard = () => {
       <div className="mb-6 grid grid-cols-4 gap-4">
         <StatCard title="Total Courses" value={courses.length} icon={BookOpen} color="primary" />
         <StatCard
-          title="Published"
+          title="published"
           value={publishedCourses.length}
           icon={TrendingUp}
           color="success"
         />
-        <StatCard title="Drafts" value={draftCourses.length} icon={BookOpen} color="warning" />
+        <StatCard title="drafts" value={draftCourses.length} icon={BookOpen} color="warning" />
         <StatCard title="Students" value={stats?.totalUsers || 0} icon={Users} color="accent" />
       </div>
 

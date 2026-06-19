@@ -13,7 +13,7 @@ import { useUnsavedChanges } from "@/hooks";
 import { useToast } from "@/app/context/ToastContext";
 import { t } from "@/styles/theme";
 
-const DRAFT_KEY = "assignment_create_draft";
+const draft_KEY = "assignment_create_draft";
 
 const AssignmentCreate = () => {
   usePageTitle("Create Assignment");
@@ -24,7 +24,7 @@ const AssignmentCreate = () => {
 
   const [formData, setFormData] = useState(() => {
     try {
-      const saved = localStorage.getItem(DRAFT_KEY);
+      const saved = localStorage.getItem(draft_KEY);
       if (saved) return JSON.parse(saved);
     } catch {
       /* ignore */
@@ -63,7 +63,7 @@ const AssignmentCreate = () => {
       audienceType: "COURSE",
     },
     setFormData,
-    { draftKey: DRAFT_KEY }
+    { draftKey: draft_KEY }
   );
 
   const validate = () => {

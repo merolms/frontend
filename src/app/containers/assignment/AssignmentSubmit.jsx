@@ -100,8 +100,8 @@ const AssignmentSubmit = () => {
     );
   }
 
-  const isPublished = assignment.status === "PUBLISHED";
-  if (!isPublished) {
+  const ispublished = assignment.status === "published";
+  if (!ispublished) {
     return (
       <DashboardLayout>
         <div className="text-gray-500">This assignment is not yet published.</div>

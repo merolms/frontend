@@ -148,7 +148,7 @@ const CourseDetail = () => {
     try {
       setActionLoading(true);
       await restoreMutation.mutateAsync(id);
-      addToast("Course restored to Draft", "success");
+      addToast("Course restored to draft", "success");
     } catch (err) {
       addToast(err.message || "Failed to restore course", "error");
     } finally {
@@ -171,9 +171,9 @@ const CourseDetail = () => {
   };
 
   const statusConfig = {
-    published: { color: "green", text: "Published" },
-    draft: { color: "gray", text: "Draft" },
-    archived: { color: "orange", text: "Archived" },
+    published: { color: "green", text: "published" },
+    draft: { color: "gray", text: "draft" },
+    archived: { color: "orange", text: "archived" },
   };
 
   if (isLoading) {

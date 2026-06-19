@@ -31,9 +31,9 @@ import ViewModeSwitcher from "./views/ViewModeSwitcher";
 
 const statusOptions = [
   { value: "all", label: "All" },
-  { value: "published", label: "Published" },
-  { value: "draft", label: "Draft" },
-  { value: "archived", label: "Archived" },
+  { value: "published", label: "published" },
+  { value: "draft", label: "draft" },
+  { value: "archived", label: "archived" },
 ];
 
 const sortOptions = [

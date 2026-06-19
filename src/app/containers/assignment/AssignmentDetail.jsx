@@ -100,8 +100,8 @@ const AssignmentDetail = () => {
     );
   }
 
-  const isPublished = assignment.status === "PUBLISHED";
-  const isDraft = assignment.status === "DRAFT";
+  const ispublished = assignment.status === "published";
+  const isdraft = assignment.status === "draft";
 
   return (
     <DashboardLayout>
@@ -115,7 +115,7 @@ const AssignmentDetail = () => {
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{assignment.title}</h1>
               <div className="mt-1 flex items-center gap-2">
-                <Badge variant={isPublished ? "default" : "secondary"}>{assignment.status}</Badge>
+                <Badge variant={ispublished ? "default" : "secondary"}>{assignment.status}</Badge>
                 {assignment.audienceType !== "COURSE" && (
                   <Badge variant="outline">{assignment.audienceType}</Badge>
                 )}
@@ -123,7 +123,7 @@ const AssignmentDetail = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            {isDraft && canEdit && (
+            {isdraft && canEdit && (
               <Button size="sm" onClick={handlePublish}>
                 <Send className="mr-2 h-4 w-4" />
                 Publish
@@ -293,7 +293,7 @@ const AssignmentDetail = () => {
             </Paper>
 
             {/* Quick Actions */}
-            {isPublished && (
+            {ispublished && (
               <Paper className="p-6">
                 <h2 className="mb-4 text-lg font-semibold">Quick Actions</h2>
                 <div className="space-y-2">

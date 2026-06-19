@@ -96,9 +96,9 @@ export const getStatusLabel = (status) => {
     active: "In Progress",
     completed: "Completed",
     dropped: "Dropped",
-    published: "Published",
-    draft: "Draft",
-    archived: "Archived",
+    published: "published",
+    draft: "draft",
+    archived: "archived",
   };
   return labels[status] || status;
 };

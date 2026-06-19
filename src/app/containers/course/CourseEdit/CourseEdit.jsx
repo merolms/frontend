@@ -156,7 +156,7 @@ const CourseEdit = () => {
                       : "gray"
                 }
               >
-                {form.status === "draft" ? "Draft" : form.status || "Draft"}
+                {form.status === "draft" ? "draft" : form.status || "draft"}
               </Badge>
               <span className="text-text-muted text-[11px]">
                 Use the course detail page to publish, archive, or restore.

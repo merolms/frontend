@@ -265,13 +265,13 @@ const CourseViewer = () => {
   }
 
   // Determine if course is enrollable
-  const isPublished = course.status === "published";
+  const ispublished = course.status === "published";
   const isAdmin = hasPermission(user, "courses.publish"); // admin/instructor can see all
 
   // Not enrolled — show enroll prompt (only for published courses, or admins)
   if (!enrollment) {
-    // Draft/archived: show info message instead of enroll button (unless admin)
-    if (!isPublished && !isAdmin) {
+    // draft/archived: show info message instead of enroll button (unless admin)
+    if (!ispublished && !isAdmin) {
       return (
         <div
           style={{
@@ -300,7 +300,7 @@ const CourseViewer = () => {
                 : "This course is no longer available for enrollment."}
             </p>
             <Badge variant={course.status === "draft" ? "gray" : "orange"}>
-              {course.status === "draft" ? "Draft" : "Archived"}
+              {course.status === "draft" ? "draft" : "archived"}
             </Badge>
           </div>
         </div>
@@ -334,13 +334,13 @@ const CourseViewer = () => {
           </p>
           <button
             onClick={handleEnroll}
-            disabled={enrollMutation.isPending || !isPublished}
+            disabled={enrollMutation.isPending || !ispublished}
             className="bg-primary hover:bg-primary-hover text-secondary rounded-md px-6 py-2 text-sm font-medium disabled:opacity-50"
           >
             {enrollMutation.isPending
               ? "Enrolling…"
-              : !isPublished
-                ? "Enrollment Closed"
+              : !ispublished
+                ? "Enrollment closed"
                 : "Enroll Now"}
           </button>
         </div>

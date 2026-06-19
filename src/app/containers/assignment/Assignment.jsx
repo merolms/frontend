@@ -28,9 +28,9 @@ import { t } from "@/styles/theme";
 
 const statusOptions = [
   { value: "all", label: "All Status" },
-  { value: "PUBLISHED", label: "Published" },
-  { value: "DRAFT", label: "Draft" },
-  { value: "CLOSED", label: "Closed" },
+  { value: "published", label: "published" },
+  { value: "draft", label: "draft" },
+  { value: "closed", label: "closed" },
 ];
 
 const sortOptions = [
@@ -145,10 +145,10 @@ const AssignmentContainer = () => {
   const handleToggleStatus = async (assignment) => {
     try {
       const { updateAssignment } = await import("@/app/services/assignmentService");
-      const newStatus = assignment.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED";
+      const newStatus = assignment.status === "published" ? "draft" : "published";
       await updateAssignment(assignment.id, { status: newStatus });
       addToast(
-        `Assignment "${assignment.title}" ${newStatus === "PUBLISHED" ? "published" : "unpublished"}`,
+        `Assignment "${assignment.title}" ${newStatus === "published" ? "published" : "unpublished"}`,
         "success"
       );
       await fetchData();
@@ -288,7 +288,7 @@ const AssignmentContainer = () => {
                   <tr
                     key={assignment.id}
                     className={`hover:bg-bg-surface-hover cursor-pointer transition-colors ${
-                      assignment.status === "DRAFT" ? "opacity-60" : ""
+                      assignment.status === "draft" ? "opacity-60" : ""
                     }`}
                     onClick={() => navigate(`/assignments/${assignment.id}`)}
                   >
@@ -311,9 +311,9 @@ const AssignmentContainer = () => {
                     <td className="px-4 py-3">
                       <Badge
                         variant={
-                          assignment.status === "PUBLISHED"
+                          assignment.status === "published"
                             ? "green"
-                            : assignment.status === "CLOSED"
+                            : assignment.status === "closed"
                               ? "red"
                               : "gray"
                         }
@@ -340,7 +340,7 @@ const AssignmentContainer = () => {
                         <button
                           className="border-border hover:bg-bg-surface-active text-text-secondary flex h-7 w-7 items-center justify-center rounded-md border"
                           onClick={() => handleToggleStatus(assignment)}
-                          title={assignment.status === "PUBLISHED" ? "Unpublish" : "Publish"}
+                          title={assignment.status === "published" ? "Unpublish" : "Publish"}
                         >
                           <ToggleLeft size={12} />
                         </button>

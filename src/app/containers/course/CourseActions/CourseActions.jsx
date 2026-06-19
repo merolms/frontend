@@ -38,7 +38,7 @@ export const ArchiveModal = ({ open, onConfirm, onCancel, courseTitle, loading =
         <DialogTitle>Archive Course</DialogTitle>
       </DialogHeader>
       <p className="text-text-secondary text-sm">
-        Are you sure you want to archive <strong>{courseTitle}</strong>? Archived courses are hidden
+        Are you sure you want to archive <strong>{courseTitle}</strong>? archived courses are hidden
         from users but can be restored later.
       </p>
       <DialogFooter>
@@ -121,7 +121,7 @@ export const RestoreModal = ({ open, onConfirm, onCancel, courseTitle, loading =
         <DialogTitle>Restore Course</DialogTitle>
       </DialogHeader>
       <p className="text-text-secondary text-sm">
-        Restore <strong>{courseTitle}</strong> to Draft? It will be editable again and can be
+        Restore <strong>{courseTitle}</strong> to draft? It will be editable again and can be
         republished when ready.
       </p>
       <DialogFooter>
@@ -129,7 +129,7 @@ export const RestoreModal = ({ open, onConfirm, onCancel, courseTitle, loading =
           Cancel
         </Button>
         <Button variant="primary" onClick={onConfirm} disabled={loading}>
-          <ArchiveRestore size={14} /> Restore to Draft
+          <ArchiveRestore size={14} /> Restore to draft
         </Button>
       </DialogFooter>
     </DialogContent>

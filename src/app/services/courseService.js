@@ -7,7 +7,7 @@ import { apiDelete, apiGet, apiPost, apiPut, apiUpload } from "@/app/services/ht
 // Backend sends: created_at, updated_at (integer unix timestamps)
 // Backend sends: imageUrl, authorId, categoryId, lessonCount (camelCase)
 // Backend sends: duration as integer (minutes)
-// Backend sends: status as integer enum (0=DRAFT, 1=PUBLISHED, 2=ARCHIVED)
+// Backend sends: status as integer enum (0=draft, 1=published, 2=archived)
 // Backend lesson fields: displayOrder, durationMinutes, lessonType, contentFormat, isFreePreview
 
 const DEFAULT_COURSE_IMAGE =
@@ -145,7 +145,7 @@ export const createCourse = async (courseData) => {
       categoryId: courseData.category || null,
       authorId: courseData.authorID || null,
       duration: parseInt(courseData.duration, 10) || 0,
-      status: courseData.status || "DRAFT",
+      status: courseData.status || "draft",
     };
     const data = await apiPost("/courses", payload);
     return normalizeCourse(data);
@@ -167,7 +167,7 @@ export const updateCourse = async (id, courseData) => {
       imageUrl: courseData.coverImage || courseData.imageURL || "",
       categoryId: courseData.category || null,
       duration: parseInt(courseData.duration, 10) || 0,
-      status: courseData.status || "Draft",
+      status: courseData.status || "draft",
     };
     const data = await apiPut(`/courses/${id}`, payload);
     return normalizeCourse(data);
@@ -232,10 +232,10 @@ export const markCourseImportant = async (id) => {
   }
 };
 
-// Restore an archived course back to Draft so it can be edited/republished.
+// Restore an archived course back to draft so it can be edited/republished.
 export const restoreCourse = async (id) => {
   try {
-    const data = await apiPut(`/courses/${id}`, { status: "Draft" });
+    const data = await apiPut(`/courses/${id}`, { status: "draft" });
     return normalizeCourse(data);
   } catch (error) {
     console.error("Error restoring course:", error);
