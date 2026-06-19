@@ -145,7 +145,7 @@ export const createCourse = async (courseData) => {
       categoryId: courseData.category || null,
       authorId: courseData.authorID || null,
       duration: parseInt(courseData.duration, 10) || 0,
-      status: courseData.status || "Draft",
+      status: courseData.status || "DRAFT",
     };
     const data = await apiPost("/courses", payload);
     return normalizeCourse(data);

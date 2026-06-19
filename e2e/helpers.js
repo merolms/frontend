@@ -790,11 +790,86 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
     });
   });
 
-  await page.route("**/categories**", async (route) => {
+  await page.route("http://192.168.1.67:9090/categories**", async (route) => {
+    const url = route.request().url();
+    const method = route.request().method();
+
+    // Parse existing categories from localStorage to maintain state across requests
+    // Default seed data
+    let categories = [
+      { id: 1, name: "Programming", slug: "programming", description: "Software development courses", color: "#6366F1", icon: "code", status: 1, createdAt: 1700000000, updatedAt: 1700000000, courseCount: 5 },
+      { id: 2, name: "Design", slug: "design", description: "UI/UX and graphic design", color: "#EC4899", icon: "paint brush", status: 1, createdAt: 1700000100, updatedAt: 1700000100, courseCount: 3 },
+      { id: 3, name: "Data Science", slug: "data-science", description: "Data analysis and ML", color: "#10B981", icon: "database", status: 1, createdAt: 1700000200, updatedAt: 1700000200, courseCount: 2 },
+    ];
+
+    if (method === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "success", data: categories }),
+      });
+      return;
+    }
+
+    if (method === "POST") {
+      let body = {};
+      try { body = await route.request().postDataJSON(); } catch {}
+      const newCat = {
+        id: Date.now(),
+        name: body.name || "New Category",
+        slug: body.slug || body.name?.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "new-category",
+        description: body.description || "",
+        color: body.color || "#6366F1",
+        icon: body.icon || "folder",
+        status: 1,
+        createdAt: Math.floor(Date.now() / 1000),
+        updatedAt: Math.floor(Date.now() / 1000),
+        courseCount: 0,
+      };
+      categories.push(newCat);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "success", data: newCat }),
+      });
+      return;
+    }
+
+    // PUT /categories/:id
+    const putMatch = url.match(/\/categories\/(\d+)/);
+    if (method === "PUT" && putMatch) {
+      const catId = parseInt(putMatch[1]);
+      let body = {};
+      try { body = await route.request().postDataJSON(); } catch {}
+      const idx = categories.findIndex(c => c.id === catId);
+      if (idx !== -1) {
+        categories[idx] = { ...categories[idx], ...body, updatedAt: Math.floor(Date.now() / 1000) };
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "success", data: idx !== -1 ? categories[idx] : body }),
+      });
+      return;
+    }
+
+    // DELETE /categories/:id
+    const delMatch = url.match(/\/categories\/(\d+)/);
+    if (method === "DELETE" && delMatch) {
+      const catId = parseInt(delMatch[1]);
+      categories = categories.filter(c => c.id !== catId);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "Category deleted successfully" }),
+      });
+      return;
+    }
+
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ message: "success", data: ["Programming", "Design", "Data Science"] }),
+      body: JSON.stringify({ message: "success", data: categories }),
     });
   });
 
