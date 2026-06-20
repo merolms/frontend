@@ -17,7 +17,7 @@ import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import LoadingState from "@/components/common/LoadingState";
 import ProgressBar from "@/components/ProgressBar/ProgressBar";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import {
   Select,

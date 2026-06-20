@@ -23,7 +23,7 @@ import {
   useLearningPathCategories,
 } from "@/hooks/queries/useEntities";
 import { getLearningPathCategories } from "@/app/services/learningPathService";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Input } from "@/components/ui/input";

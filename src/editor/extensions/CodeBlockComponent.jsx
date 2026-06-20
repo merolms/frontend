@@ -4,7 +4,7 @@ import { Check, Copy, Eye, EyeOff } from "lucide-react";
 import { marked } from "marked";
 import { useEffect, useState } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import {
   Select,
   SelectContent,

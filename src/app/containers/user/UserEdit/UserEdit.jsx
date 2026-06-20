@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/app/context/ToastContext";
 import { fetchRoles } from "@/app/services/authService";
 import { fetchUserById, updateUser } from "@/app/services/userService";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Input } from "@/components/ui/input";

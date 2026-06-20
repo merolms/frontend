@@ -12,3 +12,5 @@ e2e_test_results.log
 archive/
 unused_code/
 stats.html
+*storybook.log
+storybook-static

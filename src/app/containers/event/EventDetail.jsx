@@ -9,7 +9,7 @@ import {
 } from "@/app/utils/eventUtils";
 import { useEvent, useDeleteEvent, useUpdateEvent } from "@/hooks/queries/useEvents";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 
 import EventForm from "./components/EventForm";

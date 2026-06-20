@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import TeamForm from "@/app/containers/team/TeamForm/TeamForm";
 import { useToast } from "@/app/context/ToastContext";
 import { useTeam, useUpdateTeam } from "@/hooks/queries/useEntities";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { t } from "@/styles/theme";

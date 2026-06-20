@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import { fetchTeams } from "@/app/services/teamService";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { t } from "@/styles/theme";
 

@@ -15,7 +15,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { hasPermission } from "@/app/services/authService";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Separator } from "@/components/ui/separator";

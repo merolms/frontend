@@ -3,7 +3,7 @@ import { useCallback, useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import UnderlineExtension from "@tiptap/extension-underline";
-import { Button } from "./button";
+import { Button } from "./Button";
 
 const RichTextEditor = ({ value, onChange, placeholder = "Enter content...", rows = 4 }) => {
   const editor = useEditor({

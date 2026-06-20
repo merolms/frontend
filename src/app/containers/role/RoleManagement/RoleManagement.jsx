@@ -6,7 +6,7 @@ import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute"
 import { useToast } from "@/app/context/ToastContext";
 import { deleteRole, fetchRoles } from "@/app/services/authService";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";

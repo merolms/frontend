@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import RoleForm from "@/app/containers/role/RoleForm/RoleForm";
 import { useToast } from "@/app/context/ToastContext";
 import { fetchRoleById, updateRole } from "@/app/services/authService";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { t } from "@/styles/theme";

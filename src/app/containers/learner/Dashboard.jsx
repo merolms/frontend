@@ -8,7 +8,7 @@ import LoadingState from "@/components/common/LoadingState";
 import StatCard from "@/components/common/StatCard";
 import EmptyState from "@/components/common/EmptyState";
 import ProgressBar from "@/components/ProgressBar/ProgressBar";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { usePageTitle } from "@/hooks";
 

@@ -25,7 +25,7 @@ import {
   adminEnrollTeamInCourse,
 } from "@/app/services/enrollmentService";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";

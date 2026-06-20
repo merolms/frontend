@@ -6,7 +6,7 @@ import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 import SideBar from "@/app/containers/SideBar/SideBar";
 import { useCourse, useCourseLessons } from "@/hooks/queries/useCourses";
 import { ReaderLayout } from "@/components/layouts/ReaderLayout";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/skeleton";
 import MeroEduEditor from "@/editor/Editor";
 import { loadLessonDoc } from "@/editor/utils/lessonContent";

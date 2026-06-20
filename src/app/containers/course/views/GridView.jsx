@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import EmptyState from "@/components/common/EmptyState";
 import LoadingState from "@/components/common/LoadingState";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 
 import { getStatusLabel } from "./viewHelpers";
 

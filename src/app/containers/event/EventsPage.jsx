@@ -11,7 +11,7 @@ import {
 } from "@/app/utils/eventUtils";
 import { useEvents, useDeleteEvent, useUpdateEvent, useCreateEvent } from "@/hooks/queries/useEvents";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
