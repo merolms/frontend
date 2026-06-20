@@ -13,6 +13,7 @@ import {
   useGetMembers,
   useAddMember,
   useRemoveMember,
+  useTeamGetStat,
 } from "@/app/api/orval";
 // Keep user fetching for now - available-users endpoint missing in orval
 import {
@@ -29,9 +30,13 @@ import {
 // Migrated to orval-generated hooks for categories
 import {
   useCategoryGetAll,
+  useCategoryGetByID,
   useCategoryCreate,
   useCategoryUpdate,
   useCategoryDelete,
+  useCategoryGetChildren,
+  useCategoryGetRoots,
+  useCategoryGetStat,
 } from "@/app/api/orval";
 // Migrated to orval-generated hooks for learning paths
 import {
@@ -188,6 +193,15 @@ export const useAvailableUsers = (teamId) => {
   });
 };
 
+export const useTeamStat = () => {
+  const result = useTeamGetStat();
+  
+  return {
+    ...result,
+    data: result.data?.data,
+  };
+};
+
 // ─── User Hooks ────────────────────────────────────────────
 
 export const useUsers = (params = {}) => {
@@ -229,6 +243,15 @@ export const useDeleteUser = () => {
   });
 };
 
+// ─── Course Analytics & Prerequisites (Orval-generated) ─────────
+
+// Note: The following hooks are available from @/app/api/orval
+// Use them directly in components:
+// - useGetCourseInsights
+// - useGetCourseProgress  
+// - useCreateCoursePrerequisite
+// - useDeleteCoursePrerequisite
+
 // ─── Category Hooks (Orval-generated) ────────────────────
 
 export const useCategories = (params = {}) => {
@@ -249,19 +272,13 @@ export const useCategories = (params = {}) => {
 };
 
 export const useCategory = (id) => {
-  // For single category, we need to implement using the base query
-  // Orval doesn't have a specific get by ID hook, so we'll use the getAll with filter
-  // This is a limitation - we may need to add a custom hook or use the base function
-  const qc = useQueryClient();
-  return useQuery({
-    queryKey: queryKeys.categories.detail(id),
-    queryFn: async () => {
-      // Fallback to manual implementation since orval doesn't have get by ID
-      const { apiGet } = await import("@/app/services/http");
-      return apiGet(`/categories/${id}`);
-    },
+  const result = useCategoryGetByID(id);
+  
+  return {
+    ...result,
+    data: result.data?.data,
     enabled: !!id,
-  });
+  };
 };
 
 export const useCreateCategory = () => {
@@ -308,6 +325,54 @@ export const useDeleteCategory = () => {
     },
     mutateAsync: async (id) => {
       return orvalMutation.mutateAsync({ id });
+    },
+  };
+};
+
+export const useCategoryChildren = (parentId) => {
+  const result = useCategoryGetChildren(parentId);
+  
+  return {
+    ...result,
+    data: result.data?.data || [],
+    enabled: !!parentId,
+  };
+};
+
+export const useCategoryRoots = (params = {}) => {
+  const orvalParams = {};
+  if (params.start !== undefined) orvalParams.start = params.start;
+  if (params.limit !== undefined) orvalParams.limit = params.limit;
+  
+  const result = useCategoryGetRoots(orvalParams);
+  
+  return {
+    ...result,
+    data: result.data?.data || [],
+  };
+};
+
+export const useCategoryStat = () => {
+  const result = useCategoryGetStat();
+  
+  return {
+    ...result,
+    data: result.data?.data,
+  };
+};
+
+export const useSetCategoryParent = () => {
+  const qc = useQueryClient();
+  const orvalMutation = useCategorySetParent();
+  
+  return {
+    ...orvalMutation,
+    mutate: async ({ id, parentId }) => {
+      // Orval expects { id: number; data: { parentId: number } }
+      return orvalMutation.mutateAsync({ id, data: { parentId } });
+    },
+    mutateAsync: async ({ id, parentId }) => {
+      return orvalMutation.mutateAsync({ id, data: { parentId } });
     },
   };
 };
