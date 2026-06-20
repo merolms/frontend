@@ -251,6 +251,16 @@ export const useDeleteUser = () => {
 // - useGetCourseProgress  
 // - useCreateCoursePrerequisite
 // - useDeleteCoursePrerequisite
+// - useEnrollTeam
+// - useRemoveTeamEnrollment
+// - useSubmitTeam
+// - useCreateContentRevision
+// - useDeleteContentRevision
+// - useGetCourseCertificates
+// - useGetCourseEvents
+// - useGetCourseForums
+// - useGetInvitationsByCourse
+// - useReorderCourses
 
 // ─── Category Hooks (Orval-generated) ────────────────────
 

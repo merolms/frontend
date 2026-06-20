@@ -21,14 +21,35 @@ This document lists backend APIs that are available in the Orval-generated API (
 
 The following hooks are available from the orval-generated API and can be imported directly in components. They are NOT re-exported through `useEntities.js`:
 
+**Analytics & Prerequisites:**
 - **`useGetCourseInsights`** - Get course insights (enrollments, completions, avg progress, quiz stats)
 - **`useGetCourseProgress`** - Get all learner progress summaries for a course
 - **`useCreateCoursePrerequisite`** - Create a course prerequisite
 - **`useDeleteCoursePrerequisite`** - Delete a course prerequisite
 
+**Enrollment & Assignments:**
+- **`useEnrollTeam`** - Enroll a team in a course (bulk enrollment)
+- **`useRemoveTeamEnrollment`** - Remove team enrollment (bulk unenrollment)
+- **`useSubmitTeam`** - Submit assignment as a team
+
+**Content Management:**
+- **`useCreateContentRevision`** - Create content revision
+- **`useDeleteContentRevision`** - Delete content revision
+
+**Advanced Features:**
+- **`useGetCourseCertificates`** - Get certificates issued for a course
+- **`useGetCourseEvents`** - Get events associated with a course
+- **`useGetCourseForums`** - Get forums for a course
+- **`useGetInvitationsByCourse`** - Get invitations for a course
+- **`useReorderCourses`** - Reorder courses
+
 ### ❌ Missing / Not Yet Migrated
 
-#### Course Versions
+**Note:** All course-related hooks that exist in the backend OpenAPI spec are now available from orval. The only missing APIs are for course version control, which are not defined in the OpenAPI spec and would need to be added to the backend before they can be used.
+
+#### Course Versions (Not in OpenAPI Spec)
+**Note:** Course version control hooks are NOT available in the orval-generated API. These would need to be added to the backend OpenAPI spec before they can be used.
+
 - **`useCreateCourseVersion`** - Create a new course version
   - Endpoint: `/courses/{id}/versions`
   - Use Case: Version control for course content
@@ -45,68 +66,20 @@ The following hooks are available from the orval-generated API and can be import
   - Endpoint: `/courses/{id}/versions/{versionId}`
   - Use Case: Clean up old versions
 
-#### Course Certificates
-- **`useGetCourseCertificates`** - Get certificates issued for a course
-  - Endpoint: `/courses/{id}/certificates`
-  - Use Case: View all certificates for a course
-
-#### Course Events
-- **`useGetCourseEvents`** - Get events associated with a course
-  - Endpoint: `/courses/{id}/events`
-  - Use Case: Link live sessions/events to courses
-
-#### Course Forums
-- **`useGetCourseForums`** - Get forums for a course
-  - Endpoint: `/courses/{id}/forums`
-  - Use Case: Course discussion boards
-
-#### Course Invitations
-- **`useGetInvitationsByCourse`** - Get invitations for a course
-  - Endpoint: `/courses/{id}/invitations`
-  - Use Case: Manage course invitations
-
-#### Course Reordering
-- **`useReorderCourses`** - Reorder courses
-  - Endpoint: `/courses/reorder`
-  - Use Case: Custom course ordering in catalogs
-
-#### Content Revisions
-- **`useCreateContentRevision`** - Create content revision
-  - Endpoint: `/courses/{id}/revisions`
-  - Use Case: Track content changes
-
-- **`useDeleteContentRevision`** - Delete content revision
-  - Endpoint: `/courses/{id}/revisions/{revisionId}`
-  - Use Case: Remove revision history
-
-#### Enrollment Team Operations
-- **`useEnrollTeam`** - Enroll a team in a course
-  - Endpoint: `/courses/{id}/enroll-team`
-  - Use Case: Bulk team enrollment
-
-- **`useRemoveTeamEnrollment`** - Remove team enrollment
-  - Endpoint: `/courses/{id}/enrollments/{teamId}`
-  - Use Case: Bulk team unenrollment
-
-#### Team Assignment Submission
-- **`useSubmitTeam`** - Submit assignment as a team
-  - Endpoint: `/assignments/{id}/submit-team`
-  - Use Case: Collaborative assignment submissions
-
 ---
 
 ## 🏷️ CATEGORIES
 
-### ✅ Already Migrated to Orval
+### ✅ Already Migrated to Orval (via useEntities.js)
 - `useCategoryGetAll` - Get all categories
 - `useCategoryGetByID` - Get category by ID
 - `useCategoryCreate` - Create a new category
 - `useCategoryUpdate` - Update a category
 - `useCategoryDelete` - Delete a category
-- `useCategoryGetChildren` - Get child categories of a parent
-- `useCategoryGetRoots` - Get root categories
-- `useCategorySetParent` - Set parent category
-- `useCategoryGetStat` - Get total category count
+- `useCategoryChildren` - Get child categories of a parent
+- `useCategoryRoots` - Get root categories
+- `useSetCategoryParent` - Set parent category
+- `useCategoryStat` - Get total category count
 
 ### ❌ Missing / Not Yet Migrated
 
@@ -116,7 +89,7 @@ The following hooks are available from the orval-generated API and can be import
 
 ## 👥 TEAMS
 
-### ✅ Already Migrated to Orval
+### ✅ Already Migrated to Orval (via useEntities.js)
 - `useTeamGetAll` - List all teams
 - `useTeamGetByID` - Get team by ID
 - `useTeamCreate` - Create a new team
@@ -125,7 +98,7 @@ The following hooks are available from the orval-generated API and can be import
 - `useGetMembers` - Get team members
 - `useAddMember` - Add member to team
 - `useRemoveMember` - Remove member from team
-- `useTeamGetStat` - Get total team count
+- `useTeamStat` - Get total team count
 
 ### ❌ Missing / Not Yet Migrated
 
@@ -137,33 +110,34 @@ The following hooks are available from the orval-generated API and can be import
 
 ## 📝 Priority Recommendations
 
-### ✅ Completed (Just Migrated)
+### ✅ Completed (Categories & Teams - 100% Migrated)
 
-1. **`useCategoryGetByID`** - Now using orval hook instead of manual implementation
-2. **`useTeamGetStat`** - Now imported and exposed in useEntities.js
-3. **`useCategoryGetChildren`** - Now imported and wrapper added
-4. **`useCategoryGetRoots`** - Now imported and wrapper added
-5. **`useCategorySetParent`** - Now imported and wrapper added
-6. **`useCategoryGetStat`** - Now imported and wrapper added
+1. ✅ `useCategoryGetByID` - Now using orval hook instead of manual implementation
+2. ✅ `useTeamStat` - Now imported and exposed in useEntities.js
+3. ✅ `useCategoryChildren` - Now imported and wrapper added
+4. ✅ `useCategoryRoots` - Now imported and wrapper added
+5. ✅ `useCategorySetParent` - Now imported and wrapper added
+6. ✅ `useCategoryStat` - Now imported and wrapper added
 
-### High Priority (Most Useful)
+### High Priority (Available in Orval - Use Directly)
 
-1. **`useGetCourseInsights`** - Essential for course analytics dashboard
-2. **`useCourseProgress`** - Useful for tracking learner progress
-3. **`useCreateCoursePrerequisite`** & **`useDeleteCoursePrerequisite`** - For course dependencies
+1. **`useGetCourseInsights`** - Import from `@/app/api/orval` - Essential for course analytics dashboard
+2. **`useGetCourseProgress`** - Import from `@/app/api/orval` - Useful for tracking learner progress
+3. **`useCreateCoursePrerequisite`** & **`useDeleteCoursePrerequisite`** - Import from `@/app/api/orval` - For course dependencies
+4. **`useEnrollTeam`** & **`useRemoveTeamEnrollment`** - Import from `@/app/api/orval` - Bulk team enrollment
+5. **`useSubmitTeam`** - Import from `@/app/api/orval` - Team assignment submissions
 
-### Medium Priority (Nice to Have)
+### Medium Priority (Available in Orval - Use Directly)
 
-1. **`useEnrollTeam`** & **`useRemoveTeamEnrollment`** - Bulk team enrollment
-2. **`useCourseVersions`** - Version control for courses
-3. **`useSubmitTeam`** - Team assignment submissions
+1. **`useCreateContentRevision`** & **`useDeleteContentRevision`** - Import from `@/app/api/orval` - Content revision tracking
+2. **`useReorderCourses`** - Import from `@/app/api/orval` - Custom course ordering
 
-### Low Priority (Advanced Features)
+### Low Priority (Advanced Features - Available in Orval)
 
-1. Course content revisions tracking
-2. Course certificates
-3. Course forums integration
-4. Course events linking
+1. **`useGetCourseCertificates`** - Import from `@/app/api/orval` - Certificate management
+2. **`useGetCourseEvents`** - Import from `@/app/api/orval` - Course events linking
+3. **`useGetCourseForums`** - Import from `@/app/api/orval` - Course forums integration
+4. **`useGetInvitationsByCourse`** - Import from `@/app/api/orval` - Course invitations management
 
 ---
 
@@ -173,18 +147,18 @@ The following hooks are available from the orval-generated API and can be import
 
 1. ✅ Import `useCategoryGetByID` in `useEntities.js` and remove manual implementation
 2. ✅ Import `useTeamGetStat` in `useEntities.js` and expose as hook
-3. ✅ Create wrapper for `useCategoryGetChildren` in useEntities.js
-4. ✅ Create wrapper for `useCategoryGetRoots` in useEntities.js
+3. ✅ Create wrapper for `useCategoryChildren` in useEntities.js
+4. ✅ Create wrapper for `useCategoryRoots` in useEntities.js
 5. ✅ Create wrapper for `useCategorySetParent` in useEntities.js
 6. ✅ Create wrapper for `useCategoryGetStat` in useEntities.js
 
 ### Short-term (Add New Features)
 
-1. Implement course insights dashboard using `useGetCourseInsights`
-2. Add course progress tracking using `useGetCourseProgress`
-3. Add team stats to dashboard using `useTeamGetStat`
-4. Implement category hierarchy support
-5. Add course prerequisite management
+1. Implement course insights dashboard - import `useGetCourseInsights` directly from `@/app/api/orval`
+2. Add course progress tracking - import `useGetCourseProgress` directly from `@/app/api/orval`
+3. Add team stats to dashboard using `useTeamStat` from useEntities.js
+4. Implement category hierarchy support using the new category hooks
+5. Add course prerequisite management - import prerequisite hooks from `@/app/api/orval`
 
 ### Long-term (Advanced Features)
 
@@ -200,9 +174,9 @@ The following hooks are available from the orval-generated API and can be import
 
 | Module | Total APIs | Migrated | Missing | % Migrated |
 |--------|-----------|----------|---------|------------|
-| Courses | ~25 | 10 | ~15 | 40% |
-| Categories | 9 | 9 | 0 | 100% |
-| Teams | 9 | 9 | 0 | 100% |
-| **Total** | **~43** | **28** | **~15** | **65%** |
+| Courses | ~29 | 25 | 4 | **86%** |
+| Categories | 9 | 9 | 0 | **100%** ✅ |
+| Teams | 9 | 9 | 0 | **100%** ✅ |
+| **Total** | **~47** | **43** | **4** | **91%** |
 
-**Note:** This count is approximate based on the APIs analyzed in the orval-generated file. Some APIs may be related to features not yet implemented in the frontend (e.g., forums, certificates, events). All currently available category and team APIs have been fully migrated to orval.
+**Note:** This count is approximate based on the APIs analyzed in the orval-generated file. Almost all course-related hooks that exist in the backend OpenAPI spec are now available from orval. The only missing APIs are for course version control (4 hooks), which are not defined in the OpenAPI spec and would need to be added to the backend before they can be used. All category and team APIs are fully migrated.
