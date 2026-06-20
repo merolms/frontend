@@ -50,6 +50,27 @@ import {
   useLearningPathAdminEnrollUser,
   useLearningPathAdminEnrollTeam,
 } from "@/app/api/orval";
+// Enrollment hooks - orval-generated
+import {
+  useEnrollmentAdminEnrollTeam,
+  useEnrollmentAdminEnrollUser,
+  useEnrollmentDrop,
+  useEnrollmentEnroll,
+  useEnrollmentGet,
+  useEnrollmentGetProgress,
+} from "@/app/api/orval";
+// Certificate hooks - orval-generated
+import {
+  useCertificateGet,
+  useCertificateUpdate,
+  useCertificateDelete,
+} from "@/app/api/orval";
+// Notification hooks - orval-generated
+import {
+  useNotificationGet,
+  useNotificationCreate,
+  useNotificationDelete,
+} from "@/app/api/orval";
 // Keep these functions from learning path service - not in orval or need custom handling
 import {
   getLearningPathCategories,
@@ -543,4 +564,178 @@ export const useDashboardStats = () => {
     },
   });
   return result;
+};
+
+// ─── Enrollment Hooks (Orval-generated) ─────────────────────
+
+export const useEnrollment = (id) => {
+  const result = useEnrollmentGet(id);
+  
+  return {
+    ...result,
+    data: result.data?.data,
+    enabled: !!id,
+  };
+};
+
+export const useEnrollmentProgress = (id) => {
+  const result = useEnrollmentGetProgress(id);
+  
+  return {
+    ...result,
+    data: result.data?.data,
+    enabled: !!id,
+  };
+};
+
+export const useEnrollInCourse = () => {
+  const qc = useQueryClient();
+  const orvalMutation = useEnrollmentEnroll();
+  
+  return {
+    ...orvalMutation,
+    mutate: async (id) => {
+      // Orval expects { id: number }
+      return orvalMutation.mutateAsync({ id });
+    },
+    mutateAsync: async (id) => {
+      return orvalMutation.mutateAsync({ id });
+    },
+  };
+};
+
+export const useDropFromCourse = () => {
+  const qc = useQueryClient();
+  const orvalMutation = useEnrollmentDrop();
+  
+  return {
+    ...orvalMutation,
+    mutate: async (id) => {
+      // Orval expects { id: number }
+      return orvalMutation.mutateAsync({ id });
+    },
+    mutateAsync: async (id) => {
+      return orvalMutation.mutateAsync({ id });
+    },
+  };
+};
+
+export const useAdminEnrollUserInCourse = () => {
+  const qc = useQueryClient();
+  const orvalMutation = useEnrollmentAdminEnrollUser();
+  
+  return {
+    ...orvalMutation,
+    mutate: async ({ id, data }) => {
+      // Orval expects { id: number; data: HttpAdminEnrollRequest }
+      return orvalMutation.mutateAsync({ id, data });
+    },
+    mutateAsync: async ({ id, data }) => {
+      return orvalMutation.mutateAsync({ id, data });
+    },
+  };
+};
+
+export const useAdminEnrollTeamInCourse = () => {
+  const qc = useQueryClient();
+  const orvalMutation = useEnrollmentAdminEnrollTeam();
+  
+  return {
+    ...orvalMutation,
+    mutate: async ({ id, data }) => {
+      // Orval expects { id: number; data: HttpAdminEnrollTeamRequest }
+      return orvalMutation.mutateAsync({ id, data });
+    },
+    mutateAsync: async ({ id, data }) => {
+      return orvalMutation.mutateAsync({ id, data });
+    },
+  };
+};
+
+// ─── Certificate Hooks (Orval-generated) ─────────────────────
+
+export const useCertificate = (id) => {
+  const result = useCertificateGet(id);
+  
+  return {
+    ...result,
+    data: result.data?.data,
+    enabled: !!id,
+  };
+};
+
+export const useUpdateCertificate = () => {
+  const qc = useQueryClient();
+  const orvalMutation = useCertificateUpdate();
+  
+  return {
+    ...orvalMutation,
+    mutate: async ({ id, data }) => {
+      // Orval expects { id: number; data: DomainCertificate }
+      return orvalMutation.mutateAsync({ id, data });
+    },
+    mutateAsync: async ({ id, data }) => {
+      return orvalMutation.mutateAsync({ id, data });
+    },
+  };
+};
+
+export const useDeleteCertificate = () => {
+  const qc = useQueryClient();
+  const orvalMutation = useCertificateDelete();
+  
+  return {
+    ...orvalMutation,
+    mutate: async (id) => {
+      // Orval expects { id: number }
+      return orvalMutation.mutateAsync({ id });
+    },
+    mutateAsync: async (id) => {
+      return orvalMutation.mutateAsync({ id });
+    },
+  };
+};
+
+// ─── Notification Hooks (Orval-generated) ───────────────────
+
+export const useNotification = (id) => {
+  const result = useNotificationGet(id);
+  
+  return {
+    ...result,
+    data: result.data?.data,
+    enabled: !!id,
+  };
+};
+
+export const useCreateNotification = () => {
+  const qc = useQueryClient();
+  const orvalMutation = useNotificationCreate();
+  
+  return {
+    ...orvalMutation,
+    mutate: async (data) => {
+      // Orval expects { data: DomainNotification }
+      return orvalMutation.mutateAsync({ data });
+    },
+    mutateAsync: async (data) => {
+      return orvalMutation.mutateAsync({ data });
+    },
+  };
+};
+
+export const useDeleteNotification = () => {
+  const qc = useQueryClient();
+  const orvalMutation = useNotificationDelete();
+  
+  return {
+    ...orvalMutation,
+    mutate: async (id) => {
+      // Orval expects { id: number }
+      return orvalMutation.mutateAsync({ id });
+    },
+    mutateAsync: async (id) => {
+      return orvalMutation.mutateAsync({ id });
+    },
+  };
 };
