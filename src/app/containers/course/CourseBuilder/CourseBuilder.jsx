@@ -346,6 +346,50 @@ const CourseBuilder = () => {
     }
   };
 
+  const handleBulkDeleteLessons = async (lessonIds) => {
+    try {
+      for (const lessonId of lessonIds) {
+        await deleteLesson(id, lessonId);
+      }
+      const updated = lessons.filter((l) => !lessonIds.includes(l.id));
+      setLessons(updated);
+      // If selected lesson was deleted, select the next one
+      if (selectedLesson && lessonIds.includes(selectedLesson.id)) {
+        const idx = lessons.findIndex((l) => l.id === selectedLesson.id);
+        const next = updated[idx] || updated[idx - 1] || null;
+        if (next) {
+          await loadLesson(next);
+          navigate(`/courses/${id}/builder/${next.id}`, { replace: true });
+        } else {
+          setSelectedLesson(null);
+          setContent("");
+          contentRef.current = "";
+        }
+      }
+    } catch (err) {
+      setError(err.message || "Failed to delete lessons.");
+    }
+  };
+
+  const handleBulkDuplicateLessons = async (lessonIds) => {
+    try {
+      const newLessons = [...lessons];
+      for (const lessonId of lessonIds) {
+        const original = lessons.find((l) => l.id === lessonId);
+        if (original) {
+          const duplicated = await createLesson(id, {
+            title: `${original.title} (Copy)`,
+            sort_order: lessons.length + 1,
+          });
+          newLessons.push(duplicated);
+        }
+      }
+      setLessons(newLessons);
+    } catch (err) {
+      setError(err.message || "Failed to duplicate lessons.");
+    }
+  };
+
   const lessonIndex = lessons.findIndex((l) => l.id === selectedLesson?.id);
 
   // ─── Loading ───────────────────────────────────────────────────
@@ -516,9 +560,11 @@ const CourseBuilder = () => {
             onAddLesson={handleAddLesson}
             onRenameLesson={handleRenameLesson}
             onDeleteLesson={handleDeleteLesson}
+            onReorder={handleReorderLessons}
+            onBulkDelete={handleBulkDeleteLessons}
+            onBulkDuplicate={handleBulkDuplicateLessons}
             adding={addingLesson}
             width={panelWidth}
-            onReorder={handleReorderLessons}
             isDragging={isDragging}
           />
 
