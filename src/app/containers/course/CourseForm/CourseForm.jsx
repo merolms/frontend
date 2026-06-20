@@ -150,7 +150,6 @@ const CourseForm = ({
               const value = e.target.value ? parseInt(e.target.value) : null;
               onFieldChange?.("category", value);
               setForm?.((prev) => ({ ...prev, category: value }));
-              if (errors.category) setForm?.((prev) => ({ ...prev, category: null }));
             }}
             className={inputCls}
           >

@@ -81,7 +81,7 @@ const CourseEdit = () => {
         data: {
           title: form.title,
           description: form.description,
-          categoryID: form.category,
+          category: form.category,
           coverImage: form.coverImage,
           duration: form.duration ? parseInt(form.duration) : null,
         },

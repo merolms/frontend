@@ -25,7 +25,14 @@ const CourseCreate = () => {
   const [form, setForm] = useState(() => {
     try {
       const saved = localStorage.getItem(draft_KEY);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Convert category from string to integer if it exists
+        if (parsed.category && typeof parsed.category === 'string') {
+          parsed.category = parseInt(parsed.category, 10);
+        }
+        return parsed;
+      }
     } catch {
       /* ignore */
     }
@@ -70,7 +77,7 @@ const CourseCreate = () => {
       const result = await createMutation.mutateAsync({
         title: form.title,
         description: form.description,
-        categoryID: form.category,
+        category: form.category,
         coverImage: form.coverImage,
         duration: form.duration ? parseInt(form.duration) : null,
         instructorID: currentUser?.id,
