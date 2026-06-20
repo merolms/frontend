@@ -1,23 +1,50 @@
 import { ChevronRight, Users } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import TeamForm from "@/app/containers/team/TeamForm/TeamForm";
 import { useToast } from "@/app/context/ToastContext";
 import { useCreateTeam } from "@/hooks/queries/useEntities";
+import { useUnsavedChanges } from "@/hooks";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { t } from "@/styles/theme";
+
+const draft_KEY = "team_create_draft";
 
 const TeamCreate = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
   const createMutation = useCreateTeam();
 
+  const [form, setForm] = useState(() => {
+    try {
+      const saved = localStorage.getItem(draft_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch {
+      /* ignore */
+    }
+    return { name: "", description: "", color: "#6366F1" };
+  });
+
+  const { updateForm, clearDirty } = useUnsavedChanges(
+    form,
+    { name: "", description: "", color: "#6366F1" },
+    setForm,
+    draft_KEY
+  );
+
+  // Save draft to localStorage
+  useEffect(() => {
+    localStorage.setItem(draft_KEY, JSON.stringify(form));
+  }, [form]);
+
   const handleSubmit = async (formData) => {
     try {
       const team = await createMutation.mutateAsync(formData);
       addToast(`Team "${team.name}" created successfully`, "success");
+      clearDirty();
+      localStorage.removeItem(draft_KEY);
       navigate(`/teams/${team.id}`);
     } catch (err) {
       console.error(err);
@@ -42,7 +69,16 @@ const TeamCreate = () => {
         <p className="text-text-muted mb-4 text-xs">
           Set up a new team and start assigning members.
         </p>
-        <TeamForm onSubmit={handleSubmit} onCancel={() => navigate("/teams")} loading={createMutation.isPending} />
+        <TeamForm
+          initialData={form}
+          onSubmit={handleSubmit}
+          onCancel={() => navigate("/teams")}
+          loading={createMutation.isPending}
+          submitLabel="Create Team"
+          setForm={setForm}
+          autoSave={true}
+          autoSaveKey={draft_KEY}
+        />
       </Paper>
     </DashboardLayout>
   );

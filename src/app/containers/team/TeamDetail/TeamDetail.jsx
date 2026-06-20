@@ -1,11 +1,12 @@
-import { AlertCircle, ChevronRight, Loader, Pencil, Plus, Trash2 } from "lucide-react";
+import { AlertCircle, ChevronRight, Loader, Pencil, Plus, Trash2, Power } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import TeamMemberAssignModal from "@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal";
 import { useToast } from "@/app/context/ToastContext";
-import { useTeam, useTeamMembers, useDeleteTeam } from "@/hooks/queries/useEntities";
+import { useTeam, useTeamMembers, useDeleteTeam, useUpdateTeam } from "@/hooks/queries/useEntities";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,9 +18,11 @@ const TeamDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { addToast } = useToast();
+  const queryClient = useQueryClient();
   const { data: team, isLoading: loading } = useTeam(id);
   const { data: members } = useTeamMembers(id);
   const deleteMutation = useDeleteTeam();
+  const updateMutation = useUpdateTeam();
   const [error, setError] = useState(null);
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -31,6 +34,41 @@ const TeamDetail = () => {
       navigate("/teams");
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const getDeleteWarnings = () => {
+    if (!team) return null;
+    const memberCount = members?.length || 0;
+    if (memberCount === 0) return null;
+    return {
+      members: memberCount,
+    };
+  };
+
+  const handleRefreshMembers = () => {
+    queryClient.invalidateQueries({ queryKey: ["teamMembers", id] });
+  };
+
+  const handleToggleStatus = async () => {
+    if (!team) return;
+    try {
+      const newStatus = team.status === 1 ? 0 : 1;
+      await updateMutation.mutateAsync({
+        id,
+        data: { status: newStatus },
+      });
+      addToast(
+        `Team "${team.name}" ${newStatus === 1 ? "activated" : "deactivated"}`,
+        "success"
+      );
+      // Invalidate team query to refresh data
+      queryClient.invalidateQueries({ queryKey: ["team", id] });
+    } catch (err) {
+      addToast(
+        err.message || `Failed to ${team.status === 1 ? "deactivate" : "activate"} team`,
+        "error"
+      );
     }
   };
 
@@ -69,16 +107,26 @@ const TeamDetail = () => {
         </div>
 
         {/* Actions */}
-        <div className="mb-4 flex items-center justify-end gap-2">
-          <Button size="sm" onClick={() => setShowMemberModal(true)}>
-            <Plus size={14} /> Add Member
+        <div className="mb-4 flex items-center justify-between">
+          <Button
+            size="sm"
+            variant={team.status === 1 ? "danger" : "primary"}
+            onClick={handleToggleStatus}
+            disabled={updateMutation.isPending}
+          >
+            <Power size={14} /> {team.status === 1 ? "Deactivate" : "Activate"}
           </Button>
-          <Button variant="default" size="sm" onClick={() => navigate(`/teams/${id}/edit`)}>
-            <Pencil size={14} /> Edit
-          </Button>
-          <Button variant="default" size="sm" onClick={() => setDeleteTarget(team)}>
-            <Trash2 size={14} /> Delete
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button size="sm" onClick={() => setShowMemberModal(true)}>
+              <Plus size={14} /> Add Member
+            </Button>
+            <Button variant="default" size="sm" onClick={() => navigate(`/teams/${id}/edit`)}>
+              <Pencil size={14} /> Edit
+            </Button>
+            <Button variant="default" size="sm" onClick={() => setDeleteTarget(team)}>
+              <Trash2 size={14} /> Delete
+            </Button>
+          </div>
         </div>
 
         <div className="mb-4 flex items-center gap-3">
@@ -155,16 +203,17 @@ const TeamDetail = () => {
           open={showMemberModal}
           onClose={() => setShowMemberModal(false)}
           team={team}
-          onUpdated={loadData}
+          onUpdated={handleRefreshMembers}
         />
       )}
       <DeleteModal
         open={!!deleteTarget}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
-        itemName={deleteTarget?.name}
+        itemName={deleteTarget?.name || team?.name}
         itemType="team"
-        loading={actionLoading}
+        loading={deleteMutation.isPending}
+        warnings={getDeleteWarnings()}
       />
     </>
   );

@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import TeamMemberAssignModal from "@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal";
+import { useToast } from "@/app/context/ToastContext";
 import { useTeams, useTeamMembers, useDeleteTeam } from "@/hooks/queries/useEntities";
 import { fetchTeamMembers } from "@/app/services/teamService";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -39,6 +40,7 @@ const TeamContainer = () => {
   usePageTitle("Teams");
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { addToast } = useToast();
   const [assignTeam, setAssignTeam] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
@@ -80,6 +82,7 @@ const TeamContainer = () => {
     try {
       setActionLoading(true);
       await deleteMutation.mutateAsync(deleteTarget.id);
+      addToast(`Team "${deleteTarget.name}" deleted`, "error");
       setDeleteTarget(null);
       // The deleteMutation should handle cache invalidation automatically
       // But we still need to trigger the member data refresh
@@ -89,6 +92,15 @@ const TeamContainer = () => {
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const getDeleteWarnings = (team) => {
+    if (!team) return null;
+    const memberCount = team.memberCount || 0;
+    if (memberCount === 0) return null;
+    return {
+      members: memberCount,
+    };
   };
 
   const handleClear = () => {
@@ -250,6 +262,7 @@ const TeamContainer = () => {
         itemName={deleteTarget?.name}
         itemType="team"
         loading={actionLoading}
+        warnings={getDeleteWarnings(deleteTarget)}
       />
     </>
   );

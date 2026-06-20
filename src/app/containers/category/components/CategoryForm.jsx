@@ -77,79 +77,81 @@ const CategoryForm = ({ category = null, onSubmit, onClose, loading = false }) =
         <DialogHeader>
           <DialogTitle>{isEditing ? "Edit Category" : "Create Category"}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-3">
-          <FormField label="Name" error={errors.name} required>
-            <Input
-              placeholder="e.g., Web Development"
-              value={form.name}
-              onChange={handleNameChange}
-            />
-          </FormField>
-          <FormField label="Slug" error={errors.slug} required>
-            <Input
-              placeholder="e.g., web-development"
-              value={form.slug}
-              onChange={(e) => handleChange("slug", e.target.value)}
-            />
-          </FormField>
-          <FormField label="Description">
-            <Textarea
-              placeholder="What kind of courses belong in this category?"
-              value={form.description}
-              onChange={(e) => handleChange("description", e.target.value)}
-              rows={3}
-            />
-          </FormField>
-          <FormField label="Color">
-            <Select value={form.color} onValueChange={(v) => handleChange("color", v)}>
-              <SelectTrigger>
-                <div className="flex items-center gap-2">
-                  <span
-                    className="h-3 w-3 flex-shrink-0 rounded-full"
-                    style={{ background: form.color }}
-                  />
-                  <span>
-                    {getCategoryColorOptions().find((c) => c.value === form.color)?.label ||
-                      form.color}
-                  </span>
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                {getCategoryColorOptions().map((c) => (
-                  <SelectItem key={c.value} value={c.value}>
-                    <span className="flex items-center gap-2">
-                      <span
-                        className="h-3 w-3 flex-shrink-0 rounded-full"
-                        style={{ background: c.value }}
-                      />
-                      {c.label}
+        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+          <div className="space-y-3">
+            <FormField label="Name" error={errors.name} required>
+              <Input
+                placeholder="e.g., Web Development"
+                value={form.name}
+                onChange={handleNameChange}
+              />
+            </FormField>
+            <FormField label="Slug" error={errors.slug} required>
+              <Input
+                placeholder="e.g., web-development"
+                value={form.slug}
+                onChange={(e) => handleChange("slug", e.target.value)}
+              />
+            </FormField>
+            <FormField label="Description">
+              <Textarea
+                placeholder="What kind of courses belong in this category?"
+                value={form.description}
+                onChange={(e) => handleChange("description", e.target.value)}
+                rows={3}
+              />
+            </FormField>
+            <FormField label="Color">
+              <Select value={form.color} onValueChange={(v) => handleChange("color", v)}>
+                <SelectTrigger>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="h-3 w-3 flex-shrink-0 rounded-full"
+                      style={{ background: form.color }}
+                    />
+                    <span>
+                      {getCategoryColorOptions().find((c) => c.value === form.color)?.label ||
+                        form.color}
                     </span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </FormField>
-          <FormField label="Icon">
-            <Select value={form.icon} onValueChange={(v) => handleChange("icon", v)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {iconOptions.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>
-                    {o.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </FormField>
-        </div>
-        <FormActions
-          onCancel={onClose}
-          loading={loading}
-          submitLabel={isEditing ? "Save Changes" : "Create Category"}
-          showCancel
-        />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  {getCategoryColorOptions().map((c) => (
+                    <SelectItem key={c.value} value={c.value}>
+                      <span className="flex items-center gap-2">
+                        <span
+                          className="h-3 w-3 flex-shrink-0 rounded-full"
+                          style={{ background: c.value }}
+                        />
+                        {c.label}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormField>
+            <FormField label="Icon">
+              <Select value={form.icon} onValueChange={(v) => handleChange("icon", v)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {iconOptions.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormField>
+          </div>
+          <FormActions
+            onCancel={onClose}
+            loading={loading}
+            submitLabel={isEditing ? "Save Changes" : "Create Category"}
+            showCancel
+          />
+        </form>
       </DialogContent>
     </Dialog>
   );

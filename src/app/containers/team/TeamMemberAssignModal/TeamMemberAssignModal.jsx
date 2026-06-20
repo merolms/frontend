@@ -7,6 +7,10 @@ import {
   Minus,
   Plus,
   Search,
+  Users,
+  UserPlus,
+  ShieldCheck,
+  X,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
@@ -23,19 +27,29 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { t } from "@/styles/theme";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 12;
+
+const TEAM_ROLES = [
+  { value: "Team Lead", label: "Team Lead", color: "orange" },
+  { value: "Instructor", label: "Instructor", color: "blue" },
+  { value: "Student", label: "Student", color: "green" },
+  { value: "Member", label: "Member", color: "gray" },
+];
 
 const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
   const [members, setMembers] = useState([]);
-  const [allLoaded, setAllLoaded] = useState([]);
   const [displayedUsers, setDisplayedUsers] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -45,6 +59,11 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [memberIds, setMemberIds] = useState(new Set());
+  const [allLoaded, setAllLoaded] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [selectedRole, setSelectedRole] = useState("Member");
   const { addToast } = useToast();
   const addMutation = useAddTeamMember();
   const removeMutation = useRemoveTeamMember();
@@ -70,6 +89,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
     setIsSearchMode(false);
     setSearchResults([]);
     setMemberIds(new Set());
+    setSelectedRole("Member");
   };
 
   const applyPagination = useCallback((users, page) => {
@@ -120,7 +140,6 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
       const filtered = batch.filter((u) => !memberIds.has(u.id));
       const updated = [...allLoaded, ...filtered];
       setAllLoaded(updated);
-      // Jump to the page showing the newly loaded users
       const newPage = Math.max(1, Math.ceil(updated.length / PAGE_SIZE));
       applyPagination(updated, newPage);
     } catch (err) {
@@ -142,7 +161,6 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
     setSearchLoading(true);
 
     try {
-      // Search through already loaded users first
       let results = allLoaded.filter(
         (u) =>
           (u.firstName || "").toLowerCase().includes(q) ||
@@ -150,12 +168,11 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
           (u.email || "").toLowerCase().includes(q)
       );
 
-      // If not enough results, fetch more from server
       if (results.length === 0) {
         let fetched = allLoaded.length;
         let keepFetching = true;
 
-        while (keepFetching) {
+        while (keepFetching && fetched < 500) {
           const result = await fetchUsers({ start: fetched, limit: 50 });
           const batch = Array.isArray(result.users) ? result.users : [];
           if (batch.length === 0) {
@@ -219,33 +236,31 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
     try {
       markBusy(key, true);
       setError(null);
-      await addMutation.mutateAsync({ teamId: team.id, userId: user.id });
+      await addMutation.mutateAsync({ 
+        teamId: team.id, 
+        userId: user.id,
+        role: selectedRole 
+      });
       const newMember = {
         userID: user.id,
         userId: user.id,
         userName: `${user.firstName} ${user.lastName}`.trim(),
         avatar: user.avatar || "",
-        role: user.role || "",
+        role: selectedRole,
         userEmail: user.email || "",
       };
       setMembers((prev) => [...prev, newMember]);
       const newMIds = new Set([...memberIds, user.id]);
       setMemberIds(newMIds);
-
-      // Remove from all loaded
       setAllLoaded((prev) => prev.filter((u) => u.id !== user.id));
       setSearchResults((prev) => prev.filter((u) => u.id !== user.id));
-
-      // Re-paginate current view
       const source = isSearchMode
         ? searchResults.filter((u) => u.id !== user.id)
         : allLoaded.filter((u) => u.id !== user.id);
-      // Adjust page if current page is now empty
       const maxPage = Math.ceil(source.length / PAGE_SIZE) || 1;
       const page = Math.min(currentPage, maxPage);
       applyPagination(source, page);
-
-      addToast(`${user.firstName} ${user.lastName} added to team`, "success");
+      addToast(`${user.firstName} ${user.lastName} added as ${selectedRole}`, "success");
       if (onUpdated) onUpdated();
     } catch (err) {
       setError(err.message || "Failed to add member.");
@@ -273,18 +288,8 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
   };
 
   const getRoleColor = (role) => {
-    switch (role) {
-      case "Administrator":
-        return "red";
-      case "Instructor":
-        return "blue";
-      case "Team Lead":
-        return "orange";
-      case "Student":
-        return "green";
-      default:
-        return "gray";
-    }
+    const r = TEAM_ROLES.find((r) => r.value === role);
+    return r?.color || "gray";
   };
 
   if (!team) return null;
@@ -295,45 +300,16 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
     </Badge>
   );
 
-  const renderUserRow = (user, onAction, actionIcon, actionClass, actionKey) => {
-    const isBusy = busyIds.has(actionKey);
-    return (
-      <div
-        key={user.id}
-        className="flex items-center justify-between rounded-lg px-3 py-2.5"
-        style={{ background: t("bg-surface"), border: `1px solid ${t("border-primary")}` }}
-      >
-        <div className="flex items-center gap-2.5">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={user.avatar || "https://i.pravatar.cc/150?img=1"} />
-            <AvatarFallback>{(user.firstName || "U")[0]}</AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="text-text-primary text-xs font-semibold">
-              {user.firstName} {user.lastName}
-            </p>
-            <p className="text-text-muted text-[11px]">{user.email}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {getRoleBadge(user.role)}
-          <button
-            className={`flex h-7 w-7 items-center justify-center rounded-md ${actionClass} hover:bg-opacity-20 cursor-pointer disabled:opacity-50`}
-            onClick={() => onAction(user)}
-            disabled={isBusy}
-          >
-            {actionIcon}
-          </button>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <Dialog open={open} onOpenChange={busyIds.size === 0 ? onClose : undefined}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Manage Members — {team.name}</DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle>Manage Members — {team.name}</DialogTitle>
+            <Badge variant={team.status === 1 ? "green" : "gray"} className="text-xs">
+              {team.status === 1 ? "Active" : "Inactive"}
+            </Badge>
+          </div>
         </DialogHeader>
 
         {error && (
@@ -343,156 +319,224 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
         )}
 
         {/* Current Members */}
-        <p className="text-text-primary flex items-center gap-1 text-xs font-semibold">
-          <Check size={12} className="text-success" /> Current Members ({members.length})
-        </p>
-        {loading ? (
-          <Loader size={14} className="text-text-muted mt-2 animate-spin" />
-        ) : members.length === 0 ? (
-          <p className="text-text-muted mt-1 text-xs">No members assigned yet.</p>
-        ) : (
-          <div className="mt-2 mb-4 max-h-48 space-y-1 overflow-y-auto">
-            {members.map((member) => {
-              const userId = member.userID || member.userId;
-              const userName = member.userName || "Unknown";
-              const isBusy = busyIds.has(`remove-${userId}`);
-              return (
-                <div
-                  key={userId}
-                  className="flex items-center justify-between rounded-lg px-3 py-2.5"
-                  style={{
-                    background: t("bg-secondary"),
-                    border: `1px solid ${t("border-primary")}`,
-                  }}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={member.avatar || "https://i.pravatar.cc/150?img=1"} />
-                      <AvatarFallback>{userName[0]}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-text-primary text-xs font-semibold">{userName}</p>
-                      {getRoleBadge(member.role)}
-                    </div>
-                  </div>
-                  <button
-                    className="text-error hover:bg-error/10 flex h-7 w-7 cursor-pointer items-center justify-center rounded-md disabled:opacity-50"
-                    onClick={() => handleRemoveMember(member)}
-                    disabled={isBusy}
-                  >
-                    <Minus size={12} />
-                  </button>
-                </div>
-              );
-            })}
+        <div className="bg-secondary/50 border-border mb-4 rounded-lg border p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Users size={16} className="text-primary" />
+              <h3 className="text-text-primary text-sm font-semibold">
+                Current Members ({members.length})
+              </h3>
+            </div>
           </div>
-        )}
-
-        <hr className="border-border" />
-
-        {/* Available Users */}
-        <div className="flex items-center justify-between">
-          <p className="text-text-primary flex items-center gap-1 text-xs font-semibold">
-            <Plus size={12} style={{ color: t("accent") }} /> Available Users ({totalCount})
-          </p>
+          {loading ? (
+            <Loader size={16} className="text-text-muted animate-spin" />
+          ) : members.length === 0 ? (
+            <p className="text-text-muted text-xs">No members assigned yet.</p>
+          ) : (
+            <div className="grid gap-2 sm:grid-cols-2">
+              {members.map((member) => {
+                const userId = member.userID || member.userId;
+                const userName = member.userName || "Unknown";
+                const isBusy = busyIds.has(`remove-${userId}`);
+                return (
+                  <div
+                    key={userId}
+                    className="border-border bg-surface flex items-center justify-between rounded-lg border p-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={member.avatar || "https://i.pravatar.cc/150?img=1"} />
+                        <AvatarFallback>{userName[0]}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-text-primary text-xs font-semibold truncate">{userName}</p>
+                        <p className="text-text-muted text-[11px] truncate">{member.userEmail}</p>
+                        {getRoleBadge(member.role)}
+                      </div>
+                    </div>
+                    <button
+                      className="border-border hover:bg-destructive/10 text-destructive flex h-7 w-7 items-center justify-center rounded-md border disabled:opacity-50"
+                      onClick={() => handleRemoveMember(member)}
+                      disabled={isBusy}
+                      title="Remove member"
+                    >
+                      <Minus size={12} />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {/* Search */}
-        <form onSubmit={handleSearch} className="flex gap-2">
-          <div className="relative flex-1">
-            <Search
-              size={14}
-              className="text-text-muted absolute top-1/2 left-2.5 -translate-y-1/2"
-            />
-            <Input
-              placeholder="Search users..."
-              value={userSearch}
-              onChange={(e) => setUserSearch(e.target.value)}
-              className="pl-8"
-            />
+        {/* Add New Members */}
+        <div className="border-border border-t pt-4">
+          <div className="mb-3 flex items-center gap-2">
+            <UserPlus size={16} className="text-primary" />
+            <h3 className="text-text-primary text-sm font-semibold">
+              Add Members
+            </h3>
           </div>
-          <Button type="submit" variant="default" size="sm" disabled={searchLoading}>
-            {searchLoading ? (
-              <>
-                <Loader size={12} className="mr-1 animate-spin" />
-              </>
-            ) : (
-              "Search"
-            )}
-          </Button>
-          {isSearchMode && (
-            <Button type="button" variant="default" size="sm" onClick={clearSearch}>
-              Clear
-            </Button>
-          )}
-        </form>
 
-        {/* Available Users List */}
-        {loading ? (
-          <Loader size={14} className="text-text-muted mt-2 animate-spin" />
-        ) : displayedUsers.length === 0 ? (
-          <p className="text-text-muted mt-1 text-xs">
-            {searchLoading
-              ? "Searching..."
-              : isSearchMode
-                ? `No users found matching "${userSearch}"`
-                : "No available users found."}
-          </p>
-        ) : (
-          <>
-            <div className="mt-2 max-h-56 space-y-1 overflow-y-auto">
-              {displayedUsers.map((user) =>
-                renderUserRow(
-                  user,
-                  handleAddMember,
-                  <Plus size={12} />,
-                  "text-success hover:bg-success/10",
-                  `add-${user.id}`
-                )
+          {/* Role Selection */}
+          <div className="mb-3">
+            <label className="text-text-muted mb-1.5 block text-xs">Default Role</label>
+            <Select value={selectedRole} onValueChange={setSelectedRole}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {TEAM_ROLES.map((role) => (
+                  <SelectItem key={role.value} value={role.value}>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="h-2 w-2 rounded-full"
+                        style={{ background: t(role.color) }}
+                      />
+                      {role.label}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Search */}
+          <form onSubmit={handleSearch} className="mb-3">
+            <div className="relative">
+              <Search
+                size={14}
+                className="text-text-muted absolute top-1/2 left-2.5 -translate-y-1/2"
+              />
+              <Input
+                placeholder="Search users by name or email..."
+                value={userSearch}
+                onChange={(e) => setUserSearch(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+            <div className="mt-2 flex gap-2">
+              <Button type="submit" variant="primary" size="sm" disabled={searchLoading}>
+                {searchLoading ? (
+                  <>
+                    <Loader size={12} className="mr-1 animate-spin" />
+                    Searching...
+                  </>
+                ) : (
+                  "Search"
+                )}
+              </Button>
+              {isSearchMode && (
+                <Button type="button" variant="default" size="sm" onClick={clearSearch}>
+                  <X size={12} className="mr-1" /> Clear
+                </Button>
               )}
             </div>
+          </form>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-2 flex items-center justify-between">
-                <button
-                  onClick={() => goToPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className="border-border text-text-secondary hover:bg-bg-surface-active flex h-7 cursor-pointer items-center gap-1 rounded-md border px-2 text-xs disabled:pointer-events-none disabled:opacity-50"
-                >
-                  <ChevronLeft size={12} /> <span>Previous</span>
-                </button>
-                <span className="text-text-muted text-[11px]">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <button
-                  onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage === totalPages}
-                  className="border-border text-text-secondary hover:bg-bg-surface-active flex h-7 cursor-pointer items-center gap-1 rounded-md border px-2 text-xs disabled:pointer-events-none disabled:opacity-50"
-                >
-                  <span>Next</span> <ChevronRight size={12} />
-                </button>
+          {/* Available Users */}
+          {loading ? (
+            <div className="text-center py-8">
+              <Loader size={20} className="text-text-muted mx-auto animate-spin" />
+            </div>
+          ) : displayedUsers.length === 0 ? (
+            <div className="border-border bg-surface py-8 text-center rounded-lg border">
+              <ShieldCheck size={32} className="text-text-muted mx-auto mb-2" />
+              <p className="text-text-muted text-sm">
+                {searchLoading
+                  ? "Searching..."
+                  : isSearchMode
+                    ? `No users found matching "${userSearch}"`
+                    : "No available users found."}
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="border-border bg-surface max-h-80 overflow-y-auto rounded-lg border">
+                <div className="grid gap-2 p-3 sm:grid-cols-2">
+                  {displayedUsers.map((user) => (
+                    <div
+                      key={user.id}
+                      className="border-border hover:bg-hover flex items-center justify-between rounded-lg border p-3 transition-colors"
+                    >
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={user.avatar || "https://i.pravatar.cc/150?img=1"} />
+                          <AvatarFallback>{(user.firstName || "U")[0]}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-text-primary text-xs font-semibold truncate">
+                            {user.firstName} {user.lastName}
+                          </p>
+                          <p className="text-text-muted text-[11px] truncate">{user.email}</p>
+                          {user.role && <Badge variant={getRoleColor(user.role)} className="text-[10px]">{user.role}</Badge>}
+                        </div>
+                      </div>
+                      <button
+                        className="border-success hover:bg-success/10 text-success flex h-8 w-8 items-center justify-center rounded-md border disabled:opacity-50"
+                        onClick={() => handleAddMember(user)}
+                        disabled={busyIds.has(`add-${user.id}`)}
+                        title={`Add as ${selectedRole}`}
+                      >
+                        <Plus size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
-            )}
 
-            {/* Load More — only show in non-search mode */}
-            {!isSearchMode && totalPages > 0 && currentPage === totalPages && (
-              <div className="mt-2 flex justify-center">
-                <Button variant="default" size="sm" onClick={loadMoreUsers} disabled={loadingMore}>
-                  {loadingMore ? (
-                    <>
-                      <Loader size={12} className="mr-1 animate-spin" /> Loading...
-                    </>
-                  ) : (
-                    "Load More Users"
-                  )}
-                </Button>
-              </div>
-            )}
-          </>
-        )}
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="text-text-muted text-xs">
+                    Page {currentPage} of {totalPages} ({totalCount} users)
+                  </span>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => goToPage(Math.max(1, currentPage - 1))}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft size={14} /> Previous
+                    </Button>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next <ChevronRight size={14} />
+                    </Button>
+                  </div>
+                </div>
+              )}
 
-        <div className="mt-4 flex justify-end">
+              {/* Load More */}
+              {!isSearchMode && totalPages > 0 && currentPage === totalPages && allLoaded.length > 0 && (
+                <div className="mt-3 flex justify-center">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={loadMoreUsers}
+                    disabled={loadingMore}
+                  >
+                    {loadingMore ? (
+                      <>
+                        <Loader size={14} className="mr-1 animate-spin" />
+                        Loading more...
+                      </>
+                    ) : (
+                      "Load More Users"
+                    )}
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        <div className="border-border border-t mt-4 pt-4 flex justify-end">
           <Button variant="default" onClick={onClose} disabled={busyIds.size > 0}>
             Done
           </Button>
