@@ -1,43 +1,20 @@
-import { useEffect, useState } from "react";
-import { ImageIcon, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { ImageIcon, Trash2, Pencil, Plus } from "lucide-react";
 
 import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
-import { useCategories } from "@/hooks/queries/useEntities";
+import { uploadCourseImage } from "@/app/services/courseService";
+import FormErrorBanner from "@/components/common/FormErrorBanner";
+import FormActions from "@/components/forms/FormActions";
+import FormField from "@/components/forms/FormField";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import FormField from "@/components/forms/FormField";
-import FormActions from "@/components/forms/FormActions";
+import { t } from "@/styles/theme";
 
-const tagOptions = [
-  "javascript",
-  "react",
-  "python",
-  "css",
-  "html",
-  "nodejs",
-  "typescript",
-  "machine-learning",
-  "data-science",
-  "design",
-  "ui",
-  "ux",
-  "devops",
-  "cloud",
-  "aws",
-  "docker",
-  "api",
-  "database",
-  "security",
-].map((tag) => ({ value: tag, label: tag }));
+const inputCls =
+  "border-border bg-bg-input text-text-primary text-sm placeholder:text-text-muted w-full rounded-md border px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";
 
 const CourseForm = ({
   initialData = null,
@@ -45,140 +22,196 @@ const CourseForm = ({
   onCancel,
   loading = false,
   submitLabel = "Save Course",
+  mode = "create", // "create" or "edit"
+  status = null, // For edit mode - show status badge
+  categories = [],
+  apiError = null,
+  errors = {},
+  onFieldChange,
+  form,
+  setForm,
+  setCoverUploading,
+  setCoverError,
 }) => {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    category: "",
-    tags: [],
-    coverImage: "",
-    ...initialData,
-  });
-  const [errors, setErrors] = useState({});
   const [unsplashOpen, setUnsplashOpen] = useState(false);
 
-  const { data: categories = [] } = useCategories({ status: "active" });
-
-  const categoryOptions = categories.map((c) => ({ value: c.name, label: c.name }));
-
-  useEffect(() => {
-    if (initialData) setFormData({ ...initialData });
-  }, [initialData]);
-
-  const validate = () => {
-    const e = {};
-    if (!formData.title.trim()) e.title = "Course title is required";
-    if (!formData.description.trim()) e.description = "Description is required";
-    if (!formData.category) e.category = "Category is required";
-    setErrors(e);
-    return Object.keys(e).length === 0;
+  const handleUnsplashSelect = (url) => {
+    setCoverError?.(false);
+    setForm?.((prev) => ({ ...prev, coverImage: url }));
+    setUnsplashOpen(false);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validate()) onSubmit(formData);
-  };
-  const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: null }));
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      setCoverUploading?.(true);
+      setCoverError?.(false);
+      const response = await uploadCourseImage(file);
+      setForm?.((prev) => ({ ...prev, coverImage: response?.url || response?.imageURL || "" }));
+    } catch (err) {
+      setCoverError?.(true);
+      console.error("Upload failed:", err);
+    } finally {
+      setCoverUploading?.(false);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="course-form space-y-3">
-      {Object.keys(errors).length > 0 && (
-        <Paper className="p-3">
-          <p className="text-error text-sm">Please fix the errors below.</p>
-        </Paper>
+    <form onSubmit={onSubmit} className="space-y-3">
+      {apiError && <FormErrorBanner message={apiError} />}
+      {Object.keys(errors).length > 0 && !apiError && (
+        <FormErrorBanner message="Please fix the errors below." />
       )}
 
       <FormField label="Course Title" error={errors.title} required>
-        <Input
+        <input
+          name="title"
           placeholder="e.g., Advanced React Patterns"
-          value={formData.title}
-          onChange={(e) => handleChange("title", e.target.value)}
+          value={form?.title || ""}
+          onChange={(e) => {
+            onFieldChange?.("title", e.target.value);
+            if (errors.title) setForm?.((prev) => ({ ...prev, title: e.target.value }));
+          }}
+          className={inputCls}
         />
       </FormField>
 
       <FormField label="Description" error={errors.description} required>
-        <Textarea
-          placeholder="What will students learn?"
-          value={formData.description}
-          onChange={(e) => handleChange("description", e.target.value)}
-          rows={4}
+        <textarea
+          name="description"
+          placeholder="What will students learn? What are the prerequisites?"
+          className={`${inputCls} min-h-[110px] py-1.5`}
+          value={form?.description || ""}
+          onChange={(e) => {
+            onFieldChange?.("description", e.target.value);
+            if (errors.description) setForm?.((prev) => ({ ...prev, description: e.target.value }));
+          }}
         />
       </FormField>
 
       <FormField label="Category" error={errors.category} required>
-        <Select value={formData.category} onValueChange={(v) => handleChange("category", v)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a category" />
-          </SelectTrigger>
-          <SelectContent>
-            {categoryOptions.map((o) => (
-              <SelectItem key={o.value} value={o.value}>
-                {o.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <select
+          name="category"
+          value={form?.category || ""}
+          onChange={(e) => {
+            const value = e.target.value ? parseInt(e.target.value) : null;
+            onFieldChange?.("category", value);
+            setForm?.((prev) => ({ ...prev, category: value }));
+            if (errors.category) setForm?.((prev) => ({ ...prev, category: null }));
+          }}
+          className={inputCls}
+        >
+          <option value="">Select a category</option>
+          {categories.map((o) => (
+            <option key={o.id} value={o.id}>
+              {o.name}
+            </option>
+          ))}
+        </select>
       </FormField>
 
-      <FormField label="Tags">
-        <Select value={formData.tags} onValueChange={(v) => handleChange("tags", v)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Add tags to help discovery" />
-          </SelectTrigger>
-          <SelectContent>
-            {tagOptions.map((o) => (
-              <SelectItem key={o.value} value={o.value}>
-                {o.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <FormField label="Duration (hours)" error={errors.duration}>
+        <input
+          name="duration"
+          type="number"
+          min="0"
+          placeholder="e.g. 8"
+          value={form?.duration ?? ""}
+          onChange={(e) => {
+            onFieldChange?.("duration", e.target.value);
+            setForm?.((prev) => ({ ...prev, duration: e.target.value }));
+          }}
+          className={inputCls}
+        />
       </FormField>
 
-      <FormField label="Cover Image">
+      {mode === "edit" && status && (
         <div className="flex items-center gap-2">
-          <Input
+          <span className="text-text-muted text-xs">Status</span>
+          <Badge
+            variant={
+              status === "published"
+                ? "green"
+                : status === "archived"
+                  ? "orange"
+                  : "gray"
+            }
+          >
+            {status === "draft" ? "draft" : status || "draft"}
+          </Badge>
+          <span className="text-text-muted text-[11px]">
+            Use the course detail page to publish, archive, or restore.
+          </span>
+        </div>
+      )}
+
+      <div>
+        <label className="text-text-primary text-xs font-semibold">Cover Image</label>
+        <div className="mt-1 flex gap-2">
+          <input
+            name="coverImage"
             placeholder="https://example.com/cover.jpg"
-            value={formData.coverImage}
-            onChange={(e) => handleChange("coverImage", e.target.value)}
+            value={form?.coverImage || ""}
+            onChange={(e) => {
+              setCoverError?.(false);
+              onFieldChange?.("coverImage", e.target.value);
+              setForm?.((prev) => ({ ...prev, coverImage: e.target.value }));
+            }}
+            className={`${inputCls} flex-1`}
           />
           <Button
             type="button"
-            variant="default"
             size="sm"
             onClick={() => setUnsplashOpen(true)}
             disabled={loading}
           >
             <ImageIcon size={14} /> Unsplash
           </Button>
+          <label className="cursor-pointer">
+            <Button type="button" size="sm" disabled={loading} asChild>
+              <span>Upload</span>
+            </Button>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileUpload}
+              disabled={loading}
+            />
+          </label>
         </div>
-        {formData.coverImage && (
+        {form?.coverImage && (
           <div className="relative mt-2 inline-block">
-            <img src={formData.coverImage} alt="Cover" className="h-36 rounded-md object-cover" />
+            <img
+              src={form.coverImage}
+              alt="Cover"
+              className="h-36 w-36 rounded-md object-cover"
+              onError={() => setCoverError?.(true)}
+            />
             <Button
               type="button"
               size="xs"
               variant="danger"
-              onClick={() => handleChange("coverImage", "")}
+              onClick={() => {
+                setCoverError?.(false);
+                onFieldChange?.("coverImage", "");
+                setForm?.((prev) => ({ ...prev, coverImage: "" }));
+              }}
               className="absolute top-1 right-1"
             >
               <Trash2 size={10} />
             </Button>
           </div>
         )}
-      </FormField>
+      </div>
 
       <UnsplashPicker
         open={unsplashOpen}
         onClose={() => setUnsplashOpen(false)}
-        onSelect={(url) => {
-          handleChange("coverImage", url);
-          setUnsplashOpen(false);
-        }}
-        initialQuery={formData.title || "education"}
+        onSelect={handleUnsplashSelect}
+        initialQuery={form?.title || "education"}
       />
 
       <FormActions onCancel={onCancel} loading={loading} submitLabel={submitLabel} />

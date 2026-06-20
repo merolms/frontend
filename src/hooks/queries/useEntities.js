@@ -64,10 +64,12 @@ export const useTeams = (params = {}) => {
 
   const result = useTeamGetAll(orvalParams);
 
-  // Transform data to match expected format
+  // The custom fetcher unwraps { message, data } envelope
+  // Orval's response structure: { data: DomainTeam[] }
+  // Component expects array directly, but we can provide both for compatibility
   return {
     ...result,
-    data: result.data?.data ? { teams: result.data.data, total: result.data.data.length } : { teams: [], total: 0 },
+    data: result.data || result.data?.data || [], // Return array directly for components
   };
 };
 
@@ -237,11 +239,12 @@ export const useCategories = (params = {}) => {
   
   const result = useCategoryGetAll(orvalParams);
   
-  // Orval returns the full response, we need to extract the data
-  // The custom fetcher handles the { message, data } envelope unwrapping
+  // The custom fetcher unwraps { message, data } envelope
+  // Orval's response structure: { data: DomainCategory[] }
+  return result
   return {
     ...result,
-    data: result.data?.data || [], // Extract categories array from response
+    data: result.data || [], // Handle both wrapped and unwrapped data
   };
 };
 

@@ -76,10 +76,12 @@ const CourseContainer = () => {
   const totalPages = data?.totalPages ?? 1;
   const total = data?.total ?? 0;
 
+
   const categoryOptions = [
     { value: "all", label: "All Categories" },
     ...categories.map((cat) => ({ value: cat.name, label: cat.name })),
   ];
+  console.log("categoryOptions: ", categoryOptions)
 
   const updateParams = (updates) => {
     const newParams = new URLSearchParams(searchParams);
@@ -123,7 +125,10 @@ const CourseContainer = () => {
         return <GridView {...props} />;
     }
   };
-
+  if(courses.length>0){
+    console.log("courses are ", courses)
+  }
+  
   return (
     <DashboardLayout
       title="Courses"

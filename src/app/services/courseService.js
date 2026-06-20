@@ -14,6 +14,7 @@ const DEFAULT_COURSE_IMAGE =
   "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop";
 
 // Convert unix timestamp (integer) to ISO date string, handling both seconds and milliseconds
+// I have commented this i don't know who is using this
 const tsToIso = (ts) => {
   if (!ts) return "";
   // Backend sends seconds since epoch
@@ -38,8 +39,8 @@ const normalizeCourse = (c) => ({
   tags: c.tags || [],
   totalLessons: c.lessonCount || 0,
   enrolledUsers: c.enrolledUsers || 0,
-  createdAt: tsToIso(c.created_at || c.createdAt),
-  updatedAt: tsToIso(c.updated_at || c.updatedAt),
+  createdAt: c.created_at,
+  updatedAt: c.updated_at,
   lessons: c.lessons || [],
   attachments: c.attachments || [],
 });
@@ -275,8 +276,8 @@ const normalizeLesson = (l) => {
     sort_order: l.displayOrder || l.orderNumber || l.order || 0,
     isFreePreview: l.isFreePreview || false,
     points: l.points || 0,
-    updatedAt: tsToIso(l.updatedAt || l.updated_at),
-    createdAt: tsToIso(l.createdAt || l.created_at),
+    updatedAt: l.updatedAt,
+    createdAt: l.createdAt,
     tags: l.tags || [],
   };
 };

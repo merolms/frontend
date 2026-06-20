@@ -1,15 +1,13 @@
-import { Lightbulb, Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
+import CourseForm from "@/app/containers/course/CourseForm/CourseForm";
 import { useToast } from "@/app/context/ToastContext";
-import { uploadCourseImage } from "@/app/services/courseService";
 import { useCategories } from "@/hooks/queries/useEntities";
 import { useCreateCourse } from "@/hooks/queries/useCourses";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
-import FormActions from "@/components/forms/FormActions";
 import FormField from "@/components/forms/FormField";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { usePageTitle } from "@/hooks";
@@ -35,8 +33,6 @@ const CourseCreate = () => {
   });
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState(null);
-  const [unsplashOpen, setUnsplashOpen] = useState(false);
-  const [dirty, setDirty] = useState(false);
   const [coverUploading, setCoverUploading] = useState(false);
   const [coverError, setCoverError] = useState(false);
 
@@ -48,30 +44,18 @@ const CourseCreate = () => {
     form,
     { title: "", description: "", category: null, coverImage: "", duration: "" },
     setForm,
-    { draftKey: draft_KEY }
+    draft_KEY
   );
 
-  const handleCoverUpload = async (e) => {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file) return;
-    setCoverUploading(true);
-    try {
-      const presignUrl = await uploadCourseImage(file);
-      setCoverError(false);
-      updateForm((p) => ({ ...p, coverImage: presignUrl }));
-    } catch (err) {
-      addToast(err.message || "Failed to upload image", "error");
-    } finally {
-      setCoverUploading(false);
-    }
-  };
+  // Save draft to localStorage
+  useEffect(() => {
+    localStorage.setItem(draft_KEY, JSON.stringify(form));
+  }, [form]);
 
   const validate = () => {
     const e = {};
-    if (!form.title.trim()) e.title = "Course title is required";
-    if (form.title.trim().length < 3) e.title = "Title must be at least 3 characters";
-    if (!form.description.trim()) e.description = "Description is required";
+    if (!form.title?.trim()) e.title = "Course title is required";
+    if (!form.description?.trim()) e.description = "Description is required";
     if (!form.category) e.category = "Category is required";
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -80,22 +64,31 @@ const CourseCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    setApiError(null);
+
     try {
-      const course = await createMutation.mutateAsync({
-        ...form,
-        authorID: currentUser?.id ?? null,
+      setApiError(null);
+      const result = await createMutation.mutateAsync({
+        title: form.title,
+        description: form.description,
+        categoryID: form.category,
+        coverImage: form.coverImage,
+        duration: form.duration ? parseInt(form.duration) : null,
+        instructorID: currentUser?.id,
       });
-      clearDirty();
+
       addToast("Course created successfully!", "success");
-      navigate(`/courses/${course.id}`);
+      clearDirty();
+      localStorage.removeItem(draft_KEY);
+      navigate(`/courses/${result.id}/builder`);
     } catch (err) {
       setApiError(err.message || "Failed to create course. Please try again.");
     }
   };
 
-  const inputCls =
-    "w-full h-8 px-3 rounded-md border border-border bg-bg-surface text-xs text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary mt-1";
+  const handleFieldChange = (field, value) => {
+    updateForm((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: null }));
+  };
 
   return (
     <DashboardLayout title="Create Course" subtitle="Fill in the course details below">
@@ -118,177 +111,24 @@ const CourseCreate = () => {
               Fill in the course details below. You can add lessons later from the Course Builder.
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-3">
-              {apiError && <FormErrorBanner message={apiError} />}
-              {Object.keys(errors).length > 0 && !apiError && (
-                <FormErrorBanner message="Please fix the errors below." />
-              )}
-
-              <FormField label="Course Title" error={errors.title} required>
-                <input
-                  name="title"
-                  placeholder="e.g., Advanced React Patterns"
-                  value={form.title}
-                  onChange={(e) => {
-                    updateForm((p) => ({ ...p, title: e.target.value }));
-                    if (errors.title) setErrors((p) => ({ ...p, title: null }));
-                  }}
-                  className={inputCls}
-                />
-              </FormField>
-
-              <FormField label="Description" error={errors.description} required>
-                <textarea
-                  name="description"
-                  placeholder="What will students learn? What are the prerequisites?"
-                  className={`${inputCls} min-h-[110px] py-1.5`}
-                  value={form.description}
-                  onChange={(e) => {
-                    updateForm((p) => ({ ...p, description: e.target.value }));
-                    if (errors.description) setErrors((p) => ({ ...p, description: null }));
-                  }}
-                />
-              </FormField>
-
-              <FormField label="Category" error={errors.category} required>
-                <select
-                  name="category"
-                  value={form.category || ""}
-                  onChange={(e) => {
-                    updateForm((p) => ({
-                      ...p,
-                      category: e.target.value ? parseInt(e.target.value) : null,
-                    }));
-                    if (errors.category) setErrors((p) => ({ ...p, category: null }));
-                  }}
-                  className={inputCls}
-                >
-                  <option value="">Select a category</option>
-                  {categories.map((o) => (
-                    <option key={o.id} value={o.id}>
-                      {o.name}
-                    </option>
-                  ))}
-                </select>
-              </FormField>
-
-              <FormField label="Duration (hours)" error={errors.duration}>
-                <input
-                  name="duration"
-                  type="number"
-                  min="0"
-                  placeholder="e.g. 8"
-                  value={form.duration ?? ""}
-                  onChange={(e) => updateForm((p) => ({ ...p, duration: e.target.value }))}
-                  className={inputCls}
-                />
-              </FormField>
-
-              <div>
-                <label className="text-text-primary text-xs font-semibold">Cover Image</label>
-                <div className="mt-1 flex gap-2">
-                  <input
-                    name="coverImage"
-                    placeholder="https://example.com/cover.jpg"
-                    value={form.coverImage}
-                    onChange={(e) => {
-                      setCoverError(false);
-                      updateForm((p) => ({ ...p, coverImage: e.target.value }));
-                    }}
-                    className={`${inputCls} flex-1`}
-                  />
-                  <label
-                    className={`border-border text-text-secondary hover:bg-bg-surface-active flex h-8 items-center rounded-md border px-3 text-xs ${
-                      coverUploading || createMutation.isLoading
-                        ? "cursor-not-allowed opacity-60"
-                        : "cursor-pointer"
-                    }`}
-                  >
-                    {coverUploading ? "Uploading…" : "Upload"}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleCoverUpload}
-                      disabled={coverUploading || createMutation.isLoading}
-                      className="hidden"
-                    />
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setUnsplashOpen(true)}
-                    disabled={createMutation.isLoading}
-                    className="border-border text-text-secondary hover:bg-bg-surface-active h-8 cursor-pointer rounded-md border px-3 text-xs"
-                  >
-                    Unsplash
-                  </button>
-                </div>
-                {form.coverImage && (
-                  <div className="relative mt-2 inline-block">
-                    {coverError ? (
-                      <div className="border-error bg-error/5 flex max-h-40 w-48 items-center justify-center rounded-md border border-dashed p-4">
-                        <span className="text-error text-xs">Invalid image URL</span>
-                      </div>
-                    ) : (
-                      <img
-                        src={form.coverImage}
-                        alt="Cover"
-                        className="max-h-40 rounded-md object-cover"
-                        onError={() => setCoverError(true)}
-                      />
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCoverError(false);
-                        updateForm((p) => ({ ...p, coverImage: "" }));
-                      }}
-                      className="bg-error text-secondary absolute top-1 right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded hover:opacity-80"
-                    >
-                      <X size={10} />
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <FormActions
-                onCancel={() => navigate("/courses")}
-                loading={createMutation.isLoading}
-                submitLabel={createMutation.isLoading ? "Creating..." : "Create Course"}
-              />
-            </form>
-          </div>
-        </div>
-
-        <div className="col-span-3 space-y-4">
-          {form.coverImage && (
-            <div className="border-border bg-bg-surface rounded-lg border p-6 shadow-sm">
-              <h3 className="text-text-primary mb-2 text-sm font-semibold">Current Cover</h3>
-              <img src={form.coverImage} alt="Cover" className="w-full rounded-md" />
-            </div>
-          )}
-          <div className="border-border bg-bg-surface space-y-2 rounded-lg border p-6 shadow-sm">
-            <h3 className="text-text-primary flex items-center gap-1 text-sm font-semibold">
-              <Lightbulb size={14} /> Tips
-            </h3>
-            <ul className="text-text-muted list-inside list-disc space-y-1 text-xs">
-              <li>Choose a descriptive, specific title</li>
-              <li>Write a compelling description (100-200 words)</li>
-              <li>Select the most relevant category</li>
-              <li>Use a high-quality cover image (16:9 ratio)</li>
-            </ul>
+            <CourseForm
+              mode="create"
+              form={form}
+              setForm={setForm}
+              categories={categories}
+              apiError={apiError}
+              errors={errors}
+              onFieldChange={handleFieldChange}
+              onSubmit={handleSubmit}
+              onCancel={() => navigate("/courses")}
+              loading={createMutation.isPending}
+              submitLabel="Create Course"
+              setCoverUploading={setCoverUploading}
+              setCoverError={setCoverError}
+            />
           </div>
         </div>
       </div>
-
-      <UnsplashPicker
-        open={unsplashOpen}
-        onClose={() => setUnsplashOpen(false)}
-        onSelect={(url) => {
-          updateForm((p) => ({ ...p, coverImage: url }));
-          setUnsplashOpen(false);
-        }}
-        initialQuery={form.title || "education"}
-      />
     </DashboardLayout>
   );
 };

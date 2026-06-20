@@ -160,21 +160,21 @@ const EventsPage = () => {
   const createMutation = useCreateEvent();
   const updateMutation = useUpdateEvent();
 
-  // Process data
-  useEffect(() => {
-    if (eventsResult) {
-      setEvents(eventsResult?.events || []);
-      setTotalPages(eventsResult?.totalPages || 1);
-      setTotal(eventsResult?.total || 0);
-    }
-  }, [eventsResult]);
+  // // Process data
+  // useEffect(() => {
+  //   if (eventsResult) {
+  //     setEvents(eventsResult?.events || []);
+  //     setTotalPages(eventsResult?.totalPages || 1);
+  //     setTotal(eventsResult?.total || 0);
+  //   }
+  // }, [eventsResult]);
 
-  // Update error state from query
-  useEffect(() => {
-    if (eventsError) {
-      setError("Failed to load events.");
-    }
-  }, [eventsError]);
+  // // Update error state from query
+  // useEffect(() => {
+  //   if (eventsError) {
+  //     setError("Failed to load events.");
+  //   }
+  // }, [eventsError]);
 
   const loading = eventsLoading;
 

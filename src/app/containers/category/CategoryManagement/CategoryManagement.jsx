@@ -56,8 +56,6 @@ const CategoryManagement = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [editingCat, setEditingCat] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const [filteredCategories, setFilteredCategories] = useState([]);
-  const limit = 10;
 
   // Fetch all categories for client-side filtering
   const {
@@ -67,44 +65,11 @@ const CategoryManagement = () => {
     refetch,
   } = useCategories({ start: 0, limit: 10 });
 
+
   // Mutation hooks
   const createMutation = useCreateCategory();
   const updateMutation = useUpdateCategory();
   const deleteMutation = useDeleteCategory();
-
-  // Client-side filtering, sorting, and pagination
-  // useEffect(() => {
-  //   const hasFilters = Boolean(search || statusFilter || sort);
-  //   let data = [...allCategories];
-
-  //   if (hasFilters) {
-  //     // Apply filters
-  //     if (search) {
-  //       const q = search.toLowerCase();
-  //       data = data.filter(
-  //         (c) =>
-  //           (c.name || "").toLowerCase().includes(q) ||
-  //           (c.description || "").toLowerCase().includes(q)
-  //       );
-  //     }
-  //     if (statusFilter) {
-  //       data = data.filter((c) => String(c.status) === statusFilter);
-  //     }
-  //     if (sort === "name") data.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-  //     else if (sort === "recent") data.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
-
-  //     const filteredTotal = data.length;
-  //     setFilteredCategories(data.slice((page - 1) * limit, page * limit));
-  //     setTotal(filteredTotal);
-  //     setTotalPages(Math.ceil(filteredTotal / limit) || 1);
-  //   } else {
-  //     // Server-side pagination for plain browsing
-  //     const start = (page - 1) * limit;
-  //     setFilteredCategories(data.slice(start, start + limit));
-  //     setTotal(data.length);
-  //     setTotalPages(Math.ceil(data.length / limit) || 1);
-  //   }
-  // }, [allCategories, search, statusFilter, sort, page]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -252,7 +217,7 @@ const CategoryManagement = () => {
         <Paper className="overflow-hidden">
           {isLoading ? (
             <LoadingState count={5} height="h-12" className="p-4" />
-          ) : filteredCategories.length === 0 ? (
+          ) : allCategories.length === 0 ? (
             <EmptyState
               icon={<Folder size={48} className="text-text-muted" />}
               title="No categories found"
@@ -290,7 +255,7 @@ const CategoryManagement = () => {
                 </tr>
               </thead>
               <tbody className="divide-border divide-y">
-                {filteredCategories.map((cat) => (
+                {allCategories.map((cat) => (
                   <tr
                     key={cat.id}
                     className={`hover:bg-bg-surface-hover transition-colors ${cat.status === 0 ? "opacity-60" : ""}`}

@@ -39,10 +39,6 @@ const TeamContainer = () => {
   usePageTitle("Teams");
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [teams, setTeams] = useState([]);
-  const [error, setError] = useState(null);
-  const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
   const [assignTeam, setAssignTeam] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
@@ -52,80 +48,17 @@ const TeamContainer = () => {
   const statusFilter = searchParams.get("status") || "";
   const sort = searchParams.get("sort") || "";
   const [searchInput, setSearchInput] = useState(search);
-
-  const limit = 8;
-
-  // TanStack Query hook for teams
-  const {
-    data: teamsResult,
-    isLoading: teamsLoading,
-    error: teamsError,
-    refetch,
-  } = useTeams({
-    start: (page - 1) * limit,
-    limit,
-    sort,
-  });
+  const totalPages=1
 
   const deleteMutation = useDeleteTeam();
-
-  const loading = teamsLoading;
-
-  useEffect(() => {
-    if (teamsError) {
-      setError(teamsError.message || "Failed to load teams");
-    }
-  }, [teamsError]);
-
-  // Update fetchData to use TanStack Query data
-  useEffect(() => {
-    const processData = async () => {
-      if (!teamsResult) return;
-
-      try {
-        setError(null);
-        const teamList = Array.isArray(teamsResult?.teams)
-          ? teamsResult.teams
-          : Array.isArray(teamsResult)
-            ? teamsResult
-            : [];
-        let filtered = teamList;
-        if (statusFilter) filtered = filtered.filter((t) => String(t.status) === statusFilter);
-        if (search) {
-          const q = search.toLowerCase();
-          filtered = filtered.filter(
-            (t) =>
-              (t.name || "").toLowerCase().includes(q) ||
-              (t.description || "").toLowerCase().includes(q)
-          );
-        }
-        const teamsWithMembers = await Promise.all(
-          filtered.map(async (team) => {
-            try {
-              const members = await fetchTeamMembers(team.id);
-              return {
-                ...team,
-                memberCount: members.length,
-                memberAvatars: members.slice(0, AVATAR_COUNT).map((m) => ({
-                  avatar: m.avatar || "https://i.pravatar.cc/150?img=1",
-                  userName: m.userName || "Unknown",
-                })),
-              };
-            } catch {
-              return { ...team, memberCount: 0, memberAvatars: [] };
-            }
-          })
-        );
-        setTeams(teamsWithMembers);
-        setTotal(teamsResult?.total || teamsResult?.length || 0);
-        setTotalPages(Math.ceil((teamsResult?.total || teamsResult?.length || 0) / limit) || 1);
-      } catch (err) {
-        setError(err.message || "Failed to load teams");
-      }
-    };
-
-    processData();
-  }, [teamsResult, statusFilter, search, limit, page, sort]);
+  // ─── TanStack Query: replaces manual useState + useEffect + fetch ───
+  // Fetch all teams for client-side filtering
+  const {
+    data: teams = [],
+    isLoading,
+    error: queryError,
+    refetch,
+  } = useTeams({ start: 0, limit: 10 });
 
   const updateParams = (updates) => {
     const newParams = new URLSearchParams(searchParams);
@@ -162,10 +95,10 @@ const TeamContainer = () => {
     setSearchInput("");
     setSearchParams(new URLSearchParams());
   };
-
+  console.log("teams", teams)
   return (
     <>
-      <DashboardLayout title="Teams" subtitle={`${total} team${total !== 1 ? "s" : ""} total`}>
+      <DashboardLayout title="Teams" >
         {/* Action bar */}
         <div className="mb-4 flex items-center justify-end">
           <Button size="sm" onClick={() => navigate("/teams/create")}>
@@ -174,7 +107,7 @@ const TeamContainer = () => {
         </div>
 
         {/* Error */}
-        {error && (
+        {queryError && (
           <div className="border-error/30 bg-error/5 text-error mb-4 flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm">
             <AlertCircle size={14} /> {error}
           </div>
@@ -231,7 +164,7 @@ const TeamContainer = () => {
         </Paper>
 
         {/* Content */}
-        {loading ? (
+        {isLoading ? (
           <div className="grid grid-cols-4 gap-4">
             {[...Array(4)].map((_, i) => (
               <Skeleton key={i} className="h-48" />
