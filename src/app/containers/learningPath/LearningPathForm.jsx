@@ -16,11 +16,12 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useToast } from "@/app/context/ToastContext";
 import { fetchCourses } from "@/app/services/courseService";
 import {
-  createLearningPath,
-  fetchLearningPathById,
-  fetchLearningPaths,
-  updateLearningPath,
-} from "@/app/services/learningPathService";
+  useLearningPath,
+  useLearningPaths,
+  useCreateLearningPath,
+  useUpdateLearningPath,
+  useLearningPathCategories,
+} from "@/hooks/queries/useEntities";
 import { getLearningPathCategories } from "@/app/services/learningPathService";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";

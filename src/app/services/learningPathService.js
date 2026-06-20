@@ -1,113 +1,8 @@
-// Learning Path API Service
-// Backend base path: /learning-paths (no /api prefix; backend basePath=/)
+// Learning Path API Service - Reduced
+// Only contains helper functions that aren't available in orval or need special handling
+// All main CRUD operations have been migrated to orval-generated hooks
 
-import { apiDelete, apiGet, apiPost, apiPut } from "@/app/services/http";
-
-// ==================== LIST ====================
-// GET /learning-paths?page=1&limit=6&search=react&category=Programming&status=published
-// Returns { message, data: { paths, total, page, limit, totalPages } }
-export const fetchLearningPaths = async (params = {}) => {
-  try {
-    const queryParams = new URLSearchParams();
-    if (params.page) queryParams.set("page", params.page);
-    if (params.limit) queryParams.set("limit", params.limit);
-    if (params.search) queryParams.set("search", params.search);
-    if (params.category && params.category !== "all") queryParams.set("category", params.category);
-    if (params.status && params.status !== "all") queryParams.set("status", params.status);
-
-    const queryStr = queryParams.toString();
-    const data = await apiGet(`/learning-paths${queryStr ? "?" + queryStr : ""}`);
-    return {
-      paths: data.paths || [],
-      total: data.total || 0,
-      page: data.page || 1,
-      limit: data.limit || 6,
-      totalPages: data.totalPages || 1,
-    };
-  } catch (error) {
-    console.error("Error fetching learning paths:", error);
-    throw error;
-  }
-};
-
-// ==================== GET BY ID ====================
-// GET /learning-paths/:id
-// Returns { message, data: { id, title, description, ... } }
-export const fetchLearningPathById = async (id) => {
-  try {
-    return await apiGet(`/learning-paths/${id}`);
-  } catch (error) {
-    console.error("Error fetching learning path:", error);
-    throw error;
-  }
-};
-
-// ==================== CREATE ====================
-// POST /learning-paths
-// Body: { title, description, category, difficulty, estimatedDuration, status, tags, color, courses: [{courseId, order}] }
-// Returns { message, data: { id, title, ... } }
-export const createLearningPath = async (data) => {
-  try {
-    const body = {
-      title: data.title,
-      description: data.description,
-      category: data.category,
-      difficulty: data.difficulty || "",
-      estimatedDuration: data.estimatedDuration || "",
-      status: data.status || "draft",
-      tags: data.tags || [],
-      color: data.color || "#6366F1",
-      courses: (data.courses || []).map((c, i) => ({
-        courseId: c.courseId || c.id,
-        order: c.order || i + 1,
-      })),
-    };
-    return await apiPost("/learning-paths", body);
-  } catch (error) {
-    console.error("Error creating learning path:", error);
-    throw error;
-  }
-};
-
-// ==================== UPDATE ====================
-// PUT /learning-paths/:id
-// Body: { title?, description?, category?, difficulty?, estimatedDuration?, status?, tags?, color?, courses? }
-// Returns { message, data: { id, title, ... } }
-export const updateLearningPath = async (id, data) => {
-  try {
-    const body = {};
-    if (data.title !== undefined) body.title = data.title;
-    if (data.description !== undefined) body.description = data.description;
-    if (data.category !== undefined) body.category = data.category;
-    if (data.difficulty !== undefined) body.difficulty = data.difficulty;
-    if (data.estimatedDuration !== undefined) body.estimatedDuration = data.estimatedDuration;
-    if (data.status !== undefined) body.status = data.status;
-    if (data.tags !== undefined) body.tags = data.tags;
-    if (data.color !== undefined) body.color = data.color;
-    if (data.courses !== undefined) {
-      body.courses = data.courses.map((c, i) => ({
-        courseId: c.courseId || c.id,
-        order: c.order || i + 1,
-      }));
-    }
-    return await apiPut(`/learning-paths/${id}`, body);
-  } catch (error) {
-    console.error("Error updating learning path:", error);
-    throw error;
-  }
-};
-
-// ==================== DELETE ====================
-// DELETE /learning-paths/:id
-// Returns { message: "Learning path deleted successfully" }
-export const deleteLearningPath = async (id) => {
-  try {
-    return await apiDelete(`/learning-paths/${id}`);
-  } catch (error) {
-    console.error("Error deleting learning path:", error);
-    throw error;
-  }
-};
+import { apiGet, apiPost, apiPut } from "@/app/services/http";
 
 // ==================== CATEGORIES ====================
 // GET /learning-paths/categories
@@ -118,25 +13,6 @@ export const getLearningPathCategories = async () => {
     return ["All Categories", ...(data || [])];
   } catch (error) {
     console.error("Error fetching learning path categories:", error);
-    throw error;
-  }
-};
-
-// ==================== STAT ====================
-// GET /learning-paths/stat
-// Returns { message, data: { count: N } }
-export const fetchLearningPathStat = async (params = {}) => {
-  try {
-    const queryParams = new URLSearchParams();
-    if (params.search) queryParams.set("search", params.search);
-    if (params.category) queryParams.set("category", params.category);
-    if (params.status) queryParams.set("status", params.status);
-
-    const queryStr = queryParams.toString();
-    const data = await apiGet(`/learning-paths/stat${queryStr ? "?" + queryStr : ""}`);
-    return data?.count || 0;
-  } catch (error) {
-    console.error("Error fetching learning path stat:", error);
     throw error;
   }
 };
@@ -160,18 +36,7 @@ export const reorderLearningPathCourses = async (id, courses) => {
   }
 };
 
-// ==================== ENROLL ====================
-// POST /learning-paths/:id/enroll
-// Returns { message, data: { enrollmentId, learningPathId, userId, status, progress, ... } }
-export const enrollInLearningPath = async (id) => {
-  try {
-    return await apiPost(`/learning-paths/${id}/enroll`, {});
-  } catch (error) {
-    console.error("Error enrolling in learning path:", error);
-    throw error;
-  }
-};
-
+// ==================== ADMIN ENROLLMENTS ====================
 // POST /learning-paths/:id/admin/enroll-user body: { userId }
 export const adminEnrollUserInLearningPath = async (learningPathId, userId) => {
   try {
@@ -199,17 +64,5 @@ export const getLearningPathEnrollments = async (learningPathId) => {
   } catch (error) {
     console.error("Error fetching learning path enrollments:", error);
     return [];
-  }
-};
-
-// ==================== PROGRESS ====================
-// GET /learning-paths/:id/progress
-// Returns { message, data: { enrollmentId, progress, currentCourseId, ... } }
-export const fetchLearningPathProgress = async (id) => {
-  try {
-    return await apiGet(`/learning-paths/${id}/progress`);
-  } catch (error) {
-    console.error("Error fetching learning path progress:", error);
-    throw error;
   }
 };

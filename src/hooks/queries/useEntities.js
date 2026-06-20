@@ -26,26 +26,29 @@ import {
   updateUser,
   deleteUser,
 } from "@/app/services/userService";
-// Migrated to orval-generated hooks
+// Migrated to orval-generated hooks for categories
 import {
   useCategoryGetAll,
   useCategoryCreate,
   useCategoryUpdate,
   useCategoryDelete,
 } from "@/app/api/orval";
+// Migrated to orval-generated hooks for learning paths
 import {
-  fetchLearningPaths,
-  fetchLearningPathById,
-  createLearningPath,
-  updateLearningPath,
-  deleteLearningPath,
-  enrollInLearningPath,
-  fetchLearningPathProgress,
+  useLearningPathGetAll,
+  useLearningPathGetByID,
+  useLearningPathCreate,
+  useLearningPathUpdate,
+  useLearningPathDelete,
+  useLearningPathEnroll,
+  useLearningPathGetProgress,
+  useLearningPathAdminEnrollUser,
+  useLearningPathAdminEnrollTeam,
+} from "@/app/api/orval";
+// Keep these functions from learning path service - not in orval or need custom handling
+import {
   getLearningPathCategories,
-  fetchLearningPathStat,
   reorderLearningPathCourses,
-  adminEnrollUserInLearningPath,
-  adminEnrollTeamInLearningPath,
   getLearningPathEnrollments,
 } from "@/app/services/learningPathService";
 // Migrated to orval-generated hooks
@@ -306,29 +309,41 @@ export const useDeleteCategory = () => {
   };
 };
 
-// ─── Learning Path Hooks ───────────────────────────────────
+// ─── Learning Path Hooks (Orval-generated) ─────────────────
 
 export const useLearningPaths = (params = {}) => {
-  return useQuery({
-    queryKey: queryKeys.learningPaths.list(params),
-    queryFn: () => fetchLearningPaths(params),
-  });
+  const orvalParams = {};
+  if (params.page !== undefined) orvalParams.page = params.page;
+  if (params.limit !== undefined) orvalParams.limit = params.limit;
+  if (params.search !== undefined) orvalParams.search = params.search;
+  if (params.category !== undefined && params.category !== "all") orvalParams.category = params.category;
+  if (params.status !== undefined && params.status !== "all") orvalParams.status = params.status;
+
+  const result = useLearningPathGetAll(orvalParams);
+
+  // Transform data to match expected format
+  return {
+    ...result,
+    data: result.data?.data || result.data || { paths: [], total: 0, page: 1, limit: 6, totalPages: 1 },
+  };
 };
 
 export const useLearningPath = (id) => {
-  return useQuery({
-    queryKey: queryKeys.learningPaths.detail(id),
-    queryFn: () => fetchLearningPathById(id),
+  const result = useLearningPathGetByID(id);
+
+  return {
+    ...result,
     enabled: !!id,
-  });
+  };
 };
 
 export const useLearningPathProgress = (id) => {
-  return useQuery({
-    queryKey: queryKeys.learningPaths.progress(id),
-    queryFn: () => fetchLearningPathProgress(id),
+  const result = useLearningPathGetProgress(id);
+
+  return {
+    ...result,
     enabled: !!id,
-  });
+  };
 };
 
 export const useLearningPathCategories = () => {
@@ -340,36 +355,104 @@ export const useLearningPathCategories = () => {
 
 export const useCreateLearningPath = () => {
   const qc = useQueryClient();
-  return useMutation({
-    mutationFn: createLearningPath,
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.learningPaths.all }),
-  });
+  const orvalMutation = useLearningPathCreate();
+
+  return {
+    ...orvalMutation,
+    mutate: async (data) => {
+      // Orval expects { data: DomainCreateLearningPathRequest }
+      return orvalMutation.mutateAsync({ data });
+    },
+    mutateAsync: async (data) => {
+      return orvalMutation.mutateAsync({ data });
+    },
+  };
 };
 
 export const useUpdateLearningPath = () => {
   const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, data }) => updateLearningPath(id, data),
-    onSuccess: (data) => {
-      qc.setQueryData(queryKeys.learningPaths.detail(data.id), data);
-      qc.invalidateQueries({ queryKey: queryKeys.learningPaths.all });
+  const orvalMutation = useLearningPathUpdate();
+
+  return {
+    ...orvalMutation,
+    mutate: async ({ id, data }) => {
+      // Orval expects { id: number; data: DomainUpdateLearningPathRequest }
+      return orvalMutation.mutateAsync({ id, data });
     },
-  });
+    mutateAsync: async ({ id, data }) => {
+      return orvalMutation.mutateAsync({ id, data });
+    },
+  };
 };
 
 export const useDeleteLearningPath = () => {
   const qc = useQueryClient();
-  return useMutation({
-    mutationFn: deleteLearningPath,
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.learningPaths.all }),
-  });
+  const orvalMutation = useLearningPathDelete();
+
+  return {
+    ...orvalMutation,
+    mutate: async (id) => {
+      // Orval expects { id: number }
+      return orvalMutation.mutateAsync({ id });
+    },
+    mutateAsync: async (id) => {
+      return orvalMutation.mutateAsync({ id });
+    },
+  };
 };
 
 export const useEnrollInLearningPath = () => {
   const qc = useQueryClient();
+  const orvalMutation = useLearningPathEnroll();
+
+  return {
+    ...orvalMutation,
+    mutate: async (id) => {
+      // Orval expects just the id as a parameter, not wrapped
+      return orvalMutation.mutateAsync({ id });
+    },
+    mutateAsync: async (id) => {
+      return orvalMutation.mutateAsync({ id });
+    },
+  };
+};
+
+// Keep admin enroll functions as they use the service for now
+export const useAdminEnrollUserInLearningPath = () => {
+  const qc = useQueryClient();
   return useMutation({
-    mutationFn: enrollInLearningPath,
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.learningPaths.all }),
+    mutationFn: ({ learningPathId, userId }) => adminEnrollUserInLearningPath(learningPathId, userId),
+    onSuccess: (_, { learningPathId }) => {
+      qc.invalidateQueries({ queryKey: queryKeys.learningPaths.detail(learningPathId) });
+    },
+  });
+};
+
+export const useAdminEnrollTeamInLearningPath = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ learningPathId, teamId }) => adminEnrollTeamInLearningPath(learningPathId, teamId),
+    onSuccess: (_, { learningPathId }) => {
+      qc.invalidateQueries({ queryKey: queryKeys.learningPaths.detail(learningPathId) });
+    },
+  });
+};
+
+export const useReorderLearningPathCourses = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, courses }) => reorderLearningPathCourses(id, courses),
+    onSuccess: (_, { id }) => {
+      qc.invalidateQueries({ queryKey: queryKeys.learningPaths.detail(id) });
+    },
+  });
+};
+
+export const useGetLearningPathEnrollments = (learningPathId) => {
+  return useQuery({
+    queryKey: queryKeys.learningPaths.enrollments(learningPathId),
+    queryFn: () => getLearningPathEnrollments(learningPathId),
+    enabled: !!learningPathId,
   });
 };
 
