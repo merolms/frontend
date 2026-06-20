@@ -10,7 +10,9 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "generate:api": "orval --config orval.config.js"
+    "generate:api": "orval --config orval.config.js",
+    "cosmos": "cosmos",
+    "cosmos-export": "cosmos-export"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.2",
@@ -146,6 +148,8 @@
     "playwright": "^1.61.0",
     "postcss": "^8.5.15",
     "prettier-plugin-tailwindcss": "^0.8.0",
+    "react-cosmos": "^7.3.0",
+    "react-cosmos-plugin-vite": "^7.3.0",
     "rollup-plugin-visualizer": "^7.0.1",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^6.0.3"
