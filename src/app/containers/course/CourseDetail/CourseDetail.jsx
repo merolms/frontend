@@ -589,25 +589,25 @@ const CourseDetail = () => {
       {/* Modals */}
       <PublishModal
         open={activeModal === "publish"}
-        onClose={() => setActiveModal(null)}
+        onCancel={() => setActiveModal(null)}
         onConfirm={handlePublish}
         loading={publishMutation.isLoading}
       />
       <ArchiveModal
         open={activeModal === "archive"}
-        onClose={() => setActiveModal(null)}
+        onCancel={() => setActiveModal(null)}
         onConfirm={handleArchive}
         loading={archiveMutation.isLoading}
       />
       <RestoreModal
         open={activeModal === "restore"}
-        onClose={() => setActiveModal(null)}
+        onCancel={() => setActiveModal(null)}
         onConfirm={handleRestore}
         loading={restoreMutation.isLoading}
       />
       <DeleteModal
         open={activeModal === "delete"}
-        onClose={() => setActiveModal(null)}
+        onCancel={() => setActiveModal(null)}
         onConfirm={handleDelete}
         itemName={course?.title || "this course"}
         loading={deleteMutation.isLoading}
@@ -618,7 +618,7 @@ const CourseDetail = () => {
       />
       <DropModal
         open={activeModal === "drop"}
-        onClose={() => setActiveModal(null)}
+        onCancel={() => setActiveModal(null)}
         onConfirm={handleDrop}
         loading={dropMutation.isLoading}
       />
