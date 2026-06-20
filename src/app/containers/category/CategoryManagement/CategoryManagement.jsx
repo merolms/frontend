@@ -1,5 +1,5 @@
-import { Folder, Pencil, Plus, Search, ToggleLeft, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Folder, Pencil, Plus, Search, ToggleLeft, Trash2, CheckSquare, Square, MoreHorizontal } from "lucide-react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
@@ -14,7 +14,6 @@ import {
 import { prepareCategoryData } from "@/app/utils/categoryUtils";
 import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
-import LoadingState from "@/components/common/LoadingState";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Paper } from "@/components/ui/card";
@@ -47,8 +46,6 @@ const CategoryManagement = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -56,6 +53,9 @@ const CategoryManagement = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [editingCat, setEditingCat] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [bulkDeleteTarget, setBulkDeleteTarget] = useState(null);
+  const limit = 10;
 
   // Fetch all categories for client-side filtering
   const {
@@ -63,7 +63,7 @@ const CategoryManagement = () => {
     isLoading,
     error: queryError,
     refetch,
-  } = useCategories({ start: 0, limit: 10 });
+  } = useCategories({ start: 0, limit: 100 });
 
 
   // Mutation hooks
@@ -128,6 +128,65 @@ const CategoryManagement = () => {
       addToast(err.message || "Failed to update category status.", "error");
     }
   };
+
+  const handleSelectAll = (checked) => {
+    if (checked) {
+      setSelectedIds(new Set(filteredData.map((c) => c.id)));
+    } else {
+      setSelectedIds(new Set());
+    }
+  };
+
+  const handleSelectOne = (id, checked) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  };
+
+  const handleBulkActivate = async () => {
+    try {
+      const promises = Array.from(selectedIds).map((id) =>
+        updateMutation.mutateAsync({ id, data: { status: 1 } })
+      );
+      await Promise.all(promises);
+      addToast(`${selectedIds.size} categor${selectedIds.size === 1 ? "y" : "ies"} activated`, "success");
+      setSelectedIds(new Set());
+      refetch();
+    } catch (err) {
+      addToast(err.message || "Failed to activate categories.", "error");
+    }
+  };
+
+  const handleBulkDeactivate = async () => {
+    try {
+      const promises = Array.from(selectedIds).map((id) =>
+        updateMutation.mutateAsync({ id, data: { status: 0 } })
+      );
+      await Promise.all(promises);
+      addToast(`${selectedIds.size} categor${selectedIds.size === 1 ? "y" : "ies"} deactivated`, "success");
+      setSelectedIds(new Set());
+      refetch();
+    } catch (err) {
+      addToast(err.message || "Failed to deactivate categories.", "error");
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    try {
+      const promises = Array.from(selectedIds).map((id) => deleteMutation.mutateAsync(id));
+      await Promise.all(promises);
+      addToast(`${selectedIds.size} categor${selectedIds.size === 1 ? "y" : "ies"} deleted`, "success");
+      setSelectedIds(new Set());
+      setBulkDeleteTarget(null);
+      refetch();
+    } catch (err) {
+      addToast(err.message || "Failed to delete categories.", "error");
+    }
+  };
+
   const handleClear = () => {
     setSearchInput("");
     setSearch("");
@@ -136,14 +195,90 @@ const CategoryManagement = () => {
     setPage(1);
   };
 
+  // Client-side filtering, sorting, and pagination
+  // Use allCategories.length instead of allCategories to prevent infinite loops
+  const { filteredData, totalCount, totalPagesCount } = useMemo(() => {
+    const hasFilters = Boolean(search || statusFilter || sort);
+    let data = [...allCategories];
+
+    if (hasFilters) {
+      // Apply filters
+      if (search) {
+        const q = search.toLowerCase();
+        data = data.filter(
+          (c) =>
+            (c.name || "").toLowerCase().includes(q) ||
+            (c.description || "").toLowerCase().includes(q)
+        );
+      }
+      if (statusFilter) {
+        data = data.filter((c) => String(c.status) === statusFilter);
+      }
+      if (sort === "name") data.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+      else if (sort === "recent") data.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+      const filteredTotal = data.length;
+      return {
+        filteredData: data.slice((page - 1) * limit, page * limit),
+        totalCount: filteredTotal,
+        totalPagesCount: Math.ceil(filteredTotal / limit) || 1,
+      };
+    } else {
+      // No filters - show paginated data
+      return {
+        filteredData: allCategories.slice((page - 1) * limit, page * limit),
+        totalCount: allCategories.length,
+        totalPagesCount: Math.ceil(allCategories.length / limit) || 1,
+      };
+    }
+  }, [allCategories.length, search, statusFilter, sort, page, limit]);
+
   return (
     <>
       <DashboardLayout
         title="Categories"
-        subtitle={`${total} categor${total === 1 ? "y" : "ies"} total`}
+        subtitle={`${totalCount} categor${totalCount === 1 ? "y" : "ies"} total`}
       >
+        {/* Analytics Summary */}
+        <div className="mb-4 grid grid-cols-3 gap-4">
+          <Paper className="p-4">
+            <div className="text-text-muted text-xs">Total Categories</div>
+            <div className="text-text-primary text-2xl font-semibold">{allCategories.length}</div>
+          </Paper>
+          <Paper className="p-4">
+            <div className="text-text-muted text-xs">Active Categories</div>
+            <div className="text-text-primary text-2xl font-semibold">
+              {allCategories.filter((c) => c.status === 1).length}
+            </div>
+          </Paper>
+          <Paper className="p-4">
+            <div className="text-text-muted text-xs">Inactive Categories</div>
+            <div className="text-text-primary text-2xl font-semibold">
+              {allCategories.filter((c) => c.status === 0).length}
+            </div>
+          </Paper>
+        </div>
+
         {/* Action bar */}
-        <div className="mb-4 flex items-center justify-end">
+        <div className="mb-4 flex items-center justify-between">
+          {selectedIds.size > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="text-text-muted text-xs">
+                {selectedIds.size} selected
+              </span>
+              <Button size="sm" variant="default" onClick={handleBulkActivate}>
+                Activate
+              </Button>
+              <Button size="sm" variant="default" onClick={handleBulkDeactivate}>
+                Deactivate
+              </Button>
+              <PermissionGuard permissions={["category.delete"]}>
+                <Button size="sm" variant="danger" onClick={() => setBulkDeleteTarget(true)}>
+                  Delete
+                </Button>
+              </PermissionGuard>
+            </div>
+          )}
           <PermissionGuard permissions={["category.create"]}>
             <Button size="sm" onClick={handleCreate} disabled={isLoading}>
               <Plus size={14} /> New Category
@@ -216,8 +351,18 @@ const CategoryManagement = () => {
         {/* Table */}
         <Paper className="overflow-hidden">
           {isLoading ? (
-            <LoadingState count={5} height="h-12" className="p-4" />
-          ) : allCategories.length === 0 ? (
+            <div className="p-4 space-y-3">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="flex items-center gap-4">
+                  <div className="h-8 w-8 animate-pulse rounded-full bg-bg-surface" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 animate-pulse rounded bg-bg-surface" />
+                    <div className="h-3 w-3/4 animate-pulse rounded bg-bg-surface" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredData.length === 0 ? (
             <EmptyState
               icon={<Folder size={48} className="text-text-muted" />}
               title="No categories found"
@@ -234,6 +379,18 @@ const CategoryManagement = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-border border-b">
+                  <th className="px-4 py-2.5 text-center">
+                    <button
+                      onClick={() => handleSelectAll(selectedIds.size !== filteredData.length)}
+                      className="text-text-muted hover:text-text-primary"
+                    >
+                      {selectedIds.size === filteredData.length && filteredData.length > 0 ? (
+                        <CheckSquare size={16} />
+                      ) : (
+                        <Square size={16} />
+                      )}
+                    </button>
+                  </th>
                   <th className="text-text-muted px-4 py-2.5 text-left text-xs font-medium">
                     Category
                   </th>
@@ -247,6 +404,9 @@ const CategoryManagement = () => {
                     Status
                   </th>
                   <th className="text-text-muted px-4 py-2.5 text-left text-xs font-medium">
+                    Created
+                  </th>
+                  <th className="text-text-muted px-4 py-2.5 text-left text-xs font-medium">
                     Updated
                   </th>
                   <th className="text-text-muted px-4 py-2.5 text-center text-xs font-medium">
@@ -255,11 +415,19 @@ const CategoryManagement = () => {
                 </tr>
               </thead>
               <tbody className="divide-border divide-y">
-                {allCategories.map((cat) => (
+                {filteredData.map((cat) => (
                   <tr
                     key={cat.id}
                     className={`hover:bg-bg-surface-hover transition-colors ${cat.status === 0 ? "opacity-60" : ""}`}
                   >
+                    <td className="px-4 py-3 text-center">
+                      <button
+                        onClick={() => handleSelectOne(cat.id, !selectedIds.has(cat.id))}
+                        className="text-text-muted hover:text-text-primary"
+                      >
+                        {selectedIds.has(cat.id) ? <CheckSquare size={16} /> : <Square size={16} />}
+                      </button>
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <span
@@ -284,6 +452,9 @@ const CategoryManagement = () => {
                       <Badge variant={cat.status === 1 ? "green" : "gray"}>
                         {cat.status === 1 ? "Active" : "Inactive"}
                       </Badge>
+                    </td>
+                    <td className="text-text-muted px-4 py-3 text-[11px]">
+                      {cat.createdAt ? new Date(cat.createdAt * 1000).toLocaleDateString() : "—"}
                     </td>
                     <td className="text-text-muted px-4 py-3 text-[11px]">
                       {cat.updatedAt ? new Date(cat.updatedAt * 1000).toLocaleDateString() : "—"}
@@ -324,9 +495,9 @@ const CategoryManagement = () => {
           )}
         </Paper>
 
-        {totalPages > 1 && (
+        {totalPagesCount > 1 && (
           <div className="mt-4 flex justify-center">
-            <Pagination total={totalPages} value={page} onChange={setPage} />
+            <Pagination total={totalPagesCount} value={page} onChange={setPage} />
           </div>
         )}
 
@@ -347,6 +518,17 @@ const CategoryManagement = () => {
           onCancel={() => setDeleteTarget(null)}
           itemName={deleteTarget?.name}
           itemType="category"
+          loading={deleteMutation.isPending}
+        />
+        <DeleteModal
+          open={!!bulkDeleteTarget}
+          onConfirm={handleBulkDelete}
+          onCancel={() => {
+            setBulkDeleteTarget(false);
+            setSelectedIds(new Set());
+          }}
+          itemName={`${selectedIds.size} categor${selectedIds.size === 1 ? "y" : "ies"}`}
+          itemType="categories"
           loading={deleteMutation.isPending}
         />
       </DashboardLayout>
