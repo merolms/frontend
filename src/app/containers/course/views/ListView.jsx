@@ -1,5 +1,6 @@
-import { BookOpen, List, Network, Pencil, User, Users } from "lucide-react";
+import { BookOpen, List, Network, Pencil, User, Users, MoreHorizontal, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Paper } from "@/components/ui/card";
@@ -27,73 +28,114 @@ const ListView = ({ courses, navigate, loading }) => {
     );
   }
 
-  return (
-    <div className="space-y-2">
-      {courses.map((course) => {
-        const status = getStatusLabel(course.status);
-        return (
-          <Paper
-            key={course.id}
-            className="cursor-pointer p-4 transition-shadow hover:shadow-md"
-            onClick={() => navigate(`/courses/${course.id}`)}
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex min-w-0 gap-3">
-                {course.coverImage ? (
-                  <img
-                    src={course.coverImage}
-                    alt={course.title}
-                    className="h-20 w-32 shrink-0 rounded-md object-cover"
-                  />
-                ) : (
-                  <div className="bg-bg-surface-active flex h-20 w-32 shrink-0 items-center justify-center rounded-md">
-                    <BookOpen size={24} className="text-text-muted" />
-                  </div>
-                )}
-                <div className="min-w-0 space-y-1">
-                  <h3 className="text-text-primary text-sm font-semibold">{course.title}</h3>
-                  {status && (
-                    <Badge variant={status.color === "grey" ? "gray" : status.color}>
-                      {status.text}
-                    </Badge>
-                  )}
-                  <p className="text-text-muted line-clamp-2 text-xs">{course.description}</p>
-                  <div className="text-text-muted flex items-center gap-3 text-[11px]">
-                    <Badge variant={getCategoryColor(course.category)} className="text-[10px]">
-                      {course.category}
-                    </Badge>
-                    <span className="flex items-center gap-1">
-                      <User size={10} /> {course.author}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <List size={10} /> {course.totalLessons}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Users size={10} /> {course.enrolledUsers}
-                    </span>
-                  </div>
-                </div>
+  const CourseListItem = ({ course }) => {
+    const [menuOpen, setMenuOpen] = useState(false);
+    const status = getStatusLabel(course.status);
+
+    const handleMenuClick = (e) => {
+      e.stopPropagation();
+      setMenuOpen(!menuOpen);
+    };
+
+    return (
+      <Paper
+        key={course.id}
+        className="group relative cursor-pointer p-4 transition-shadow hover:shadow-md"
+        onClick={() => navigate(`/courses/${course.id}`)}
+      >
+        {/* Quick Actions Menu */}
+        <button
+          onClick={handleMenuClick}
+          className="absolute top-2 right-2 z-10 rounded-md bg-bg-surface/90 p-1.5 text-text-muted opacity-0 transition-opacity hover:bg-bg-surface group-hover:opacity-100"
+          style={{ backdropFilter: "blur(4px)" }}
+        >
+          <MoreHorizontal size={14} />
+        </button>
+
+        {menuOpen && (
+          <div className="absolute right-2 top-10 z-20 w-40 rounded-md border bg-bg-surface shadow-lg">
+            <div className="p-1">
+              <Link
+                to={`/courses/${course.id}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(false);
+                }}
+                className="text-text-muted hover:text-text-primary hover:bg-bg-surface-hover flex w-full items-center gap-2 rounded px-3 py-2 text-xs"
+              >
+                <Eye size={12} /> View
+              </Link>
+              <Link
+                to={`/courses/${course.id}/builder`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(false);
+                }}
+                className="text-text-muted hover:text-text-primary hover:bg-bg-surface-hover flex w-full items-center gap-2 rounded px-3 py-2 text-xs"
+              >
+                <Network size={12} /> Builder
+              </Link>
+              <Link
+                to={`/courses/${course.id}/edit`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(false);
+                }}
+                className="text-text-muted hover:text-text-primary hover:bg-bg-surface-hover flex w-full items-center gap-2 rounded px-3 py-2 text-xs"
+              >
+                <Pencil size={12} /> Edit
+              </Link>
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex min-w-0 gap-3">
+            {course.coverImage ? (
+              <img
+                src={course.coverImage}
+                alt={course.title}
+                className="h-20 w-32 shrink-0 rounded-md object-cover"
+              />
+            ) : (
+              <div className="bg-bg-surface-active flex h-20 w-32 shrink-0 items-center justify-center rounded-md">
+                <BookOpen size={24} className="text-text-muted" />
               </div>
-              <div className="flex shrink-0 items-center gap-1">
-                <Link
-                  to={`/courses/${course.id}/builder`}
-                  className="border-border text-text-muted hover:bg-bg-surface-active rounded border px-2 py-1 text-[11px]"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Network size={10} /> Builder
-                </Link>
-                <Link
-                  to={`/courses/${course.id}/edit`}
-                  className="border-border text-text-muted hover:bg-bg-surface-active rounded border px-2 py-1 text-[11px]"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Pencil size={10} /> Edit
-                </Link>
+            )}
+            <div className="min-w-0 space-y-1">
+              <h3 className="text-text-primary text-sm font-semibold">{course.title}</h3>
+              {status && (
+                <Badge variant={status.color === "grey" ? "gray" : status.color}>
+                  {status.text}
+                </Badge>
+              )}
+              <p className="text-text-muted line-clamp-2 text-xs">{course.description}</p>
+              <div className="text-text-muted flex items-center gap-3 text-[11px]">
+                <Badge variant={getCategoryColor(course.category)} className="text-[10px]">
+                  {course.category}
+                </Badge>
+                <span className="flex items-center gap-1">
+                  <User size={10} /> {course.author}
+                </span>
+                <span className="flex items-center gap-1">
+                  <List size={10} /> {course.totalLessons}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Users size={10} /> {course.enrolledUsers}
+                </span>
               </div>
             </div>
-          </Paper>
-        );
-      })}
+          </div>
+        </div>
+      </Paper>
+    );
+  };
+
+  return (
+    <div className="space-y-2">
+      {courses.map((course) => (
+        <CourseListItem key={course.id} course={course} navigate={navigate} />
+      ))}
     </div>
   );
 };

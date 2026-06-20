@@ -1,9 +1,11 @@
-import { BookOpen, Clock, List, User } from "lucide-react";
-import { memo } from "react";
+import { BookOpen, Clock, List, User, MoreHorizontal, Eye, Pencil, Network } from "lucide-react";
+import { memo, useState } from "react";
+import { Link } from "react-router-dom";
 
 import { Badge } from "@/components/ui/badge";
 import EmptyState from "@/components/common/EmptyState";
 import LoadingState from "@/components/common/LoadingState";
+import { Button } from "@/components/ui/button";
 
 import { getStatusLabel } from "./viewHelpers";
 
@@ -31,15 +33,21 @@ const CourseCardSkeleton = memo(() => (
 ));
 
 const CourseCard = memo(({ course, navigate }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
   const status = getStatusLabel(course.status);
   const slide = course.coverImage || course.images?.[0];
+
+  const handleMenuClick = (e) => {
+    e.stopPropagation();
+    setMenuOpen(!menuOpen);
+  };
 
   return (
     <div
       role="button"
       tabIndex={0}
       aria-label={`View course: ${course.title}`}
-      className="border-border bg-bg-surface focus-visible:ring-primary flex h-full cursor-pointer flex-col overflow-hidden rounded-md border shadow-sm transition-shadow hover:shadow-md focus-visible:ring-2 focus-visible:outline-none"
+      className="border-border bg-bg-surface focus-visible:ring-primary group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-md border shadow-sm transition-shadow hover:shadow-md focus-visible:ring-2 focus-visible:outline-none"
       onClick={() => navigate(`/courses/${course.id}`)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -48,6 +56,52 @@ const CourseCard = memo(({ course, navigate }) => {
         }
       }}
     >
+      {/* Quick Actions Menu */}
+      <button
+        onClick={handleMenuClick}
+        className="absolute top-2 right-2 z-10 rounded-md bg-bg-surface/90 p-1.5 text-text-muted opacity-0 transition-opacity hover:bg-bg-surface group-hover:opacity-100"
+        style={{ backdropFilter: "blur(4px)" }}
+      >
+        <MoreHorizontal size={14} />
+      </button>
+
+      {menuOpen && (
+        <div className="absolute right-2 top-10 z-20 w-40 rounded-md border bg-bg-surface shadow-lg">
+          <div className="p-1">
+            <Link
+              to={`/courses/${course.id}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setMenuOpen(false);
+              }}
+              className="text-text-muted hover:text-text-primary hover:bg-bg-surface-hover flex w-full items-center gap-2 rounded px-3 py-2 text-xs"
+            >
+              <Eye size={12} /> View
+            </Link>
+            <Link
+              to={`/courses/${course.id}/builder`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setMenuOpen(false);
+              }}
+              className="text-text-muted hover:text-text-primary hover:bg-bg-surface-hover flex w-full items-center gap-2 rounded px-3 py-2 text-xs"
+            >
+              <Network size={12} /> Builder
+            </Link>
+            <Link
+              to={`/courses/${course.id}/edit`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setMenuOpen(false);
+              }}
+              className="text-text-muted hover:text-text-primary hover:bg-bg-surface-hover flex w-full items-center gap-2 rounded px-3 py-2 text-xs"
+            >
+              <Pencil size={12} /> Edit
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Image */}
       {slide ? (
         <img

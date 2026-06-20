@@ -609,7 +609,12 @@ const CourseDetail = () => {
         open={activeModal === "delete"}
         onClose={() => setActiveModal(null)}
         onConfirm={handleDelete}
+        itemName={course?.title || "this course"}
         loading={deleteMutation.isLoading}
+        warnings={{
+          lessons: lessons?.length || 0,
+          enrolled: course?.enrolledUsers || enrollmentsSafe?.length || 0,
+        }}
       />
       <DropModal
         open={activeModal === "drop"}

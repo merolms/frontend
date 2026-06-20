@@ -1,11 +1,13 @@
-import { BookOpen, Plus, RefreshCw, Search } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { BookOpen, Plus, RefreshCw, Search, Users, Clock, CheckSquare, Square } from "lucide-react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
 import { hasPermission } from "@/app/services/authService";
-import { useCourses } from "@/hooks/queries/useCourses";
+import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
+import { useToast } from "@/app/context/ToastContext";
+import { useCourses, usePublishCourse, useArchiveCourse, useDeleteCourse } from "@/hooks/queries/useCourses";
 import { useCategories } from "@/hooks/queries/useEntities";
 import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
@@ -39,12 +41,24 @@ const statusOptions = [
 const sortOptions = [
   { value: "all", label: "Newest First" },
   { value: "title", label: "Title A-Z" },
+  { value: "enrollment", label: "Most Enrolled" },
+  { value: "updated", label: "Recently Updated" },
+];
+
+const durationOptions = [
+  { value: "all", label: "All Durations" },
+  { value: "short", label: "< 2 hours" },
+  { value: "medium", label: "2-5 hours" },
+  { value: "long", label: "> 5 hours" },
 ];
 
 const CourseContainer = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const user = useSelector((s) => s.auth.user);
+  const { addToast } = useToast();
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [bulkDeleteTarget, setBulkDeleteTarget] = useState(false);
 
   const isAdmin = hasPermission(user, "courses.publish");
 
@@ -55,6 +69,7 @@ const CourseContainer = () => {
   const status = searchParams.get("status") || defaultStatus;
   const category = searchParams.get("category") || "";
   const sort = searchParams.get("sort") || "";
+  const duration = searchParams.get("duration") || "";
   const viewMode = searchParams.get("view") || "grid";
 
   const [searchInput, setSearchInput] = useState(search);
@@ -72,9 +87,45 @@ const CourseContainer = () => {
 
   const { data: categories = [] } = useCategories({ start: 0, limit: 100 });
 
+  // Bulk operation mutations
+  const publishMutation = usePublishCourse();
+  const archiveMutation = useArchiveCourse();
+  const deleteMutation = useDeleteCourse();
+
   const courses = data?.courses ?? [];
   const totalPages = data?.totalPages ?? 1;
   const total = data?.total ?? 0;
+
+  // Client-side filtering and sorting for duration and advanced sorting
+  const { filteredCourses: clientFilteredCourses } = useMemo(() => {
+    let data = [...courses];
+
+    // Duration filtering
+    if (duration && duration !== "all") {
+      data = data.filter((course) => {
+        const dur = parseFloat(course.duration) || 0;
+        if (duration === "short") return dur < 2;
+        if (duration === "medium") return dur >= 2 && dur <= 5;
+        if (duration === "long") return dur > 5;
+        return true;
+      });
+    }
+
+    // Enhanced sorting
+    if (sort === "enrollment") {
+      data.sort((a, b) => (b.enrolledUsers || 0) - (a.enrolledUsers || 0));
+    } else if (sort === "updated") {
+      data.sort((a, b) => {
+        const dateA = a.updatedAt || a.lastUpdated || 0;
+        const dateB = b.updatedAt || b.lastUpdated || 0;
+        return dateB - dateA;
+      });
+    } else if (sort === "title") {
+      data.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+    }
+
+    return { filteredCourses: data };
+  }, [courses, duration, sort]);
 
 
   const categoryOptions = [
@@ -110,10 +161,83 @@ const CourseContainer = () => {
   const handleClear = () => {
     setSearchInput("");
     setSearchParams(new URLSearchParams());
+    setSelectedIds(new Set());
+  };
+
+  const handleSelectAll = (checked) => {
+    if (checked) {
+      setSelectedIds(new Set(clientFilteredCourses.map((c) => c.id)));
+    } else {
+      setSelectedIds(new Set());
+    }
+  };
+
+  const handleSelectOne = (id, checked) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  };
+
+  const handleBulkPublish = async () => {
+    try {
+      const promises = Array.from(selectedIds).map((id) => publishMutation.mutateAsync(id));
+      await Promise.all(promises);
+      addToast(`${selectedIds.size} course${selectedIds.size === 1 ? "" : "s"} published successfully`, "success");
+      setSelectedIds(new Set());
+      refetch();
+    } catch (err) {
+      addToast("Failed to publish courses. Please try again.", "error");
+    }
+  };
+
+  const handleBulkArchive = async () => {
+    try {
+      const promises = Array.from(selectedIds).map((id) => archiveMutation.mutateAsync(id));
+      await Promise.all(promises);
+      addToast(`${selectedIds.size} course${selectedIds.size === 1 ? "" : "s"} archived successfully`, "success");
+      setSelectedIds(new Set());
+      refetch();
+    } catch (err) {
+      addToast("Failed to archive courses. Please try again.", "error");
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    try {
+      const promises = Array.from(selectedIds).map((id) => deleteMutation.mutateAsync(id));
+      await Promise.all(promises);
+      addToast(`${selectedIds.size} course${selectedIds.size === 1 ? "" : "s"} deleted successfully`, "success");
+      setSelectedIds(new Set());
+      setBulkDeleteTarget(false);
+      refetch();
+    } catch (err) {
+      addToast("Failed to delete courses. Please try again.", "error");
+    }
+  };
+
+  // Calculate warnings for bulk delete
+  const getBulkDeleteWarnings = () => {
+    const selectedCourses = clientFilteredCourses.filter((c) => selectedIds.has(c.id));
+    return {
+      lessons: selectedCourses.reduce((sum, c) => sum + (c.totalLessons || 0), 0),
+      enrolled: selectedCourses.reduce((sum, c) => sum + (c.enrolledUsers || 0), 0),
+    };
   };
 
   const renderView = () => {
-    const props = { courses, navigate, loading: isLoading, onRefresh: refetch };
+    const props = {
+      courses: clientFilteredCourses,
+      navigate,
+      loading: isLoading,
+      onRefresh: refetch,
+      selectedIds,
+      onSelectOne: handleSelectOne,
+      onSelectAll: handleSelectAll,
+      viewMode,
+    };
     switch (viewMode) {
       case "table":
         return <TableView {...props} />;
@@ -125,10 +249,7 @@ const CourseContainer = () => {
         return <GridView {...props} />;
     }
   };
-  if(courses.length>0){
-    console.log("courses are ", courses)
-  }
-  
+
   return (
     <DashboardLayout
       title="Courses"
@@ -140,8 +261,62 @@ const CourseContainer = () => {
             }${isFetching ? " (refreshing...)" : ""}`
       }
     >
+      {/* Analytics Summary */}
+      {!isLoading && clientFilteredCourses.length > 0 && (
+        <div className="mb-4 grid grid-cols-4 gap-4">
+          <Paper className="p-4">
+            <div className="text-text-muted mb-1 flex items-center gap-2 text-xs">
+              <BookOpen size={14} /> Total Courses
+            </div>
+            <div className="text-text-primary text-2xl font-semibold">{clientFilteredCourses.length}</div>
+          </Paper>
+          <Paper className="p-4">
+            <div className="text-text-muted mb-1 flex items-center gap-2 text-xs">
+              <Users size={14} /> Published
+            </div>
+            <div className="text-text-primary text-2xl font-semibold">
+              {clientFilteredCourses.filter((c) => c.status === "published").length}
+            </div>
+          </Paper>
+          <Paper className="p-4">
+            <div className="text-text-muted mb-1 flex items-center gap-2 text-xs">
+              <BookOpen size={14} /> Draft
+            </div>
+            <div className="text-text-primary text-2xl font-semibold">
+              {clientFilteredCourses.filter((c) => c.status === "draft").length}
+            </div>
+          </Paper>
+          <Paper className="p-4">
+            <div className="text-text-muted mb-1 flex items-center gap-2 text-xs">
+              <Clock size={14} /> Total Enrollments
+            </div>
+            <div className="text-text-primary text-2xl font-semibold">
+              {clientFilteredCourses.reduce((sum, c) => sum + (c.enrolledUsers || 0), 0)}
+            </div>
+          </Paper>
+        </div>
+      )}
+
       {/* Action bar */}
-      <div className="mb-4 flex items-center justify-end">
+      <div className="mb-4 flex items-center justify-between">
+        {selectedIds.size > 0 && viewMode === "table" && (
+          <div className="flex items-center gap-2">
+            <span className="text-text-muted text-xs">
+              {selectedIds.size} course{selectedIds.size === 1 ? "" : "s"} selected
+            </span>
+            <Button size="sm" variant="default" onClick={handleBulkPublish}>
+              Publish
+            </Button>
+            <Button size="sm" variant="default" onClick={handleBulkArchive}>
+              Archive
+            </Button>
+            <PermissionGuard permissions={["courses.delete"]}>
+              <Button size="sm" variant="danger" onClick={() => setBulkDeleteTarget(true)}>
+                Delete
+              </Button>
+            </PermissionGuard>
+          </div>
+        )}
         <PermissionGuard permissions={["courses.create"]}>
           <Button size="sm" onClick={() => navigate("/courses/create")}>
             <Plus size={14} /> New Course
@@ -192,6 +367,21 @@ const CourseContainer = () => {
             </SelectTrigger>
             <SelectContent>
               {categoryOptions.map((o) => (
+                <SelectItem key={o.value} value={o.value}>
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={duration}
+            onValueChange={(v) => updateParams({ duration: v === "all" ? "" : v, page: 1 })}
+          >
+            <SelectTrigger className="w-36">
+              <SelectValue placeholder="Duration" />
+            </SelectTrigger>
+            <SelectContent>
+              {durationOptions.map((o) => (
                 <SelectItem key={o.value} value={o.value}>
                   {o.label}
                 </SelectItem>
@@ -269,17 +459,37 @@ const CourseContainer = () => {
       )}
 
       {/* Empty */}
-      {!error && courses.length === 0 && !isLoading ? (
+      {!error && clientFilteredCourses.length === 0 && !isLoading ? (
         <EmptyState
           icon={<BookOpen size={48} className="text-text-muted" />}
-          title="No courses found"
-          description="Try adjusting your filters or create a new course."
+          title={
+            search || status || category || duration
+              ? "No courses match your filters"
+              : isAdmin
+                ? "No courses yet"
+                : "No courses available"
+          }
+          description={
+            search || status || category || duration
+              ? "Try adjusting your filters or clear them to see all courses."
+              : isAdmin
+                ? "Create your first course to start building your learning platform."
+                : "Explore the course catalog and enroll in courses that interest you."
+          }
           action={
-            <PermissionGuard permissions={["courses.create"]}>
-              <Button size="sm" onClick={() => navigate("/courses/create")}>
-                <Plus size={14} /> Create Course
+            (search || status || category || duration) ? (
+              <Button size="sm" variant="outline" onClick={handleClear}>
+                Clear Filters
               </Button>
-            </PermissionGuard>
+            ) : (
+              isAdmin && (
+                <PermissionGuard permissions={["courses.create"]}>
+                  <Button size="sm" onClick={() => navigate("/courses/create")}>
+                    <Plus size={14} /> Create Course
+                  </Button>
+                </PermissionGuard>
+              )
+            )
           }
         />
       ) : (
@@ -298,6 +508,20 @@ const CourseContainer = () => {
           </>
         )
       )}
+
+      {/* Bulk Delete Modal */}
+      <DeleteModal
+        open={!!bulkDeleteTarget}
+        onConfirm={handleBulkDelete}
+        onCancel={() => {
+          setBulkDeleteTarget(false);
+          setSelectedIds(new Set());
+        }}
+        itemName={`${selectedIds.size} course${selectedIds.size === 1 ? "" : "s"}`}
+        itemType="courses"
+        loading={deleteMutation.isPending}
+        warnings={getBulkDeleteWarnings()}
+      />
     </DashboardLayout>
   );
 };

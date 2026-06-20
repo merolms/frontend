@@ -11,10 +11,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { CheckSquare, Square } from "lucide-react";
 
 import { getCategoryColor, getStatusLabel } from "./viewHelpers";
 
-const TableView = ({ courses, navigate, loading }) => {
+const TableView = ({
+  courses,
+  navigate,
+  loading,
+  selectedIds = new Set(),
+  onSelectOne,
+  onSelectAll,
+  viewMode,
+}) => {
   if (loading) {
     return (
       <div className="space-y-2">
@@ -30,11 +39,27 @@ const TableView = ({ courses, navigate, loading }) => {
     <Table>
       <TableHeader>
         <TableRow>
+          <TableHead className="w-12 text-center">
+            {viewMode === "table" && onSelectAll && (
+              <button
+                onClick={() => onSelectAll(selectedIds.size !== courses.length)}
+                className="text-text-muted hover:text-text-primary"
+              >
+                {selectedIds.size === courses.length && courses.length > 0 ? (
+                  <CheckSquare size={16} />
+                ) : (
+                  <Square size={16} />
+                )}
+              </button>
+            )}
+          </TableHead>
           <TableHead>Course</TableHead>
           <TableHead>Category</TableHead>
           <TableHead>Status</TableHead>
           <TableHead className="text-center">Lessons</TableHead>
           <TableHead className="text-center">Enrolled</TableHead>
+          <TableHead>Created</TableHead>
+          <TableHead>Updated</TableHead>
           <TableHead className="text-center">Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -43,6 +68,16 @@ const TableView = ({ courses, navigate, loading }) => {
           const status = getStatusLabel(course.status);
           return (
             <TableRow key={course.id}>
+              <TableCell className="text-center">
+                {viewMode === "table" && onSelectOne && (
+                  <button
+                    onClick={() => onSelectOne(course.id, !selectedIds.has(course.id))}
+                    className="text-text-muted hover:text-text-primary"
+                  >
+                    {selectedIds.has(course.id) ? <CheckSquare size={16} /> : <Square size={16} />}
+                  </button>
+                )}
+              </TableCell>
               <TableCell>
                 <div
                   className="flex cursor-pointer items-center gap-3"
@@ -80,6 +115,20 @@ const TableView = ({ courses, navigate, loading }) => {
               </TableCell>
               <TableCell className="text-text-muted text-center text-xs">
                 {course.enrolledUsers}
+              </TableCell>
+              <TableCell className="text-text-muted text-xs">
+                {course.createdAt
+                  ? new Date(course.createdAt).toLocaleDateString()
+                  : course.createdDate
+                  ? new Date(course.createdDate).toLocaleDateString()
+                  : "—"}
+              </TableCell>
+              <TableCell className="text-text-muted text-xs">
+                {course.updatedAt
+                  ? new Date(course.updatedAt).toLocaleDateString()
+                  : course.lastUpdated
+                  ? new Date(course.lastUpdated).toLocaleDateString()
+                  : "—"}
               </TableCell>
               <TableCell>
                 <div className="flex items-center justify-center gap-1">

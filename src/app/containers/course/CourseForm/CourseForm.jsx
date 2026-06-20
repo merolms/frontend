@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ImageIcon, Trash2, Pencil, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ImageIcon, Trash2, Pencil, Plus, Check, AlertCircle } from "lucide-react";
 
 import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
 import { uploadCourseImage } from "@/app/services/courseService";
@@ -32,8 +32,22 @@ const CourseForm = ({
   setForm,
   setCoverUploading,
   setCoverError,
+  autoSave = false,
+  autoSaveKey = "course_draft",
 }) => {
   const [unsplashOpen, setUnsplashOpen] = useState(false);
+  const [lastSaved, setLastSaved] = useState(null);
+
+  // Auto-save to localStorage
+  useEffect(() => {
+    if (autoSave && form) {
+      const timer = setTimeout(() => {
+        localStorage.setItem(autoSaveKey, JSON.stringify(form));
+        setLastSaved(new Date().toLocaleTimeString());
+      }, 2000); // Save 2 seconds after last change
+      return () => clearTimeout(timer);
+    }
+  }, [form, autoSave, autoSaveKey]);
 
   const handleUnsplashSelect = (url) => {
     setCoverError?.(false);
@@ -66,50 +80,102 @@ const CourseForm = ({
       )}
 
       <FormField label="Course Title" error={errors.title} required>
-        <input
-          name="title"
-          placeholder="e.g., Advanced React Patterns"
-          value={form?.title || ""}
-          onChange={(e) => {
-            onFieldChange?.("title", e.target.value);
-            if (errors.title) setForm?.((prev) => ({ ...prev, title: e.target.value }));
-          }}
-          className={inputCls}
-        />
+        <div className="relative">
+          <input
+            name="title"
+            placeholder="e.g., Advanced React Patterns"
+            maxLength={100}
+            value={form?.title || ""}
+            onChange={(e) => {
+              onFieldChange?.("title", e.target.value);
+              if (errors.title) setForm?.((prev) => ({ ...prev, title: e.target.value }));
+            }}
+            className={inputCls}
+          />
+          {form?.title && form?.title.trim().length > 0 && !errors.title && (
+            <Check size={16} className="text-success absolute right-3 top-1/2 -translate-y-1/2" />
+          )}
+        </div>
+        <div className="text-text-muted mt-1 flex items-center justify-between text-xs">
+          <span>
+            {form?.title && form?.title.trim().length > 0 ? (
+              <span className="text-success flex items-center gap-1">
+                <Check size={12} /> Title is valid
+              </span>
+            ) : (
+              <span className="text-text-muted">Title is required</span>
+            )}
+          </span>
+          <span>{(form?.title || "").length} / 100</span>
+        </div>
       </FormField>
 
       <FormField label="Description" error={errors.description} required>
-        <textarea
-          name="description"
-          placeholder="What will students learn? What are the prerequisites?"
-          className={`${inputCls} min-h-[110px] py-1.5`}
-          value={form?.description || ""}
-          onChange={(e) => {
-            onFieldChange?.("description", e.target.value);
-            if (errors.description) setForm?.((prev) => ({ ...prev, description: e.target.value }));
-          }}
-        />
+        <div className="relative">
+          <textarea
+            name="description"
+            placeholder="What will students learn? What are the prerequisites?"
+            maxLength={500}
+            className={`${inputCls} min-h-[110px] py-1.5`}
+            value={form?.description || ""}
+            onChange={(e) => {
+              onFieldChange?.("description", e.target.value);
+              if (errors.description) setForm?.((prev) => ({ ...prev, description: e.target.value }));
+            }}
+          />
+          {form?.description && form?.description.trim().length > 0 && !errors.description && (
+            <Check size={16} className="text-success absolute right-3 top-3" />
+          )}
+        </div>
+        <div className="text-text-muted mt-1 flex items-center justify-between text-xs">
+          <span>
+            {form?.description && form?.description.trim().length > 0 ? (
+              <span className="text-success flex items-center gap-1">
+                <Check size={12} /> Description is valid
+              </span>
+            ) : (
+              <span className="text-text-muted">Description is required</span>
+            )}
+          </span>
+          <span>{(form?.description || "").length} / 500</span>
+        </div>
       </FormField>
 
       <FormField label="Category" error={errors.category} required>
-        <select
-          name="category"
-          value={form?.category || ""}
-          onChange={(e) => {
-            const value = e.target.value ? parseInt(e.target.value) : null;
-            onFieldChange?.("category", value);
-            setForm?.((prev) => ({ ...prev, category: value }));
-            if (errors.category) setForm?.((prev) => ({ ...prev, category: null }));
-          }}
-          className={inputCls}
-        >
-          <option value="">Select a category</option>
-          {categories.map((o) => (
-            <option key={o.id} value={o.id}>
-              {o.name}
-            </option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            name="category"
+            value={form?.category || ""}
+            onChange={(e) => {
+              const value = e.target.value ? parseInt(e.target.value) : null;
+              onFieldChange?.("category", value);
+              setForm?.((prev) => ({ ...prev, category: value }));
+              if (errors.category) setForm?.((prev) => ({ ...prev, category: null }));
+            }}
+            className={inputCls}
+          >
+            <option value="">Select a category</option>
+            {categories.map((o) => (
+              <option key={o.id} value={o.id}>
+                {o.name}
+              </option>
+            ))}
+          </select>
+          {form?.category && !errors.category && (
+            <Check size={16} className="text-success absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          )}
+        </div>
+        <div className="text-text-muted mt-1 flex items-center justify-between text-xs">
+          <span>
+            {form?.category ? (
+              <span className="text-success flex items-center gap-1">
+                <Check size={12} /> Category selected
+              </span>
+            ) : (
+              <span className="text-text-muted">Category is required</span>
+            )}
+          </span>
+        </div>
       </FormField>
 
       <FormField label="Duration (hours)" error={errors.duration}>
@@ -213,6 +279,12 @@ const CourseForm = ({
         onSelect={handleUnsplashSelect}
         initialQuery={form?.title || "education"}
       />
+
+      {autoSave && lastSaved && (
+        <div className="text-text-muted mt-2 text-center text-xs">
+          Draft auto-saved at {lastSaved}
+        </div>
+      )}
 
       <FormActions onCancel={onCancel} loading={loading} submitLabel={submitLabel} />
     </form>

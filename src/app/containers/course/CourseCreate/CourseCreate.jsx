@@ -125,6 +125,8 @@ const CourseCreate = () => {
               submitLabel="Create Course"
               setCoverUploading={setCoverUploading}
               setCoverError={setCoverError}
+              autoSave={true}
+              autoSaveKey={draft_KEY}
             />
           </div>
         </div>
