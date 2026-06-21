@@ -429,7 +429,7 @@ const LearningPathDetail = () => {
               {/* Course cover */}
               <img
                 src={
-                  activeCourse.coverImage ||
+                  activecourse.imageUrl ||
                   "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop"
                 }
                 alt={activeCourse.title}

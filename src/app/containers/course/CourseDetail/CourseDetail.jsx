@@ -212,7 +212,7 @@ const CourseDetail = () => {
         <div
           className="mb-4 overflow-hidden rounded-xl"
           style={{
-            background: `linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%), url(${course.coverImage || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&h=400&fit=crop"}) center/cover`,
+            background: `linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%), url(${course.imageUrl || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&h=400&fit=crop"}) center/cover`,
           }}
         >
           <div className="flex items-start justify-between gap-6 p-6">

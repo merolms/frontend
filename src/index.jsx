@@ -11,6 +11,7 @@ import { Toaster } from "sonner";
 import { ThemeProvider } from "@/app/context/ThemeContext";
 import { ToastProvider } from "@/app/context/ToastContext";
 import AppRoutes from "@/app/Routes";
+import { SidebarProvider } from "@/contexts/SidebarContext";
 import { setAuthErrorHandler } from "@/app/services/http";
 import { clearAuth, restoreSession } from "@/redux/slices/authSlice";
 import store from "@/redux/store";
@@ -56,14 +57,16 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <QueryClientProvider client={queryClient}>
     <Provider store={store}>
       <ThemeProvider>
-        <AuthErrorBridge>
-          <AuthInitializer>
-            <ToastProvider>
-              <RouterProvider router={createBrowserRouter(AppRoutes)} />
-              <Toaster position="top-right" richColors closeButton />
-            </ToastProvider>
-          </AuthInitializer>
-        </AuthErrorBridge>
+        <SidebarProvider>
+          <AuthErrorBridge>
+            <AuthInitializer>
+              <ToastProvider>
+                <RouterProvider router={createBrowserRouter(AppRoutes)} />
+                <Toaster position="top-right" richColors closeButton />
+              </ToastProvider>
+            </AuthInitializer>
+          </AuthErrorBridge>
+        </SidebarProvider>
       </ThemeProvider>
     </Provider>
     <ReactQueryDevtools initialIsOpen={false} />

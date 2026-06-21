@@ -30,7 +30,7 @@ const CourseCard = ({
     >
       <div className="relative h-16 w-24 flex-shrink-0 overflow-hidden rounded-lg">
         <img
-          src={course.coverImage || DEFAULT_COURSE_IMAGE}
+          src={course.imageUrl || DEFAULT_COURSE_IMAGE}
           alt={course.title}
           className="h-full w-full object-cover transition-transform group-hover:scale-110"
           onError={(e) => {

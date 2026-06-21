@@ -90,7 +90,7 @@ export const createCourse = async (courseData) => {
       duration: parseInt(courseData.duration, 10) || 0,
       status: courseData.status || "draft",
     };
-    const data = await courseCreate({ data: payload });
+    const data = await courseCreate({ ...payload });
     return data;
   } catch (error) {
     console.error("Error creating course:", error);
@@ -111,7 +111,7 @@ export const updateCourse = async (id, courseData) => {
       duration: parseInt(courseData.duration, 10) || 0,
       status: courseData.status || "draft",
     };
-    const data = await courseUpdate(id, { data: payload });
+    const data = await courseUpdate(id, {  ...payload });
     return data;
   } catch (error) {
     console.error("Error updating course:", error);

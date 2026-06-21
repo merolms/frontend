@@ -762,9 +762,9 @@ const LearningPathForm = () => {
                     className="hover:bg-bg-surface-active flex w-full items-center gap-3 rounded-md p-2 text-left"
                   >
                     <div className="bg-bg-surface border-border flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-md border">
-                      {course.coverImage ? (
+                      {course.imageUrl ? (
                         <img
-                          src={course.coverImage}
+                          src={course.imageUrl}
                           alt={course.title}
                           className="h-full w-full object-cover"
                           onError={(e) => {
