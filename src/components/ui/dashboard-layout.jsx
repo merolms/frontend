@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 import {
   fetchNotifications,
   getTimeAgo,
@@ -10,7 +11,6 @@ import {
   markAsRead,
 } from "@/app/services/notificationService";
 import RoleBasedSidebar from "@/components/layouts/RoleBasedSidebar";
-import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 import { logoutUser } from "@/redux/slices/authSlice";
 
 const typeColors = {

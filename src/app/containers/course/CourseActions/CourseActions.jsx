@@ -1,4 +1,4 @@
-import { Archive, ArchiveRestore, Check, LogOut, Trash2, AlertTriangle } from "lucide-react";
+import { AlertTriangle, Archive, ArchiveRestore, Check, LogOut, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import {
@@ -8,7 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 
 export const PublishModal = ({ open, onConfirm, onCancel, courseTitle, loading = false }) => (
   <Dialog open={open} onOpenChange={loading ? undefined : onCancel}>

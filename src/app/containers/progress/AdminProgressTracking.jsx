@@ -1,8 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
 import { Award, BarChart3, Search, TrendingUp, Users } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { useQuery } from "@tanstack/react-query";
 import { fetchEnrollments } from "@/app/services/enrollmentService";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";

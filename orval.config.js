@@ -3,7 +3,7 @@ const path = require("path");
 module.exports = {
   meroedu: {
     input: {
-      target: path.resolve(__dirname, "../backend/api-spec/openapi.yaml"),
+      target: path.resolve(__dirname, "../backend/docs/swagger.yaml"),
     },
     output: {
       target: "src/app/api/orval",

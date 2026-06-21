@@ -1,23 +1,18 @@
 // TanStack Query hooks for Notifications
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { queryKeys } from "@/lib/queryKeys";
 import {
-  fetchNotifications,
-  fetchUnreadNotifications,
-  fetchNotificationSummary,
-  fetchNotificationById,
-  createNotification,
-  markAsRead,
-  markAllAsRead,
   deleteNotification,
   fetchNotificationPreferences,
-  fetchNotificationPreferenceByType,
-  createNotificationPreference,
+  fetchNotifications,
+  fetchNotificationSummary,
+  fetchUnreadNotifications,
+  markAllAsRead,
+  markAsRead,
   updateNotificationPreference,
-  deleteNotificationPreference,
 } from "@/app/services/notificationService";
+import { queryKeys } from "@/lib/queryKeys";
 
 // ─── Queries ──────────────────────────────────────────────
 

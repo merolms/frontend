@@ -4,12 +4,12 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import CourseForm from "@/app/containers/course/CourseForm/CourseForm";
 import LoadingState from "@/components/common/LoadingState";
+import { Badge } from "@/components/ui/badge";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { usePageTitle } from "@/hooks";
 import { useUnsavedChanges } from "@/hooks";
-import { useCategories } from "@/hooks/queries/useEntities";
 import { useCourse, useUpdateCourse } from "@/hooks/queries/useCourses";
-import { Badge } from "@/components/ui/badge";
+import { useCategories } from "@/hooks/queries/useEntities";
 import { t } from "@/styles/theme";
 
 const CourseEdit = () => {

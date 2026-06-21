@@ -1,11 +1,11 @@
 import { BarChart3, BookOpen, TrendingUp, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import { useDashboardStats } from "@/hooks/queries/useEntities";
 import LoadingState from "@/components/common/LoadingState";
 import StatCard from "@/components/common/StatCard";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { usePageTitle } from "@/hooks";
+import { useDashboardStats } from "@/hooks/queries/useEntities";
 
 /**
  * AdminDashboard — Main dashboard for Administrator role.

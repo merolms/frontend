@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { ImageIcon, Trash2, Pencil, Plus, Check, AlertCircle } from "lucide-react";
+import { Check, ImageIcon, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import UnsplashPicker from "@/app/containers/course/components/UnsplashPicker";
 import { uploadCourseImage } from "@/app/services/courseService";
@@ -8,10 +8,6 @@ import FormActions from "@/components/forms/FormActions";
 import FormField from "@/components/forms/FormField";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
-import { Paper } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { t } from "@/styles/theme";
 
 const inputCls =
   "border-border bg-bg-input text-text-primary text-sm placeholder:text-text-muted w-full rounded-md border px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";

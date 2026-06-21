@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const AssignmentDetail = () => {
   const navigate = useNavigate();

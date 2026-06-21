@@ -1,11 +1,9 @@
-import { BookOpen, Clock, List, User, MoreHorizontal, Eye, Pencil, Network } from "lucide-react";
+import { BookOpen, Clock, Eye, List, MoreHorizontal, Network, Pencil, User } from "lucide-react";
 import { memo, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Badge } from "@/components/ui/badge";
 import EmptyState from "@/components/common/EmptyState";
-import LoadingState from "@/components/common/LoadingState";
-import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/badge";
 
 import { getStatusLabel } from "./viewHelpers";
 

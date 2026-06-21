@@ -1,51 +1,39 @@
 // TanStack Query hooks for Teams, Users, Categories, Learning Paths
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery,useQueryClient } from "@tanstack/react-query";
 
-import { queryKeys } from "@/lib/queryKeys";
 // Migrated to orval-generated hooks for teams
 import {
+  useAddMember,
+  useGetMembers,
+  useRemoveMember,
+  useTeamCreate,
+  useTeamDelete,
   useTeamGetAll,
   useTeamGetByID,
-  useTeamCreate,
-  useTeamUpdate,
-  useTeamDelete,
-  useGetMembers,
-  useAddMember,
-  useRemoveMember,
   useTeamGetStat,
+  useTeamUpdate,
 } from "@/app/api/orval";
-// Keep user fetching for now - available-users endpoint missing in orval
-import { fetchUsers as fetchTeamUsers, getAvailableUsers } from "@/app/services/teamService";
-import {
-  fetchUsers,
-  fetchUserById,
-  createUser,
-  updateUser,
-  deleteUser,
-} from "@/app/services/userService";
 // Migrated to orval-generated hooks for categories
 import {
+  useCategoryCreate,
+  useCategoryDelete,
   useCategoryGetAll,
   useCategoryGetByID,
-  useCategoryCreate,
-  useCategoryUpdate,
-  useCategoryDelete,
   useCategoryGetChildren,
   useCategoryGetRoots,
   useCategoryGetStat,
+  useCategoryUpdate,
 } from "@/app/api/orval";
 // Migrated to orval-generated hooks for learning paths
 import {
-  useLearningPathGetAll,
-  useLearningPathGetByID,
   useLearningPathCreate,
-  useLearningPathUpdate,
   useLearningPathDelete,
   useLearningPathEnroll,
+  useLearningPathGetAll,
+  useLearningPathGetByID,
   useLearningPathGetProgress,
-  useLearningPathAdminEnrollUser,
-  useLearningPathAdminEnrollTeam,
+  useLearningPathUpdate,
 } from "@/app/api/orval";
 // Enrollment hooks - orval-generated
 import {
@@ -57,17 +45,27 @@ import {
   useEnrollmentGetProgress,
 } from "@/app/api/orval";
 // Certificate hooks - orval-generated
-import { useCertificateGet, useCertificateUpdate, useCertificateDelete } from "@/app/api/orval";
+import { useCertificateDelete, useCertificateGet, useCertificateUpdate } from "@/app/api/orval";
 // Notification hooks - orval-generated
-import { useNotificationGet, useNotificationCreate, useNotificationDelete } from "@/app/api/orval";
+import { useNotificationCreate, useNotificationDelete, useNotificationGet } from "@/app/api/orval";
+// Migrated to orval-generated hooks
+import { useStatsGet } from "@/app/api/orval";
 // Keep these functions from learning path service - not in orval or need custom handling
 import {
   getLearningPathCategories,
-  reorderLearningPathCourses,
   getLearningPathEnrollments,
+  reorderLearningPathCourses,
 } from "@/app/services/learningPathService";
-// Migrated to orval-generated hooks
-import { useStatsGet } from "@/app/api/orval";
+// Keep user fetching for now - available-users endpoint missing in orval
+import { fetchUsers as fetchTeamUsers, getAvailableUsers } from "@/app/services/teamService";
+import {
+  createUser,
+  deleteUser,
+  fetchUserById,
+  fetchUsers,
+  updateUser,
+} from "@/app/services/userService";
+import { queryKeys } from "@/lib/queryKeys";
 
 // ─── Team Hooks (Orval-generated) ────────────────────────
 
@@ -108,7 +106,6 @@ export const useTeamMembers = (teamId) => {
 };
 
 export const useCreateTeam = () => {
-  const qc = useQueryClient();
   const orvalMutation = useTeamCreate();
 
   return {
@@ -124,7 +121,6 @@ export const useCreateTeam = () => {
 };
 
 export const useUpdateTeam = () => {
-  const qc = useQueryClient();
   const orvalMutation = useTeamUpdate();
 
   return {
@@ -140,7 +136,6 @@ export const useUpdateTeam = () => {
 };
 
 export const useDeleteTeam = () => {
-  const qc = useQueryClient();
   const orvalMutation = useTeamDelete();
 
   return {
@@ -156,7 +151,6 @@ export const useDeleteTeam = () => {
 };
 
 export const useAddTeamMember = () => {
-  const qc = useQueryClient();
   const orvalMutation = useAddMember();
 
   return {
@@ -172,7 +166,6 @@ export const useAddTeamMember = () => {
 };
 
 export const useRemoveTeamMember = () => {
-  const qc = useQueryClient();
   const orvalMutation = useRemoveMember();
 
   return {
@@ -302,7 +295,6 @@ export const useCategory = (id) => {
 };
 
 export const useCreateCategory = () => {
-  const qc = useQueryClient();
   const orvalMutation = useCategoryCreate();
 
   return {
@@ -318,7 +310,6 @@ export const useCreateCategory = () => {
 };
 
 export const useUpdateCategory = () => {
-  const qc = useQueryClient();
   const orvalMutation = useCategoryUpdate();
 
   return {
@@ -334,7 +325,6 @@ export const useUpdateCategory = () => {
 };
 
 export const useDeleteCategory = () => {
-  const qc = useQueryClient();
   const orvalMutation = useCategoryDelete();
 
   return {
@@ -382,7 +372,6 @@ export const useCategoryStat = () => {
 };
 
 export const useSetCategoryParent = () => {
-  const qc = useQueryClient();
   const orvalMutation = useCategorySetParent();
 
   return {
@@ -444,7 +433,6 @@ export const useLearningPathCategories = () => {
 };
 
 export const useCreateLearningPath = () => {
-  const qc = useQueryClient();
   const orvalMutation = useLearningPathCreate();
 
   return {
@@ -460,7 +448,6 @@ export const useCreateLearningPath = () => {
 };
 
 export const useUpdateLearningPath = () => {
-  const qc = useQueryClient();
   const orvalMutation = useLearningPathUpdate();
 
   return {
@@ -476,7 +463,6 @@ export const useUpdateLearningPath = () => {
 };
 
 export const useDeleteLearningPath = () => {
-  const qc = useQueryClient();
   const orvalMutation = useLearningPathDelete();
 
   return {
@@ -492,7 +478,6 @@ export const useDeleteLearningPath = () => {
 };
 
 export const useEnrollInLearningPath = () => {
-  const qc = useQueryClient();
   const orvalMutation = useLearningPathEnroll();
 
   return {
@@ -582,7 +567,6 @@ export const useEnrollmentProgress = (id) => {
 };
 
 export const useEnrollInCourse = () => {
-  const qc = useQueryClient();
   const orvalMutation = useEnrollmentEnroll();
 
   return {
@@ -598,7 +582,6 @@ export const useEnrollInCourse = () => {
 };
 
 export const useDropFromCourse = () => {
-  const qc = useQueryClient();
   const orvalMutation = useEnrollmentDrop();
 
   return {
@@ -614,7 +597,6 @@ export const useDropFromCourse = () => {
 };
 
 export const useAdminEnrollUserInCourse = () => {
-  const qc = useQueryClient();
   const orvalMutation = useEnrollmentAdminEnrollUser();
 
   return {
@@ -630,7 +612,6 @@ export const useAdminEnrollUserInCourse = () => {
 };
 
 export const useAdminEnrollTeamInCourse = () => {
-  const qc = useQueryClient();
   const orvalMutation = useEnrollmentAdminEnrollTeam();
 
   return {
@@ -658,7 +639,6 @@ export const useCertificate = (id) => {
 };
 
 export const useUpdateCertificate = () => {
-  const qc = useQueryClient();
   const orvalMutation = useCertificateUpdate();
 
   return {
@@ -674,7 +654,6 @@ export const useUpdateCertificate = () => {
 };
 
 export const useDeleteCertificate = () => {
-  const qc = useQueryClient();
   const orvalMutation = useCertificateDelete();
 
   return {
@@ -702,7 +681,6 @@ export const useNotification = (id) => {
 };
 
 export const useCreateNotification = () => {
-  const qc = useQueryClient();
   const orvalMutation = useNotificationCreate();
 
   return {
@@ -718,7 +696,6 @@ export const useCreateNotification = () => {
 };
 
 export const useDeleteNotification = () => {
-  const qc = useQueryClient();
   const orvalMutation = useNotificationDelete();
 
   return {

@@ -21,10 +21,10 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useToast } from "@/app/context/ToastContext";
-import { useLearningPath, useDeleteLearningPath } from "@/hooks/queries/useEntities.js";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import { useDeleteLearningPath, useLearningPath } from "@/hooks/queries/useEntities.js";
 
 const difficultyColors = {
   Beginner: "green",

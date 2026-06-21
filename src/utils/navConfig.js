@@ -2,13 +2,13 @@ import {
   BarChart3,
   BookOpen,
   CalendarDays,
+  ClipboardCheck,
   GraduationCap,
   Home,
   Network,
   Shield,
   Tags,
   Users,
-  ClipboardCheck,
 } from "lucide-react";
 
 /**

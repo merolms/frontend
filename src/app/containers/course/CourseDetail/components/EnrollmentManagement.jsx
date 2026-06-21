@@ -1,29 +1,25 @@
 import {
-  Loader,
-  Search,
-  UserPlus,
-  Users,
-  X,
-  ArrowUpDown,
-  Trash2,
-  TrendingUp,
   CheckCircle,
   Clock,
-  Users as UsersIcon,
   Download,
+  Loader,
+  Search,
+  Trash2,
+  TrendingUp,
   Upload,
+  UserPlus,
+  Users,
+  Users as UsersIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { useToast } from "@/app/context/ToastContext";
-import { useAdminEnrollUser, useAdminEnrollTeam } from "@/hooks/queries/useEnrollments";
-import { useUsers, useTeams } from "@/hooks/queries/useEntities";
-import { fetchUsers, fetchTeams } from "@/app/services/teamService";
 import {
-  getCourseEnrollments,
-  adminEnrollUserInCourse,
   adminEnrollTeamInCourse,
+  adminEnrollUserInCourse,
+  getCourseEnrollments,
 } from "@/app/services/enrollmentService";
+import { fetchTeams, fetchUsers } from "@/app/services/teamService";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
@@ -36,6 +32,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useAdminEnrollTeam, useAdminEnrollUser } from "@/hooks/queries/useEnrollments";
+import { useTeams, useUsers } from "@/hooks/queries/useEntities";
 import { t } from "@/styles/theme";
 
 // Simple Tab component

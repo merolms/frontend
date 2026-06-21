@@ -1,7 +1,6 @@
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { Color } from "@tiptap/extension-color";
 import Highlight from "@tiptap/extension-highlight";
-import ListItem from "@tiptap/extension-list-item";
+import Placeholder from "@tiptap/extension-placeholder";
 import { Table } from "@tiptap/extension-table";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
@@ -41,7 +40,6 @@ import UserBlock from "./extensions/Users/UserBlock";
 import VideoBlock from "./extensions/Video/VideoBlock";
 import WebPreview from "./extensions/WebPreview/WebPreview";
 import { ToolbarButtons } from "./Toolbar/ToolbarButtons";
-import Placeholder from "@tiptap/extension-placeholder";
 // import { placeholder } from "@codemirror/view";
 
 const DEFAULT_CONTENT = {

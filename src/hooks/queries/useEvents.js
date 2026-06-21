@@ -1,27 +1,24 @@
 // TanStack Query hooks for Events
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
-import { queryKeys } from "@/lib/queryKeys";
 // Migrated to orval-generated hooks
 import {
-  useGetOrgEvents,
+  useAddAttendee,
   useEventCreate,
-  useEventUpdate,
   useEventDelete,
+  useEventUpdate,
+  useGetAttendeeCount,
   useGetCourseEvents,
-  useGetEventsInTimeRange,
-  useGetEventsByType,
+  useGetEventAttendees,
+  useGetEventStats,
+  useGetOrgEvents,
   useGetUpcomingEvents,
   useGetUserEvents,
-  useGetUserAttendees,
-  useGetEventAttendees,
-  useAddAttendee,
-  useGetAttendeeCount,
-  useUpdateAttendeeStatus as useOrvalUpdateAttendeeStatus,
   useRemoveAttendee,
-  useGetEventStats,
+  useUpdateAttendeeStatus as useOrvalUpdateAttendeeStatus,
 } from "@/app/api/orval";
+import { queryKeys } from "@/lib/queryKeys";
 
 // ─── Queries (Orval-generated) ───────────────────────────
 
@@ -45,7 +42,6 @@ export const useEvents = (params = {}) => {
 export const useEvent = (id) => {
   // For single event, we need to implement using orval's eventGet function
   // But since there's no hook for get by ID, we'll need to use the base function or create a custom hook
-  const qc = useQueryClient();
   return useQuery({
     queryKey: queryKeys.events.detail(id),
     queryFn: async () => {
@@ -135,7 +131,6 @@ export const useEventStats = (eventId) => {
 // ─── Mutations (Orval-generated) ─────────────────────────
 
 export const useCreateEvent = () => {
-  const qc = useQueryClient();
   const orvalMutation = useEventCreate();
 
   return {
@@ -151,7 +146,6 @@ export const useCreateEvent = () => {
 };
 
 export const useUpdateEvent = () => {
-  const qc = useQueryClient();
   const orvalMutation = useEventUpdate();
 
   return {
@@ -167,7 +161,6 @@ export const useUpdateEvent = () => {
 };
 
 export const useDeleteEvent = () => {
-  const qc = useQueryClient();
   const orvalMutation = useEventDelete();
 
   return {
@@ -183,7 +176,6 @@ export const useDeleteEvent = () => {
 };
 
 export const useAddEventAttendee = () => {
-  const qc = useQueryClient();
   const orvalMutation = useAddAttendee();
 
   return {
@@ -205,7 +197,6 @@ export const useAddEventAttendee = () => {
 };
 
 export const useUpdateAttendeeStatus = () => {
-  const qc = useQueryClient();
   const orvalMutation = useOrvalUpdateAttendeeStatus();
 
   return {
@@ -229,7 +220,6 @@ export const useUpdateAttendeeStatus = () => {
 };
 
 export const useRemoveEventAttendee = () => {
-  const qc = useQueryClient();
   const orvalMutation = useRemoveAttendee();
 
   return {

@@ -4,21 +4,21 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 import { useToast } from "@/app/context/ToastContext";
-import CourseCompletionCelebration from "@/components/CourseCompletionCelebration";
-import { Badge } from "@/components/ui/badge";
-import { useCourse, useCourseLessons } from "@/hooks/queries/useCourses";
-import {
-  useEnrollmentStatus,
-  useCourseProgress,
-  useMyLessonCompletions,
-  useEnrollInCourse,
-  useMarkLessonComplete,
-} from "@/hooks/queries/useEnrollments";
 import { hasPermission } from "@/app/services/authService";
+import CourseCompletionCelebration from "@/components/CourseCompletionCelebration";
 import { ReaderLayout } from "@/components/layouts/ReaderLayout";
+import { Badge } from "@/components/ui/badge";
 import MeroEduEditor from "@/editor/Editor";
 import { loadLessonDoc } from "@/editor/utils/lessonContent";
 import { usePageTitle } from "@/hooks";
+import { useCourse, useCourseLessons } from "@/hooks/queries/useCourses";
+import {
+  useCourseProgress,
+  useEnrollInCourse,
+  useEnrollmentStatus,
+  useMarkLessonComplete,
+  useMyLessonCompletions,
+} from "@/hooks/queries/useEnrollments";
 import { t } from "@/styles/theme";
 
 const CourseViewer = () => {

@@ -1,17 +1,17 @@
-import { AlertCircle, ChevronRight, Loader, Pencil, Plus, Trash2, Power } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
+import { AlertCircle, ChevronRight, Loader, Pencil, Plus, Power, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import TeamMemberAssignModal from "@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal";
 import { useToast } from "@/app/context/ToastContext";
-import { useTeam, useTeamMembers, useDeleteTeam, useUpdateTeam } from "@/hooks/queries/useEntities";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import { useDeleteTeam, useTeam, useTeamMembers, useUpdateTeam } from "@/hooks/queries/useEntities";
 import { t } from "@/styles/theme";
 
 const TeamDetail = () => {

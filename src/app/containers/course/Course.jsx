@@ -1,19 +1,12 @@
-import { BookOpen, Plus, RefreshCw, Search, Users, Clock, CheckSquare, Square } from "lucide-react";
-import { useCallback, useEffect, useState, useMemo } from "react";
+import { BookOpen, Clock, Plus, RefreshCw, Search, Users } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
-import { hasPermission } from "@/app/services/authService";
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import { useToast } from "@/app/context/ToastContext";
-import {
-  useCourses,
-  usePublishCourse,
-  useArchiveCourse,
-  useDeleteCourse,
-} from "@/hooks/queries/useCourses";
-import { useCategories } from "@/hooks/queries/useEntities";
+import { hasPermission } from "@/app/services/authService";
 import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +22,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  useArchiveCourse,
+  useCourses,
+  useDeleteCourse,
+  usePublishCourse,
+} from "@/hooks/queries/useCourses";
+import { useCategories } from "@/hooks/queries/useEntities";
 
 import CompactView from "./views/CompactView";
 import GridView from "./views/GridView";

@@ -1,12 +1,12 @@
 import { CalendarDays, Clock, Edit, MapPin, Tag, Trash2, Users } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { formatEventDate, formatEventTime, getEventStatus } from "@/app/utils/eventUtils";
-import { useEvent, useDeleteEvent, useUpdateEvent } from "@/hooks/queries/useEvents";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import { useDeleteEvent, useEvent, useUpdateEvent } from "@/hooks/queries/useEvents";
 
 import EventForm from "./components/EventForm";
 

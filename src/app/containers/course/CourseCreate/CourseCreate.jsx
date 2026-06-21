@@ -5,13 +5,11 @@ import { useNavigate } from "react-router-dom";
 
 import CourseForm from "@/app/containers/course/CourseForm/CourseForm";
 import { useToast } from "@/app/context/ToastContext";
-import { useCategories } from "@/hooks/queries/useEntities";
-import { useCreateCourse } from "@/hooks/queries/useCourses";
-import FormErrorBanner from "@/components/common/FormErrorBanner";
-import FormField from "@/components/forms/FormField";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { usePageTitle } from "@/hooks";
 import { useUnsavedChanges } from "@/hooks";
+import { useCreateCourse } from "@/hooks/queries/useCourses";
+import { useCategories } from "@/hooks/queries/useEntities";
 import { t } from "@/styles/theme";
 
 const draft_KEY = "course_create_draft";

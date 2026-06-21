@@ -201,7 +201,7 @@ export const useCourse = (id) => {
 };
 
 export const useCreateCourse = () => {
-  const qc = useQueryClient();
+  
   return useMutation({
     mutationFn: createCourse,
     onSuccess: () => {
@@ -211,7 +211,7 @@ export const useCreateCourse = () => {
 };
 
 export const usePublishCourse = () => {
-  const qc = useQueryClient();
+  
   return useMutation({
     mutationFn: publishCourse,
     onSuccess: (data) => {

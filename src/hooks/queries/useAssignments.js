@@ -1,32 +1,28 @@
 // TanStack Query hooks for Assignments
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { queryKeys } from "@/lib/queryKeys";
 import {
+  addAttachment,
+  createAssignment,
+  deleteAssignment,
+  deleteAttachment,
+  enrollTeam,
+  enrollUser,
+  getAssignmentById,
   getAssignments,
   getAssignmentsByLesson,
-  getAssignmentById,
-  createAssignment,
-  updateAssignment,
-  deleteAssignment,
+  getAttachments,
+  getEnrolledTeams,
+  getEnrolledUsers,
+  getSubmissionById,
+  getSubmissions,
+  gradeSubmission,
   publishAssignment,
   submitAssignment,
-  submitTeamAssignment,
-  getSubmissions,
-  getSubmissionById,
-  gradeSubmission,
-  gradeTeamSubmission,
-  getAttachments,
-  addAttachment,
-  deleteAttachment,
-  enrollUser,
-  removeUserEnrollment,
-  getEnrolledUsers,
-  enrollTeam,
-  removeTeamEnrollment,
-  getEnrolledTeams,
+  updateAssignment,
 } from "@/app/services/assignmentService";
+import { queryKeys } from "@/lib/queryKeys";
 
 // ─── Queries ──────────────────────────────────────────────
 
@@ -96,7 +92,6 @@ export const useEnrolledTeams = (assignmentId) => {
 // ─── Mutations ─────────────────────────────────────────────
 
 export const useCreateAssignment = () => {
-  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ lessonId, data }) => createAssignment(lessonId, data),
     onSuccess: (data) => {
@@ -106,7 +101,6 @@ export const useCreateAssignment = () => {
 };
 
 export const useUpdateAssignment = () => {
-  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }) => updateAssignment(id, data),
     onSuccess: (data) => {
@@ -117,7 +111,6 @@ export const useUpdateAssignment = () => {
 };
 
 export const useDeleteAssignment = () => {
-  const qc = useQueryClient();
   return useMutation({
     mutationFn: deleteAssignment,
     onSuccess: () => {
@@ -127,7 +120,6 @@ export const useDeleteAssignment = () => {
 };
 
 export const usePublishAssignment = () => {
-  const qc = useQueryClient();
   return useMutation({
     mutationFn: publishAssignment,
     onSuccess: (data) => {
@@ -138,7 +130,6 @@ export const usePublishAssignment = () => {
 };
 
 export const useSubmitAssignment = () => {
-  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ assignmentId, data }) => submitAssignment(assignmentId, data),
     onSuccess: (data) => {
@@ -148,7 +139,6 @@ export const useSubmitAssignment = () => {
 };
 
 export const useGradeSubmission = () => {
-  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ submissionId, data }) => gradeSubmission(submissionId, data),
     onSuccess: (data) => {
@@ -158,7 +148,6 @@ export const useGradeSubmission = () => {
 };
 
 export const useAddAttachment = () => {
-  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ assignmentId, mediaId }) => addAttachment(assignmentId, mediaId),
     onSuccess: (_, { assignmentId }) => {
@@ -168,7 +157,6 @@ export const useAddAttachment = () => {
 };
 
 export const useDeleteAttachment = () => {
-  const qc = useQueryClient();
   return useMutation({
     mutationFn: deleteAttachment,
     onSuccess: () => {
@@ -178,7 +166,6 @@ export const useDeleteAttachment = () => {
 };
 
 export const useEnrollUser = () => {
-  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ assignmentId, userId }) => enrollUser(assignmentId, userId),
     onSuccess: (_, { assignmentId }) => {
@@ -188,7 +175,6 @@ export const useEnrollUser = () => {
 };
 
 export const useEnrollTeam = () => {
-  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ assignmentId, teamId }) => enrollTeam(assignmentId, teamId),
     onSuccess: (_, { assignmentId }) => {

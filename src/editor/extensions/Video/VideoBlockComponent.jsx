@@ -1,7 +1,8 @@
+import "@videojs/react/video/skin.css";
+
 import { NodeViewWrapper } from "@tiptap/react";
 import { createPlayer } from "@videojs/react";
-import { VideoSkin, Video, videoFeatures } from "@videojs/react/video";
-import "@videojs/react/video/skin.css";
+import { Video, videoFeatures, VideoSkin } from "@videojs/react/video";
 import { AlertCircle, Loader2, RefreshCcw, Upload, Video as VideoIcon } from "lucide-react";
 import React from "react";
 

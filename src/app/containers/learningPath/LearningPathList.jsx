@@ -15,7 +15,6 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { useLearningPaths, useLearningPathCategories } from "@/hooks/queries/useEntities.js";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
@@ -30,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { usePageTitle } from "@/hooks";
+import { useLearningPathCategories, useLearningPaths } from "@/hooks/queries/useEntities.js";
 
 const difficultyColors = {
   Beginner: "green",

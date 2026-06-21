@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { useTheme } from "@/app/context/ThemeContext";
-import { changePassword, updateProfile } from "@/app/services/authService";
 import { useToast } from "@/app/context/ToastContext";
+import { changePassword, updateProfile } from "@/app/services/authService";
+import FormErrorBanner from "@/components/common/FormErrorBanner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
-import FormErrorBanner from "@/components/common/FormErrorBanner";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -20,8 +20,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { setAuth } from "@/redux/slices/authSlice";
 import { usePageTitle } from "@/hooks";
+import { setAuth } from "@/redux/slices/authSlice";
 
 const Settings = () => {
   usePageTitle("Settings");

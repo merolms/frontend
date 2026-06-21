@@ -1,27 +1,20 @@
 import {
   AlertCircle,
   BookOpen,
+  Check,
   ChevronDown,
   ChevronUp,
   Clock,
-  Check,
   Plus,
   Sparkles,
   Trash2,
   X,
 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { useToast } from "@/app/context/ToastContext";
 import { fetchCourses } from "@/app/services/courseService";
-import {
-  useLearningPath,
-  useLearningPaths,
-  useCreateLearningPath,
-  useUpdateLearningPath,
-  useLearningPathCategories,
-} from "@/hooks/queries/useEntities";
 import { getLearningPathCategories } from "@/app/services/learningPathService";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";

@@ -1,11 +1,11 @@
-import { BookOpen, Pencil, Plus, Search, ToggleLeft, Trash2, RefreshCw } from "lucide-react";
+import { BookOpen, Pencil, Plus, Search, ToggleLeft, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
-import { hasPermission } from "@/app/services/authService";
+import { useToast } from "@/app/context/ToastContext";
 import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import LoadingState from "@/components/common/LoadingState";
@@ -15,7 +15,6 @@ import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
-
 import {
   Select,
   SelectContent,
@@ -23,8 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/app/context/ToastContext";
-import { t } from "@/styles/theme";
 
 const statusOptions = [
   { value: "all", label: "All Status" },

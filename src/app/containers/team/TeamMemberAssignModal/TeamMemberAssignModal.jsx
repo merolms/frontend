@@ -1,29 +1,25 @@
 import {
   AlertCircle,
-  Check,
   ChevronLeft,
   ChevronRight,
   Loader,
   Minus,
   Plus,
   Search,
-  Users,
-  UserPlus,
   ShieldCheck,
+  UserPlus,
+  Users,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { useToast } from "@/app/context/ToastContext";
-import {
-  useAddTeamMember,
-  useRemoveTeamMember,
-  useFetchTeamUsers,
-} from "@/hooks/queries/useEntities";
 import { fetchTeamMembers, fetchUsers } from "@/app/services/teamService";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -31,8 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { useAddTeamMember, useRemoveTeamMember } from "@/hooks/queries/useEntities";
 import { t } from "@/styles/theme";
 
 const PAGE_SIZE = 12;

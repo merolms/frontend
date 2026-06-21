@@ -1,7 +1,6 @@
 import {
   Archive,
   ArchiveRestore,
-  BookOpen,
   Check,
   ChevronRight,
   Clock,
@@ -17,7 +16,7 @@ import {
   User,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -31,21 +30,6 @@ import {
 } from "@/app/containers/course/CourseActions/CourseActions";
 import { useToast } from "@/app/context/ToastContext";
 import { hasPermission } from "@/app/services/authService";
-import {
-  useCourse,
-  useCourseLessons,
-  usePublishCourse,
-  useArchiveCourse,
-  useRestoreCourse,
-  useDeleteCourse,
-} from "@/hooks/queries/useCourses";
-import {
-  useEnrollmentStatus,
-  useEnrollInCourse,
-  useDropCourse,
-  useCourseEnrollments,
-  useLessonCompletionCounts,
-} from "@/hooks/queries/useEnrollments";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import LoadingState from "@/components/common/LoadingState";
 import { Badge } from "@/components/ui/badge";
@@ -54,6 +38,21 @@ import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePageTitle } from "@/hooks";
+import {
+  useArchiveCourse,
+  useCourse,
+  useCourseLessons,
+  useDeleteCourse,
+  usePublishCourse,
+  useRestoreCourse,
+} from "@/hooks/queries/useCourses";
+import {
+  useCourseEnrollments,
+  useDropCourse,
+  useEnrollInCourse,
+  useEnrollmentStatus,
+  useLessonCompletionCounts,
+} from "@/hooks/queries/useEnrollments";
 import { t } from "@/styles/theme";
 
 import EnrollmentManagement from "./components/EnrollmentManagement";
@@ -322,7 +321,7 @@ const CourseDetail = () => {
             )}
             {course.status === "draft" && (
               <PermissionGuard permissions={["courses.publish"]}>
-                <Button size="sm" variant="ghost" onClick={() => setActiveModal("publish")}>
+                <Button size="sm" variant="primary" onClick={() => setActiveModal("publish")}>
                   <Check size={14} /> Publish
                 </Button>
               </PermissionGuard>

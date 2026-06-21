@@ -12,7 +12,6 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { useMyEnrollments } from "@/hooks/queries/useEnrollments";
 import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import LoadingState from "@/components/common/LoadingState";
@@ -27,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { usePageTitle } from "@/hooks";
+import { useMyEnrollments } from "@/hooks/queries/useEnrollments";
 import { getStatusColor, getStatusLabel } from "@/utils";
 
 const MyLearning = () => {

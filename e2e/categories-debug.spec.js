@@ -1,4 +1,5 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
+
 import { DEMO_USERS, mockLogin } from "./helpers";
 
 test("debug JS errors", async ({ page }) => {

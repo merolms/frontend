@@ -1,8 +1,9 @@
+import UnderlineExtension from "@tiptap/extension-underline";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 import { Bold, Italic, List, ListOrdered, Underline } from "lucide-react";
 import { useCallback, useEffect } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import UnderlineExtension from "@tiptap/extension-underline";
+
 import { Button } from "./Button";
 
 const RichTextEditor = ({ value, onChange, placeholder = "Enter content...", rows = 4 }) => {

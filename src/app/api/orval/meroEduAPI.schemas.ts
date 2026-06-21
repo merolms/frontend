@@ -5,6 +5,20 @@
  * MeroEdu Learning Management System (LMS) API Backend.
  * OpenAPI spec version: 2.0
  */
+export interface DomainLearnerStreak {
+  currentStreakDays?: number;
+  id?: number;
+  lastActivityDate?: string;
+  longestStreakDays?: number;
+  refreshedAt?: number;
+  totalActiveDays?: number;
+  userId?: number;
+}
+
+export interface Data {
+  data?: DomainLearnerStreak[];
+}
+
 export interface DomainAIGenerationRequest {
   blockType: string;
   context?: string;
@@ -12,26 +26,30 @@ export interface DomainAIGenerationRequest {
   prompt: string;
 }
 
-export interface DomainActivityLog {
-  action?: string;
-  createdAt?: number;
-  entityId?: number;
-  entityType?: string;
+export type DomainAddressType = typeof DomainAddressType[keyof typeof DomainAddressType];
+
+
+export const DomainAddressType = {
+  AddressTypeBilling: 'billing',
+  AddressTypeShipping: 'shipping',
+  AddressTypeMain: 'main',
+  AddressTypeOther: 'other',
+} as const;
+
+export interface DomainAddress {
+  addressType: DomainAddressType;
+  city?: string;
+  countryId?: number;
+  createdAt?: string;
   id?: number;
-  ipAddress?: string;
-  metadata?: string;
+  isDefault?: boolean;
   organizationId?: number;
-  sessionId?: string;
-  userAgent?: string;
+  postalCode?: string;
+  state?: string;
+  streetAddress1?: string;
+  streetAddress2?: string;
+  updatedAt?: string;
   userId?: number;
-}
-
-export interface DomainAdminEnrollTeamRequest {
-  teamId: number;
-}
-
-export interface DomainAdminEnrollUserRequest {
-  userId: number;
 }
 
 export interface DomainAdminResetPasswordRequest {
@@ -67,6 +85,8 @@ export interface DomainAttachment {
   courseId?: number;
   createdAt?: string;
   description?: string;
+  entityId?: number;
+  entityType?: string;
   fileSize?: number;
   fileType?: string;
   id?: number;
@@ -75,15 +95,16 @@ export interface DomainAttachment {
   updatedAt?: string;
 }
 
-export type DomainAttendeeStatus = (typeof DomainAttendeeStatus)[keyof typeof DomainAttendeeStatus];
+export type DomainAttendeeStatus = typeof DomainAttendeeStatus[keyof typeof DomainAttendeeStatus];
+
 
 export const DomainAttendeeStatus = {
-  AttendeeStatusInvited: "invited",
-  AttendeeStatusAccepted: "accepted",
-  AttendeeStatusDeclined: "declined",
-  AttendeeStatusTentative: "tentative",
-  AttendeeStatusAttended: "attended",
-  AttendeeStatusMissed: "missed",
+  AttendeeStatusInvited: 'invited',
+  AttendeeStatusAccepted: 'accepted',
+  AttendeeStatusDeclined: 'declined',
+  AttendeeStatusTentative: 'tentative',
+  AttendeeStatusAttended: 'attended',
+  AttendeeStatusMissed: 'missed',
 } as const;
 
 export interface DomainAuditLog {
@@ -113,16 +134,15 @@ export interface DomainCategory {
   parentId?: number;
   slug?: string;
   sortOrder?: number;
-  status?: number;
   updatedAt?: string;
 }
 
-export type DomainCertificateOrientation =
-  (typeof DomainCertificateOrientation)[keyof typeof DomainCertificateOrientation];
+export type DomainCertificateOrientation = typeof DomainCertificateOrientation[keyof typeof DomainCertificateOrientation];
+
 
 export const DomainCertificateOrientation = {
-  CertificateOrientationLandscape: "landscape",
-  CertificateOrientationPortrait: "portrait",
+  CertificateOrientationLandscape: 'landscape',
+  CertificateOrientationPortrait: 'portrait',
 } as const;
 
 export interface DomainContentRevision {
@@ -135,27 +155,27 @@ export interface DomainContentRevision {
   snapshot?: string;
 }
 
-export type DomainContentType = (typeof DomainContentType)[keyof typeof DomainContentType];
+export type DomainContentType = typeof DomainContentType[keyof typeof DomainContentType];
+
 
 export const DomainContentType = {
-  ContentTypeMarkdown: "markdown",
-  ContentTypeHTML: "html",
-  ContentTypePlain: "plain",
+  ContentTypeMarkdown: 'markdown',
+  ContentTypeHTML: 'html',
+  ContentTypePlain: 'plain',
 } as const;
 
-export type DomainCourseEnrollmentType =
-  (typeof DomainCourseEnrollmentType)[keyof typeof DomainCourseEnrollmentType];
+export type DomainCourseEnrollmentType = typeof DomainCourseEnrollmentType[keyof typeof DomainCourseEnrollmentType];
+
 
 export const DomainCourseEnrollmentType = {
-  open: "open",
-  approval: "approval",
-  invite_only: "invite_only",
-  paid: "paid",
+  open: 'open',
+  approval: 'approval',
+  invite_only: 'invite_only',
+  paid: 'paid',
 } as const;
 
 export interface DomainUser {
-  address1?: string;
-  address2?: string;
+  addresses?: DomainAddress[];
   avatar?: string;
   bio?: string;
   countryId?: number;
@@ -169,7 +189,6 @@ export interface DomainUser {
   invitedBy?: number;
   joinedDate?: string;
   lastLoginAt?: string;
-  lastOnline?: string;
   lastname?: string;
   loginCount?: number;
   organizationId?: number;
@@ -179,7 +198,7 @@ export interface DomainUser {
   preferredLanguage?: string;
   role?: string;
   roleId?: number;
-  status?: number;
+  status?: string;
   updatedAt?: string;
   username?: string;
 }
@@ -203,23 +222,24 @@ export interface DomainLesson {
   updatedAt?: string;
 }
 
-export type DomainStatus = (typeof DomainStatus)[keyof typeof DomainStatus];
+export type DomainStatus = typeof DomainStatus[keyof typeof DomainStatus];
+
 
 export const DomainStatus = {
-  Success: "success",
-  Error: "error",
-  CourseInDraft: "draft",
-  CourseArchived: "archived",
-  CourseAssigned: "assigned",
-  CoursePublished: "published",
-  CoursePublic: "public",
-  CourseCreated: "created",
-  CourseComplete: "completed",
-  StatusSuccess: "queued",
-  StatusQueued: "sending",
-  StatusSending: "unknown",
-  StatusUnknown: "scheduled",
-  StatusScheduled: "retrying",
+  Success: 'success',
+  Error: 'error',
+  CourseInDraft: 'draft',
+  CourseArchived: 'archived',
+  CourseAssigned: 'assigned',
+  CoursePublished: 'published',
+  CoursePublic: 'public',
+  CourseCreated: 'created',
+  CourseComplete: 'completed',
+  StatusSuccess: 'queued',
+  StatusQueued: 'sending',
+  StatusSending: 'unknown',
+  StatusUnknown: 'scheduled',
+  StatusScheduled: 'retrying',
 } as const;
 
 export interface DomainCourse {
@@ -230,9 +250,9 @@ export interface DomainCourse {
   categoryId?: DomainNullInt64;
   certificateEnabled?: boolean;
   /**
-   * @minimum 0
-   * @maximum 100
-   */
+     * @minimum 0
+     * @maximum 100
+     */
   completionThreshold?: number;
   createdAt?: string;
   deletedAt?: string;
@@ -247,13 +267,11 @@ export interface DomainCourse {
   imageUrl?: string;
   lessonCount?: number;
   lessons?: DomainLesson[];
-  longDescription?: string;
   status?: DomainStatus;
-  thumbnailUrl?: string;
   /**
-   * @minLength 3
-   * @maxLength 256
-   */
+     * @minLength 3
+     * @maxLength 256
+     */
   title: string;
   updatedAt?: string;
   users?: DomainUser[];
@@ -275,12 +293,12 @@ export interface DomainCourseInsights {
   totalQuizAttempts?: number;
 }
 
-export type DomainPrerequisiteType =
-  (typeof DomainPrerequisiteType)[keyof typeof DomainPrerequisiteType];
+export type DomainPrerequisiteType = typeof DomainPrerequisiteType[keyof typeof DomainPrerequisiteType];
+
 
 export const DomainPrerequisiteType = {
-  PrerequisiteTypeRequired: "required",
-  PrerequisiteTypeRecommended: "recommended",
+  PrerequisiteTypeRequired: 'required',
+  PrerequisiteTypeRecommended: 'recommended',
 } as const;
 
 export interface DomainCoursePrerequisite {
@@ -291,23 +309,23 @@ export interface DomainCoursePrerequisite {
   prerequisiteType?: DomainPrerequisiteType;
 }
 
-export type DomainCourseUpdateDTOEnrollmentType =
-  (typeof DomainCourseUpdateDTOEnrollmentType)[keyof typeof DomainCourseUpdateDTOEnrollmentType];
+export type DomainCourseUpdateDTOEnrollmentType = typeof DomainCourseUpdateDTOEnrollmentType[keyof typeof DomainCourseUpdateDTOEnrollmentType];
+
 
 export const DomainCourseUpdateDTOEnrollmentType = {
-  open: "open",
-  approval: "approval",
-  invite_only: "invite_only",
-  paid: "paid",
+  open: 'open',
+  approval: 'approval',
+  invite_only: 'invite_only',
+  paid: 'paid',
 } as const;
 
 export interface DomainCourseUpdateDTO {
   authorId?: number;
   categoryId?: number;
   /**
-   * @minimum 0
-   * @maximum 100
-   */
+     * @minimum 0
+     * @maximum 100
+     */
   completionThreshold?: number;
   /** @maxLength 5000 */
   description?: string;
@@ -317,13 +335,11 @@ export interface DomainCourseUpdateDTO {
   imageUrl?: string;
   isCertificateEnabled?: boolean;
   isFeatured?: boolean;
-  longDescription?: string;
   status?: DomainStatus;
-  thumbnailUrl?: string;
   /**
-   * @minLength 3
-   * @maxLength 256
-   */
+     * @minLength 3
+     * @maxLength 256
+     */
   title?: string;
   version?: number;
 }
@@ -349,9 +365,9 @@ export interface DomainCreateCertificateRequest {
   score?: string;
   templateId?: number;
   /**
-   * @minLength 1
-   * @maxLength 256
-   */
+     * @minLength 1
+     * @maxLength 256
+     */
   title: string;
   userId: number;
   verificationCode?: string;
@@ -362,9 +378,9 @@ export interface DomainCreateCertificateTemplateRequest {
   htmlTemplate: string;
   isDefault?: boolean;
   /**
-   * @minLength 2
-   * @maxLength 256
-   */
+     * @minLength 2
+     * @maxLength 256
+     */
   name: string;
   organizationId: number;
   orientation?: DomainCertificateOrientation;
@@ -376,16 +392,17 @@ export interface DomainCreateEventAttendeeRequest {
   userId: number;
 }
 
-export type DomainEventType = (typeof DomainEventType)[keyof typeof DomainEventType];
+export type DomainEventType = typeof DomainEventType[keyof typeof DomainEventType];
+
 
 export const DomainEventType = {
-  EventTypeLiveSession: "live_session",
-  EventTypeOfficeHours: "office_hours",
-  EventTypeAssignmentDue: "assignment_due",
-  EventTypeQuizDue: "quiz_due",
-  EventTypeWebinar: "webinar",
-  EventTypeMeeting: "meeting",
-  EventTypeOther: "other",
+  EventTypeLiveSession: 'live_session',
+  EventTypeOfficeHours: 'office_hours',
+  EventTypeAssignmentDue: 'assignment_due',
+  EventTypeQuizDue: 'quiz_due',
+  EventTypeWebinar: 'webinar',
+  EventTypeMeeting: 'meeting',
+  EventTypeOther: 'other',
 } as const;
 
 export interface DomainCreateEventRequest {
@@ -403,20 +420,21 @@ export interface DomainCreateEventRequest {
   startTime: string;
   timezone?: string;
   /**
-   * @minLength 1
-   * @maxLength 256
-   */
+     * @minLength 1
+     * @maxLength 256
+     */
   title: string;
 }
 
-export type DomainForumType = (typeof DomainForumType)[keyof typeof DomainForumType];
+export type DomainForumType = typeof DomainForumType[keyof typeof DomainForumType];
+
 
 export const DomainForumType = {
-  ForumTypeCourse: "course",
-  ForumTypeLesson: "lesson",
-  ForumTypeAnnouncement: "announcement",
-  ForumTypeQA: "qa",
-  ForumTypeOpen: "open",
+  ForumTypeCourse: 'course',
+  ForumTypeLesson: 'lesson',
+  ForumTypeAnnouncement: 'announcement',
+  ForumTypeQA: 'qa',
+  ForumTypeOpen: 'open',
 } as const;
 
 export interface DomainCreateForumRequest {
@@ -426,41 +444,9 @@ export interface DomainCreateForumRequest {
   isModerated?: boolean;
   lessonId?: number;
   /**
-   * @minLength 3
-   * @maxLength 256
-   */
-  title: string;
-}
-
-export interface DomainLearningPathCourse {
-  courseId: number;
-  coverImage?: string;
-  description?: string;
-  duration?: string;
-  id?: number;
-  instructor?: string;
-  lessons?: number;
-  /** @minimum 1 */
-  order: number;
-  title?: string;
-}
-
-export interface DomainCreateLearningPathRequest {
-  category: string;
-  color?: string;
-  /** @minItems 1 */
-  courses: DomainLearningPathCourse[];
-  /** @minLength 10 */
-  description: string;
-  difficulty?: string;
-  estimatedDuration?: string;
-  image?: string;
-  status?: string;
-  tags?: string[];
-  /**
-   * @minLength 3
-   * @maxLength 255
-   */
+     * @minLength 3
+     * @maxLength 256
+     */
   title: string;
 }
 
@@ -472,26 +458,27 @@ export interface DomainCreateNotificationPreferenceRequest {
   userId: number;
 }
 
-export type DomainSentVia = (typeof DomainSentVia)[keyof typeof DomainSentVia];
+export type DomainSentVia = typeof DomainSentVia[keyof typeof DomainSentVia];
+
 
 export const DomainSentVia = {
-  SentViaInApp: "in_app",
-  SentViaEmail: "email",
-  SentViaPush: "push",
+  SentViaInApp: 'in_app',
+  SentViaEmail: 'email',
+  SentViaPush: 'push',
 } as const;
 
-export type DomainNotificationType =
-  (typeof DomainNotificationType)[keyof typeof DomainNotificationType];
+export type DomainNotificationType = typeof DomainNotificationType[keyof typeof DomainNotificationType];
+
 
 export const DomainNotificationType = {
-  NotificationTypeAssignmentDue: "assignment_due",
-  NotificationTypeGradePosted: "grade_posted",
-  NotificationTypeReply: "reply",
-  NotificationTypeBadge: "badge",
-  NotificationTypeCourseUpdated: "course_updated",
-  NotificationTypeEnrollment: "enrollment",
-  NotificationTypeMention: "mention",
-  NotificationTypeSystem: "system",
+  NotificationTypeAssignmentDue: 'assignment_due',
+  NotificationTypeGradePosted: 'grade_posted',
+  NotificationTypeReply: 'reply',
+  NotificationTypeBadge: 'badge',
+  NotificationTypeCourseUpdated: 'course_updated',
+  NotificationTypeEnrollment: 'enrollment',
+  NotificationTypeMention: 'mention',
+  NotificationTypeSystem: 'system',
 } as const;
 
 export interface DomainCreateNotificationRequest {
@@ -502,9 +489,9 @@ export interface DomainCreateNotificationRequest {
   organizationId?: number;
   sentVia?: DomainSentVia[];
   /**
-   * @minLength 1
-   * @maxLength 256
-   */
+     * @minLength 1
+     * @maxLength 256
+     */
   title: string;
   type: DomainNotificationType;
   userId: number;
@@ -522,9 +509,9 @@ export interface DomainCreateThreadRequest {
   contentType?: DomainContentType;
   forumId: number;
   /**
-   * @minLength 3
-   * @maxLength 512
-   */
+     * @minLength 3
+     * @maxLength 512
+     */
   title: string;
 }
 
@@ -579,14 +566,14 @@ export interface DomainDiscussionThread {
   viewCount?: number;
 }
 
-export type DomainEnrollmentPolicyType =
-  (typeof DomainEnrollmentPolicyType)[keyof typeof DomainEnrollmentPolicyType];
+export type DomainEnrollmentPolicyType = typeof DomainEnrollmentPolicyType[keyof typeof DomainEnrollmentPolicyType];
+
 
 export const DomainEnrollmentPolicyType = {
-  EnrollmentPolicyOpen: "open",
-  EnrollmentPolicyApproval: "approval",
-  EnrollmentPolicyInvite: "invite_only",
-  EnrollmentPolicyPaid: "paid",
+  EnrollmentPolicyOpen: 'open',
+  EnrollmentPolicyApproval: 'approval',
+  EnrollmentPolicyInvite: 'invite_only',
+  EnrollmentPolicyPaid: 'paid',
 } as const;
 
 export interface DomainEnrollmentPolicy {
@@ -603,32 +590,33 @@ export interface DomainEnrollmentPolicy {
   welcomeMessage?: string;
 }
 
-export type DomainExportRequestStatus =
-  (typeof DomainExportRequestStatus)[keyof typeof DomainExportRequestStatus];
+export type DomainExportRequestStatus = typeof DomainExportRequestStatus[keyof typeof DomainExportRequestStatus];
+
 
 export const DomainExportRequestStatus = {
-  ExportRequestStatusPending: "pending",
-  ExportRequestStatusProcessing: "processing",
-  ExportRequestStatusCompleted: "completed",
-  ExportRequestStatusFailed: "failed",
+  ExportRequestStatusPending: 'pending',
+  ExportRequestStatusProcessing: 'processing',
+  ExportRequestStatusCompleted: 'completed',
+  ExportRequestStatusFailed: 'failed',
 } as const;
 
-export type DomainInvitationRole = (typeof DomainInvitationRole)[keyof typeof DomainInvitationRole];
+export type DomainInvitationRole = typeof DomainInvitationRole[keyof typeof DomainInvitationRole];
+
 
 export const DomainInvitationRole = {
-  InvitationRoleLearner: "learner",
-  InvitationRoleAdmin: "admin",
-  InvitationRoleInstructor: "instructor",
+  InvitationRoleLearner: 'learner',
+  InvitationRoleAdmin: 'admin',
+  InvitationRoleInstructor: 'instructor',
 } as const;
 
-export type DomainInvitationStatus =
-  (typeof DomainInvitationStatus)[keyof typeof DomainInvitationStatus];
+export type DomainInvitationStatus = typeof DomainInvitationStatus[keyof typeof DomainInvitationStatus];
+
 
 export const DomainInvitationStatus = {
-  InvitationStatusPending: "pending",
-  InvitationStatusAccepted: "accepted",
-  InvitationStatusExpired: "expired",
-  InvitationStatusRevoked: "revoked",
+  InvitationStatusPending: 'pending',
+  InvitationStatusAccepted: 'accepted',
+  InvitationStatusExpired: 'expired',
+  InvitationStatusRevoked: 'revoked',
 } as const;
 
 export interface DomainInvitation {
@@ -647,128 +635,18 @@ export interface DomainInvitation {
   uuid?: string;
 }
 
-export interface DomainLearnerProgressSummary {
-  assignmentsGraded?: number;
-  assignmentsSubmitted?: number;
-  avgAssignmentScore?: number;
-  avgQuizScore?: number;
-  completedLessons?: number;
-  courseId?: number;
-  id?: number;
-  lastActivityAt?: number;
-  overallProgress?: number;
-  quizzesPassed?: number;
-  totalAssignments?: number;
-  totalLessons?: number;
-  totalQuizzes?: number;
-  totalTimeSpentSec?: number;
-  updatedAt?: number;
-  userId?: number;
-}
-
-export interface DomainLearnerStreak {
-  currentStreakDays?: number;
-  id?: number;
-  lastActivityDate?: string;
-  longestStreakDays?: number;
-  refreshedAt?: number;
-  totalActiveDays?: number;
-  userId?: number;
-}
-
-export type DomainLearningPathDifficulty =
-  (typeof DomainLearningPathDifficulty)[keyof typeof DomainLearningPathDifficulty];
-
-export const DomainLearningPathDifficulty = {
-  Beginner: "Beginner",
-  Intermediate: "Intermediate",
-  Advanced: "Advanced",
-  Beginner_to_Advanced: "Beginner to Advanced",
-} as const;
-
-export type DomainLearningPathStatus =
-  (typeof DomainLearningPathStatus)[keyof typeof DomainLearningPathStatus];
-
-export const DomainLearningPathStatus = {
-  draft: "draft",
-  published: "published",
-  archived: "archived",
-} as const;
-
-export interface DomainLearningPath {
-  authorId?: number;
-  authorName?: string;
-  category: string;
-  color?: string;
-  /** @minItems 1 */
-  courses?: DomainLearningPathCourse[];
-  createdAt?: string;
-  /** @minLength 10 */
-  description: string;
-  difficulty?: DomainLearningPathDifficulty;
-  enrolledCount?: number;
-  estimatedDuration?: string;
-  id?: number;
-  image?: string;
-  rating?: number;
-  status?: DomainLearningPathStatus;
-  tags?: string[];
-  /**
-   * @minLength 3
-   * @maxLength 255
-   */
-  title: string;
-  totalCourses?: number;
-  updatedAt?: string;
-}
-
-export interface DomainLearningPathCompletedCourse {
-  completedAt?: string;
-  courseId?: number;
-  title?: string;
-}
-
-export type DomainLearningPathEnrollmentStatus =
-  (typeof DomainLearningPathEnrollmentStatus)[keyof typeof DomainLearningPathEnrollmentStatus];
-
-export const DomainLearningPathEnrollmentStatus = {
-  active: "active",
-  completed: "completed",
-  dropped: "dropped",
-} as const;
-
-export interface DomainLearningPathRemainingCourse {
-  courseId?: number;
-  title?: string;
-}
-
-export interface DomainLearningPathEnrollment {
-  completedAt?: string;
-  completedCourses?: DomainLearningPathCompletedCourse[];
-  currentCourseId?: number;
-  currentCourseTitle?: string;
-  enrolledAt?: string;
-  estimatedCompletion?: string;
-  id?: number;
-  lastAccessed?: string;
-  learningPathId?: number;
-  progress?: number;
-  remainingCourses?: DomainLearningPathRemainingCourse[];
-  status?: DomainLearningPathEnrollmentStatus;
-  userId?: number;
-}
-
-export interface DomainLearningPathListResponse {
-  limit?: number;
-  page?: number;
-  paths?: DomainLearningPath[];
-  total?: number;
-  totalPages?: number;
-}
-
 export interface DomainLessonBlockRequest {
   lessonId: number;
   snapshot: string;
+}
+
+export interface DomainLessonLessonBlock {
+  createdAt?: string;
+  id?: number;
+  lessonId?: number;
+  /** JSON snapshot of all blocks */
+  snapshot?: string;
+  userId?: number;
 }
 
 export interface DomainLessonPrerequisite {
@@ -785,6 +663,7 @@ export interface DomainLoginRequest {
 }
 
 export interface DomainUserResponse {
+  addresses?: DomainAddress[];
   avatar?: string;
   bio?: string;
   createdAt?: string;
@@ -794,13 +673,12 @@ export interface DomainUserResponse {
   id?: number;
   lastLoginAt?: string;
   lastName?: string;
-  lastOnline?: string;
   loginCount?: number;
   permissions?: string[];
   phone?: string;
   preferredLanguage?: string;
   role?: string;
-  status?: number;
+  status?: string;
   updatedAt?: string;
   username?: string;
 }
@@ -821,8 +699,8 @@ export interface DomainMediaFolder {
 }
 
 export interface DomainOrgInsights {
-  activeLearners30d?: number;
   activeLearners7d?: number;
+  activeLearners30d?: number;
   avgCourseProgress?: number;
   completedEnrollments?: number;
   id?: number;
@@ -834,10 +712,8 @@ export interface DomainOrgInsights {
   totalLearners?: number;
 }
 
-export type DomainPaginatedResponseData = { [key: string]: unknown };
-
-export interface DomainPaginatedResponse {
-  data?: DomainPaginatedResponseData;
+export type DomainPaginatedResponse = Data & {
+  data?: unknown;
   hasNext?: boolean;
   hasPrev?: boolean;
   message?: DomainStatus;
@@ -845,7 +721,7 @@ export interface DomainPaginatedResponse {
   pageSize?: number;
   total?: number;
   totalPages?: number;
-}
+};
 
 export interface DomainPasswordChangeRequest {
   currentPassword: string;
@@ -859,62 +735,6 @@ export interface DomainProfileUpdateRequest {
   firstName?: string;
   lastName?: string;
   phone?: string;
-}
-
-export interface DomainQuestionBank {
-  createdAt?: number;
-  createdBy?: number;
-  description?: string;
-  id?: number;
-  organizationId?: number;
-  title?: string;
-  updatedAt?: number;
-}
-
-export interface DomainQuestionBankOption {
-  id?: number;
-  isCorrect?: boolean;
-  questionId?: number;
-  sortOrder?: number;
-  text?: string;
-}
-
-export type DomainQuestionDifficulty =
-  (typeof DomainQuestionDifficulty)[keyof typeof DomainQuestionDifficulty];
-
-export const DomainQuestionDifficulty = {
-  DifficultyEasy: "easy",
-  DifficultyMedium: "medium",
-  DifficultyHard: "hard",
-} as const;
-
-export interface DomainQuestionBankQuestion {
-  bankId?: number;
-  correctAnswer?: string;
-  createdAt?: number;
-  createdBy?: number;
-  description?: string;
-  difficulty?: DomainQuestionDifficulty;
-  explanation?: string;
-  id?: number;
-  points?: number;
-  tags?: string;
-  title?: string;
-  /** reuses question type constants from collaboration.go */
-  type?: string;
-  updatedAt?: number;
-}
-
-export interface DomainQuizAnalytics {
-  avgScore?: number;
-  avgTimeSec?: number;
-  difficultyIndex?: number;
-  id?: number;
-  passRate?: number;
-  quizId?: number;
-  totalAttempts?: number;
-  uniqueAttempts?: number;
-  updatedAt?: number;
 }
 
 export interface DomainReactionCount {
@@ -931,28 +751,21 @@ export interface DomainRegisterRequest {
   phone?: string;
 }
 
-export interface DomainReorderCoursesRequest {
-  /** @minItems 1 */
-  courses: DomainLearningPathCourse[];
-}
-
 export interface DomainReorderRequest {
   id: number;
   orderNumber: number;
 }
 
-export type DomainResponseData = { [key: string]: unknown };
-
-export interface DomainResponse {
-  data?: DomainResponseData;
+export type DomainResponse = Data & {
+  data?: unknown;
   message?: DomainStatus;
-}
+};
 
 export interface DomainRevokeCertificateRequest {
   /**
-   * @minLength 1
-   * @maxLength 500
-   */
+     * @minLength 1
+     * @maxLength 500
+     */
   revokeReason: string;
 }
 
@@ -1014,20 +827,24 @@ export interface DomainStatsResponse {
   userCount?: number;
 }
 
-export type DomainSubmissionStatus =
-  (typeof DomainSubmissionStatus)[keyof typeof DomainSubmissionStatus];
+export type DomainSubmissionStatus = typeof DomainSubmissionStatus[keyof typeof DomainSubmissionStatus];
+
 
 export const DomainSubmissionStatus = {
-  SubmissionSubmitted: "submitted",
-  SubmissionGraded: "graded",
-  SubmissionReturned: "returned",
+  SubmissionSubmitted: 'submitted',
+  SubmissionGraded: 'graded',
+  SubmissionReturned: 'returned',
 } as const;
 
-export type DomainSubmissionType = (typeof DomainSubmissionType)[keyof typeof DomainSubmissionType];
+/**
+ * USER or TEAM
+ */
+export type DomainSubmissionType = typeof DomainSubmissionType[keyof typeof DomainSubmissionType];
+
 
 export const DomainSubmissionType = {
-  SubmissionTypeUser: "user",
-  SubmissionTypeTeam: "team",
+  SubmissionTypeUser: 'user',
+  SubmissionTypeTeam: 'team',
 } as const;
 
 export interface DomainSubmission {
@@ -1044,7 +861,6 @@ export interface DomainSubmission {
   isLate?: boolean;
   score?: number;
   status?: DomainSubmissionStatus;
-  /** USER or TEAM */
   submissionType?: DomainSubmissionType;
   submittedAt?: string;
   submittedBy?: number;
@@ -1053,10 +869,8 @@ export interface DomainSubmission {
   userId?: number;
 }
 
-export type DomainSummariesData = { [key: string]: unknown };
-
 export interface DomainSummaries {
-  data?: DomainSummariesData;
+  data?: unknown;
   message?: DomainStatus;
   total?: number;
 }
@@ -1138,67 +952,20 @@ export interface DomainUpdateEventRequest {
   title?: string;
 }
 
-export interface DomainUpdateLearningPathRequest {
-  category?: string;
-  color?: string;
-  /** @minItems 1 */
-  courses?: DomainLearningPathCourse[];
-  /** @minLength 10 */
-  description?: string;
-  difficulty?: string;
-  estimatedDuration?: string;
-  image?: string;
-  status?: string;
-  tags?: string[];
-  /**
-   * @minLength 3
-   * @maxLength 255
-   */
-  title?: string;
-}
-
 export interface DomainUpdateNotificationPreferenceRequest {
   email?: boolean;
   inApp?: boolean;
   push?: boolean;
 }
 
-export type DomainUserLearningPathEnrollmentStatus =
-  (typeof DomainUserLearningPathEnrollmentStatus)[keyof typeof DomainUserLearningPathEnrollmentStatus];
+export type DomainWaitlistStatus = typeof DomainWaitlistStatus[keyof typeof DomainWaitlistStatus];
 
-export const DomainUserLearningPathEnrollmentStatus = {
-  active: "active",
-  completed: "completed",
-  dropped: "dropped",
-} as const;
-
-export interface DomainUserLearningPathEnrollment {
-  completedAt?: string;
-  completedCourses?: DomainLearningPathCompletedCourse[];
-  courseCount?: number;
-  currentCourseId?: number;
-  currentCourseTitle?: string;
-  description?: string;
-  enrolledAt?: string;
-  estimatedCompletion?: string;
-  id?: number;
-  imageUrl?: string;
-  lastAccessed?: string;
-  learningPathId?: number;
-  progress?: number;
-  remainingCourses?: DomainLearningPathRemainingCourse[];
-  status?: DomainUserLearningPathEnrollmentStatus;
-  title?: string;
-  userId?: number;
-}
-
-export type DomainWaitlistStatus = (typeof DomainWaitlistStatus)[keyof typeof DomainWaitlistStatus];
 
 export const DomainWaitlistStatus = {
-  WaitlistStatusWaiting: "waiting",
-  WaitlistStatusInvited: "invited",
-  WaitlistStatusEnrolled: "enrolled",
-  WaitlistStatusExpired: "expired",
+  WaitlistStatusWaiting: 'waiting',
+  WaitlistStatusInvited: 'invited',
+  WaitlistStatusEnrolled: 'enrolled',
+  WaitlistStatusExpired: 'expired',
 } as const;
 
 export interface DomainWaitlistEntry {
@@ -1237,979 +1004,1013 @@ export interface HttpResponseError {
   message?: string;
 }
 
-export type GetCourseInsights200 = DomainResponse & {
-  data?: DomainCourseInsights;
+export type GetCourseInsights200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetOrgInsights200 = DomainResponse & {
-  data?: DomainOrgInsights;
+export type GetOrgInsights200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type ListTopStreaksParams = {
-  /**
-   * Limit
-   */
-  limit?: number;
-  /**
-   * Offset
-   */
-  offset?: number;
+/**
+ * Limit
+ */
+limit?: number;
+/**
+ * Offset
+ */
+offset?: number;
 };
 
-export type ListTopStreaks200 = DomainResponse & {
-  data?: DomainLearnerStreak[];
+export type ListTopStreaks200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetLearnerStreak200 = DomainResponse & {
-  data?: DomainLearnerStreak;
+export type GetLearnerStreak200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type LogActivity201 = DomainResponse & {
-  data?: DomainActivityLog;
-};
+export type GenerateContentBody = { [key: string]: unknown } | DomainAIGenerationRequest;
 
-export type GetEntityActivityParams = {
-  /**
-   * Limit
-   */
-  limit?: number;
-  /**
-   * Offset
-   */
-  offset?: number;
-};
+export type GetAttachmentsBody = { [key: string]: unknown };
 
-export type GetEntityActivity200 = DomainResponse & {
-  data?: DomainActivityLog[];
-};
-
-export type GetOrgActivityParams = {
-  /**
-   * Limit
-   */
-  limit?: number;
-  /**
-   * Offset
-   */
-  offset?: number;
-};
-
-export type GetOrgActivity200 = DomainResponse & {
-  data?: DomainActivityLog[];
-};
-
-export type GetUserActivityParams = {
-  /**
-   * Limit
-   */
-  limit?: number;
-  /**
-   * Offset
-   */
-  offset?: number;
-};
-
-export type GetUserActivity200 = DomainResponse & {
-  data?: DomainActivityLog[];
-};
-
-export type CreateQuestionBank201 = DomainResponse & {
-  data?: DomainQuestionBank;
-};
-
-export type ListQuestionBanksByOrgParams = {
-  /**
-   * Limit
-   */
-  limit?: number;
-  /**
-   * Offset
-   */
-  offset?: number;
-};
-
-export type ListQuestionBanksByOrg200 = DomainResponse & {
-  data?: DomainQuestionBank[];
-};
-
-export type ListBankQuestions200 = DomainResponse & {
-  data?: DomainQuestionBankQuestion[];
-};
-
-export type CreateBankQuestion201 = DomainResponse & {
-  data?: DomainQuestionBankQuestion;
-};
-
-export type SearchBankQuestionsParams = {
-  /**
-   * Search query
-   */
-  q: string;
-};
-
-export type SearchBankQuestions200 = DomainResponse & {
-  data?: DomainQuestionBankQuestion[];
-};
-
-export type GetQuestionBank200 = DomainResponse & {
-  data?: DomainQuestionBank;
-};
-
-export type UpdateQuestionBank200 = DomainResponse & {
-  data?: DomainQuestionBank;
-};
-
-export type UpsertProgress200 = DomainResponse & {
-  data?: DomainLearnerProgressSummary;
-};
-
-export type GetCourseProgressParams = {
-  /**
-   * Limit
-   */
-  limit?: number;
-  /**
-   * Offset
-   */
-  offset?: number;
-};
-
-export type GetCourseProgress200 = DomainResponse & {
-  data?: DomainLearnerProgressSummary[];
-};
-
-export type GetByUserProgress200 = DomainResponse & {
-  data?: DomainLearnerProgressSummary[];
-};
-
-export type GetProgress200 = DomainResponse & {
-  data?: DomainLearnerProgressSummary;
-};
-
-export type UpdateBankQuestion200 = DomainResponse & {
-  data?: DomainQuestionBankQuestion;
-};
-
-export type GetBankOptions200 = DomainResponse & {
-  data?: DomainQuestionBankOption[];
-};
-
-export type CreateBankOption201 = DomainResponse & {
-  data?: DomainQuestionBankOption;
-};
-
-export type GetQuizAnalytics200 = DomainResponse & {
-  data?: DomainQuizAnalytics;
-};
-
-export type UpsertQuizAnalytics200 = DomainResponse & {
-  data?: DomainQuizAnalytics;
-};
-
-export type AssignmentGradeBody = { [key: string]: unknown };
-
-export type GradeTeamBody = { [key: string]: unknown };
-
-export type GetAttachments200 = DomainResponse & {
-  data?: DomainAssignmentAttachment[];
+export type GetAttachments200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type AddAttachmentBody = { [key: string]: unknown };
 
 export type EnrollTeamBody = { [key: string]: unknown };
 
+export type RemoveTeamEnrollmentBody = { [key: string]: unknown };
+
 export type EnrollUserBody = { [key: string]: unknown };
 
-export type GetEnrolledTeams200 = DomainResponse & {
-  data?: DomainAssignmentTeamEnrollment[];
+export type RemoveUserEnrollmentBody = { [key: string]: unknown };
+
+export type GetEnrolledTeamsBody = { [key: string]: unknown };
+
+export type GetEnrolledTeams200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetEnrolledUsers200 = DomainResponse & {
-  data?: DomainAssignmentEnrollment[];
+export type GetEnrolledUsersBody = { [key: string]: unknown };
+
+export type GetEnrolledUsers200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
+
+export type AssignmentPublishBody = { [key: string]: unknown };
 
 export type AssignmentSubmitBody = { [key: string]: unknown };
 
-export type AssignmentSubmit201 = DomainResponse & {
-  data?: DomainSubmission;
+export type AssignmentSubmit201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type SubmitTeamBody = { [key: string]: unknown };
 
-export type SubmitTeam201 = DomainResponse & {
-  data?: DomainSubmission;
+export type SubmitTeam201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type AttachmentCreateBody = {
-  /** Title */
-  title?: string;
-  /** Description */
-  description?: string;
-  /** Upload file */
-  file: Blob;
+export type DeleteAttachmentBody = { [key: string]: unknown };
+
+export type GetSubmissionByIDBody = { [key: string]: unknown };
+
+export type GetSubmissionByID200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type AssignmentGradeBody = { [key: string]: unknown };
+
+export type GradeTeamBody = { [key: string]: unknown };
+
+export type GetAllAttachmentsParams = {
+/**
+ * Pagination offset
+ */
+start?: number;
+/**
+ * Page size
+ */
+limit?: number;
+};
+
+export type GetAllAttachments200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type DownloadAttachmentParams = {
-  /**
-   * uuid-encoded file name
-   */
-  file: string;
+/**
+ * uuid-encoded file name
+ */
+file: string;
 };
 
 export type GetAuditLogsParams = {
-  /**
-   * start
-   */
-  start?: number;
-  /**
-   * limit
-   */
-  limit?: number;
-  /**
-   * Filter by user ID
-   */
-  userId?: number;
-  /**
-   * Filter by organization ID
-   */
-  orgId?: number;
-  /**
-   * Filter by entity type
-   */
-  entityType?: string;
-  /**
-   * Filter by entity ID
-   */
-  entityId?: number;
-  /**
-   * Filter by action
-   */
-  action?: string;
+/**
+ * start
+ */
+start?: number;
+/**
+ * limit
+ */
+limit?: number;
+/**
+ * Filter by user ID
+ */
+userId?: number;
+/**
+ * Filter by organization ID
+ */
+orgId?: number;
+/**
+ * Filter by entity type
+ */
+entityType?: string;
+/**
+ * Filter by entity ID
+ */
+entityId?: number;
+/**
+ * Filter by action
+ */
+action?: string;
 };
 
-export type LoginHandler200 = DomainResponse & {
-  data?: DomainLoginResponse;
+export type CreateAuditLogBody = { [key: string]: unknown } | DomainAuditLog;
+
+export type CreateDataExportRequestBody = { [key: string]: unknown };
+
+export type UpdateDataExportRequestBody = { [key: string]: unknown } | DomainUpdateDataExportRequest;
+
+export type AdminResetPasswordHandlerBody = { [key: string]: unknown } | DomainAdminResetPasswordRequest;
+
+export type LoginHandlerBody = { [key: string]: unknown } | DomainLoginRequest;
+
+export type LoginHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type MeHandler200 = DomainResponse & {
-  data?: DomainUserResponse;
+export type MeHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type UpdateProfileHandler200 = DomainResponse & {
-  data?: DomainUserResponse;
+export type ChangePasswordHandlerBody = { [key: string]: unknown } | DomainPasswordChangeRequest;
+
+export type UpdateProfileHandlerBody = { [key: string]: unknown } | DomainProfileUpdateRequest;
+
+export type UpdateProfileHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type RegisterHandler201 = DomainResponse & {
-  data?: DomainUserResponse;
+export type RegisterHandlerBody = { [key: string]: unknown } | DomainRegisterRequest;
+
+export type RegisterHandler201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type GetBlockVersions200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type CategoryGetAllParams = {
-  /**
-   * Search by name
-   */
-  search?: string;
-  /**
-   * Offset
-   */
-  start?: number;
-  /**
-   * Page size
-   */
-  limit?: number;
+/**
+ * Search by name
+ */
+search?: string;
+/**
+ * Offset
+ */
+start?: number;
+/**
+ * Page size
+ */
+limit?: number;
+};
+
+export type CategoryGetAllBody = { [key: string]: unknown };
+
+export type CategoryCreateBody = { [key: string]: unknown } | DomainCategory;
+
+export type CategoryDeleteBody = { [key: string]: unknown };
+
+export type CategoryGetByIDBody = { [key: string]: unknown };
+
+export type CategoryUpdateBody = { [key: string]: unknown } | DomainCategory;
+
+export type CategorySetParentBody = { [key: string]: unknown } | {
+  parentId?: number;
 };
 
 export type CategoryGetChildrenParams = {
-  /**
-   * Offset
-   */
-  start?: number;
-  /**
-   * Page size
-   */
-  limit?: number;
+/**
+ * Offset
+ */
+start?: number;
+/**
+ * Page size
+ */
+limit?: number;
 };
+
+export type CategoryGetChildrenBody = { [key: string]: unknown };
 
 export type CategoryGetRootsParams = {
-  /**
-   * Offset
-   */
-  start?: number;
-  /**
-   * Page size
-   */
-  limit?: number;
+/**
+ * Offset
+ */
+start?: number;
+/**
+ * Page size
+ */
+limit?: number;
 };
 
-export type CategorySetParentBody = {
-  parentId?: number;
-};
+export type CategoryGetRootsBody = { [key: string]: unknown };
 
 export type GetUserCertificatesParams = {
-  /**
-   * start
-   */
-  start?: number;
-  /**
-   * limit
-   */
-  limit?: number;
+/**
+ * start
+ */
+start?: number;
+/**
+ * limit
+ */
+limit?: number;
 };
 
+export type IssueCertificateBody = { [key: string]: unknown } | DomainCreateCertificateRequest;
+
+export type CertificateUpdateBody = { [key: string]: unknown } | DomainUpdateCertificateRequest;
+
+export type RevokeCertificateBody = { [key: string]: unknown } | DomainRevokeCertificateRequest;
+
 export type GetCourseCertificatesParams = {
-  /**
-   * start
-   */
-  start?: number;
-  /**
-   * limit
-   */
-  limit?: number;
+/**
+ * start
+ */
+start?: number;
+/**
+ * limit
+ */
+limit?: number;
 };
 
 export type GetOrgCertificatesParams = {
-  /**
-   * start
-   */
-  start?: number;
-  /**
-   * limit
-   */
-  limit?: number;
+/**
+ * start
+ */
+start?: number;
+/**
+ * limit
+ */
+limit?: number;
 };
 
-export type CreateCoursePrerequisite201 = DomainResponse & {
-  data?: DomainCoursePrerequisite;
+export type CreateTemplateBody = { [key: string]: unknown } | DomainCreateCertificateTemplateRequest;
+
+export type UpdateTemplateBody = { [key: string]: unknown } | DomainUpdateCertificateTemplateRequest;
+
+export type CreateCoursePrerequisiteBody = { [key: string]: unknown } | DomainCoursePrerequisite;
+
+export type CreateCoursePrerequisite201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type GetCoursePrerequisitesParams = {
-  /**
-   * Page number
-   */
+/**
+ * Page number
+ */
+page?: number;
+/**
+ * Page size
+ */
+pageSize?: number;
+};
+
+export type GetCoursePrerequisites200 = Data & {
+  data?: unknown;
+  hasNext?: boolean;
+  hasPrev?: boolean;
+  message?: DomainStatus;
   page?: number;
-  /**
-   * Page size
-   */
   pageSize?: number;
+  total?: number;
+  totalPages?: number;
 };
 
-export type GetCoursePrerequisites200 = DomainPaginatedResponse & {
-  data?: DomainCoursePrerequisite[];
-};
+export type CreateLessonPrerequisiteBody = { [key: string]: unknown } | DomainLessonPrerequisite;
 
-export type CreateLessonPrerequisite201 = DomainResponse & {
-  data?: DomainLessonPrerequisite;
+export type CreateLessonPrerequisite201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type GetLessonPrerequisitesParams = {
-  /**
-   * Page number
-   */
+/**
+ * Page number
+ */
+page?: number;
+/**
+ * Page size
+ */
+pageSize?: number;
+};
+
+export type GetLessonPrerequisites200 = Data & {
+  data?: unknown;
+  hasNext?: boolean;
+  hasPrev?: boolean;
+  message?: DomainStatus;
   page?: number;
-  /**
-   * Page size
-   */
   pageSize?: number;
+  total?: number;
+  totalPages?: number;
 };
 
-export type GetLessonPrerequisites200 = DomainPaginatedResponse & {
-  data?: DomainLessonPrerequisite[];
+export type CreateContentRevisionBody = { [key: string]: unknown } | DomainContentRevision;
+
+export type CreateContentRevision201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type CreateContentRevision201 = DomainResponse & {
-  data?: DomainContentRevision;
+export type GetContentRevision200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type GetBlockRevisionsParams = {
-  /**
-   * Limit
-   */
-  limit?: number;
-  /**
-   * Offset
-   */
-  offset?: number;
+/**
+ * Limit
+ */
+limit?: number;
+/**
+ * Offset
+ */
+offset?: number;
 };
 
-export type GetBlockRevisions200 = DomainPaginatedResponse & {
-  data?: DomainContentRevision[];
+export type GetBlockRevisions200 = Data & {
+  data?: unknown;
+  hasNext?: boolean;
+  hasPrev?: boolean;
+  message?: DomainStatus;
+  page?: number;
+  pageSize?: number;
+  total?: number;
+  totalPages?: number;
 };
 
-export type GetLatestContentRevision200 = DomainResponse & {
-  data?: DomainContentRevision;
+export type GetLatestContentRevision200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type GetLessonRevisionsParams = {
-  /**
-   * Limit
-   */
-  limit?: number;
-  /**
-   * Offset
-   */
-  offset?: number;
+/**
+ * Limit
+ */
+limit?: number;
+/**
+ * Offset
+ */
+offset?: number;
 };
 
-export type GetLessonRevisions200 = DomainPaginatedResponse & {
-  data?: DomainContentRevision[];
+export type GetLessonRevisions200 = Data & {
+  data?: unknown;
+  hasNext?: boolean;
+  hasPrev?: boolean;
+  message?: DomainStatus;
+  page?: number;
+  pageSize?: number;
+  total?: number;
+  totalPages?: number;
 };
 
-export type GetContentRevision200 = DomainResponse & {
-  data?: DomainContentRevision;
+export type CreateCourseVersionBody = { [key: string]: unknown } | DomainCourseVersion;
+
+export type CreateCourseVersion201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type CreateCourseVersion201 = DomainResponse & {
-  data?: DomainCourseVersion;
+export type GetCourseVersion200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type GetCourseVersionsParams = {
-  /**
-   * Limit
-   */
-  limit?: number;
-  /**
-   * Offset
-   */
-  offset?: number;
+/**
+ * Limit
+ */
+limit?: number;
+/**
+ * Offset
+ */
+offset?: number;
 };
 
-export type GetCourseVersions200 = DomainPaginatedResponse & {
-  data?: DomainCourseVersion[];
+export type GetCourseVersions200 = Data & {
+  data?: unknown;
+  hasNext?: boolean;
+  hasPrev?: boolean;
+  message?: DomainStatus;
+  page?: number;
+  pageSize?: number;
+  total?: number;
+  totalPages?: number;
 };
 
-export type GetLatestCourseVersion200 = DomainResponse & {
-  data?: DomainCourseVersion;
-};
-
-export type GetCourseVersion200 = DomainResponse & {
-  data?: DomainCourseVersion;
+export type GetLatestCourseVersion200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type CourseGetAllParams = {
-  /**
-   * start
-   */
-  start: number;
-  /**
-   * limit
-   */
-  limit: number;
+/**
+ * start
+ */
+start: number;
+/**
+ * limit
+ */
+limit: number;
 };
 
-export type CoursePartialUpdate200 = DomainResponse & {
-  data?: DomainCourse;
+export type CourseCreateBody = { [key: string]: unknown } | DomainCourse;
+
+export type CoursePartialUpdateBody = { [key: string]: unknown } | DomainCourseUpdateDTO;
+
+export type CoursePartialUpdate200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type ArchiveCourse200 = DomainResponse & {
-  data?: DomainCourse;
+export type CourseUpdateBody = { [key: string]: unknown } | DomainCourse;
+
+export type EnrollmentAdminEnrollTeamBody = { [key: string]: unknown } | HttpAdminEnrollTeamRequest;
+
+export type EnrollmentAdminEnrollUserBody = { [key: string]: unknown } | HttpAdminEnrollRequest;
+
+export type EnrollmentDropBody = { [key: string]: unknown };
+
+export type EnrollmentEnrollBody = { [key: string]: unknown };
+
+export type ToggleImportant200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type ToggleImportant200 = DomainResponse & {
-  data?: DomainCourse;
+export type CreateLessonForCourseBody = { [key: string]: unknown } | DomainLesson;
+
+export type ReorderLessonsBody = { [key: string]: unknown } | DomainReorderRequest[];
+
+export type UpdateCourseStatusBodyOne = { [key: string]: unknown };
+
+export type UpdateCourseStatus200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type PublishCourse200 = DomainResponse & {
-  data?: DomainCourse;
+export type GetCourseForums200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetCourseForums200 = DomainResponse & {
-  data?: DomainDiscussionForum[];
-};
+export type CreateForumBody = { [key: string]: unknown } | DomainCreateForumRequest;
 
-export type CreateForum201 = DomainResponse & {
-  data?: DomainDiscussionForum;
+export type CreateForum201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type GetForumThreadsParams = {
-  /**
-   * Page number
-   */
-  page?: number;
-  /**
-   * Thread limit per page
-   */
-  limit?: number;
+/**
+ * Page number
+ */
+page?: number;
+/**
+ * Thread limit per page
+ */
+limit?: number;
 };
 
-export type GetForumThreads200 = DomainResponse & {
-  data?: DomainThreadListResponse;
+export type GetForumThreads200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type CreateThread201 = DomainResponse & {
-  data?: DomainDiscussionThread;
+export type CreateThreadBody = { [key: string]: unknown } | DomainCreateThreadRequest;
+
+export type CreateThread201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type SearchThreadsParams = {
-  /**
-   * Search query string
-   */
-  q: string;
-  /**
-   * Page number
-   */
-  page?: number;
-  /**
-   * Page size
-   */
-  limit?: number;
+/**
+ * Search query string
+ */
+q: string;
+/**
+ * Page number
+ */
+page?: number;
+/**
+ * Page size
+ */
+limit?: number;
 };
 
-export type SearchThreads200 = DomainResponse & {
-  data?: DomainThreadListResponse;
+export type SearchThreads200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetForum200 = DomainResponse & {
-  data?: DomainDiscussionForum;
+export type GetForum200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type UpdateForum200 = DomainResponse & {
-  data?: DomainDiscussionForum;
+export type UpdateForumBody = { [key: string]: unknown } | DomainDiscussionForum;
+
+export type UpdateForum200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type ReactBody = { [key: string]: unknown };
+export type RemoveReactionBody = { [key: string]: unknown } | {[key: string]: unknown};
 
-export type RemoveReactionBody = { [key: string]: unknown };
+export type ReactBody = { [key: string]: unknown } | {[key: string]: unknown};
 
-export type GetReactions200 = DomainResponse & {
-  data?: DomainReactionCount[];
+export type GetReactions200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetReply200 = DomainResponse & {
-  data?: DomainDiscussionReply;
+export type GetReply200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type UpdateReply200 = DomainResponse & {
-  data?: DomainDiscussionReply;
+export type UpdateReplyBody = { [key: string]: unknown } | DomainDiscussionReply;
+
+export type UpdateReply200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type MarkAsAnswerParams = {
-  /**
-   * Is it correct answer
-   */
-  isAnswer: boolean;
+/**
+ * Is it correct answer
+ */
+isAnswer: boolean;
 };
 
-export type SubscribeBody = { [key: string]: unknown };
+export type UnsubscribeBody = { [key: string]: unknown } | {[key: string]: unknown};
 
-export type UnsubscribeBody = { [key: string]: unknown };
+export type SubscribeBody = { [key: string]: unknown } | {[key: string]: unknown};
 
-export type GetThread200 = DomainResponse & {
-  data?: DomainDiscussionThread;
+export type GetThread200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type UpdateThread200 = DomainResponse & {
-  data?: DomainDiscussionThread;
+export type UpdateThreadBody = { [key: string]: unknown } | DomainDiscussionThread;
+
+export type UpdateThread200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type LockThreadParams = {
-  /**
-   * Locked status
-   */
-  lock: boolean;
+/**
+ * Locked status
+ */
+lock: boolean;
 };
 
 export type PinThreadParams = {
-  /**
-   * Pinned status
-   */
-  pin: boolean;
+/**
+ * Pinned status
+ */
+pin: boolean;
 };
 
 export type GetThreadRepliesParams = {
-  /**
-   * Page number
-   */
-  page?: number;
-  /**
-   * Limit number
-   */
-  limit?: number;
+/**
+ * Page number
+ */
+page?: number;
+/**
+ * Limit number
+ */
+limit?: number;
 };
 
-export type GetThreadReplies200 = DomainResponse & {
-  data?: DomainDiscussionReply[];
+export type GetThreadReplies200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type CreateReply201 = DomainResponse & {
-  data?: DomainDiscussionReply;
+export type CreateReplyBody = { [key: string]: unknown } | DomainCreateReplyRequest;
+
+export type CreateReply201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type VoteBody = { [key: string]: unknown };
+export type VoteBody = { [key: string]: unknown } | {[key: string]: unknown};
 
-export type CreateInvitation201 = DomainResponse & {
-  data?: DomainInvitation;
+export type CreateInvitationBody = { [key: string]: unknown } | DomainInvitation;
+
+export type CreateInvitation201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetInvitationsByCourse200 = DomainResponse & {
-  data?: DomainInvitation[];
+export type GetInvitationsByCourse200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetPendingInvitationsByEmail200 = DomainResponse & {
-  data?: DomainInvitation[];
+export type GetPendingInvitationsByEmail200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetInvitationByToken200 = DomainResponse & {
-  data?: DomainInvitation;
+export type GetInvitationByToken200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetInvitationByUUID200 = DomainResponse & {
-  data?: DomainInvitation;
+export type GetInvitationByUUID200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type CreateEnrollmentPolicy201 = DomainResponse & {
-  data?: DomainEnrollmentPolicy;
+export type CreateEnrollmentPolicyBody = { [key: string]: unknown } | DomainEnrollmentPolicy;
+
+export type CreateEnrollmentPolicy201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetEnrollmentPolicy200 = DomainResponse & {
-  data?: DomainEnrollmentPolicy;
+export type GetEnrollmentPolicy200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type UpdateEnrollmentPolicy200 = DomainResponse & {
-  data?: DomainEnrollmentPolicy;
+export type UpdateEnrollmentPolicyBody = { [key: string]: unknown } | DomainEnrollmentPolicy;
+
+export type UpdateEnrollmentPolicy200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type CreateWaitlistEntry201 = DomainResponse & {
-  data?: DomainWaitlistEntry;
+export type CreateWaitlistEntryBody = { [key: string]: unknown } | DomainWaitlistEntry;
+
+export type CreateWaitlistEntry201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetWaitlist200 = DomainResponse & {
-  data?: DomainWaitlistEntry[];
+export type GetWaitlist200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type InviteWaitlist200 = DomainResponse & {
-  data?: DomainWaitlistEntry;
+export type InviteWaitlist200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type GetOrgEventsParams = {
-  /**
-   * start
-   */
-  start?: number;
-  /**
-   * limit
-   */
-  limit?: number;
+/**
+ * start
+ */
+start?: number;
+/**
+ * limit
+ */
+limit?: number;
 };
 
+export type EventCreateBody = { [key: string]: unknown } | DomainCreateEventRequest;
+
+export type GetEventAttendeesParams = {
+/**
+ * start
+ */
+start?: number;
+/**
+ * limit
+ */
+limit?: number;
+};
+
+export type AddAttendeeBody = { [key: string]: unknown } | DomainCreateEventAttendeeRequest;
+
+export type UpdateAttendeeStatusBody = { [key: string]: unknown } | DomainUpdateEventAttendeeRequest;
+
+export type EventUpdateBody = { [key: string]: unknown } | DomainUpdateEventRequest;
+
 export type GetCourseEventsParams = {
-  /**
-   * start
-   */
-  start?: number;
-  /**
-   * limit
-   */
-  limit?: number;
+/**
+ * start
+ */
+start?: number;
+/**
+ * limit
+ */
+limit?: number;
 };
 
 export type GetEventsInTimeRangeParams = {
-  /**
-   * Start time (Unix timestamp)
-   */
-  startTime: number;
-  /**
-   * End time (Unix timestamp)
-   */
-  endTime: number;
-  /**
-   * start
-   */
-  start?: number;
-  /**
-   * limit
-   */
-  limit?: number;
+/**
+ * Start time (Unix timestamp)
+ */
+startTime: number;
+/**
+ * End time (Unix timestamp)
+ */
+endTime: number;
+/**
+ * start
+ */
+start?: number;
+/**
+ * limit
+ */
+limit?: number;
 };
 
 export type GetEventsByTypeParams = {
-  /**
-   * start
-   */
-  start?: number;
-  /**
-   * limit
-   */
-  limit?: number;
+/**
+ * start
+ */
+start?: number;
+/**
+ * limit
+ */
+limit?: number;
 };
 
 export type GetUpcomingEventsParams = {
-  /**
-   * start
-   */
-  start?: number;
-  /**
-   * limit
-   */
-  limit?: number;
+/**
+ * start
+ */
+start?: number;
+/**
+ * limit
+ */
+limit?: number;
 };
 
 export type GetUserEventsParams = {
-  /**
-   * start
-   */
-  start?: number;
-  /**
-   * limit
-   */
-  limit?: number;
+/**
+ * start
+ */
+start?: number;
+/**
+ * limit
+ */
+limit?: number;
 };
 
 export type GetUserAttendeesParams = {
-  /**
-   * start
-   */
-  start?: number;
-  /**
-   * limit
-   */
-  limit?: number;
-};
-
-export type GetEventAttendeesParams = {
-  /**
-   * start
-   */
-  start?: number;
-  /**
-   * limit
-   */
-  limit?: number;
-};
-
-export type LearningPathGetAllParams = {
-  /**
-   * Search in title and description
-   */
-  search?: string;
-  /**
-   * Filter by category name
-   */
-  category?: string;
-  /**
-   * Filter by status: draft, published, archived
-   */
-  status?: string;
-  /**
-   * Page number (default: 1)
-   */
-  page?: number;
-  /**
-   * Items per page (default: 6)
-   */
-  limit?: number;
-};
-
-export type LearningPathGetAll200 = DomainResponse & {
-  data?: DomainLearningPathListResponse;
-};
-
-export type LearningPathCreate201 = DomainResponse & {
-  data?: DomainLearningPath;
-};
-
-export type GetCategories200 = DomainResponse & {
-  data?: string[];
-};
-
-export type GetMyLearningPathEnrollmentsParams = {
-  /**
-   * Pagination offset
-   */
-  start?: number;
-  /**
-   * Page size
-   */
-  limit?: number;
-};
-
-export type GetMyLearningPathEnrollments200 = DomainResponse & {
-  data?: DomainUserLearningPathEnrollment[];
-};
-
-export type LearningPathGetStatParams = {
-  /**
-   * Search in title and description
-   */
-  search?: string;
-  /**
-   * Filter by category
-   */
-  category?: string;
-  /**
-   * Filter by status
-   */
-  status?: string;
-};
-
-export type LearningPathGetByID200 = DomainResponse & {
-  data?: DomainLearningPath;
-};
-
-export type LearningPathUpdate200 = DomainResponse & {
-  data?: DomainLearningPath;
-};
-
-export type LearningPathAdminEnrollTeam200Data = { [key: string]: number };
-
-export type LearningPathAdminEnrollTeam200 = DomainResponse & {
-  data?: LearningPathAdminEnrollTeam200Data;
-};
-
-export type LearningPathAdminEnrollUser200 = DomainResponse & {
-  data?: DomainLearningPathEnrollment;
-};
-
-export type GetLPEnrollments200 = DomainResponse & {
-  data?: DomainLearningPathEnrollment[];
-};
-
-export type LearningPathEnroll200 = DomainResponse & {
-  data?: DomainLearningPathEnrollment;
-};
-
-export type LearningPathGetProgress200 = DomainResponse & {
-  data?: DomainLearningPathEnrollment;
+/**
+ * start
+ */
+start?: number;
+/**
+ * limit
+ */
+limit?: number;
 };
 
 export type LessonGetAllParams = {
-  /**
-   * start
-   */
-  start: number;
-  /**
-   * limit
-   */
-  limit: number;
+/**
+ * start
+ */
+start: number;
+/**
+ * limit
+ */
+limit: number;
 };
 
-export type UploadBlockMediaBody = {
-  /** Media file to upload */
-  file: Blob;
-};
+export type LessonCreateBody = { [key: string]: unknown } | DomainLesson;
 
-export type UploadLessonMediaBody = {
-  /** Media file to upload */
-  file: Blob;
-};
+export type LessonUpdateBody = { [key: string]: unknown } | DomainLesson;
+
+export type LessonBlockBody = { [key: string]: unknown } | DomainLessonBlockRequest;
+
+export type UploadBlockMediaBodyTwo = { [key: string]: unknown };
+
+export type MarkCompleteBody = { [key: string]: unknown } | HttpCompleteRequest;
+
+export type UploadLessonMediaBodyTwo = { [key: string]: unknown };
 
 export type GetFoldersParams = {
-  /**
-   * Parent folder ID for nested folders
-   */
-  parentId?: number;
+/**
+ * Parent folder ID for nested folders
+ */
+parentId?: number;
 };
 
-export type MediaUploadBody = {
-  /** File to upload */
-  file: Blob;
-  /** Entity type (block, attachment, avatar, course, team) */
-  entity_type?: string;
-  /** Entity ID */
-  entity_id?: number;
-  /** Content type hint (image, video, audio, document) */
-  content_type?: string;
+export type CreateFolderBody = { [key: string]: unknown } | DomainMediaFolder;
+
+export type UpdateFolderBody = { [key: string]: unknown } | DomainMediaFolder;
+
+export type MediaUploadBodyTwo = { [key: string]: unknown };
+
+export type NotificationCreateBody = { [key: string]: unknown } | DomainCreateNotificationRequest;
+
+export type CreatePreferenceBody = { [key: string]: unknown } | DomainCreateNotificationPreferenceRequest;
+
+export type UpdatePreferenceBody = { [key: string]: unknown } | DomainUpdateNotificationPreferenceRequest;
+
+export type GetAllRolesHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetAllRolesHandler200 = DomainResponse & {
-  data?: DomainRole[];
+export type CreateRoleHandlerBody = { [key: string]: unknown } | DomainRole;
+
+export type CreateRoleHandler201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type CreateRoleHandler201 = DomainResponse & {
-  data?: DomainRole;
+export type GetRoleByIDHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetRoleByIDHandler200 = DomainResponse & {
-  data?: DomainRole;
-};
+export type UpdateRoleHandlerBody = { [key: string]: unknown } | DomainRole;
 
-export type UpdateRoleHandler200 = DomainResponse & {
-  data?: DomainRole;
+export type UpdateRoleHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type ListRubricsParams = {
-  /**
-   * Limit results
-   */
-  limit?: number;
-  /**
-   * Offset results
-   */
-  offset?: number;
+/**
+ * Limit results
+ */
+limit?: number;
+/**
+ * Offset results
+ */
+offset?: number;
 };
 
-export type ListRubrics200 = DomainResponse & {
-  data?: DomainRubric[];
+export type ListRubrics200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type CreateRubric201 = DomainResponse & {
-  data?: DomainRubric;
+export type CreateRubricBody = { [key: string]: unknown } | DomainRubric;
+
+export type CreateRubric201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type SaveRubricGrade200 = DomainResponse & {
-  data?: DomainRubricGrade;
+export type GetRubricByID200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetGradesBySubmission200 = DomainResponse & {
-  data?: DomainRubricGrade[];
+export type UpdateRubricBody = { [key: string]: unknown } | DomainRubric;
+
+export type UpdateRubric200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetRubricByID200 = DomainResponse & {
-  data?: DomainRubric;
+export type SaveRubricGradeBody = { [key: string]: unknown } | DomainRubricGrade;
+
+export type SaveRubricGrade200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type UpdateRubric200 = DomainResponse & {
-  data?: DomainRubric;
+export type GetGradesBySubmission200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type StatsGet200 = DomainResponse & {
-  data?: DomainStatsResponse;
+export type StatsGet200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
 export type TeamGetAllParams = {
-  /**
-   * Pagination offset
-   */
-  start?: number;
-  /**
-   * Page size
-   */
-  limit?: number;
+/**
+ * Pagination offset
+ */
+start?: number;
+/**
+ * Page size
+ */
+limit?: number;
 };
 
-export type TeamGetAll200 = DomainResponse & {
-  data?: DomainTeam[];
+export type TeamGetAll200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type TeamCreate201 = DomainResponse & {
-  data?: DomainTeam;
+export type TeamCreateBody = { [key: string]: unknown } | DomainTeam;
+
+export type TeamCreate201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type TeamGetByID200 = DomainResponse & {
-  data?: DomainTeam;
+export type TeamGetByID200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type TeamUpdate200 = DomainResponse & {
-  data?: DomainTeam;
+export type TeamUpdateBody = { [key: string]: unknown } | DomainTeam;
+
+export type TeamUpdate200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetMembers200 = DomainResponse & {
-  data?: DomainUserResponse[];
+export type GetAvailableUsersParams = {
+/**
+ * Search by name or email
+ */
+search?: string;
+/**
+ * Pagination offset
+ */
+start?: number;
+/**
+ * Page size
+ */
+limit?: number;
 };
+
+export type GetAvailableUsers200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type GetMembers200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type AddMemberBody = { [key: string]: unknown } | DomainTeamMember;
 
 export type GetAllUsersHandlerParams = {
-  /**
-   * Pagination offset
-   */
-  start?: number;
-  /**
-   * Page size
-   */
-  limit?: number;
+/**
+ * Pagination offset
+ */
+start?: number;
+/**
+ * Page size
+ */
+limit?: number;
 };
 
-export type GetAllUsersHandler200 = DomainResponse & {
-  data?: DomainUser[];
+export type GetAllUsersHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
 
-export type GetUserHandler200 = DomainResponse & {
-  data?: DomainUserResponse;
+export type GetUserHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
 };
+
+export type UpdateUserHandlerBody = { [key: string]: unknown } | DomainUser;
+

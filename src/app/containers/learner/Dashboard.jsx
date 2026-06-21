@@ -1,16 +1,15 @@
 import { BookOpen, CheckCircle, Clock, TrendingUp } from "lucide-react";
-import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { useMyEnrollments } from "@/hooks/queries/useEnrollments";
+import EmptyState from "@/components/common/EmptyState";
 import LoadingState from "@/components/common/LoadingState";
 import StatCard from "@/components/common/StatCard";
-import EmptyState from "@/components/common/EmptyState";
 import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import { Button } from "@/components/ui/Button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { usePageTitle } from "@/hooks";
+import { useMyEnrollments } from "@/hooks/queries/useEnrollments";
 
 /**
  * LearnerDashboard — Main dashboard for Student role.

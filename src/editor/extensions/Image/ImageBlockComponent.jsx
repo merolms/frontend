@@ -13,11 +13,12 @@ import {
 import { Resizable } from "re-resizable";
 import React from "react";
 
-import Modal from "../../../components/ui/Modal";
 import { useEditorProvider } from "@/contexts/EditorContext";
-import { constructAcceptValue } from "../../../lib/constants";
 import { uploadEditorMedia } from "@/editor/utils/mediaUpload";
 import { useAuthenticatedMediaUrl } from "@/hooks";
+
+import Modal from "../../../components/ui/Modal";
+import { constructAcceptValue } from "../../../lib/constants";
 
 const SUPPORTED_FILES = constructAcceptValue(["jpg", "png", "webp", "gif"]);
 

@@ -2,8 +2,9 @@ import { NodeViewWrapper } from "@tiptap/react";
 import { AlignCenter, AlignLeft, AlignRight, Edit2, Save, Trash, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import Modal from "../../../components/ui/Modal";
 import { useEditorProvider } from "@/contexts/EditorContext";
+
+import Modal from "../../../components/ui/Modal";
 
 const ALIGNMENTS = [
   { value: "left", label: <AlignLeft size={16} /> },

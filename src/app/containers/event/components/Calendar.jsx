@@ -1,8 +1,8 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
-import { getMonthTimeRange } from "@/app/utils/eventUtils";
 import { useGetEventsInTimeRange } from "@/app/api/orval";
+import { getMonthTimeRange } from "@/app/utils/eventUtils";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = [

@@ -1,26 +1,19 @@
 import {
+  CheckSquare,
   Folder,
   Pencil,
   Plus,
   Search,
+  Square,
   ToggleLeft,
   Trash2,
-  CheckSquare,
-  Square,
-  MoreHorizontal,
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import { useToast } from "@/app/context/ToastContext";
-import {
-  useCategories,
-  useCreateCategory,
-  useUpdateCategory,
-  useDeleteCategory,
-} from "@/hooks/queries/useEntities";
 import { prepareCategoryData } from "@/app/utils/categoryUtils";
 import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
@@ -37,6 +30,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  useCategories,
+  useCreateCategory,
+  useDeleteCategory,
+  useUpdateCategory,
+} from "@/hooks/queries/useEntities";
 import { t } from "@/styles/theme";
 
 import CategoryForm from "../components/CategoryForm";

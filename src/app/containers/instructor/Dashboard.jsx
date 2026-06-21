@@ -2,13 +2,13 @@ import { BookOpen, Plus, TrendingUp, Users } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { useCourses } from "@/hooks/queries/useCourses";
-import { useDashboardStats } from "@/hooks/queries/useEntities";
 import Can from "@/components/auth/Can";
 import LoadingState from "@/components/common/LoadingState";
 import StatCard from "@/components/common/StatCard";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { usePageTitle } from "@/hooks";
+import { useCourses } from "@/hooks/queries/useCourses";
+import { useDashboardStats } from "@/hooks/queries/useEntities";
 
 /**
  * InstructorDashboard — Main dashboard for Instructor role.

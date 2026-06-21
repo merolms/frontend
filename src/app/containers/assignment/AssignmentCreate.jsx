@@ -1,8 +1,8 @@
 import { Lightbulb, Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { useCreateAssignment } from "@/hooks/queries/useAssignments";
+import { useToast } from "@/app/context/ToastContext";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import FormActions from "@/components/forms/FormActions";
 import FormField from "@/components/forms/FormField";
@@ -10,7 +10,7 @@ import DashboardLayout from "@/components/ui/dashboard-layout";
 import RichTextEditor from "@/components/ui/rich-text-editor";
 import { usePageTitle } from "@/hooks";
 import { useUnsavedChanges } from "@/hooks";
-import { useToast } from "@/app/context/ToastContext";
+import { useCreateAssignment } from "@/hooks/queries/useAssignments";
 import { t } from "@/styles/theme";
 
 const draft_KEY = "assignment_create_draft";

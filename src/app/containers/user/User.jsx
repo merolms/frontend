@@ -1,11 +1,10 @@
 import { AlertCircle, Pencil, Plus, Search, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import { useToast } from "@/app/context/ToastContext";
 import { fetchRoles } from "@/app/services/authService";
-import { useUsers, useDeleteUser } from "@/hooks/queries/useEntities";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
@@ -30,6 +29,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { usePageTitle } from "@/hooks";
+import { useDeleteUser, useUsers } from "@/hooks/queries/useEntities";
 
 const statusOptions = [
   { value: "all", label: "All Status" },

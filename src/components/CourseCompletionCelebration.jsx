@@ -1,6 +1,6 @@
+import { PartyPopper, Sparkles, Star, Trophy } from "lucide-react";
 import { useEffect, useState } from "react";
 import Confetti from "react-confetti";
-import { PartyPopper, Trophy, Star, Sparkles } from "lucide-react";
 
 const CourseCompletionCelebration = ({ courseTitle, onClose }) => {
   const [windowSize, setWindowSize] = useState({

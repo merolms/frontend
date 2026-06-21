@@ -1,12 +1,10 @@
 import { AlertCircle, Plus, Search, Users } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import TeamMemberAssignModal from "@/app/containers/team/TeamMemberAssignModal/TeamMemberAssignModal";
 import { useToast } from "@/app/context/ToastContext";
-import { useTeams, useTeamMembers, useDeleteTeam } from "@/hooks/queries/useEntities";
-import { fetchTeamMembers } from "@/app/services/teamService";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
@@ -22,8 +20,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { t } from "@/styles/theme";
 import { usePageTitle } from "@/hooks";
+import { useDeleteTeam, useTeams } from "@/hooks/queries/useEntities";
+import { t } from "@/styles/theme";
 
 const statusOptions = [
   { value: "all", label: "All" },

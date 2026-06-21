@@ -1,11 +1,10 @@
 import { ArrowLeft, BookOpen, CheckCircle, Clock, Flame, Play, Target, Trophy } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { useLearningPath, useLearningPathProgress } from "@/hooks/queries/useEntities.js";
 import EmptyState from "@/components/common/EmptyState";
 import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import { useLearningPath, useLearningPathProgress } from "@/hooks/queries/useEntities.js";
 
 const LearningPathProgressPage = () => {
   const navigate = useNavigate();
