@@ -203,6 +203,9 @@ export interface DomainUser {
   username?: string;
 }
 
+/**
+ * Set from JWT token
+ */
 export interface DomainNullInt64 {
   int64?: number;
   valid?: boolean;
@@ -531,30 +534,6 @@ export interface DomainDiscussionThread {
   viewCount?: number;
 }
 
-export type DomainEnrollmentPolicyType = typeof DomainEnrollmentPolicyType[keyof typeof DomainEnrollmentPolicyType];
-
-
-export const DomainEnrollmentPolicyType = {
-  EnrollmentPolicyOpen: 'open',
-  EnrollmentPolicyApproval: 'approval',
-  EnrollmentPolicyInvite: 'invite_only',
-  EnrollmentPolicyPaid: 'paid',
-} as const;
-
-export interface DomainEnrollmentPolicy {
-  completionCertificate?: boolean;
-  courseId?: number;
-  createdAt?: string;
-  enrollmentEndAt?: number;
-  enrollmentStartAt?: number;
-  enrollmentType?: DomainEnrollmentPolicyType;
-  id?: number;
-  isRequiresPrerequisites?: boolean;
-  maxEnrollments?: number;
-  updatedAt?: string;
-  welcomeMessage?: string;
-}
-
 export type DomainExportRequestStatus = typeof DomainExportRequestStatus[keyof typeof DomainExportRequestStatus];
 
 
@@ -564,41 +543,6 @@ export const DomainExportRequestStatus = {
   ExportRequestStatusCompleted: 'completed',
   ExportRequestStatusFailed: 'failed',
 } as const;
-
-export type DomainInvitationRole = typeof DomainInvitationRole[keyof typeof DomainInvitationRole];
-
-
-export const DomainInvitationRole = {
-  InvitationRoleLearner: 'learner',
-  InvitationRoleAdmin: 'admin',
-  InvitationRoleInstructor: 'instructor',
-} as const;
-
-export type DomainInvitationStatus = typeof DomainInvitationStatus[keyof typeof DomainInvitationStatus];
-
-
-export const DomainInvitationStatus = {
-  InvitationStatusPending: 'pending',
-  InvitationStatusAccepted: 'accepted',
-  InvitationStatusExpired: 'expired',
-  InvitationStatusRevoked: 'revoked',
-} as const;
-
-export interface DomainInvitation {
-  acceptedAt?: string;
-  acceptedBy?: number;
-  courseId?: number;
-  createdAt?: string;
-  email?: string;
-  expiresAt?: string;
-  id?: number;
-  invitedBy?: number;
-  organizationId?: number;
-  role?: DomainInvitationRole;
-  status?: DomainInvitationStatus;
-  token?: string;
-  uuid?: string;
-}
 
 export interface DomainLessonBlockRequest {
   lessonId: number;
@@ -923,38 +867,12 @@ export interface DomainUpdateNotificationPreferenceRequest {
   push?: boolean;
 }
 
-export type DomainWaitlistStatus = typeof DomainWaitlistStatus[keyof typeof DomainWaitlistStatus];
-
-
-export const DomainWaitlistStatus = {
-  WaitlistStatusWaiting: 'waiting',
-  WaitlistStatusInvited: 'invited',
-  WaitlistStatusEnrolled: 'enrolled',
-  WaitlistStatusExpired: 'expired',
-} as const;
-
-export interface DomainWaitlistEntry {
-  courseId?: number;
-  createdAt?: string;
-  expiresAt?: string;
-  id?: number;
-  invitedAt?: string;
-  position?: number;
-  status?: DomainWaitlistStatus;
-  userId?: number;
-}
-
-export interface HttpAdminEnrollRequest {
-  userId: number;
-}
-
 export interface HttpAdminEnrollTeamRequest {
   teamId: number;
 }
 
-export interface HttpCompleteRequest {
-  /** @minimum 0 */
-  timeSpentSeconds?: number;
+export interface HttpAdminEnrollUserRequest {
+  userId: number;
 }
 
 export interface HttpErrorDetail {
@@ -1430,7 +1348,7 @@ export type CourseUpdateBody = { [key: string]: unknown } | DomainCourse;
 
 export type EnrollmentAdminEnrollTeamBody = { [key: string]: unknown } | HttpAdminEnrollTeamRequest;
 
-export type EnrollmentAdminEnrollUserBody = { [key: string]: unknown } | HttpAdminEnrollRequest;
+export type EnrollmentAdminEnrollUserBody = { [key: string]: unknown } | HttpAdminEnrollUserRequest;
 
 export type EnrollmentDropBody = { [key: string]: unknown };
 
@@ -1597,69 +1515,6 @@ export type CreateReply201 = Data & {
 
 export type VoteBody = { [key: string]: unknown } | {[key: string]: unknown};
 
-export type CreateInvitationBody = { [key: string]: unknown } | DomainInvitation;
-
-export type CreateInvitation201 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type GetInvitationsByCourse200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type GetPendingInvitationsByEmail200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type GetInvitationByToken200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type GetInvitationByUUID200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type CreateEnrollmentPolicyBody = { [key: string]: unknown } | DomainEnrollmentPolicy;
-
-export type CreateEnrollmentPolicy201 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type GetEnrollmentPolicy200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type UpdateEnrollmentPolicyBody = { [key: string]: unknown } | DomainEnrollmentPolicy;
-
-export type UpdateEnrollmentPolicy200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type CreateWaitlistEntryBody = { [key: string]: unknown } | DomainWaitlistEntry;
-
-export type CreateWaitlistEntry201 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type GetWaitlist200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type InviteWaitlist200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
 export type GetOrgEventsParams = {
 /**
  * start
@@ -1782,8 +1637,6 @@ export type LessonUpdateBody = { [key: string]: unknown } | DomainLesson;
 export type LessonBlockBody = { [key: string]: unknown } | DomainLessonBlockRequest;
 
 export type UploadBlockMediaBodyTwo = { [key: string]: unknown };
-
-export type MarkCompleteBody = { [key: string]: unknown } | HttpCompleteRequest;
 
 export type UploadLessonMediaBodyTwo = { [key: string]: unknown };
 
