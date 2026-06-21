@@ -3,6 +3,8 @@
  * Reads from CSS custom properties set by Tailwind theme.
  */
 
+import React from "react";
+
 let currentTheme = "light";
 if (typeof document !== "undefined") {
   const existing = document.documentElement.getAttribute("data-theme");

@@ -23,6 +23,7 @@ import {
   useCategoryGetChildren,
   useCategoryGetRoots,
   useCategoryGetStat,
+  useCategorySetParent,
   useCategoryUpdate,
 } from "@/app/api/orval";
 // Migrated to orval-generated hooks for learning paths
@@ -35,6 +36,11 @@ import {
   useLearningPathGetProgress,
   useLearningPathUpdate,
 } from "@/app/api/orval";
+// Learning path service for custom admin enroll functions
+import {
+  adminEnrollTeamInLearningPath,
+  adminEnrollUserInLearningPath,
+} from "@/app/services/learningPathService";
 // Enrollment hooks - orval-generated
 import {
   useEnrollmentAdminEnrollTeam,

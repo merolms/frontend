@@ -113,6 +113,7 @@ export const useUpdateAssignment = () => {
 };
 
 export const useDeleteAssignment = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: deleteAssignment,
     onSuccess: () => {
@@ -122,6 +123,7 @@ export const useDeleteAssignment = () => {
 };
 
 export const usePublishAssignment = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: publishAssignment,
     onSuccess: (data) => {
@@ -132,6 +134,7 @@ export const usePublishAssignment = () => {
 };
 
 export const useSubmitAssignment = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ assignmentId, data }) => submitAssignment(assignmentId, data),
     onSuccess: (data) => {
@@ -141,6 +144,7 @@ export const useSubmitAssignment = () => {
 };
 
 export const useGradeSubmission = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ submissionId, data }) => gradeSubmission(submissionId, data),
     onSuccess: (data) => {
@@ -150,6 +154,7 @@ export const useGradeSubmission = () => {
 };
 
 export const useAddAttachment = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ assignmentId, mediaId }) => addAttachment(assignmentId, mediaId),
     onSuccess: (_, { assignmentId }) => {
@@ -159,6 +164,7 @@ export const useAddAttachment = () => {
 };
 
 export const useDeleteAttachment = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: deleteAttachment,
     onSuccess: () => {
@@ -168,6 +174,7 @@ export const useDeleteAttachment = () => {
 };
 
 export const useEnrollUser = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ assignmentId, userId }) => enrollUser(assignmentId, userId),
     onSuccess: (_, { assignmentId }) => {
@@ -177,6 +184,7 @@ export const useEnrollUser = () => {
 };
 
 export const useEnrollTeam = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ assignmentId, teamId }) => enrollTeam(assignmentId, teamId),
     onSuccess: (_, { assignmentId }) => {

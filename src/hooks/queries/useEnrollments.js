@@ -1,6 +1,6 @@
 // TanStack Query hooks for Enrollments
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   adminEnrollTeamInCourse,
@@ -69,6 +69,7 @@ export const useLessonCompletionCounts = (courseId) => {
 // ─── Mutations ─────────────────────────────────────────────
 
 export const useEnrollInCourse = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: (courseId) => enrollInCourseAPI(courseId),
     onSuccess: (data, courseId) => {
@@ -80,6 +81,7 @@ export const useEnrollInCourse = () => {
 };
 
 export const useDropCourse = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: (courseId) => dropCourseAPI(courseId),
     onSuccess: (data, courseId) => {
@@ -90,6 +92,7 @@ export const useDropCourse = () => {
 };
 
 export const useMarkLessonComplete = (courseId) => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ lessonId, timeSpentSeconds }) =>
       markLessonCompleteAPI(lessonId, timeSpentSeconds),
@@ -102,6 +105,7 @@ export const useMarkLessonComplete = (courseId) => {
 };
 
 export const useAdminEnrollUser = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ courseId, userId }) => adminEnrollUserInCourse(courseId, userId),
     onSuccess: (_, { courseId }) => {
@@ -111,6 +115,7 @@ export const useAdminEnrollUser = () => {
 };
 
 export const useAdminEnrollTeam = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ courseId, teamId }) => adminEnrollTeamInCourse(courseId, teamId),
     onSuccess: (_, { courseId }) => {

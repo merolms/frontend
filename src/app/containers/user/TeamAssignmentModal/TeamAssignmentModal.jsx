@@ -78,7 +78,7 @@ const TeamAssignmentModal = ({ open, onClose, user }) => {
           </div>
         )}
         <div className="mt-4 flex justify-end">
-          <Button variant="default" onClick={onClose} disabled={saving}>
+          <Button variant="default" onClick={onClose}>
             Done
           </Button>
         </div>

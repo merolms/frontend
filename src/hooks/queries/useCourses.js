@@ -1,7 +1,7 @@
 // TanStack Query hooks for Courses
 // Replaces Redux thunks + manual useState/useEffect data fetching
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   archiveCourse,
@@ -49,6 +49,7 @@ export const useCourseLessons = (courseId) => {
 // ─── Mutations ─────────────────────────────────────────────
 
 export const useCreateCourse = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: createCourse,
     onSuccess: () => {
@@ -58,6 +59,7 @@ export const useCreateCourse = () => {
 };
 
 export const useUpdateCourse = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }) => updateCourse(id, data),
     onSuccess: (data) => {
@@ -68,6 +70,7 @@ export const useUpdateCourse = () => {
 };
 
 export const usePublishCourse = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: publishCourse,
     onSuccess: (data) => {
@@ -78,6 +81,7 @@ export const usePublishCourse = () => {
 };
 
 export const useArchiveCourse = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: archiveCourse,
     onSuccess: (data) => {
@@ -88,6 +92,7 @@ export const useArchiveCourse = () => {
 };
 
 export const useRestoreCourse = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: restoreCourse,
     onSuccess: (data) => {
@@ -98,6 +103,7 @@ export const useRestoreCourse = () => {
 };
 
 export const useDeleteCourse = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: deleteCourse,
     onSuccess: () => {
@@ -109,6 +115,7 @@ export const useDeleteCourse = () => {
 // ─── Lesson Mutations ──────────────────────────────────────
 
 export const useCreateLesson = (courseId) => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: (data) => createLesson(courseId, data),
     onSuccess: () => {
@@ -119,6 +126,7 @@ export const useCreateLesson = (courseId) => {
 };
 
 export const useUpdateLesson = (courseId) => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ lessonId, data }) => updateLesson(courseId, lessonId, data),
     onSuccess: () => {
@@ -129,6 +137,7 @@ export const useUpdateLesson = (courseId) => {
 };
 
 export const useDeleteLesson = (courseId) => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ lessonId }) => deleteLesson(courseId, lessonId),
     onSuccess: () => {
@@ -139,6 +148,7 @@ export const useDeleteLesson = (courseId) => {
 };
 
 export const useReorderLessons = (courseId) => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: (lessons) => reorderLessons(courseId, lessons),
     onSuccess: () => {

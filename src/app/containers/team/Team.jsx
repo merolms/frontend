@@ -120,7 +120,7 @@ const TeamContainer = () => {
         {/* Error */}
         {queryError && (
           <div className="border-error/30 bg-error/5 text-error mb-4 flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm">
-            <AlertCircle size={14} /> {error}
+            <AlertCircle size={14} /> {queryError}
           </div>
         )}
 

@@ -78,11 +78,11 @@ const TeamDetail = () => {
     );
   }
 
-  if (error || !team) {
+  if (!team) {
     return (
       <DashboardLayout>
         <div className="text-error flex items-center gap-2 py-4">
-          <AlertCircle size={14} /> {error || "Team not found"}
+          <AlertCircle size={14} /> Team not found
         </div>
         <Button size="sm" onClick={() => navigate("/teams")}>
           Back to Teams

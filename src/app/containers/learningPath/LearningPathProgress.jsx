@@ -130,7 +130,7 @@ const LearningPathProgressPage = () => {
             <div className="text-text-muted mb-1 flex items-center gap-1 text-[10px]">
               <Clock size={10} className="text-warning" /> Time Left
             </div>
-            <p className="text-text-primary text-base font-bold">{remainingDuration}h</p>
+            <p className="text-text-primary text-base font-bold">--</p>
             <p className="text-text-muted text-[10px]">estimated</p>
           </div>
           <div className="bg-bg-surface-hover rounded-lg p-3">

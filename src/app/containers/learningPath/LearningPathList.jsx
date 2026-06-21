@@ -15,6 +15,8 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+import { useToast } from "@/app/context/ToastContext";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
@@ -178,6 +180,7 @@ const LearningPathCard = ({ path, navigate, onExport, onBookmark, isBookmarked, 
 };
 
 const LearningPathList = () => {
+  const { addToast } = useToast();
   usePageTitle("Learning Paths");
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -188,7 +191,7 @@ const LearningPathList = () => {
   const showBookmarked = searchParams.get("bookmarked") === "true";
   const [searchInput, setSearchInput] = useState(search);
 
-  const { data, isLoading, error } = useLearningPaths({ search, category, page, limit: 6 });
+  const { data, isLoading } = useLearningPaths({ search, category, page, limit: 6 });
   const { data: catsData } = useLearningPathCategories();
 
   const paths = data?.paths ?? [];
@@ -303,7 +306,7 @@ const LearningPathList = () => {
           navigate("/learning-paths/create", { state: { importedData: data.paths[0] } });
         }
       } catch (err) {
-        setError("Invalid file format. Please upload a valid JSON file.");
+        addToast("Invalid file format. Please upload a valid JSON file.", "error");
       }
     };
     reader.readAsText(file);
