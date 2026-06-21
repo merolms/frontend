@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { Navigate, useLocation } from "react-router-dom";
 
@@ -25,6 +26,11 @@ export const ProtectedRoute = ({ children, permissions = [] }) => {
   return children;
 };
 
+ProtectedRoute.propTypes = {
+  children: PropTypes.node,
+  permissions: PropTypes.arrayOf(PropTypes.string),
+};
+
 /**
  * Conditionally renders children based on permissions.
  * If user lacks permission, renders fallback (or null).
@@ -37,6 +43,12 @@ export const PermissionGuard = ({ permissions = [], children, fallback = null })
 
   const hasAccess = permissions.every((p) => hasPermission(user, p));
   return hasAccess ? children : fallback;
+};
+
+PermissionGuard.propTypes = {
+  permissions: PropTypes.arrayOf(PropTypes.string),
+  children: PropTypes.node,
+  fallback: PropTypes.node,
 };
 
 export default ProtectedRoute;

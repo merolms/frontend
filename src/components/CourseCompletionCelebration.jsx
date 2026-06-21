@@ -162,7 +162,7 @@ const CourseCompletionCelebration = ({ courseTitle, onClose }) => {
             animation: "slideUp 0.5s ease-out 0.5s both",
           }}
         >
-          You've successfully completed
+          You&apos;ve successfully completed
         </p>
 
         <p

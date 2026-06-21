@@ -130,7 +130,7 @@ function createDragHandlePlugin() {
         view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)));
         hoveredBlock.classList.add("is-dragging");
         dragHandle?.classList.add("is-dragging");
-      } catch (e) {
+      } catch {
         draggedBlockPos = null;
       }
     }
@@ -173,7 +173,9 @@ function createDragHandlePlugin() {
           tr = tr.delete(draggedBlockPos, draggedBlockPos + nodeSize);
         }
         view.dispatch(tr.insert(targetPos, slice.content));
-      } catch {}
+      } catch {
+        // Ignore drag errors
+      }
     }
 
     function findBlock(target, view) {

@@ -9,7 +9,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
@@ -52,7 +51,6 @@ const sortOptions = [
 ];
 
 const CategoryManagement = () => {
-  const navigate = useNavigate();
   const { addToast } = useToast();
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
@@ -94,21 +92,17 @@ const CategoryManagement = () => {
   };
 
   const handleFormSubmit = async (formData) => {
-    try {
-      const preparedData = prepareCategoryData(formData);
-      if (editingCat) {
-        await updateMutation.mutateAsync({ id: editingCat.id, data: preparedData });
-        addToast(`Category "${formData.name}" updated`, "success");
-      } else {
-        await createMutation.mutateAsync(preparedData);
-        addToast(`Category "${formData.name}" created`, "success");
-      }
-      setFormOpen(false);
-      setEditingCat(null);
-      refetch();
-    } catch (err) {
-      throw err;
+    const preparedData = prepareCategoryData(formData);
+    if (editingCat) {
+      await updateMutation.mutateAsync({ id: editingCat.id, data: preparedData });
+      addToast(`Category "${formData.name}" updated`, "success");
+    } else {
+      await createMutation.mutateAsync(preparedData);
+      addToast(`Category "${formData.name}" created`, "success");
     }
+    setFormOpen(false);
+    setEditingCat(null);
+    refetch();
   };
 
   const handleDelete = async () => {

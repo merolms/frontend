@@ -18,7 +18,6 @@ const CourseEdit = () => {
   const { id } = useParams();
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState(null);
-  const [coverUploading, setCoverUploading] = useState(false);
   const [formInitialized, setFormInitialized] = useState(false);
 
   // ─── TanStack Query: course data + categories + update mutation ───
@@ -171,7 +170,7 @@ const CourseEdit = () => {
               onCancel={() => navigate(`/courses/${id}`)}
               loading={updateMutation.isPending}
               submitLabel="Save Changes"
-              setCoverUploading={setCoverUploading}
+              setCoverUploading={() => {}}
               setCoverError={() => {}}
             />
           </div>

@@ -60,6 +60,7 @@ const DialogDescription = React.forwardRef(({ className, ...props }, ref) => (
     {...props}
   />
 ));
+DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
 const DialogFooter = ({ className, ...props }) => (
   <div
@@ -67,6 +68,7 @@ const DialogFooter = ({ className, ...props }) => (
     {...props}
   />
 );
+DialogFooter.displayName = "DialogFooter";
 
 // Convenience Modal component
 const Modal = ({ open, onClose, title, children, className }) => (

@@ -98,7 +98,6 @@ test.describe("Categories Page — Search & Filter", () => {
   });
 
   test("sort by name A-Z", async ({ page }) => {
-    const sortSelect = page.locator("button").filter({ hasText: "Sort" }).first();
     // The sort trigger is inside a Select component
     const sortTrigger = page
       .locator("div")
@@ -200,7 +199,6 @@ test.describe("Categories Page — Edit", () => {
   test("clicking edit button opens edit form", async ({ page }) => {
     // Find the edit button in the Programming row
     const row = page.locator("tr").filter({ hasText: "Programming" });
-    const editBtn = row.locator("button").filter({ hasText: "" }).first(); // Pencil icon button
     // The edit button is the first button in the actions cell
     const actionsCell = row.locator("td").last();
     const buttons = actionsCell.locator("button");

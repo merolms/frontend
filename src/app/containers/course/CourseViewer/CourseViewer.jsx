@@ -13,7 +13,6 @@ import { loadLessonDoc } from "@/editor/utils/lessonContent";
 import { usePageTitle } from "@/hooks";
 import { useCourse, useCourseLessons } from "@/hooks/queries/useCourses";
 import {
-  useCourseProgress,
   useEnrollInCourse,
   useEnrollmentStatus,
   useMarkLessonComplete,
@@ -38,7 +37,6 @@ const CourseViewer = () => {
   const { data: course, isLoading: courseLoading, error: courseError } = useCourse(id);
   const { data: lessons = [], isLoading: lessonsLoading } = useCourseLessons(id);
   const { data: enrollment } = useEnrollmentStatus(id, { enabled: !!user?.id });
-  const { data: progress } = useCourseProgress(id, { enabled: !!user?.id });
   const { data: completions = [] } = useMyLessonCompletions(id, { enabled: !!user?.id });
 
   const enrollMutation = useEnrollInCourse();

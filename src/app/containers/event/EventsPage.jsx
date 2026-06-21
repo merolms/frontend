@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
+import { useToast } from "@/app/context/ToastContext";
 import {
   formatEventDate,
   formatEventTime,
@@ -132,11 +133,8 @@ const EventCard = ({ event, onEdit, onDelete, navigate }) => {
 const EventsPage = () => {
   usePageTitle("Events");
   const navigate = useNavigate();
+  const { addToast } = useToast();
   const [view, setView] = useState("calendar"); // 'calendar' | 'list'
-  const [events, setEvents] = useState([]);
-  const [error, setError] = useState(null);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
@@ -153,7 +151,6 @@ const EventsPage = () => {
   const {
     data: eventsResult,
     isLoading: eventsLoading,
-    error: eventsError,
     refetch,
   } = useEvents({
     search,
@@ -161,6 +158,9 @@ const EventsPage = () => {
     page,
     limit: 8,
   });
+  const events = eventsResult?.data || [];
+  const total = eventsResult?.total || 0;
+  const totalPages = eventsResult?.totalPages || 1;
   const deleteMutation = useDeleteEvent();
   const createMutation = useCreateEvent();
   const updateMutation = useUpdateEvent();
@@ -214,8 +214,8 @@ const EventsPage = () => {
       await deleteMutation.mutateAsync(deleteTarget.id);
       setDeleteTarget(null);
       refetch();
-    } catch (err) {
-      setError("Failed to delete event.");
+    } catch {
+      addToast("Failed to delete event.", "error");
     } finally {
       setActionLoading(false);
     }

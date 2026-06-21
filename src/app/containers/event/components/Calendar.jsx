@@ -27,7 +27,7 @@ const Calendar = ({ onDateClick, onEventClick, selectedDate }) => {
 
   const { start, end } = getMonthTimeRange(year, month);
 
-  const { data: eventsData, isLoading: loading } = useGetEventsInTimeRange({ start, end });
+  const { data: eventsData } = useGetEventsInTimeRange({ start, end });
   const events = eventsData?.data || [];
 
   const calendarDays = useMemo(() => {

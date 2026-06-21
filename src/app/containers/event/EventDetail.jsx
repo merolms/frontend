@@ -29,7 +29,7 @@ const EventDetail = () => {
   const [showDelete, setShowDelete] = useState(false);
 
   // Use orval hook for fetching event
-  const { data: event, isLoading: loading, error: queryError } = useEvent(id);
+  const { data: event, isLoading: loading } = useEvent(id);
   const deleteMutation = useDeleteEvent();
   const updateMutation = useUpdateEvent();
 
@@ -37,7 +37,7 @@ const EventDetail = () => {
     try {
       await deleteMutation.mutateAsync(id);
       navigate("/events");
-    } catch (err) {
+    } catch {
       setError("Failed to delete event.");
     }
   };
@@ -171,7 +171,7 @@ const EventDetail = () => {
           <div className="border-border bg-bg-surface mx-4 w-full max-w-sm rounded-xl border p-6 shadow-lg">
             <h3 className="text-text-primary mb-2 text-base font-semibold">Delete Event</h3>
             <p className="text-text-muted mb-4 text-sm">
-              Are you sure you want to delete "{event.title}"?
+              Are you sure you want to delete &quot;{event.title}&quot;?
             </p>
             <div className="flex justify-end gap-2">
               <Button variant="default" size="sm" onClick={() => setShowDelete(false)}>

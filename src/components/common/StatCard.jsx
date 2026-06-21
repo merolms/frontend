@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
  *   color    - Theme color: "primary" | "success" | "warning" | "accent" | "error"
  *   className - Additional classes
  */
-const StatCard = memo(({ title, value, icon: Icon, color = "primary", className }) => {
+const StatCard = memo(({ title, value, icon: Icon, color = "primary" }) => {
   const colorClasses = {
     primary: "bg-primary/10 text-primary",
     success: "bg-green-500/10 text-green-600",
@@ -42,5 +42,6 @@ const StatCard = memo(({ title, value, icon: Icon, color = "primary", className 
     </div>
   );
 });
+StatCard.displayName = "StatCard";
 
 export default StatCard;

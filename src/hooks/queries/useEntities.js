@@ -1,6 +1,6 @@
 // TanStack Query hooks for Teams, Users, Categories, Learning Paths
 
-import { useMutation, useQuery,useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Migrated to orval-generated hooks for teams
 import {

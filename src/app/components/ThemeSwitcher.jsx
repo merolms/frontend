@@ -3,10 +3,7 @@ import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "@/app/context/ThemeContext";
 
 export default function ThemeSwitcher() {
-  const { mode, changeMode } = useTheme();
-
-  // Fallback for when mode is not correctly initialized
-  const currentMode = mode === "light" || mode === "dark" || mode === "system" ? mode : "system";
+  const { changeMode } = useTheme();
 
   return (
     <div

@@ -1,6 +1,5 @@
 import { ArrowLeft, Paperclip, Send } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -25,7 +24,6 @@ import { Textarea } from "@/components/ui/textarea";
 const AssignmentSubmit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const user = useSelector((s) => s.auth.user);
 
   const [assignment, setAssignment] = useState(null);
   const [formData, setFormData] = useState({

@@ -388,7 +388,7 @@ const ScenariosExtension = (props) => {
                   {scenarios.length}/40 scenarios configured
                 </p>
                 <p className="mt-1 text-xs text-neutral-500">
-                  Click "Edit Scenarios" to configure your interactive branching story
+                  Click &quot;Edit Scenarios&quot; to configure your interactive branching story
                 </p>
               </div>
             </div>
@@ -399,7 +399,7 @@ const ScenariosExtension = (props) => {
               </div>
               <h4 className="mb-2 text-xl font-bold text-neutral-900">Scenario Complete!</h4>
               <p className="mb-6 text-neutral-600">
-                You've successfully navigated through this interactive scenario.
+                You&apos;ve successfully navigated through this interactive scenario.
               </p>
               <button
                 onClick={resetScenario}

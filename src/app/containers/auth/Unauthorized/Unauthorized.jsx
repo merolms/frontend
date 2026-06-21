@@ -9,8 +9,8 @@ const Unauthorized = () => {
         <Ban size={48} className="text-error mx-auto" />
         <h1 className="text-text-primary text-xl font-bold">Access Denied</h1>
         <p className="text-text-muted text-sm">
-          You don't have permission to view this page. Contact your administrator if you believe
-          this is an error.
+          You don&apos;t have permission to view this page. Contact your administrator if you
+          believe this is an error.
         </p>
         <div className="flex items-center justify-center gap-3">
           <button

@@ -1,4 +1,6 @@
-const StatCard = ({ title, value, icon, color, trend, trendUp }) => (
+import PropTypes from "prop-types";
+
+const StatCard = ({ title, value, icon, trend, trendUp }) => (
   <div className="stat-card">
     <div className="flex items-center justify-between">
       <div className="space-y-0.5">
@@ -14,5 +16,13 @@ const StatCard = ({ title, value, icon, color, trend, trendUp }) => (
     </div>
   </div>
 );
+
+StatCard.propTypes = {
+  title: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  icon: PropTypes.node,
+  trend: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  trendUp: PropTypes.bool,
+};
 
 export default StatCard;

@@ -24,6 +24,7 @@ import { useToast } from "@/app/context/ToastContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import { Input } from "@/components/ui/input";
 import { useDeleteLearningPath, useLearningPath } from "@/hooks/queries/useEntities.js";
 
 const difficultyColors = {
@@ -66,7 +67,6 @@ const LearningPathDetail = () => {
 
   const handleSocialShare = (platform) => {
     const url = encodeURIComponent(window.location.href);
-    const title = encodeURIComponent(path?.title || "Learning Path");
     const text = encodeURIComponent(`Check out this learning path: ${path?.title}`);
 
     let shareUrl = "";
@@ -509,7 +509,8 @@ const LearningPathDetail = () => {
           <div className="border-border bg-bg-surface mx-4 w-full max-w-sm rounded-xl border p-6 shadow-lg">
             <h3 className="text-text-primary mb-2 text-base font-semibold">Delete Learning Path</h3>
             <p className="text-text-muted mb-4 text-sm">
-              Are you sure you want to delete "{path.title}"? This action cannot be undone.
+              Are you sure you want to delete &quot;{path.title}&quot;? This action cannot be
+              undone.
             </p>
             <div className="flex justify-end gap-2">
               <Button variant="default" size="sm" onClick={() => setShowDelete(false)}>

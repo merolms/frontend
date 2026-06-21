@@ -256,7 +256,9 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
       let body = {};
       try {
         body = await route.request().postDataJSON();
-      } catch {}
+      } catch {
+        // Ignore if request has no body
+      }
       const match = url.match(/courses\/(\d+)\/lessons/);
       const courseId = match ? parseInt(match[1]) : 1;
       await route.fulfill({
@@ -282,7 +284,9 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
       let body = {};
       try {
         body = await route.request().postDataJSON();
-      } catch {}
+      } catch {
+        // Ignore if request has no body
+      }
       const idMatch = url.match(/lessons\/(\d+)/);
       const lessonId = idMatch ? parseInt(idMatch[1]) : 0;
       if (url.includes("/reorder")) {
@@ -536,7 +540,9 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
       let body = {};
       try {
         body = await route.request().postDataJSON();
-      } catch {}
+      } catch {
+        // Ignore if request has no body
+      }
       const idMatch = url.match(/\/users\/(\d+)/);
       const userId = idMatch ? parseInt(idMatch[1]) : 0;
       await route.fulfill({
@@ -723,7 +729,9 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
       let body = {};
       try {
         body = await route.request().postDataJSON();
-      } catch {}
+      } catch {
+        // Ignore if request has no body
+      }
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -748,7 +756,9 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
       let body = {};
       try {
         body = await route.request().postDataJSON();
-      } catch {}
+      } catch {
+        // Ignore if request has no body
+      }
       const idMatch = url.match(/\/teams\/(\d+)/);
       const teamId = idMatch ? parseInt(idMatch[1]) : 0;
       await route.fulfill({
@@ -848,7 +858,9 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
       let body = {};
       try {
         body = await route.request().postDataJSON();
-      } catch {}
+      } catch {
+        // Ignore if request has no body
+      }
       const newCat = {
         id: Date.now(),
         name: body.name || "New Category",
@@ -877,7 +889,9 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
       let body = {};
       try {
         body = await route.request().postDataJSON();
-      } catch {}
+      } catch {
+        // Ignore if request has no body
+      }
       const idx = categories.findIndex((c) => c.id === catId);
       if (idx !== -1) {
         categories[idx] = { ...categories[idx], ...body, updatedAt: Math.floor(Date.now() / 1000) };

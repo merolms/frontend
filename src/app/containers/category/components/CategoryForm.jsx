@@ -68,7 +68,6 @@ const CategoryForm = ({ category = null, onSubmit, onClose, loading = false }) =
     }
   };
 
-  const colorOptions = getCategoryColorOptions().map((c) => ({ value: c, label: c }));
   const iconOptions = getCategoryIconOptions.map((ic) => ({ value: ic, label: ic }));
 
   return (

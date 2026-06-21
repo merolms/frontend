@@ -13,7 +13,6 @@ const inputCls =
   "border-border bg-bg-input text-text-primary text-sm placeholder:text-text-muted w-full rounded-md border px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";
 
 const CourseForm = ({
-  initialData = null,
   onSubmit,
   onCancel,
   loading = false,

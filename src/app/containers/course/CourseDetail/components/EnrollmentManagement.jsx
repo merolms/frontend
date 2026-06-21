@@ -11,7 +11,7 @@ import {
   Users,
   Users as UsersIcon,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useToast } from "@/app/context/ToastContext";
 import {
@@ -19,7 +19,6 @@ import {
   adminEnrollUserInCourse,
   getCourseEnrollments,
 } from "@/app/services/enrollmentService";
-import { fetchTeams, fetchUsers } from "@/app/services/teamService";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
@@ -32,7 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAdminEnrollTeam, useAdminEnrollUser } from "@/hooks/queries/useEnrollments";
+import { useAdminEnrollUser } from "@/hooks/queries/useEnrollments";
 import { useTeams, useUsers } from "@/hooks/queries/useEntities";
 import { t } from "@/styles/theme";
 
@@ -53,8 +52,6 @@ const TabButton = ({ active, onClick, children }) => (
 const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => {
   const { addToast } = useToast();
   const [enrollments, setEnrollments] = useState(initialEnrollments || []);
-  const [selectedUser, setSelectedUser] = useState("");
-  const [selectedTeam, setSelectedTeam] = useState("");
   const [enrolling, setEnrolling] = useState({ user: false, team: false });
   const [enrollmentFilter, setEnrollmentFilter] = useState("all");
   const [userSearchQuery, setUserSearchQuery] = useState("");
@@ -67,14 +64,11 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
   const [selectedTeams, setSelectedTeams] = useState([]);
   const [enrollmentSearchQuery, setEnrollmentSearchQuery] = useState("");
   const [enrollmentSortBy, setEnrollmentSortBy] = useState("date");
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  const [filteredTeams, setFilteredTeams] = useState([]);
 
   // TanStack Query hooks
   const { data: usersData = [] } = useUsers({ start: 0, limit: 20 });
   const { data: teamsData = [] } = useTeams({ start: 0, limit: 50 });
   const enrollUserMutation = useAdminEnrollUser();
-  const enrollTeamMutation = useAdminEnrollTeam();
 
   // Handle different response formats
   const users = Array.isArray(usersData) ? usersData : usersData?.users || [];
@@ -112,34 +106,6 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
     }
   };
 
-  const handleAdminEnrollUser = async (e) => {
-    e.preventDefault();
-    if (!selectedUser || enrolling.user) return;
-
-    // Check for duplicate enrollment
-    const enrolledUserIds = getEnrolledUserIds();
-    if (enrolledUserIds.has(parseInt(selectedUser))) {
-      addToast("User is already enrolled in this course", "error");
-      return;
-    }
-
-    try {
-      setEnrolling((s) => ({ ...s, user: true }));
-      await enrollUserMutation.mutateAsync({
-        courseId: parseInt(courseId),
-        userId: parseInt(selectedUser),
-      });
-      setSelectedUser("");
-      setUserSearchQuery("");
-      await loadEnrollments();
-      addToast("User enrolled successfully", "success");
-    } catch (err) {
-      addToast(err.message || "Failed to enroll user", "error");
-    } finally {
-      setEnrolling((s) => ({ ...s, user: false }));
-    }
-  };
-
   const handleBulkEnrollUsers = async () => {
     if (selectedUsers.length === 0 || enrolling.user) return;
 
@@ -165,34 +131,6 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
       addToast(err.message || "Failed to enroll some users", "error");
     } finally {
       setEnrolling((s) => ({ ...s, user: false }));
-    }
-  };
-
-  const handleAdminEnrollTeam = async (e) => {
-    e.preventDefault();
-    if (!selectedTeam || enrolling.team) return;
-
-    // Check for duplicate enrollment
-    const enrolledTeamIds = getEnrolledTeamIds();
-    if (enrolledTeamIds.has(parseInt(selectedTeam))) {
-      addToast("Team is already enrolled in this course", "error");
-      return;
-    }
-
-    try {
-      setEnrolling((s) => ({ ...s, team: true }));
-      await enrollTeamMutation.mutateAsync({
-        courseId: parseInt(courseId),
-        teamId: parseInt(selectedTeam),
-      });
-      setSelectedTeam("");
-      setTeamSearchQuery("");
-      await loadEnrollments();
-      addToast("Team enrolled successfully", "success");
-    } catch (err) {
-      addToast(err.message || "Failed to enroll team", "error");
-    } finally {
-      setEnrolling((s) => ({ ...s, team: false }));
     }
   };
 
@@ -223,55 +161,6 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
       setEnrolling((s) => ({ ...s, team: false }));
     }
   };
-
-  const handleSearchTeams = async (query) => {
-    if (!query || !query.trim()) {
-      // Reset to all teams when search is empty
-      try {
-        const data = await fetchTeams({ start: 0, limit: 100 });
-        setFilteredTeams(Array.isArray(data?.teams) ? data.teams : []);
-      } catch (err) {
-        console.error(err);
-      }
-      return;
-    }
-    try {
-      const data = await fetchTeams({ search: query, start: 0, limit: 100 });
-      setFilteredTeams(Array.isArray(data?.teams) ? data.teams : []);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleSearchUsers = async (query) => {
-    if (!query || !query.trim()) {
-      // Reset to all users when search is empty
-      try {
-        const data = await fetchUsers({ start: 0, limit: 100 });
-        setFilteredUsers(Array.isArray(data?.users) ? data.users : []);
-      } catch (err) {
-        console.error(err);
-      }
-      return;
-    }
-    try {
-      const data = await fetchUsers({ search: query, start: 0, limit: 100 });
-      setFilteredUsers(Array.isArray(data?.users) ? data.users : []);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // Debounced search functions
-  const debouncedSearchUsers = useCallback((query) => {
-    const timer = setTimeout(() => handleSearchUsers(query), 300);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const debouncedSearchTeams = useCallback((query) => {
-    const timer = setTimeout(() => handleSearchTeams(query), 300);
-    return () => clearTimeout(timer);
-  }, []);
 
   const getEnrolledUserIds = () => {
     const ids = new Set();
@@ -438,7 +327,7 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
         await Promise.all(promises);
         await loadEnrollments();
         addToast(`${validUsers.length} users enrolled from CSV`, "success");
-      } catch (err) {
+      } catch {
         addToast("Failed to process CSV file", "error");
       } finally {
         setEnrolling((s) => ({ ...s, user: false }));
@@ -610,7 +499,6 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                   value={userSearchQuery}
                   onChange={(e) => {
                     setUserSearchQuery(e.target.value);
-                    debouncedSearchUsers(e.target.value);
                   }}
                   className="h-9 pl-9 text-sm"
                 />
@@ -693,7 +581,6 @@ const EnrollmentManagement = ({ courseId, enrollments: initialEnrollments }) => 
                   value={teamSearchQuery}
                   onChange={(e) => {
                     setTeamSearchQuery(e.target.value);
-                    debouncedSearchTeams(e.target.value);
                   }}
                   className="h-9 pl-9 text-sm"
                 />

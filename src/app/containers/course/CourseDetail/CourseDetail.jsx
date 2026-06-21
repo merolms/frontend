@@ -94,7 +94,7 @@ const CourseDetail = () => {
     }
     try {
       setActionLoading(true);
-      const result = await enrollMutation.mutateAsync(parseInt(id));
+      await enrollMutation.mutateAsync(parseInt(id));
       addToast("Successfully enrolled! Redirecting to course...", "success");
       setTimeout(() => navigate(`/courses/${id}/learn`), 1500);
     } catch (err) {

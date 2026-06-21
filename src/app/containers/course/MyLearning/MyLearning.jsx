@@ -9,7 +9,6 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import EmptyState from "@/components/common/EmptyState";
@@ -32,7 +31,6 @@ import { getStatusColor, getStatusLabel } from "@/utils";
 const MyLearning = () => {
   usePageTitle("My Learning");
   const navigate = useNavigate();
-  const user = useSelector((s) => s.auth.user);
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("recent");
 

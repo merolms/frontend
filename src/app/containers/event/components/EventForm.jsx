@@ -5,7 +5,13 @@ import FormActions from "@/components/forms/FormActions";
 import FormField from "@/components/forms/FormField";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const EventForm = ({ event = null, onSubmit, onClose, loading = false }) => {
   const [form, setForm] = useState({

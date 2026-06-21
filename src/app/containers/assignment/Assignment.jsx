@@ -1,7 +1,6 @@
 import { BookOpen, Pencil, Plus, Search, ToggleLeft, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute";
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
@@ -38,8 +37,6 @@ const sortOptions = [
 
 const AssignmentContainer = () => {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const user = useSelector((s) => s.auth.user);
   const { addToast } = useToast();
 
   const [assignments, setAssignments] = useState([]);

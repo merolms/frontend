@@ -52,10 +52,6 @@ import ToolTip from "../../components/ui/Tooltip";
 import LinkInputTooltip from "./LinkInputTooltip";
 
 export const ToolbarButtons = React.memo(({ editor }) => {
-  const [showTableMenu, setShowTableMenu] = React.useState(false);
-  const [showListMenu, setShowListMenu] = React.useState(false);
-  const [showCodeMenu, setShowCodeMenu] = React.useState(false);
-  const [showCalloutMenu, setShowCalloutMenu] = React.useState(false);
   const [showLinkInput, setShowLinkInput] = React.useState(false);
 
   if (!editor) return null;
@@ -101,12 +97,6 @@ export const ToolbarButtons = React.memo(({ editor }) => {
       action: () => editor.chain().focus().toggleOrderedList().run(),
     },
   ];
-
-  const handleLinkClick = () => {
-    const { from, to } = editor.state.selection;
-    setShowLinkInput(true);
-    setTimeout(() => editor.commands.setTextSelection({ from, to }), 0);
-  };
 
   const getCurrentLinkUrl = () =>
     editor.isActive("link") ? editor.getAttributes("link").href : "";
@@ -822,5 +812,6 @@ export const ToolbarButtons = React.memo(({ editor }) => {
     </div>
   );
 });
+ToolbarButtons.displayName = "ToolbarButtons";
 
 export default ToolbarButtons;

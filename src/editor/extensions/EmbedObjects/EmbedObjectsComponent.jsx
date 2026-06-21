@@ -43,11 +43,11 @@ const getYouTubeEmbedUrl = (url) => {
 const MemoizedEmbed = React.memo(({ embedUrl, sanitizedEmbedCode, embedType }) => {
   useEffect(() => {
     if (embedType === "code" && sanitizedEmbedCode) {
-      const matchingPlatform = Object.entries(SCRIPT_BASED_EMBEDS).find(([_, config]) =>
+      const matchingPlatform = Object.entries(SCRIPT_BASED_EMBEDS).find(([, config]) =>
         sanitizedEmbedCode.includes(config.identifier)
       );
       if (matchingPlatform) {
-        const [_, config] = matchingPlatform;
+        const [, config] = matchingPlatform;
         const script = document.createElement("script");
         script.src = config.src;
         script.async = true;
@@ -64,7 +64,9 @@ const MemoizedEmbed = React.memo(({ embedUrl, sanitizedEmbedCode, embedType }) =
       isYoutube = ["youtube.com", "www.youtube.com", "youtu.be", "www.youtu.be"].includes(
         url.hostname
       );
-    } catch {}
+    } catch {
+      // Ignore URL parsing errors
+    }
     const processedUrl = isYoutube ? getYouTubeEmbedUrl(embedUrl) : embedUrl;
     return (
       <iframe

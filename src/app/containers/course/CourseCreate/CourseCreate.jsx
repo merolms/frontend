@@ -38,8 +38,6 @@ const CourseCreate = () => {
   });
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState(null);
-  const [coverUploading, setCoverUploading] = useState(false);
-  const [coverError, setCoverError] = useState(false);
 
   // ─── TanStack Query: categories + create mutation ───
   const { data: categories = [] } = useCategories({ start: 0, limit: 100 });
@@ -128,8 +126,8 @@ const CourseCreate = () => {
               onCancel={() => navigate("/courses")}
               loading={createMutation.isPending}
               submitLabel="Create Course"
-              setCoverUploading={setCoverUploading}
-              setCoverError={setCoverError}
+              setCoverUploading={() => {}}
+              setCoverError={() => {}}
               autoSave={true}
               autoSaveKey={draft_KEY}
             />

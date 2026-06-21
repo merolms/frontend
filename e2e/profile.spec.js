@@ -4,13 +4,6 @@ import { DEMO_USERS, mockLogin } from "./helpers";
 
 async function navigateToProfile(page) {
   await mockLogin(page, DEMO_USERS.admin);
-  // Profile is accessed via the user avatar button in the top bar (DashboardLayout header)
-  const avatarBtn = page
-    .locator(".dashboard-main button")
-    .filter({
-      has: page.locator("img, div").filter({ hasText: /[A-Z]/ }),
-    })
-    .first();
   // Also try the sidebar profile button
   const sidebarProfileBtn = page.locator(".sidebar-wrapper button").first();
   await sidebarProfileBtn.click();

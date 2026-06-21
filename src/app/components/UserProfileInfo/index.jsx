@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 const UserProfileInfo = ({ image, primaryText, secondaryText }) => {
   return (
     <div className="user-profile-container">
@@ -8,6 +10,12 @@ const UserProfileInfo = ({ image, primaryText, secondaryText }) => {
       </div>
     </div>
   );
+};
+
+UserProfileInfo.propTypes = {
+  image: PropTypes.string,
+  primaryText: PropTypes.string,
+  secondaryText: PropTypes.string,
 };
 
 export default UserProfileInfo;

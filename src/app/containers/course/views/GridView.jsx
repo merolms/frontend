@@ -29,6 +29,7 @@ const CourseCardSkeleton = memo(() => (
     </div>
   </div>
 ));
+CourseCardSkeleton.displayName = "CourseCardSkeleton";
 
 const CourseCard = memo(({ course, navigate }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -159,8 +160,9 @@ const CourseCard = memo(({ course, navigate }) => {
     </div>
   );
 });
+CourseCard.displayName = "CourseCard";
 
-const GridView = ({ courses, navigate, loading, onRefresh }) => {
+const GridView = ({ courses, navigate, loading }) => {
   if (loading) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

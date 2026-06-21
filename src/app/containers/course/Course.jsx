@@ -195,7 +195,7 @@ const CourseContainer = () => {
       );
       setSelectedIds(new Set());
       refetch();
-    } catch (err) {
+    } catch {
       addToast("Failed to publish courses. Please try again.", "error");
     }
   };
@@ -210,7 +210,7 @@ const CourseContainer = () => {
       );
       setSelectedIds(new Set());
       refetch();
-    } catch (err) {
+    } catch {
       addToast("Failed to archive courses. Please try again.", "error");
     }
   };
@@ -226,7 +226,7 @@ const CourseContainer = () => {
       setSelectedIds(new Set());
       setBulkDeleteTarget(false);
       refetch();
-    } catch (err) {
+    } catch {
       addToast("Failed to delete courses. Please try again.", "error");
     }
   };

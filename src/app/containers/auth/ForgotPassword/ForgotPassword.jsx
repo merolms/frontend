@@ -40,7 +40,8 @@ const ForgotPassword = () => {
                 <div>
                   <p className="text-sm font-semibold">Check your email</p>
                   <p className="text-xs">
-                    If an account with that email exists, we've sent password reset instructions.
+                    If an account with that email exists, we&apos;ve sent password reset
+                    instructions.
                   </p>
                 </div>
               </div>
@@ -54,7 +55,8 @@ const ForgotPassword = () => {
           ) : (
             <>
               <p className="text-text-muted mb-4 text-center text-xs">
-                Enter your email address and we'll send you instructions to reset your password.
+                Enter your email address and we&apos;ll send you instructions to reset your
+                password.
               </p>
               <FormErrorBanner message={error} />
               <form onSubmit={handleSubmit} className="space-y-3">
