@@ -31,8 +31,8 @@ Lifecycle covered: **Discover → Create → Edit → Build → Preview → Publ
 
 ### P0.5 CourseEdit category can submit a name string instead of an ID
 
-`CourseEdit.jsx` initializes `form.category = data.categoryID || data.category`; the fallback is a display name and breaks the update payload.
-**Fix:** use `categoryID` only; if absent, leave unset. Effort: S.
+`CourseEdit.jsx` initializes `form.category = data.categoryId || data.category`; the fallback is a display name and breaks the update payload.
+**Fix:** use `categoryId` only; if absent, leave unset. Effort: S.
 
 ### P0.6 Category management filters break pagination
 

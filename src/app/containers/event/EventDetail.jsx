@@ -151,9 +151,9 @@ const EventDetail = () => {
                 <h4 className="text-text-muted mb-2 text-xs font-semibold uppercase">Tags</h4>
                 <div className="flex flex-wrap gap-1.5">
                   {event.tags.map((tag) => (
-                    <Badge key={tag} variant="default" className="text-[10px]">
+                    <Badge key={tag.id} variant="default" className="text-[10px]">
                       <Tag size={9} className="mr-0.5" />
-                      {tag}
+                      {tag.name}
                     </Badge>
                   ))}
                 </div>

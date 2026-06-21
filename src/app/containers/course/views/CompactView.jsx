@@ -41,8 +41,8 @@ const CompactView = ({ courses, navigate, loading }) => {
               <span className="text-text-primary truncate text-xs">{course.title}</span>
             </div>
             <div className="col-span-2">
-              <Badge variant={getCategoryColor(course.category)} className="text-[10px]">
-                {course.category}
+              <Badge variant={getCategoryColor(course.category?.name)} className="text-[10px]">
+                {course.category?.name}
               </Badge>
             </div>
             <div className="col-span-1">
@@ -56,11 +56,9 @@ const CompactView = ({ courses, navigate, loading }) => {
               )}
             </div>
             <div className="text-text-muted col-span-1 text-center text-[11px]">
-              {course.totalLessons}
+              {course.duration || 0}h
             </div>
-            <div className="text-text-muted col-span-1 text-center text-[11px]">
-              {course.enrolledUsers}
-            </div>
+            <div className="text-text-muted col-span-1 text-center text-[11px]">-</div>
             <div
               className="col-span-2 flex items-center justify-center gap-1"
               onClick={(e) => e.stopPropagation()}

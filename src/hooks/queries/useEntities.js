@@ -264,21 +264,13 @@ export const useCategories = (params = {}) => {
   if (params.start !== undefined) orvalParams.start = params.start;
   if (params.limit !== undefined) orvalParams.limit = params.limit;
 
-  const result = useCategoryGetAll(undefined, orvalParams);
+  return useCategoryGetAll(undefined, orvalParams);
 
-  // The custom fetcher unwraps { message, data } envelope
-  // Orval's response structure: { data: DomainCategory[] }
-  return result;
+
 };
 
 export const useCategory = (id) => {
-  const result = useCategoryGetByID(id);
-
-  return {
-    ...result,
-    data: result.data?.data,
-    enabled: !!id,
-  };
+  return seCategoryGetByID(id);
 };
 
 export const useCreateCategory = () => {
@@ -327,13 +319,8 @@ export const useDeleteCategory = () => {
 };
 
 export const useCategoryChildren = (parentId) => {
-  const result = useCategoryGetChildren(parentId);
+  return useCategoryGetChildren(parentId);
 
-  return {
-    ...result,
-    data: result.data?.data || [],
-    enabled: !!parentId,
-  };
 };
 
 export const useCategoryRoots = (params = {}) => {

@@ -1,6 +1,7 @@
 // Course API Service
 // Handles all API calls related to courses and lessons
 // Migrated to use orval-generated functions where available
+// Returns backend data directly without normalization
 
 import {
   courseCreate,
@@ -15,106 +16,35 @@ import {
   reorderLessons as orvalReorderLessons,
 } from "@/app/api/orval";
 
-// ==================== FIELD MAPPING ====================
-// Backend sends: created_at, updated_at (integer unix timestamps)
-// Backend sends: imageUrl, authorId, categoryId, lessonCount (camelCase)
-// Backend sends: duration as integer (minutes)
-// Backend sends: status as integer enum (0=draft, 1=published, 2=archived)
-// Backend lesson fields: displayOrder, durationMinutes, lessonType, contentFormat, isFreePreview
-
-const DEFAULT_COURSE_IMAGE =
-  "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop";
-
-// Convert unix timestamp (integer) to ISO date string, handling both seconds and milliseconds
-// I have commented this i don't know who is using this
-// const tsToIso = (ts) => {
-//   if (!ts) return "";
-//   // Backend sends seconds since epoch
-//   const ms = ts > 1e12 ? ts : ts * 1000;
-//   return new Date(ms).toISOString().split("T")[0];
-// };
-
-const normalizeCourse = (c) => ({
-  id: c.id,
-  title: c.title || "",
-  description: c.description || "",
-  imageURL: c.imageUrl || DEFAULT_COURSE_IMAGE,
-  coverImage: c.imageUrl || DEFAULT_COURSE_IMAGE,
-  duration: c.duration != null ? String(c.duration) : "",
-  // Backend sends status as lowercase string: "draft", "published", "archived"
-  status: (c.status || "draft").toLowerCase(),
-  categoryID: c.categoryId != null ? Number(c.categoryId) : null,
-  category: c.category?.name || c.categories?.name || "",
-  authorID: c.authorId,
-  author: c.author ? `${c.author.firstName || ""} ${c.author.lastName || ""}`.trim() : "",
-  authorEmail: c.author?.email || "",
-  tags: c.tags || [],
-  totalLessons: c.lessonCount || 0,
-  enrolledUsers: c.enrolledUsers || 0,
-  createdAt: c.created_at,
-  updatedAt: c.updated_at,
-  lessons: c.lessons || [],
-  attachments: c.attachments || [],
-});
-
 // ==================== COURSES ====================
 
 /**
  * Fetch paginated courses. Frontend uses page/limit; backend uses start/limit.
  * Returns { courses, total, page, limit, totalPages } for the frontend.
  */
-const CLIENT_FILTER_FETCH_LIMIT = 500;
-
 export const fetchCourses = async (params = {}) => {
   try {
     const page = parseInt(params.page) || 1;
     const limit = parseInt(params.limit) || 8;
     const search = params.search || "";
-    const status = params.status && params.status !== "all" ? params.status : "";
-    const category = params.category && params.category !== "all" ? params.category : "";
-    const sort = params.sort && params.sort !== "all" ? params.sort : "";
+    const status = params.status && params.status !== "all" ? params.status : undefined;
+    const category = params.category && params.category !== "all" ? params.category : undefined;
+    const sort = params.sort && params.sort !== "all" ? params.sort : undefined;
 
-    const orvalParams = {
-      start: (page - 1) * limit,
-      limit,
-      search: search || undefined,
-    };
-
-    const needsClientFiltering = Boolean(status || category || sort);
-
-    if (!needsClientFiltering) {
-      const data = await courseGetAll(orvalParams);
-      const list = data?.data || [];
-      const total = data?.total || Array.isArray(list) ? list.length : 0;
-      return {
-        courses: list.map(normalizeCourse),
-        total,
-        page,
-        limit,
-        totalPages: Math.max(1, Math.ceil(total / limit)),
-      };
-    }
-
-    const data = await courseGetAll({
-      start: 0,
-      limit: CLIENT_FILTER_FETCH_LIMIT,
-      search: search || undefined,
-    });
-    let courses = (data?.data || []).map(normalizeCourse);
-    if (status) courses = courses.filter((c) => c.status === status);
-    if (category) courses = courses.filter((c) => c.category === category);
-    if (sort === "title") {
-      courses = [...courses].sort((a, b) => a.title.localeCompare(b.title));
-    }
-
-    const total = courses.length;
-    return {
-      courses: courses.slice((page - 1) * limit, page * limit),
-      total,
+    const response = await courseGetAll({
       page,
       limit,
-      totalPages: Math.max(1, Math.ceil(total / limit)),
-    };
+      search: search || undefined,
+      status,
+      category,
+      sort,
+    });
+
+    // Assuming backend now returns an object like:
+    // { data: courses[], total: number, page: number, limit: number }
+    // We'll just return the response as is; the consumer can rely on totalPages if provided.
+    // If totalPages is not provided, we could compute it, but to "what backend has sent" we leave as is.
+    return response;
   } catch (error) {
     console.error("Error fetching courses:", error);
     throw error;
@@ -127,7 +57,7 @@ export const fetchCourses = async (params = {}) => {
 export const fetchCourseById = async (id) => {
   try {
     const data = await courseGetByID(id);
-    return normalizeCourse(data);
+    return data;
   } catch (error) {
     console.error("Error fetching course:", error);
     throw error;
@@ -161,7 +91,7 @@ export const createCourse = async (courseData) => {
       status: courseData.status || "draft",
     };
     const data = await courseCreate({ data: payload });
-    return normalizeCourse(data);
+    return data;
   } catch (error) {
     console.error("Error creating course:", error);
     throw error;
@@ -182,7 +112,7 @@ export const updateCourse = async (id, courseData) => {
       status: courseData.status || "draft",
     };
     const data = await courseUpdate(id, { data: payload });
-    return normalizeCourse(data);
+    return data;
   } catch (error) {
     console.error("Error updating course:", error);
     throw error;
@@ -209,50 +139,14 @@ export const markCourseImportant = async (id) => {
   try {
     const { apiPut } = await import("@/app/services/http");
     const data = await apiPut(`/courses/${id}/important`);
-    return normalizeCourse(data);
+    return data;
   } catch (error) {
     console.error("Error marking course important:", error);
     throw error;
   }
 };
 
-// Map frontend lesson type to backend enum values
-// DB enum: 'video','text','quiz','assignment','live','mixed'
-const VALID_LESSON_TYPES = new Set(["video", "text", "quiz", "assignment", "live", "mixed"]);
-const lessonTypeFromFrontend = (type) => {
-  const t = (type || "text").toLowerCase();
-  return VALID_LESSON_TYPES.has(t) ? t : "text";
-};
-
-// Map frontend content format to backend enum values
-// DB enum: 'rich_text','blocks','markdown','scorm'
-const VALID_CONTENT_FORMATS = new Set(["rich_text", "blocks", "markdown", "scorm"]);
-const contentFormatFromFrontend = (format) => {
-  const f = (format || "rich_text").toLowerCase();
-  return VALID_CONTENT_FORMATS.has(f) ? f : "rich_text";
-};
-
 // ==================== LESSONS ====================
-
-// Backend Lesson fields from swagger:
-// { id, courseId, title, contentFormat, displayOrder, durationMinutes, lessonType, status, isFreePreview, createdAt, updatedAt }
-const normalizeLesson = (l) => {
-  return {
-    id: l.id,
-    courseId: l.courseId,
-    title: l.title || "",
-    duration: l.durationMinutes != null ? String(l.durationMinutes) : l.duration || "",
-    contentFormat: l.contentFormat || "",
-    type: l.lessonType || l.type || "text",
-    status: l.status !== undefined && l.status !== null ? String(l.status) : "0",
-    sort_order: l.displayOrder || l.orderNumber || l.order || 0,
-    isFreePreview: l.isFreePreview || false,
-    points: l.points || 0,
-    updatedAt: l.updatedAt,
-    createdAt: l.createdAt,
-    tags: l.tags || [],
-  };
-};
 
 /**
  * Get lessons for a course
@@ -262,7 +156,7 @@ export const fetchLessons = async (courseId) => {
     const orvalParams = { courseId: parseInt(courseId, 10) };
     const data = await lessonGetAll(orvalParams);
     const list = data?.data || [];
-    return list.map(normalizeLesson);
+    return list;
   } catch (error) {
     console.error("Error fetching lessons:", error);
     throw error;
@@ -274,17 +168,8 @@ export const fetchLessons = async (courseId) => {
  */
 export const createLesson = async (courseId, lessonData) => {
   try {
-    const payload = {
-      courseId: parseInt(courseId, 10),
-      title: lessonData.title,
-      displayOrder: lessonData.sort_order || 0,
-      lessonType: lessonTypeFromFrontend(lessonData.type),
-      contentFormat: contentFormatFromFrontend(lessonData.contentFormat),
-      durationMinutes: lessonData.durationMinutes || 0,
-      isFreePreview: lessonData.isFreePreview || false,
-    };
-    const data = await lessonCreate({ data: payload });
-    return normalizeLesson(data);
+    const data = await lessonCreate({ data: lessonData });
+    return data;
   } catch (error) {
     console.error("Error creating lesson:", error);
     throw error;
@@ -296,17 +181,8 @@ export const createLesson = async (courseId, lessonData) => {
  */
 export const updateLesson = async (courseId, lessonId, lessonData) => {
   try {
-    const payload = {
-      courseId: parseInt(courseId, 10),
-      title: lessonData.title,
-      lessonType: lessonTypeFromFrontend(lessonData.type),
-      contentFormat: contentFormatFromFrontend(lessonData.contentFormat),
-      displayOrder: lessonData.sort_order || 0,
-      durationMinutes: lessonData.durationMinutes || 0,
-      isFreePreview: lessonData.isFreePreview || false,
-    };
-    const data = await lessonUpdate(lessonId, { data: payload });
-    return normalizeLesson(data);
+    const data = await lessonUpdate(lessonId, { data: lessonData });
+    return data;
   } catch (error) {
     console.error("Error updating lesson:", error);
     throw error;

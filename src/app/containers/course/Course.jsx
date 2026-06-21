@@ -1,5 +1,5 @@
 import { BookOpen, Clock, Plus, RefreshCw, Search, Users } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -81,17 +81,24 @@ const CourseContainer = () => {
 
   // ─── TanStack Query: replaces manual useState + useEffect + fetch ───
   const limit = viewMode === "list" ? 10 : viewMode === "compact" ? 15 : 8;
-  const { data, isLoading, error, isFetching, refetch } = useCourses({
+  const {
+    data: courses = [],
+    total = 0,
+    totalPages = 1,
+    isLoading,
+    error,
+    isFetching,
+    refetch,
+  } = useCourses({
     search,
     status,
     category,
     sort,
+    duration,
     page,
     limit,
   });
-  if(!isLoading){
-    console.log("courses:", data)
-  }
+
   const { data: categories = [] } = useCategories({ start: 0, limit: 100 });
 
   // Bulk operation mutations
@@ -99,46 +106,10 @@ const CourseContainer = () => {
   const archiveMutation = useArchiveCourse();
   const deleteMutation = useDeleteCourse();
 
-  const courses = data?.courses ?? [];
-  const totalPages = data?.totalPages ?? 1;
-  const total = data?.total ?? 0;
-
-  // Client-side filtering and sorting for duration and advanced sorting
-  const { filteredCourses: clientFilteredCourses } = useMemo(() => {
-    let data = [...courses];
-    
-    // Duration filtering
-    if (duration && duration !== "all") {
-      data = data.filter((course) => {
-        const dur = parseFloat(course.duration) || 0;
-        if (duration === "short") return dur < 2;
-        if (duration === "medium") return dur >= 2 && dur <= 5;
-        if (duration === "long") return dur > 5;
-        return true;
-      });
-    }
-
-    // Enhanced sorting
-    if (sort === "enrollment") {
-      data.sort((a, b) => (b.enrolledUsers || 0) - (a.enrolledUsers || 0));
-    } else if (sort === "updated") {
-      data.sort((a, b) => {
-        const dateA = a.updatedAt || a.lastUpdated || 0;
-        const dateB = b.updatedAt || b.lastUpdated || 0;
-        return dateB - dateA;
-      });
-    } else if (sort === "title") {
-      data.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
-    }
-
-    return { filteredCourses: data };
-  }, [courses, duration, sort]);
-
   const categoryOptions = [
     { value: "all", label: "All Categories" },
     ...categories.map((cat) => ({ value: cat.name, label: cat.name })),
   ];
-  console.log("categoryOptions: ", categoryOptions);
 
   const updateParams = (updates) => {
     const newParams = new URLSearchParams(searchParams);
@@ -172,7 +143,7 @@ const CourseContainer = () => {
 
   const handleSelectAll = (checked) => {
     if (checked) {
-      setSelectedIds(new Set(clientFilteredCourses.map((c) => c.id)));
+      setSelectedIds(new Set(courses.map((c) => c.id)));
     } else {
       setSelectedIds(new Set());
     }
@@ -235,16 +206,15 @@ const CourseContainer = () => {
 
   // Calculate warnings for bulk delete
   const getBulkDeleteWarnings = () => {
-    const selectedCourses = clientFilteredCourses.filter((c) => selectedIds.has(c.id));
     return {
-      lessons: selectedCourses.reduce((sum, c) => sum + (c.totalLessons || 0), 0),
-      enrolled: selectedCourses.reduce((sum, c) => sum + (c.enrolledUsers || 0), 0),
+      lessons: 0, // Not available in backend response
+      enrolled: 0, // Not available in backend response
     };
   };
 
   const renderView = () => {
     const props = {
-      courses: clientFilteredCourses,
+      courses,
       navigate,
       loading: isLoading,
       onRefresh: refetch,
@@ -277,22 +247,20 @@ const CourseContainer = () => {
       }
     >
       {/* Analytics Summary */}
-      {!isLoading && clientFilteredCourses.length > 0 && (
+      {!isLoading && courses.length > 0 && (
         <div className="mb-4 grid grid-cols-4 gap-4">
           <Paper className="p-4">
             <div className="text-text-muted mb-1 flex items-center gap-2 text-xs">
               <BookOpen size={14} /> Total Courses
             </div>
-            <div className="text-text-primary text-2xl font-semibold">
-              {clientFilteredCourses.length}
-            </div>
+            <div className="text-text-primary text-2xl font-semibold">{courses.length}</div>
           </Paper>
           <Paper className="p-4">
             <div className="text-text-muted mb-1 flex items-center gap-2 text-xs">
               <Users size={14} /> Published
             </div>
             <div className="text-text-primary text-2xl font-semibold">
-              {clientFilteredCourses.filter((c) => c.status === "published").length}
+              {courses.filter((c) => c.status === "published").length}
             </div>
           </Paper>
           <Paper className="p-4">
@@ -300,7 +268,7 @@ const CourseContainer = () => {
               <BookOpen size={14} /> Draft
             </div>
             <div className="text-text-primary text-2xl font-semibold">
-              {clientFilteredCourses.filter((c) => c.status === "draft").length}
+              {courses.filter((c) => c.status === "draft").length}
             </div>
           </Paper>
           <Paper className="p-4">
@@ -308,7 +276,7 @@ const CourseContainer = () => {
               <Clock size={14} /> Total Enrollments
             </div>
             <div className="text-text-primary text-2xl font-semibold">
-              {clientFilteredCourses.reduce((sum, c) => sum + (c.enrolledUsers || 0), 0)}
+              0 {/* enrolledUsers not available in backend response */}
             </div>
           </Paper>
         </div>
@@ -431,7 +399,7 @@ const CourseContainer = () => {
           </div>
         </div>
 
-        {(status || category || search) && (
+        {(status || category || search || duration) && (
           <div className="mt-4 flex items-center gap-2">
             <span className="text-text-muted text-xs">Filters:</span>
             {search && (
@@ -455,6 +423,11 @@ const CourseContainer = () => {
                 {category}
               </Badge>
             )}
+            {duration && (
+              <Badge variant="orange" onClose={() => updateParams({ duration: "", page: 1 })}>
+                {durationOptions.find((d) => d.value === duration)?.label || duration}
+              </Badge>
+            )}
           </div>
         )}
       </div>
@@ -476,7 +449,7 @@ const CourseContainer = () => {
       )}
 
       {/* Empty */}
-      {!error && clientFilteredCourses.length === 0 && !isLoading ? (
+      {!error && courses.length === 0 && !isLoading ? (
         <EmptyState
           icon={<BookOpen size={48} className="text-text-muted" />}
           title={

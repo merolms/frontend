@@ -228,11 +228,11 @@ const CourseDetail = () => {
               <p className="max-w-xl text-sm text-white/80">{course.description}</p>
               <div className="flex items-center gap-3 text-xs text-white/60">
                 <span className="flex items-center gap-1">
-                  <User size={12} /> {course.author}
+                  <User size={12} /> {course.author?.firstname} {course.author?.lastname}
                 </span>
                 <span>·</span>
                 <span className="flex items-center gap-1">
-                  <Folder size={12} /> {course.category}
+                  <Folder size={12} /> {course.categories?.name}
                 </span>
                 <span>·</span>
                 <span className="flex items-center gap-1">
@@ -243,10 +243,10 @@ const CourseDetail = () => {
                 <div className="mt-1 flex items-center gap-1.5">
                   {course.tags.map((tag) => (
                     <span
-                      key={tag}
+                      key={tag.id}
                       className="rounded-full bg-white/20 px-2 py-0.5 text-[11px] text-white"
                     >
-                      {tag}
+                      {tag.name}
                     </span>
                   ))}
                 </div>
@@ -255,7 +255,7 @@ const CourseDetail = () => {
             <div className="flex shrink-0 gap-8">
               <div className="text-center text-white">
                 <List size={20} className="mx-auto mb-1" style={{ color: t("accent") }} />
-                <div className="text-lg font-bold">{course.totalLessons}</div>
+                <div className="text-lg font-bold">0</div>
                 <div className="text-[11px] text-white/60">Lessons</div>
               </div>
               <div className="text-center text-white">
@@ -378,8 +378,8 @@ const CourseDetail = () => {
                       </h3>
                       <div className="flex items-center gap-1.5">
                         {course.tags.map((tag) => (
-                          <Badge key={tag} variant="teal">
-                            {tag}
+                          <Badge key={tag.id} variant="teal">
+                            {tag.name}
                           </Badge>
                         ))}
                       </div>
@@ -446,13 +446,11 @@ const CourseDetail = () => {
                           <User size={14} className="mt-0.5" style={{ color: t("accent") }} />
                           <div>
                             <div className="text-text-primary text-xs font-semibold">
-                              Instructor
+                              Author
                             </div>
                             <div className="text-text-muted text-xs">
-                              {course?.author || "N/A"}
-                              {course?.authorEmail && (
-                                <span className="ml-2 text-[10px]">· {course.authorEmail}</span>
-                              )}
+                              {course.author?.firstname} {course.author?.lastname}
+                              
                             </div>
                           </div>
                         </div>
@@ -481,7 +479,7 @@ const CourseDetail = () => {
                           <div>
                             <div className="text-text-primary text-xs font-semibold">Lessons</div>
                             <div className="text-text-muted text-xs">
-                              {course?.totalLessons || 0} lessons
+                              0 lessons {/* totalLessons not available in backend */}
                             </div>
                           </div>
                         </div>
@@ -550,7 +548,7 @@ const CourseDetail = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-text-muted text-xs">Total Lessons</span>
                   <span className="text-text-primary text-sm font-semibold">
-                    {course.totalLessons}
+                    0 {/* totalLessons not available */}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -612,7 +610,7 @@ const CourseDetail = () => {
         loading={deleteMutation.isLoading}
         warnings={{
           lessons: lessons?.length || 0,
-          enrolled: course?.enrolledUsers || enrollmentsSafe?.length || 0,
+          enrolled: enrollmentsSafe?.length || 0, // enrolledUsers not available in backend
         }}
       />
       <DropModal

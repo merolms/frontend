@@ -201,7 +201,6 @@ export const useCourse = (id) => {
 };
 
 export const useCreateCourse = () => {
-  
   return useMutation({
     mutationFn: createCourse,
     onSuccess: () => {
@@ -211,7 +210,6 @@ export const useCreateCourse = () => {
 };
 
 export const usePublishCourse = () => {
-  
   return useMutation({
     mutationFn: publishCourse,
     onSuccess: (data) => {

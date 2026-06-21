@@ -86,7 +86,7 @@ const TableView = ({
                   <Avatar className="h-10 w-10 rounded-md">
                     <AvatarImage
                       src={
-                        course.coverImage ||
+                        course.imageUrl ||
                         "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=100&h=100&fit=crop"
                       }
                     />
@@ -101,7 +101,9 @@ const TableView = ({
                 </div>
               </TableCell>
               <TableCell>
-                <Badge variant={getCategoryColor(course.category)}>{course.category}</Badge>
+                <Badge variant={getCategoryColor(course.category?.name)}>
+                  {course.category?.name}
+                </Badge>
               </TableCell>
               <TableCell>
                 {status && (
@@ -111,10 +113,7 @@ const TableView = ({
                 )}
               </TableCell>
               <TableCell className="text-text-muted text-center text-xs">
-                {course.totalLessons}
-              </TableCell>
-              <TableCell className="text-text-muted text-center text-xs">
-                {course.enrolledUsers}
+                {course.duration || 0}h
               </TableCell>
               <TableCell className="text-text-muted text-xs">
                 {course.createdAt

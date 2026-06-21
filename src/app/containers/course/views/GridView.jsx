@@ -1,4 +1,4 @@
-import { BookOpen, Clock, Eye, List, MoreHorizontal, Network, Pencil, User } from "lucide-react";
+import { BookOpen, Clock, Eye, MoreHorizontal, Network, Pencil, User } from "lucide-react";
 import { memo, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -34,7 +34,7 @@ CourseCardSkeleton.displayName = "CourseCardSkeleton";
 const CourseCard = memo(({ course, navigate }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const status = getStatusLabel(course.status);
-  const slide = course.coverImage || course.images?.[0];
+  const slide = course.imageUrl || course.images?.[0];
 
   const handleMenuClick = (e) => {
     e.stopPropagation();
@@ -117,9 +117,9 @@ const CourseCard = memo(({ course, navigate }) => {
 
       <div className="flex flex-1 flex-col gap-2 p-3">
         <div className="flex items-center justify-between">
-          <Badge variant="default">{course.category}</Badge>
+          <Badge variant="default">{course.category?.name}</Badge>
           <span className="text-text-muted flex items-center gap-1 text-[11px]">
-            <User size={10} /> {course.author}
+            <User size={10} /> {course.author?.firstname} {course.author?.lastname}
           </span>
         </div>
 
@@ -128,21 +128,15 @@ const CourseCard = memo(({ course, navigate }) => {
 
         <div className="text-text-muted mt-auto flex items-center gap-3 text-[11px]">
           <span className="flex items-center gap-1">
-            <List size={10} /> {course.totalLessons}
-          </span>
-          <span className="flex items-center gap-1">
-            <User size={10} /> {course.enrolledUsers}
-          </span>
-          <span className="flex items-center gap-1">
-            <Clock size={10} /> {course.duration}
+            <Clock size={10} /> {course.duration || 0}h
           </span>
         </div>
 
         {course.tags?.length > 0 && (
           <div className="flex items-center gap-1">
             {course.tags.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="default" className="text-[10px]">
-                {tag}
+              <Badge key={tag.id} variant="default" className="text-[10px]">
+                {tag.name}
               </Badge>
             ))}
             {course.tags.length > 3 && (

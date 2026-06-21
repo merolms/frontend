@@ -1,4 +1,4 @@
-import { BookOpen, Eye, List, MoreHorizontal, Network, Pencil, User, Users } from "lucide-react";
+import { BookOpen, Clock, Eye, MoreHorizontal, Network, Pencil, User } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -91,9 +91,9 @@ const ListView = ({ courses, navigate, loading }) => {
 
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 gap-3">
-            {course.coverImage ? (
+            {course.imageUrl ? (
               <img
-                src={course.coverImage}
+                src={course.imageUrl}
                 alt={course.title}
                 className="h-20 w-32 shrink-0 rounded-md object-cover"
               />
@@ -111,17 +111,14 @@ const ListView = ({ courses, navigate, loading }) => {
               )}
               <p className="text-text-muted line-clamp-2 text-xs">{course.description}</p>
               <div className="text-text-muted flex items-center gap-3 text-[11px]">
-                <Badge variant={getCategoryColor(course.category)} className="text-[10px]">
-                  {course.category}
+                <Badge variant={getCategoryColor(course.category?.name)} className="text-[10px]">
+                  {course.category?.name}
                 </Badge>
                 <span className="flex items-center gap-1">
-                  <User size={10} /> {course.author}
+                  <User size={10} /> {course.author?.firstname} {course.author?.lastname}
                 </span>
                 <span className="flex items-center gap-1">
-                  <List size={10} /> {course.totalLessons}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Users size={10} /> {course.enrolledUsers}
+                  <Clock size={10} /> {course.duration || 0}h
                 </span>
               </div>
             </div>

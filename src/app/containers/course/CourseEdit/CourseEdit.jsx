@@ -22,7 +22,7 @@ const CourseEdit = () => {
 
   // ─── TanStack Query: course data + categories + update mutation ───
   const { data: course, isLoading: fetching, error: courseError } = useCourse(id);
-  const { data: categories = [] } = useCategories({ start: 0, limit: 100 });
+  const { data: categories } = useCategories({ start: 0, limit: 100 });
   const updateMutation = useUpdateCourse();
 
   const [form, setForm] = useState({
@@ -34,12 +34,13 @@ const CourseEdit = () => {
     status: "draft",
   });
 
+
   // Sync form when course data loads
   if (course && !formInitialized) {
     setForm({
       title: course.title || "",
       description: course.description || "",
-      category: course.categoryID || null,
+      category: course.categoryId || null,
       coverImage: course.coverImage || course.imageURL || "",
       duration: course.duration || "",
       status: course.status || "draft",
@@ -52,7 +53,7 @@ const CourseEdit = () => {
     {
       title: course?.title || "",
       description: course?.description || "",
-      category: course?.categoryID || null,
+      category: course?.categoryId || null,
       coverImage: course?.coverImage || course?.imageURL || "",
       duration: course?.duration || "",
       status: course?.status || "draft",
@@ -156,7 +157,7 @@ const CourseEdit = () => {
                 Use the course detail page to publish, archive, or restore.
               </span>
             </div>
-
+            
             <CourseForm
               mode="edit"
               status={form.status}
