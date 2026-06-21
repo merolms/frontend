@@ -166,9 +166,9 @@ export const fetchLessons = async (courseId) => {
 /**
  * Create a lesson
  */
-export const createLesson = async (courseId, lessonData) => {
+export const createLesson = async (lessonData) => {
   try {
-    const data = await lessonCreate({ data: lessonData });
+    const data = await lessonCreate({ ...lessonData });
     return data;
   } catch (error) {
     console.error("Error creating lesson:", error);

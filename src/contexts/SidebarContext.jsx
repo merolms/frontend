@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from "react";
 const SidebarContext = createContext(undefined);
 
 export const SidebarProvider = ({ children }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   return (

@@ -145,7 +145,7 @@ const CourseBuilder = () => {
         }
         await loadLesson(targetLesson);
       } else {
-        const newLesson = await createLesson(id, { title: "Lesson 1", sort_order: 1 });
+        // const newLesson = await createLesson({ courseId: Number(id), title: "Lesson 1", sort_order: 1  });
         setLessons([newLesson]);
         setSelectedLesson(newLesson);
         setContent("");
