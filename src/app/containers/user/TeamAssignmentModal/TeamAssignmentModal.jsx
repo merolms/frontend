@@ -7,11 +7,10 @@ import { Button } from "@/components/ui/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { t } from "@/styles/theme";
 
-const TeamAssignmentModal = ({ open, onClose, user, onUpdated }) => {
+const TeamAssignmentModal = ({ open, onClose, user }) => {
   const [teams, setTeams] = useState([]);
   const [assignedTeams, setAssignedTeams] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -26,7 +25,7 @@ const TeamAssignmentModal = ({ open, onClose, user, onUpdated }) => {
       setLoading(true);
       const data = await fetchTeams();
       setTeams(Array.isArray(data) ? data : []);
-    } catch (err) {
+    } catch {
       setError("Failed to load teams.");
     } finally {
       setLoading(false);

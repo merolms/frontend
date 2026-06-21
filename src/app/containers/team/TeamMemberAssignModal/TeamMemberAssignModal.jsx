@@ -101,7 +101,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
       const mIds = new Set((membersData || []).map((m) => m.userID || m.userId));
       setMemberIds(mIds);
       await loadInitialUsers(mIds);
-    } catch (err) {
+    } catch {
       setError("Failed to load team members.");
     } finally {
       setLoading(false);

@@ -42,7 +42,7 @@ const UserEdit = () => {
       try {
         const roles = await fetchRoles();
         setRoleOptions(roles.map((r) => ({ value: r.name, label: r.name })));
-      } catch (err) {
+      } catch {
         setRoleOptions([
           { value: "Student", label: "Student" },
           { value: "Instructor", label: "Instructor" },
@@ -67,7 +67,7 @@ const UserEdit = () => {
           bio: data.bio || "",
           status: data.status !== undefined ? data.status : 1,
         });
-      } catch (err) {
+      } catch {
         setError("Failed to load user data.");
       } finally {
         setFetching(false);
@@ -82,11 +82,11 @@ const UserEdit = () => {
     try {
       setLoading(true);
       setError(null);
-      const updated = await updateUser(id, formData);
+      await updateUser(id, formData);
       addToast(`${formData.firstName} ${formData.lastName} updated successfully`, "success");
       navigate(`/users/${id}`);
-    } catch (err) {
-      setError(err.message || "Failed to update user.");
+    } catch {
+      setError("Failed to update user.");
     } finally {
       setLoading(false);
     }

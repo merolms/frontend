@@ -200,7 +200,7 @@ const CourseViewer = () => {
     user?.id,
     markCompleteMutation,
     lessonCompletionStatus,
-  ]); // eslint-disable-line react-hooks/exhaustive-deps
+  ]);
 
   // Auto-mark course complete when all lessons are done
   useEffect(() => {

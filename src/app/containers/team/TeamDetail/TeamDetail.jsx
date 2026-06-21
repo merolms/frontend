@@ -23,7 +23,6 @@ const TeamDetail = () => {
   const { data: members } = useTeamMembers(id);
   const deleteMutation = useDeleteTeam();
   const updateMutation = useUpdateTeam();
-  const [error, setError] = useState(null);
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
 

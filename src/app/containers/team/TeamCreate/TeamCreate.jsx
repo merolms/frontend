@@ -27,7 +27,7 @@ const TeamCreate = () => {
     return { name: "", description: "", color: "#6366F1" };
   });
 
-  const { updateForm, clearDirty } = useUnsavedChanges(
+  const { clearDirty } = useUnsavedChanges(
     form,
     { name: "", description: "", color: "#6366F1" },
     setForm,

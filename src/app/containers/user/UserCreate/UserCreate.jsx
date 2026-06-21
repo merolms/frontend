@@ -39,7 +39,7 @@ const UserCreate = () => {
       try {
         const roles = await fetchRoles();
         setRoleOptions(roles.map((r) => ({ value: r.name, label: r.name })));
-      } catch (err) {
+      } catch {
         setRoleOptions([
           { value: "Student", label: "Student" },
           { value: "Instructor", label: "Instructor" },

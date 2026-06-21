@@ -75,7 +75,6 @@ const AdminProgressTracking = () => {
 
   // Aggregate stats
   const allEnrollmentsList = allEnrollments;
-  const totalLearners = new Set(allEnrollmentsList.map((e) => e.userId)).size;
   const completedCount = allEnrollmentsList.filter((e) => e.status === "completed").length;
   const activeCount = allEnrollmentsList.filter((e) => e.status === "active").length;
   const avgProgress =

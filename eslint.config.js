@@ -3,6 +3,7 @@ import { defineConfig } from "eslint/config";
 import gitignore from "eslint-config-flat-gitignore";
 import pluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 import pluginReact from "eslint-plugin-react";
+import pluginReactHooks from "eslint-plugin-react-hooks";
 import pluginSimpleImportSort from "eslint-plugin-simple-import-sort";
 import unusedImports from "eslint-plugin-unused-imports";
 import globals from "globals";
@@ -31,6 +32,7 @@ export default defineConfig([
 
   js.configs.recommended,
   pluginReact.configs.flat.recommended,
+  pluginReactHooks.configs.flat.recommended,
 
   {
     settings: {
@@ -41,6 +43,7 @@ export default defineConfig([
     plugins: {
       "simple-import-sort": pluginSimpleImportSort,
       "unused-imports": unusedImports,
+      "react-hooks": pluginReactHooks,
     },
     rules: {
       "simple-import-sort/imports": "error",
@@ -60,6 +63,7 @@ export default defineConfig([
       "no-unreachable": "warn",
       "react/jsx-key": "warn",
       "no-unused-vars": "warn",
+      "react-hooks/exhaustive-deps": "warn",
 
       "unused-imports/no-unused-imports": "error",
     },

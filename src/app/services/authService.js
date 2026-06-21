@@ -3,7 +3,7 @@
 // All auth calls go through the centralized http client which handles
 // JWT injection and the { message, data } response envelope.
 
-import { apiGet, apiPost, apiPut } from "@/app/services/http";
+import { apiDelete, apiGet, apiPost, apiPut } from "@/app/services/http";
 
 // ==================== STATIC USERS (for role management UI) ====================
 // These are reference data for the role/permission management pages.
@@ -407,7 +407,7 @@ export const getRoleById = (id) => {
 
 // ==================== PASSWORD RESET (mock - no backend endpoint yet) ====================
 
-export const forgotPassword = async (email) => {
+export const forgotPassword = async () => {
   await new Promise((r) => setTimeout(r, 500));
   return { message: "If an account with that email exists, a reset link has been sent." };
 };

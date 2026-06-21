@@ -37,7 +37,7 @@ const RoleManagement = () => {
       const data = await fetchRoles();
       setRoles(Array.isArray(data) ? data : []);
       setCurrentPage(1);
-    } catch (err) {
+    } catch {
       setError("Failed to load roles.");
     } finally {
       setLoading(false);

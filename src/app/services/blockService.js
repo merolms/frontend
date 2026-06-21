@@ -249,6 +249,6 @@ export const mockSaveAutosave = async (lessonId, snapshot) => {
   return Promise.resolve({ id: Date.now(), lessonId, snapshot });
 };
 
-export const mockFetchAutosave = async (lessonId) => {
+export const mockFetchAutosave = async () => {
   return Promise.resolve(null);
 };

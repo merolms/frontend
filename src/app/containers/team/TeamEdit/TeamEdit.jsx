@@ -24,7 +24,7 @@ const TeamEdit = () => {
       const updated = await updateMutation.mutateAsync({ id, data: formData });
       addToast(`Team "${formData.name}" updated successfully`, "success");
       navigate(`/teams/${updated.id}`);
-    } catch (err) {
+    } catch {
       setError("Failed to update team. Please try again.");
     }
   };

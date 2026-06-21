@@ -15,12 +15,12 @@ const DEFAULT_COURSE_IMAGE =
 
 // Convert unix timestamp (integer) to ISO date string, handling both seconds and milliseconds
 // I have commented this i don't know who is using this
-const tsToIso = (ts) => {
-  if (!ts) return "";
-  // Backend sends seconds since epoch
-  const ms = ts > 1e12 ? ts : ts * 1000;
-  return new Date(ms).toISOString().split("T")[0];
-};
+// const tsToIso = (ts) => {
+//   if (!ts) return "";
+//   // Backend sends seconds since epoch
+//   const ms = ts > 1e12 ? ts : ts * 1000;
+//   return new Date(ms).toISOString().split("T")[0];
+// };
 
 const normalizeCourse = (c) => ({
   id: c.id,

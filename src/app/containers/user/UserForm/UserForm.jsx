@@ -36,7 +36,7 @@ const UserForm = ({
       try {
         const roles = await fetchRoles();
         setRoleOptions(roles.map((role) => ({ value: role.name, label: role.name })));
-      } catch (err) {
+      } catch {
         setRoleOptions([
           { value: "Student", label: "Student" },
           { value: "Instructor", label: "Instructor" },

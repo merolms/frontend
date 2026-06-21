@@ -26,7 +26,6 @@ const TeamForm = ({
   submitLabel = "Save Team",
   setForm: externalSetForm = null,
   autoSave = false,
-  autoSaveKey = null,
 }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -36,8 +35,6 @@ const TeamForm = ({
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [savedTime, setSavedTime] = useState(null);
-
-  const isEditing = !!initialData;
 
   useEffect(() => {
     if (initialData)

@@ -26,7 +26,7 @@ const RoleEdit = () => {
         const data = await fetchRoleById(id);
         if (!data) setError("Role not found.");
         else setRole(data);
-      } catch (err) {
+      } catch {
         setError("Failed to load role data.");
       } finally {
         setFetching(false);
