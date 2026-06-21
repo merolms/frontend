@@ -77,7 +77,12 @@ const CategoryForm = ({ category = null, onSubmit, onClose, loading = false }) =
         <DialogHeader>
           <DialogTitle>{isEditing ? "Edit Category" : "Create Category"}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+        >
           <div className="space-y-3">
             <FormField label="Name" error={errors.name} required>
               <Input

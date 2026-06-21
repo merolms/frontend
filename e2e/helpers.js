@@ -797,9 +797,42 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
     // Parse existing categories from localStorage to maintain state across requests
     // Default seed data
     let categories = [
-      { id: 1, name: "Programming", slug: "programming", description: "Software development courses", color: "#6366F1", icon: "code", status: 1, createdAt: 1700000000, updatedAt: 1700000000, courseCount: 5 },
-      { id: 2, name: "Design", slug: "design", description: "UI/UX and graphic design", color: "#EC4899", icon: "paint brush", status: 1, createdAt: 1700000100, updatedAt: 1700000100, courseCount: 3 },
-      { id: 3, name: "Data Science", slug: "data-science", description: "Data analysis and ML", color: "#10B981", icon: "database", status: 1, createdAt: 1700000200, updatedAt: 1700000200, courseCount: 2 },
+      {
+        id: 1,
+        name: "Programming",
+        slug: "programming",
+        description: "Software development courses",
+        color: "#6366F1",
+        icon: "code",
+        status: 1,
+        createdAt: 1700000000,
+        updatedAt: 1700000000,
+        courseCount: 5,
+      },
+      {
+        id: 2,
+        name: "Design",
+        slug: "design",
+        description: "UI/UX and graphic design",
+        color: "#EC4899",
+        icon: "paint brush",
+        status: 1,
+        createdAt: 1700000100,
+        updatedAt: 1700000100,
+        courseCount: 3,
+      },
+      {
+        id: 3,
+        name: "Data Science",
+        slug: "data-science",
+        description: "Data analysis and ML",
+        color: "#10B981",
+        icon: "database",
+        status: 1,
+        createdAt: 1700000200,
+        updatedAt: 1700000200,
+        courseCount: 2,
+      },
     ];
 
     if (method === "GET") {
@@ -813,7 +846,9 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
 
     if (method === "POST") {
       let body = {};
-      try { body = await route.request().postDataJSON(); } catch {}
+      try {
+        body = await route.request().postDataJSON();
+      } catch {}
       const newCat = {
         id: Date.now(),
         name: body.name || "New Category",
@@ -840,8 +875,10 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
     if (method === "PUT" && putMatch) {
       const catId = parseInt(putMatch[1]);
       let body = {};
-      try { body = await route.request().postDataJSON(); } catch {}
-      const idx = categories.findIndex(c => c.id === catId);
+      try {
+        body = await route.request().postDataJSON();
+      } catch {}
+      const idx = categories.findIndex((c) => c.id === catId);
       if (idx !== -1) {
         categories[idx] = { ...categories[idx], ...body, updatedAt: Math.floor(Date.now() / 1000) };
       }
@@ -857,7 +894,7 @@ export async function mockLogin(page, user = DEMO_USERS.admin) {
     const delMatch = url.match(/\/categories\/(\d+)/);
     if (method === "DELETE" && delMatch) {
       const catId = parseInt(delMatch[1]);
-      categories = categories.filter(c => c.id !== catId);
+      categories = categories.filter((c) => c.id !== catId);
       await route.fulfill({
         status: 200,
         contentType: "application/json",

@@ -24,9 +24,9 @@ const Calendar = ({ onDateClick, onEventClick, selectedDate }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-  
+
   const { start, end } = getMonthTimeRange(year, month);
-  
+
   const { data: eventsData, isLoading: loading } = useGetEventsInTimeRange({ start, end });
   const events = eventsData?.data || [];
 

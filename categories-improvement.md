@@ -4,10 +4,10 @@
 
 The Category Management module currently supports:
 
-* Create Category
-* Update Category
-* Delete Category
-* Change Category Status (Active / Inactive)
+- Create Category
+- Update Category
+- Delete Category
+- Change Category Status (Active / Inactive)
 
 ---
 
@@ -19,8 +19,8 @@ Add a search input to quickly find categories by name.
 
 ### Benefits
 
-* Faster navigation
-* Better scalability as categories grow
+- Faster navigation
+- Better scalability as categories grow
 
 ---
 
@@ -28,14 +28,14 @@ Add a search input to quickly find categories by name.
 
 Provide quick filters:
 
-* All
-* Active
-* Inactive
+- All
+- Active
+- Inactive
 
 ### Benefits
 
-* Easier content management
-* Reduced administrative effort
+- Easier content management
+- Reduced administrative effort
 
 ---
 
@@ -43,15 +43,15 @@ Provide quick filters:
 
 Allow sorting by:
 
-* Category Name
-* Status
-* Created Date
-* Updated Date
+- Category Name
+- Status
+- Created Date
+- Updated Date
 
 ### Benefits
 
-* Better data organization
-* Faster category discovery
+- Better data organization
+- Faster category discovery
 
 ---
 
@@ -59,14 +59,14 @@ Allow sorting by:
 
 Allow page size selection:
 
-* 10
-* 25
-* 50
-* 100
+- 10
+- 25
+- 50
+- 100
 
 ### Benefits
 
-* Improved usability for large datasets
+- Improved usability for large datasets
 
 ---
 
@@ -85,8 +85,8 @@ Allow page size selection:
 
 ### Benefits
 
-* Better visibility into category information
-* Reduced need to open detail screens
+- Better visibility into category information
+- Reduced need to open detail screens
 
 ---
 
@@ -110,13 +110,13 @@ Add checkboxes to each row.
 
 Available after selecting categories:
 
-* Activate
-* Deactivate
-* Delete
+- Activate
+- Deactivate
+- Delete
 
 ### Benefits
 
-* Significant time savings for administrators
+- Significant time savings for administrators
 
 ---
 
@@ -126,13 +126,13 @@ Available after selecting categories:
 
 Use a single form component for:
 
-* Create Category
-* Edit Category
+- Create Category
+- Edit Category
 
 ### Benefits
 
-* Reduced code duplication
-* Easier maintenance
+- Reduced code duplication
+- Easier maintenance
 
 ---
 
@@ -152,8 +152,8 @@ Science
 
 ### Benefits
 
-* Faster feedback
-* Better user experience
+- Faster feedback
+- Better user experience
 
 ---
 
@@ -169,8 +169,8 @@ Description
 
 ### Benefits
 
-* Prevents validation surprises
-* Improves content quality
+- Prevents validation surprises
+- Improves content quality
 
 ---
 
@@ -194,8 +194,8 @@ or
 
 ### Benefits
 
-* Faster visual recognition
-* Improved readability
+- Faster visual recognition
+- Improved readability
 
 ---
 
@@ -218,7 +218,7 @@ This action cannot be undone.
 
 ### Benefits
 
-* Reduces accidental deletions
+- Reduces accidental deletions
 
 ---
 
@@ -239,7 +239,7 @@ Deleting it may affect existing content.
 
 ### Benefits
 
-* Prevents unintended data loss
+- Prevents unintended data loss
 
 ---
 
@@ -249,20 +249,20 @@ Avoid unnecessary page navigation.
 
 ## Actions
 
-* Edit
-* View
-* Change Status
-* Delete
+- Edit
+- View
+- Change Status
+- Delete
 
 ### Options
 
-* Hover Actions
-* Context Menu (⋮)
+- Hover Actions
+- Context Menu (⋮)
 
 ### Benefits
 
-* Faster workflows
-* Reduced clicks
+- Faster workflows
+- Reduced clicks
 
 ---
 
@@ -289,8 +289,8 @@ Science-related courses and content
 
 ### Benefits
 
-* Faster access to details
-* Less page navigation
+- Faster access to details
+- Less page navigation
 
 ---
 
@@ -310,8 +310,8 @@ Create your first category to organize courses.
 
 ### Benefits
 
-* Better onboarding
-* Improved usability
+- Better onboarding
+- Improved usability
 
 ---
 
@@ -331,8 +331,8 @@ Replace loading spinners with skeleton rows.
 
 ### Benefits
 
-* Perceived faster loading
-* More modern UI experience
+- Perceived faster loading
+- More modern UI experience
 
 ---
 
@@ -354,8 +354,8 @@ Use toast notifications for successful actions.
 
 ### Benefits
 
-* Clear user feedback
-* Better confidence in actions
+- Clear user feedback
+- Better confidence in actions
 
 ---
 
@@ -385,8 +385,8 @@ Parent Category
 
 ### Benefits
 
-* Better content organization
-* Supports future growth
+- Better content organization
+- Supports future growth
 
 ---
 
@@ -406,7 +406,7 @@ Inactive Categories: 5
 
 ### Benefits
 
-* Quick visibility into category health
+- Quick visibility into category health
 
 ---
 
@@ -414,17 +414,17 @@ Inactive Categories: 5
 
 ## Recommended Enhancements
 
-* Keyboard navigation
-* Enter key form submission
-* Escape key dialog closing
-* Proper focus indicators
-* ARIA labels
-* Screen reader support
+- Keyboard navigation
+- Enter key form submission
+- Escape key dialog closing
+- Proper focus indicators
+- ARIA labels
+- Screen reader support
 
 ### Benefits
 
-* Improved accessibility compliance
-* Better experience for all users
+- Improved accessibility compliance
+- Better experience for all users
 
 ---
 
@@ -446,8 +446,8 @@ Updated: 2 days ago
 
 ### Benefits
 
-* Better mobile usability
-* Improved touch interactions
+- Better mobile usability
+- Improved touch interactions
 
 ---
 

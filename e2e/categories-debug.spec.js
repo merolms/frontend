@@ -12,5 +12,7 @@ test("debug JS errors", async ({ page }) => {
   await page.waitForTimeout(5000);
 
   const rootContent = await page.innerHTML("#root");
-  throw new Error("ERRORS: " + JSON.stringify(errors, null, 2) + "\nROOT: " + rootContent.substring(0, 1000));
+  throw new Error(
+    "ERRORS: " + JSON.stringify(errors, null, 2) + "\nROOT: " + rootContent.substring(0, 1000)
+  );
 });

@@ -46,14 +46,14 @@ const ListView = ({ courses, navigate, loading }) => {
         {/* Quick Actions Menu */}
         <button
           onClick={handleMenuClick}
-          className="absolute top-2 right-2 z-10 rounded-md bg-bg-surface/90 p-1.5 text-text-muted opacity-0 transition-opacity hover:bg-bg-surface group-hover:opacity-100"
+          className="bg-bg-surface/90 text-text-muted hover:bg-bg-surface absolute top-2 right-2 z-10 rounded-md p-1.5 opacity-0 transition-opacity group-hover:opacity-100"
           style={{ backdropFilter: "blur(4px)" }}
         >
           <MoreHorizontal size={14} />
         </button>
 
         {menuOpen && (
-          <div className="absolute right-2 top-10 z-20 w-40 rounded-md border bg-bg-surface shadow-lg">
+          <div className="bg-bg-surface absolute top-10 right-2 z-20 w-40 rounded-md border shadow-lg">
             <div className="p-1">
               <Link
                 to={`/courses/${course.id}`}

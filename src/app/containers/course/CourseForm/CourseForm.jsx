@@ -93,7 +93,7 @@ const CourseForm = ({
             className={inputCls}
           />
           {form?.title && form?.title.trim().length > 0 && !errors.title && (
-            <Check size={16} className="text-success absolute right-3 top-1/2 -translate-y-1/2" />
+            <Check size={16} className="text-success absolute top-1/2 right-3 -translate-y-1/2" />
           )}
         </div>
         <div className="text-text-muted mt-1 flex items-center justify-between text-xs">
@@ -120,11 +120,12 @@ const CourseForm = ({
             value={form?.description || ""}
             onChange={(e) => {
               onFieldChange?.("description", e.target.value);
-              if (errors.description) setForm?.((prev) => ({ ...prev, description: e.target.value }));
+              if (errors.description)
+                setForm?.((prev) => ({ ...prev, description: e.target.value }));
             }}
           />
           {form?.description && form?.description.trim().length > 0 && !errors.description && (
-            <Check size={16} className="text-success absolute right-3 top-3" />
+            <Check size={16} className="text-success absolute top-3 right-3" />
           )}
         </div>
         <div className="text-text-muted mt-1 flex items-center justify-between text-xs">
@@ -161,7 +162,10 @@ const CourseForm = ({
             ))}
           </select>
           {form?.category && !errors.category && (
-            <Check size={16} className="text-success absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Check
+              size={16}
+              className="text-success pointer-events-none absolute top-1/2 right-3 -translate-y-1/2"
+            />
           )}
         </div>
         <div className="text-text-muted mt-1 flex items-center justify-between text-xs">
@@ -196,13 +200,7 @@ const CourseForm = ({
         <div className="flex items-center gap-2">
           <span className="text-text-muted text-xs">Status</span>
           <Badge
-            variant={
-              status === "published"
-                ? "green"
-                : status === "archived"
-                  ? "orange"
-                  : "gray"
-            }
+            variant={status === "published" ? "green" : status === "archived" ? "orange" : "gray"}
           >
             {status === "draft" ? "draft" : status || "draft"}
           </Badge>
@@ -226,12 +224,7 @@ const CourseForm = ({
             }}
             className={`${inputCls} flex-1`}
           />
-          <Button
-            type="button"
-            size="sm"
-            onClick={() => setUnsplashOpen(true)}
-            disabled={loading}
-          >
+          <Button type="button" size="sm" onClick={() => setUnsplashOpen(true)} disabled={loading}>
             <ImageIcon size={14} /> Unsplash
           </Button>
           <label className="cursor-pointer">

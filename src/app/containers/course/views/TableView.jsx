@@ -120,15 +120,15 @@ const TableView = ({
                 {course.createdAt
                   ? new Date(course.createdAt).toLocaleDateString()
                   : course.createdDate
-                  ? new Date(course.createdDate).toLocaleDateString()
-                  : "—"}
+                    ? new Date(course.createdDate).toLocaleDateString()
+                    : "—"}
               </TableCell>
               <TableCell className="text-text-muted text-xs">
                 {course.updatedAt
                   ? new Date(course.updatedAt).toLocaleDateString()
                   : course.lastUpdated
-                  ? new Date(course.lastUpdated).toLocaleDateString()
-                  : "—"}
+                    ? new Date(course.lastUpdated).toLocaleDateString()
+                    : "—"}
               </TableCell>
               <TableCell>
                 <div className="flex items-center justify-center gap-1">

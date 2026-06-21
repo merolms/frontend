@@ -7,6 +7,7 @@ This document lists backend APIs that are available in the Orval-generated API (
 ## 📚 COURSES
 
 ### ✅ Already Migrated to Orval
+
 - `useCourseGetAll` - List all courses
 - `useCourseGetByID` - Get course by ID
 - `useCourseCreate` - Create a new course
@@ -22,21 +23,25 @@ This document lists backend APIs that are available in the Orval-generated API (
 The following hooks are available from the orval-generated API and can be imported directly in components. They are NOT re-exported through `useEntities.js`:
 
 **Analytics & Prerequisites:**
+
 - **`useGetCourseInsights`** - Get course insights (enrollments, completions, avg progress, quiz stats)
 - **`useGetCourseProgress`** - Get all learner progress summaries for a course
 - **`useCreateCoursePrerequisite`** - Create a course prerequisite
 - **`useDeleteCoursePrerequisite`** - Delete a course prerequisite
 
 **Enrollment & Assignments:**
+
 - **`useEnrollTeam`** - Enroll a team in a course (bulk enrollment)
 - **`useRemoveTeamEnrollment`** - Remove team enrollment (bulk unenrollment)
 - **`useSubmitTeam`** - Submit assignment as a team
 
 **Content Management:**
+
 - **`useCreateContentRevision`** - Create content revision
 - **`useDeleteContentRevision`** - Delete content revision
 
 **Advanced Features:**
+
 - **`useGetCourseCertificates`** - Get certificates issued for a course
 - **`useGetCourseEvents`** - Get events associated with a course
 - **`useGetCourseForums`** - Get forums for a course
@@ -48,6 +53,7 @@ The following hooks are available from the orval-generated API and can be import
 **Note:** All course-related hooks that exist in the backend OpenAPI spec are now available from orval. The only missing APIs are for course version control, which are not defined in the OpenAPI spec and would need to be added to the backend before they can be used.
 
 #### Course Versions (Not in OpenAPI Spec)
+
 **Note:** Course version control hooks are NOT available in the orval-generated API. These would need to be added to the backend OpenAPI spec before they can be used.
 
 - **`useCreateCourseVersion`** - Create a new course version
@@ -71,6 +77,7 @@ The following hooks are available from the orval-generated API and can be import
 ## 🏷️ CATEGORIES
 
 ### ✅ Already Migrated to Orval (via useEntities.js)
+
 - `useCategoryGetAll` - Get all categories
 - `useCategoryGetByID` - Get category by ID
 - `useCategoryCreate` - Create a new category
@@ -90,6 +97,7 @@ The following hooks are available from the orval-generated API and can be import
 ## 👥 TEAMS
 
 ### ✅ Already Migrated to Orval (via useEntities.js)
+
 - `useTeamGetAll` - List all teams
 - `useTeamGetByID` - Get team by ID
 - `useTeamCreate` - Create a new team
@@ -111,6 +119,7 @@ The following hooks are available from the orval-generated API and can be import
 ## 📝 ENROLLMENTS
 
 ### ✅ Already Migrated to Orval (via useEntities.js)
+
 - `useEnrollmentGet` - Get enrollment by ID
 - `useEnrollmentGetProgress` - Get enrollment progress
 - `useEnrollmentEnroll` - Enroll in a course
@@ -127,6 +136,7 @@ The following hooks are available from the orval-generated API and can be import
 ## 🎓 CERTIFICATES
 
 ### ✅ Already Migrated to Orval (via useEntities.js)
+
 - `useCertificateGet` - Get certificate by ID
 - `useCertificateUpdate` - Update certificate
 - `useCertificateDelete` - Delete certificate
@@ -140,6 +150,7 @@ The following hooks are available from the orval-generated API and can be import
 ## 🔔 NOTIFICATIONS
 
 ### ✅ Already Migrated to Orval (via useEntities.js)
+
 - `useNotificationGet` - Get notification by ID
 - `useNotificationCreate` - Create notification
 - `useNotificationDelete` - Delete notification
@@ -155,6 +166,7 @@ The following hooks are available from the orval-generated API and can be import
 ### ✅ Completed (Categories, Teams, Enrollments, Certificates - 100% Migrated; Notifications Partial)
 
 **Categories & Teams:**
+
 1. ✅ `useCategoryGetByID` - Now using orval hook instead of manual implementation
 2. ✅ `useTeamStat` - Now imported and exposed in useEntities.js
 3. ✅ `useCategoryChildren` - Now imported and wrapper added
@@ -162,23 +174,11 @@ The following hooks are available from the orval-generated API and can be import
 5. ✅ `useCategorySetParent` - Now imported and wrapper added
 6. ✅ `useCategoryStat` - Now imported and wrapper added
 
-**Enrollments:**
-7. ✅ `useEnrollment` - Get enrollment by ID
-8. ✅ `useEnrollmentProgress` - Get enrollment progress
-9. ✅ `useEnrollInCourse` - Enroll in a course
-10. ✅ `useDropFromCourse` - Drop from a course
-11. ✅ `useAdminEnrollUserInCourse` - Admin enroll user
-12. ✅ `useAdminEnrollTeamInCourse` - Admin enroll team
+**Enrollments:** 7. ✅ `useEnrollment` - Get enrollment by ID 8. ✅ `useEnrollmentProgress` - Get enrollment progress 9. ✅ `useEnrollInCourse` - Enroll in a course 10. ✅ `useDropFromCourse` - Drop from a course 11. ✅ `useAdminEnrollUserInCourse` - Admin enroll user 12. ✅ `useAdminEnrollTeamInCourse` - Admin enroll team
 
-**Certificates:**
-13. ✅ `useCertificate` - Get certificate by ID
-14. ✅ `useUpdateCertificate` - Update certificate
-15. ✅ `useDeleteCertificate` - Delete certificate
+**Certificates:** 13. ✅ `useCertificate` - Get certificate by ID 14. ✅ `useUpdateCertificate` - Update certificate 15. ✅ `useDeleteCertificate` - Delete certificate
 
-**Notifications (Partial):**
-16. ✅ `useNotification` - Get notification by ID
-17. ✅ `useCreateNotification` - Create notification
-18. ✅ `useDeleteNotification` - Delete notification
+**Notifications (Partial):** 16. ✅ `useNotification` - Get notification by ID 17. ✅ `useCreateNotification` - Create notification 18. ✅ `useDeleteNotification` - Delete notification
 
 ### High Priority (Available in Orval - Use Directly)
 
@@ -233,14 +233,14 @@ The following hooks are available from the orval-generated API and can be import
 
 ## 📊 Summary
 
-| Module | Total APIs | Migrated | Missing | % Migrated |
-|--------|-----------|----------|---------|------------|
-| Courses | ~29 | 25 | 4 | **86%** |
-| Categories | 9 | 9 | 0 | **100%** ✅ |
-| Teams | 9 | 9 | 0 | **100%** ✅ |
-| Enrollments | 6 | 6 | 0 | **100%** ✅ |
-| Certificates | 3 | 3 | 0 | **100%** ✅ |
-| Notifications | 3 | 3 | 0+ | **100%** ✅ (basic) |
-| **Total** | **~59** | **55** | **4** | **93%** |
+| Module        | Total APIs | Migrated | Missing | % Migrated          |
+| ------------- | ---------- | -------- | ------- | ------------------- |
+| Courses       | ~29        | 25       | 4       | **86%**             |
+| Categories    | 9          | 9        | 0       | **100%** ✅         |
+| Teams         | 9          | 9        | 0       | **100%** ✅         |
+| Enrollments   | 6          | 6        | 0       | **100%** ✅         |
+| Certificates  | 3          | 3        | 0       | **100%** ✅         |
+| Notifications | 3          | 3        | 0+      | **100%** ✅ (basic) |
+| **Total**     | **~59**    | **55**   | **4**   | **93%**             |
 
 **Note:** This count is approximate based on the APIs analyzed in the orval-generated file. Almost all course-related hooks that exist in the backend OpenAPI spec are now available from orval. The only missing APIs are for course version control (4 hooks), which are not defined in the OpenAPI spec and would need to be added to the backend before they can be used. Categories, Teams, Enrollments, and Certificates are fully migrated. Notifications are partially migrated (basic CRUD).

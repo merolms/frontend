@@ -50,7 +50,7 @@ const TeamContainer = () => {
   const statusFilter = searchParams.get("status") || "";
   const sort = searchParams.get("sort") || "";
   const [searchInput, setSearchInput] = useState(search);
-  const totalPages=1
+  const totalPages = 1;
 
   const deleteMutation = useDeleteTeam();
   // ─── TanStack Query: replaces manual useState + useEffect + fetch ───
@@ -107,10 +107,10 @@ const TeamContainer = () => {
     setSearchInput("");
     setSearchParams(new URLSearchParams());
   };
-  console.log("teams", teams)
+  console.log("teams", teams);
   return (
     <>
-      <DashboardLayout title="Teams" >
+      <DashboardLayout title="Teams">
         {/* Action bar */}
         <div className="mb-4 flex items-center justify-end">
           <Button size="sm" onClick={() => navigate("/teams/create")}>

@@ -20,10 +20,7 @@ import {
   useRemoveTeamMember,
   useFetchTeamUsers,
 } from "@/hooks/queries/useEntities";
-import {
-  fetchTeamMembers,
-  fetchUsers,
-} from "@/app/services/teamService";
+import { fetchTeamMembers, fetchUsers } from "@/app/services/teamService";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
@@ -236,10 +233,10 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
     try {
       markBusy(key, true);
       setError(null);
-      await addMutation.mutateAsync({ 
-        teamId: team.id, 
+      await addMutation.mutateAsync({
+        teamId: team.id,
         userId: user.id,
-        role: selectedRole 
+        role: selectedRole,
       });
       const newMember = {
         userID: user.id,
@@ -348,9 +345,11 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
                         <AvatarImage src={member.avatar || "https://i.pravatar.cc/150?img=1"} />
                         <AvatarFallback>{userName[0]}</AvatarFallback>
                       </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-text-primary text-xs font-semibold truncate">{userName}</p>
-                        <p className="text-text-muted text-[11px] truncate">{member.userEmail}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-text-primary truncate text-xs font-semibold">
+                          {userName}
+                        </p>
+                        <p className="text-text-muted truncate text-[11px]">{member.userEmail}</p>
                         {getRoleBadge(member.role)}
                       </div>
                     </div>
@@ -373,9 +372,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
         <div className="border-border border-t pt-4">
           <div className="mb-3 flex items-center gap-2">
             <UserPlus size={16} className="text-primary" />
-            <h3 className="text-text-primary text-sm font-semibold">
-              Add Members
-            </h3>
+            <h3 className="text-text-primary text-sm font-semibold">Add Members</h3>
           </div>
 
           {/* Role Selection */}
@@ -389,10 +386,7 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
                 {TEAM_ROLES.map((role) => (
                   <SelectItem key={role.value} value={role.value}>
                     <div className="flex items-center gap-2">
-                      <div
-                        className="h-2 w-2 rounded-full"
-                        style={{ background: t(role.color) }}
-                      />
+                      <div className="h-2 w-2 rounded-full" style={{ background: t(role.color) }} />
                       {role.label}
                     </div>
                   </SelectItem>
@@ -436,11 +430,11 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
 
           {/* Available Users */}
           {loading ? (
-            <div className="text-center py-8">
+            <div className="py-8 text-center">
               <Loader size={20} className="text-text-muted mx-auto animate-spin" />
             </div>
           ) : displayedUsers.length === 0 ? (
-            <div className="border-border bg-surface py-8 text-center rounded-lg border">
+            <div className="border-border bg-surface rounded-lg border py-8 text-center">
               <ShieldCheck size={32} className="text-text-muted mx-auto mb-2" />
               <p className="text-text-muted text-sm">
                 {searchLoading
@@ -459,17 +453,21 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
                       key={user.id}
                       className="border-border hover:bg-hover flex items-center justify-between rounded-lg border p-3 transition-colors"
                     >
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="flex min-w-0 flex-1 items-center gap-3">
                         <Avatar className="h-8 w-8">
                           <AvatarImage src={user.avatar || "https://i.pravatar.cc/150?img=1"} />
                           <AvatarFallback>{(user.firstName || "U")[0]}</AvatarFallback>
                         </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-text-primary text-xs font-semibold truncate">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-text-primary truncate text-xs font-semibold">
                             {user.firstName} {user.lastName}
                           </p>
-                          <p className="text-text-muted text-[11px] truncate">{user.email}</p>
-                          {user.role && <Badge variant={getRoleColor(user.role)} className="text-[10px]">{user.role}</Badge>}
+                          <p className="text-text-muted truncate text-[11px]">{user.email}</p>
+                          {user.role && (
+                            <Badge variant={getRoleColor(user.role)} className="text-[10px]">
+                              {user.role}
+                            </Badge>
+                          )}
                         </div>
                       </div>
                       <button
@@ -513,30 +511,33 @@ const TeamMemberAssignModal = ({ open, onClose, team, onUpdated }) => {
               )}
 
               {/* Load More */}
-              {!isSearchMode && totalPages > 0 && currentPage === totalPages && allLoaded.length > 0 && (
-                <div className="mt-3 flex justify-center">
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={loadMoreUsers}
-                    disabled={loadingMore}
-                  >
-                    {loadingMore ? (
-                      <>
-                        <Loader size={14} className="mr-1 animate-spin" />
-                        Loading more...
-                      </>
-                    ) : (
-                      "Load More Users"
-                    )}
-                  </Button>
-                </div>
-              )}
+              {!isSearchMode &&
+                totalPages > 0 &&
+                currentPage === totalPages &&
+                allLoaded.length > 0 && (
+                  <div className="mt-3 flex justify-center">
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={loadMoreUsers}
+                      disabled={loadingMore}
+                    >
+                      {loadingMore ? (
+                        <>
+                          <Loader size={14} className="mr-1 animate-spin" />
+                          Loading more...
+                        </>
+                      ) : (
+                        "Load More Users"
+                      )}
+                    </Button>
+                  </div>
+                )}
             </>
           )}
         </div>
 
-        <div className="border-border border-t mt-4 pt-4 flex justify-end">
+        <div className="border-border mt-4 flex justify-end border-t pt-4">
           <Button variant="default" onClick={onClose} disabled={busyIds.size > 0}>
             Done
           </Button>

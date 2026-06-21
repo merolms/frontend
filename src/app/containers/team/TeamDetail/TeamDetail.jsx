@@ -58,10 +58,7 @@ const TeamDetail = () => {
         id,
         data: { status: newStatus },
       });
-      addToast(
-        `Team "${team.name}" ${newStatus === 1 ? "activated" : "deactivated"}`,
-        "success"
-      );
+      addToast(`Team "${team.name}" ${newStatus === 1 ? "activated" : "deactivated"}`, "success");
       // Invalidate team query to refresh data
       queryClient.invalidateQueries({ queryKey: ["team", id] });
     } catch (err) {

@@ -75,16 +75,15 @@ export interface DomainAttachment {
   updatedAt?: string;
 }
 
-export type DomainAttendeeStatus = typeof DomainAttendeeStatus[keyof typeof DomainAttendeeStatus];
-
+export type DomainAttendeeStatus = (typeof DomainAttendeeStatus)[keyof typeof DomainAttendeeStatus];
 
 export const DomainAttendeeStatus = {
-  AttendeeStatusInvited: 'invited',
-  AttendeeStatusAccepted: 'accepted',
-  AttendeeStatusDeclined: 'declined',
-  AttendeeStatusTentative: 'tentative',
-  AttendeeStatusAttended: 'attended',
-  AttendeeStatusMissed: 'missed',
+  AttendeeStatusInvited: "invited",
+  AttendeeStatusAccepted: "accepted",
+  AttendeeStatusDeclined: "declined",
+  AttendeeStatusTentative: "tentative",
+  AttendeeStatusAttended: "attended",
+  AttendeeStatusMissed: "missed",
 } as const;
 
 export interface DomainAuditLog {
@@ -118,12 +117,12 @@ export interface DomainCategory {
   updatedAt?: string;
 }
 
-export type DomainCertificateOrientation = typeof DomainCertificateOrientation[keyof typeof DomainCertificateOrientation];
-
+export type DomainCertificateOrientation =
+  (typeof DomainCertificateOrientation)[keyof typeof DomainCertificateOrientation];
 
 export const DomainCertificateOrientation = {
-  CertificateOrientationLandscape: 'landscape',
-  CertificateOrientationPortrait: 'portrait',
+  CertificateOrientationLandscape: "landscape",
+  CertificateOrientationPortrait: "portrait",
 } as const;
 
 export interface DomainContentRevision {
@@ -136,23 +135,22 @@ export interface DomainContentRevision {
   snapshot?: string;
 }
 
-export type DomainContentType = typeof DomainContentType[keyof typeof DomainContentType];
-
+export type DomainContentType = (typeof DomainContentType)[keyof typeof DomainContentType];
 
 export const DomainContentType = {
-  ContentTypeMarkdown: 'markdown',
-  ContentTypeHTML: 'html',
-  ContentTypePlain: 'plain',
+  ContentTypeMarkdown: "markdown",
+  ContentTypeHTML: "html",
+  ContentTypePlain: "plain",
 } as const;
 
-export type DomainCourseEnrollmentType = typeof DomainCourseEnrollmentType[keyof typeof DomainCourseEnrollmentType];
-
+export type DomainCourseEnrollmentType =
+  (typeof DomainCourseEnrollmentType)[keyof typeof DomainCourseEnrollmentType];
 
 export const DomainCourseEnrollmentType = {
-  open: 'open',
-  approval: 'approval',
-  invite_only: 'invite_only',
-  paid: 'paid',
+  open: "open",
+  approval: "approval",
+  invite_only: "invite_only",
+  paid: "paid",
 } as const;
 
 export interface DomainUser {
@@ -205,24 +203,23 @@ export interface DomainLesson {
   updatedAt?: string;
 }
 
-export type DomainStatus = typeof DomainStatus[keyof typeof DomainStatus];
-
+export type DomainStatus = (typeof DomainStatus)[keyof typeof DomainStatus];
 
 export const DomainStatus = {
-  Success: 'success',
-  Error: 'error',
-  CourseInDraft: 'draft',
-  CourseArchived: 'archived',
-  CourseAssigned: 'assigned',
-  CoursePublished: 'published',
-  CoursePublic: 'public',
-  CourseCreated: 'created',
-  CourseComplete: 'completed',
-  StatusSuccess: 'queued',
-  StatusQueued: 'sending',
-  StatusSending: 'unknown',
-  StatusUnknown: 'scheduled',
-  StatusScheduled: 'retrying',
+  Success: "success",
+  Error: "error",
+  CourseInDraft: "draft",
+  CourseArchived: "archived",
+  CourseAssigned: "assigned",
+  CoursePublished: "published",
+  CoursePublic: "public",
+  CourseCreated: "created",
+  CourseComplete: "completed",
+  StatusSuccess: "queued",
+  StatusQueued: "sending",
+  StatusSending: "unknown",
+  StatusUnknown: "scheduled",
+  StatusScheduled: "retrying",
 } as const;
 
 export interface DomainCourse {
@@ -233,9 +230,9 @@ export interface DomainCourse {
   categoryId?: DomainNullInt64;
   certificateEnabled?: boolean;
   /**
-     * @minimum 0
-     * @maximum 100
-     */
+   * @minimum 0
+   * @maximum 100
+   */
   completionThreshold?: number;
   createdAt?: string;
   deletedAt?: string;
@@ -254,9 +251,9 @@ export interface DomainCourse {
   status?: DomainStatus;
   thumbnailUrl?: string;
   /**
-     * @minLength 3
-     * @maxLength 256
-     */
+   * @minLength 3
+   * @maxLength 256
+   */
   title: string;
   updatedAt?: string;
   users?: DomainUser[];
@@ -278,12 +275,12 @@ export interface DomainCourseInsights {
   totalQuizAttempts?: number;
 }
 
-export type DomainPrerequisiteType = typeof DomainPrerequisiteType[keyof typeof DomainPrerequisiteType];
-
+export type DomainPrerequisiteType =
+  (typeof DomainPrerequisiteType)[keyof typeof DomainPrerequisiteType];
 
 export const DomainPrerequisiteType = {
-  PrerequisiteTypeRequired: 'required',
-  PrerequisiteTypeRecommended: 'recommended',
+  PrerequisiteTypeRequired: "required",
+  PrerequisiteTypeRecommended: "recommended",
 } as const;
 
 export interface DomainCoursePrerequisite {
@@ -294,23 +291,23 @@ export interface DomainCoursePrerequisite {
   prerequisiteType?: DomainPrerequisiteType;
 }
 
-export type DomainCourseUpdateDTOEnrollmentType = typeof DomainCourseUpdateDTOEnrollmentType[keyof typeof DomainCourseUpdateDTOEnrollmentType];
-
+export type DomainCourseUpdateDTOEnrollmentType =
+  (typeof DomainCourseUpdateDTOEnrollmentType)[keyof typeof DomainCourseUpdateDTOEnrollmentType];
 
 export const DomainCourseUpdateDTOEnrollmentType = {
-  open: 'open',
-  approval: 'approval',
-  invite_only: 'invite_only',
-  paid: 'paid',
+  open: "open",
+  approval: "approval",
+  invite_only: "invite_only",
+  paid: "paid",
 } as const;
 
 export interface DomainCourseUpdateDTO {
   authorId?: number;
   categoryId?: number;
   /**
-     * @minimum 0
-     * @maximum 100
-     */
+   * @minimum 0
+   * @maximum 100
+   */
   completionThreshold?: number;
   /** @maxLength 5000 */
   description?: string;
@@ -324,9 +321,9 @@ export interface DomainCourseUpdateDTO {
   status?: DomainStatus;
   thumbnailUrl?: string;
   /**
-     * @minLength 3
-     * @maxLength 256
-     */
+   * @minLength 3
+   * @maxLength 256
+   */
   title?: string;
   version?: number;
 }
@@ -352,9 +349,9 @@ export interface DomainCreateCertificateRequest {
   score?: string;
   templateId?: number;
   /**
-     * @minLength 1
-     * @maxLength 256
-     */
+   * @minLength 1
+   * @maxLength 256
+   */
   title: string;
   userId: number;
   verificationCode?: string;
@@ -365,9 +362,9 @@ export interface DomainCreateCertificateTemplateRequest {
   htmlTemplate: string;
   isDefault?: boolean;
   /**
-     * @minLength 2
-     * @maxLength 256
-     */
+   * @minLength 2
+   * @maxLength 256
+   */
   name: string;
   organizationId: number;
   orientation?: DomainCertificateOrientation;
@@ -379,17 +376,16 @@ export interface DomainCreateEventAttendeeRequest {
   userId: number;
 }
 
-export type DomainEventType = typeof DomainEventType[keyof typeof DomainEventType];
-
+export type DomainEventType = (typeof DomainEventType)[keyof typeof DomainEventType];
 
 export const DomainEventType = {
-  EventTypeLiveSession: 'live_session',
-  EventTypeOfficeHours: 'office_hours',
-  EventTypeAssignmentDue: 'assignment_due',
-  EventTypeQuizDue: 'quiz_due',
-  EventTypeWebinar: 'webinar',
-  EventTypeMeeting: 'meeting',
-  EventTypeOther: 'other',
+  EventTypeLiveSession: "live_session",
+  EventTypeOfficeHours: "office_hours",
+  EventTypeAssignmentDue: "assignment_due",
+  EventTypeQuizDue: "quiz_due",
+  EventTypeWebinar: "webinar",
+  EventTypeMeeting: "meeting",
+  EventTypeOther: "other",
 } as const;
 
 export interface DomainCreateEventRequest {
@@ -407,21 +403,20 @@ export interface DomainCreateEventRequest {
   startTime: string;
   timezone?: string;
   /**
-     * @minLength 1
-     * @maxLength 256
-     */
+   * @minLength 1
+   * @maxLength 256
+   */
   title: string;
 }
 
-export type DomainForumType = typeof DomainForumType[keyof typeof DomainForumType];
-
+export type DomainForumType = (typeof DomainForumType)[keyof typeof DomainForumType];
 
 export const DomainForumType = {
-  ForumTypeCourse: 'course',
-  ForumTypeLesson: 'lesson',
-  ForumTypeAnnouncement: 'announcement',
-  ForumTypeQA: 'qa',
-  ForumTypeOpen: 'open',
+  ForumTypeCourse: "course",
+  ForumTypeLesson: "lesson",
+  ForumTypeAnnouncement: "announcement",
+  ForumTypeQA: "qa",
+  ForumTypeOpen: "open",
 } as const;
 
 export interface DomainCreateForumRequest {
@@ -431,9 +426,9 @@ export interface DomainCreateForumRequest {
   isModerated?: boolean;
   lessonId?: number;
   /**
-     * @minLength 3
-     * @maxLength 256
-     */
+   * @minLength 3
+   * @maxLength 256
+   */
   title: string;
 }
 
@@ -463,9 +458,9 @@ export interface DomainCreateLearningPathRequest {
   status?: string;
   tags?: string[];
   /**
-     * @minLength 3
-     * @maxLength 255
-     */
+   * @minLength 3
+   * @maxLength 255
+   */
   title: string;
 }
 
@@ -477,27 +472,26 @@ export interface DomainCreateNotificationPreferenceRequest {
   userId: number;
 }
 
-export type DomainSentVia = typeof DomainSentVia[keyof typeof DomainSentVia];
-
+export type DomainSentVia = (typeof DomainSentVia)[keyof typeof DomainSentVia];
 
 export const DomainSentVia = {
-  SentViaInApp: 'in_app',
-  SentViaEmail: 'email',
-  SentViaPush: 'push',
+  SentViaInApp: "in_app",
+  SentViaEmail: "email",
+  SentViaPush: "push",
 } as const;
 
-export type DomainNotificationType = typeof DomainNotificationType[keyof typeof DomainNotificationType];
-
+export type DomainNotificationType =
+  (typeof DomainNotificationType)[keyof typeof DomainNotificationType];
 
 export const DomainNotificationType = {
-  NotificationTypeAssignmentDue: 'assignment_due',
-  NotificationTypeGradePosted: 'grade_posted',
-  NotificationTypeReply: 'reply',
-  NotificationTypeBadge: 'badge',
-  NotificationTypeCourseUpdated: 'course_updated',
-  NotificationTypeEnrollment: 'enrollment',
-  NotificationTypeMention: 'mention',
-  NotificationTypeSystem: 'system',
+  NotificationTypeAssignmentDue: "assignment_due",
+  NotificationTypeGradePosted: "grade_posted",
+  NotificationTypeReply: "reply",
+  NotificationTypeBadge: "badge",
+  NotificationTypeCourseUpdated: "course_updated",
+  NotificationTypeEnrollment: "enrollment",
+  NotificationTypeMention: "mention",
+  NotificationTypeSystem: "system",
 } as const;
 
 export interface DomainCreateNotificationRequest {
@@ -508,9 +502,9 @@ export interface DomainCreateNotificationRequest {
   organizationId?: number;
   sentVia?: DomainSentVia[];
   /**
-     * @minLength 1
-     * @maxLength 256
-     */
+   * @minLength 1
+   * @maxLength 256
+   */
   title: string;
   type: DomainNotificationType;
   userId: number;
@@ -528,9 +522,9 @@ export interface DomainCreateThreadRequest {
   contentType?: DomainContentType;
   forumId: number;
   /**
-     * @minLength 3
-     * @maxLength 512
-     */
+   * @minLength 3
+   * @maxLength 512
+   */
   title: string;
 }
 
@@ -585,14 +579,14 @@ export interface DomainDiscussionThread {
   viewCount?: number;
 }
 
-export type DomainEnrollmentPolicyType = typeof DomainEnrollmentPolicyType[keyof typeof DomainEnrollmentPolicyType];
-
+export type DomainEnrollmentPolicyType =
+  (typeof DomainEnrollmentPolicyType)[keyof typeof DomainEnrollmentPolicyType];
 
 export const DomainEnrollmentPolicyType = {
-  EnrollmentPolicyOpen: 'open',
-  EnrollmentPolicyApproval: 'approval',
-  EnrollmentPolicyInvite: 'invite_only',
-  EnrollmentPolicyPaid: 'paid',
+  EnrollmentPolicyOpen: "open",
+  EnrollmentPolicyApproval: "approval",
+  EnrollmentPolicyInvite: "invite_only",
+  EnrollmentPolicyPaid: "paid",
 } as const;
 
 export interface DomainEnrollmentPolicy {
@@ -609,33 +603,32 @@ export interface DomainEnrollmentPolicy {
   welcomeMessage?: string;
 }
 
-export type DomainExportRequestStatus = typeof DomainExportRequestStatus[keyof typeof DomainExportRequestStatus];
-
+export type DomainExportRequestStatus =
+  (typeof DomainExportRequestStatus)[keyof typeof DomainExportRequestStatus];
 
 export const DomainExportRequestStatus = {
-  ExportRequestStatusPending: 'pending',
-  ExportRequestStatusProcessing: 'processing',
-  ExportRequestStatusCompleted: 'completed',
-  ExportRequestStatusFailed: 'failed',
+  ExportRequestStatusPending: "pending",
+  ExportRequestStatusProcessing: "processing",
+  ExportRequestStatusCompleted: "completed",
+  ExportRequestStatusFailed: "failed",
 } as const;
 
-export type DomainInvitationRole = typeof DomainInvitationRole[keyof typeof DomainInvitationRole];
-
+export type DomainInvitationRole = (typeof DomainInvitationRole)[keyof typeof DomainInvitationRole];
 
 export const DomainInvitationRole = {
-  InvitationRoleLearner: 'learner',
-  InvitationRoleAdmin: 'admin',
-  InvitationRoleInstructor: 'instructor',
+  InvitationRoleLearner: "learner",
+  InvitationRoleAdmin: "admin",
+  InvitationRoleInstructor: "instructor",
 } as const;
 
-export type DomainInvitationStatus = typeof DomainInvitationStatus[keyof typeof DomainInvitationStatus];
-
+export type DomainInvitationStatus =
+  (typeof DomainInvitationStatus)[keyof typeof DomainInvitationStatus];
 
 export const DomainInvitationStatus = {
-  InvitationStatusPending: 'pending',
-  InvitationStatusAccepted: 'accepted',
-  InvitationStatusExpired: 'expired',
-  InvitationStatusRevoked: 'revoked',
+  InvitationStatusPending: "pending",
+  InvitationStatusAccepted: "accepted",
+  InvitationStatusExpired: "expired",
+  InvitationStatusRevoked: "revoked",
 } as const;
 
 export interface DomainInvitation {
@@ -683,23 +676,23 @@ export interface DomainLearnerStreak {
   userId?: number;
 }
 
-export type DomainLearningPathDifficulty = typeof DomainLearningPathDifficulty[keyof typeof DomainLearningPathDifficulty];
-
+export type DomainLearningPathDifficulty =
+  (typeof DomainLearningPathDifficulty)[keyof typeof DomainLearningPathDifficulty];
 
 export const DomainLearningPathDifficulty = {
-  Beginner: 'Beginner',
-  Intermediate: 'Intermediate',
-  Advanced: 'Advanced',
-  Beginner_to_Advanced: 'Beginner to Advanced',
+  Beginner: "Beginner",
+  Intermediate: "Intermediate",
+  Advanced: "Advanced",
+  Beginner_to_Advanced: "Beginner to Advanced",
 } as const;
 
-export type DomainLearningPathStatus = typeof DomainLearningPathStatus[keyof typeof DomainLearningPathStatus];
-
+export type DomainLearningPathStatus =
+  (typeof DomainLearningPathStatus)[keyof typeof DomainLearningPathStatus];
 
 export const DomainLearningPathStatus = {
-  draft: 'draft',
-  published: 'published',
-  archived: 'archived',
+  draft: "draft",
+  published: "published",
+  archived: "archived",
 } as const;
 
 export interface DomainLearningPath {
@@ -721,9 +714,9 @@ export interface DomainLearningPath {
   status?: DomainLearningPathStatus;
   tags?: string[];
   /**
-     * @minLength 3
-     * @maxLength 255
-     */
+   * @minLength 3
+   * @maxLength 255
+   */
   title: string;
   totalCourses?: number;
   updatedAt?: string;
@@ -735,13 +728,13 @@ export interface DomainLearningPathCompletedCourse {
   title?: string;
 }
 
-export type DomainLearningPathEnrollmentStatus = typeof DomainLearningPathEnrollmentStatus[keyof typeof DomainLearningPathEnrollmentStatus];
-
+export type DomainLearningPathEnrollmentStatus =
+  (typeof DomainLearningPathEnrollmentStatus)[keyof typeof DomainLearningPathEnrollmentStatus];
 
 export const DomainLearningPathEnrollmentStatus = {
-  active: 'active',
-  completed: 'completed',
-  dropped: 'dropped',
+  active: "active",
+  completed: "completed",
+  dropped: "dropped",
 } as const;
 
 export interface DomainLearningPathRemainingCourse {
@@ -886,13 +879,13 @@ export interface DomainQuestionBankOption {
   text?: string;
 }
 
-export type DomainQuestionDifficulty = typeof DomainQuestionDifficulty[keyof typeof DomainQuestionDifficulty];
-
+export type DomainQuestionDifficulty =
+  (typeof DomainQuestionDifficulty)[keyof typeof DomainQuestionDifficulty];
 
 export const DomainQuestionDifficulty = {
-  DifficultyEasy: 'easy',
-  DifficultyMedium: 'medium',
-  DifficultyHard: 'hard',
+  DifficultyEasy: "easy",
+  DifficultyMedium: "medium",
+  DifficultyHard: "hard",
 } as const;
 
 export interface DomainQuestionBankQuestion {
@@ -957,9 +950,9 @@ export interface DomainResponse {
 
 export interface DomainRevokeCertificateRequest {
   /**
-     * @minLength 1
-     * @maxLength 500
-     */
+   * @minLength 1
+   * @maxLength 500
+   */
   revokeReason: string;
 }
 
@@ -1021,21 +1014,20 @@ export interface DomainStatsResponse {
   userCount?: number;
 }
 
-export type DomainSubmissionStatus = typeof DomainSubmissionStatus[keyof typeof DomainSubmissionStatus];
-
+export type DomainSubmissionStatus =
+  (typeof DomainSubmissionStatus)[keyof typeof DomainSubmissionStatus];
 
 export const DomainSubmissionStatus = {
-  SubmissionSubmitted: 'submitted',
-  SubmissionGraded: 'graded',
-  SubmissionReturned: 'returned',
+  SubmissionSubmitted: "submitted",
+  SubmissionGraded: "graded",
+  SubmissionReturned: "returned",
 } as const;
 
-export type DomainSubmissionType = typeof DomainSubmissionType[keyof typeof DomainSubmissionType];
-
+export type DomainSubmissionType = (typeof DomainSubmissionType)[keyof typeof DomainSubmissionType];
 
 export const DomainSubmissionType = {
-  SubmissionTypeUser: 'user',
-  SubmissionTypeTeam: 'team',
+  SubmissionTypeUser: "user",
+  SubmissionTypeTeam: "team",
 } as const;
 
 export interface DomainSubmission {
@@ -1159,9 +1151,9 @@ export interface DomainUpdateLearningPathRequest {
   status?: string;
   tags?: string[];
   /**
-     * @minLength 3
-     * @maxLength 255
-     */
+   * @minLength 3
+   * @maxLength 255
+   */
   title?: string;
 }
 
@@ -1171,13 +1163,13 @@ export interface DomainUpdateNotificationPreferenceRequest {
   push?: boolean;
 }
 
-export type DomainUserLearningPathEnrollmentStatus = typeof DomainUserLearningPathEnrollmentStatus[keyof typeof DomainUserLearningPathEnrollmentStatus];
-
+export type DomainUserLearningPathEnrollmentStatus =
+  (typeof DomainUserLearningPathEnrollmentStatus)[keyof typeof DomainUserLearningPathEnrollmentStatus];
 
 export const DomainUserLearningPathEnrollmentStatus = {
-  active: 'active',
-  completed: 'completed',
-  dropped: 'dropped',
+  active: "active",
+  completed: "completed",
+  dropped: "dropped",
 } as const;
 
 export interface DomainUserLearningPathEnrollment {
@@ -1200,14 +1192,13 @@ export interface DomainUserLearningPathEnrollment {
   userId?: number;
 }
 
-export type DomainWaitlistStatus = typeof DomainWaitlistStatus[keyof typeof DomainWaitlistStatus];
-
+export type DomainWaitlistStatus = (typeof DomainWaitlistStatus)[keyof typeof DomainWaitlistStatus];
 
 export const DomainWaitlistStatus = {
-  WaitlistStatusWaiting: 'waiting',
-  WaitlistStatusInvited: 'invited',
-  WaitlistStatusEnrolled: 'enrolled',
-  WaitlistStatusExpired: 'expired',
+  WaitlistStatusWaiting: "waiting",
+  WaitlistStatusInvited: "invited",
+  WaitlistStatusEnrolled: "enrolled",
+  WaitlistStatusExpired: "expired",
 } as const;
 
 export interface DomainWaitlistEntry {
@@ -1255,14 +1246,14 @@ export type GetOrgInsights200 = DomainResponse & {
 };
 
 export type ListTopStreaksParams = {
-/**
- * Limit
- */
-limit?: number;
-/**
- * Offset
- */
-offset?: number;
+  /**
+   * Limit
+   */
+  limit?: number;
+  /**
+   * Offset
+   */
+  offset?: number;
 };
 
 export type ListTopStreaks200 = DomainResponse & {
@@ -1278,14 +1269,14 @@ export type LogActivity201 = DomainResponse & {
 };
 
 export type GetEntityActivityParams = {
-/**
- * Limit
- */
-limit?: number;
-/**
- * Offset
- */
-offset?: number;
+  /**
+   * Limit
+   */
+  limit?: number;
+  /**
+   * Offset
+   */
+  offset?: number;
 };
 
 export type GetEntityActivity200 = DomainResponse & {
@@ -1293,14 +1284,14 @@ export type GetEntityActivity200 = DomainResponse & {
 };
 
 export type GetOrgActivityParams = {
-/**
- * Limit
- */
-limit?: number;
-/**
- * Offset
- */
-offset?: number;
+  /**
+   * Limit
+   */
+  limit?: number;
+  /**
+   * Offset
+   */
+  offset?: number;
 };
 
 export type GetOrgActivity200 = DomainResponse & {
@@ -1308,14 +1299,14 @@ export type GetOrgActivity200 = DomainResponse & {
 };
 
 export type GetUserActivityParams = {
-/**
- * Limit
- */
-limit?: number;
-/**
- * Offset
- */
-offset?: number;
+  /**
+   * Limit
+   */
+  limit?: number;
+  /**
+   * Offset
+   */
+  offset?: number;
 };
 
 export type GetUserActivity200 = DomainResponse & {
@@ -1327,14 +1318,14 @@ export type CreateQuestionBank201 = DomainResponse & {
 };
 
 export type ListQuestionBanksByOrgParams = {
-/**
- * Limit
- */
-limit?: number;
-/**
- * Offset
- */
-offset?: number;
+  /**
+   * Limit
+   */
+  limit?: number;
+  /**
+   * Offset
+   */
+  offset?: number;
 };
 
 export type ListQuestionBanksByOrg200 = DomainResponse & {
@@ -1350,10 +1341,10 @@ export type CreateBankQuestion201 = DomainResponse & {
 };
 
 export type SearchBankQuestionsParams = {
-/**
- * Search query
- */
-q: string;
+  /**
+   * Search query
+   */
+  q: string;
 };
 
 export type SearchBankQuestions200 = DomainResponse & {
@@ -1373,14 +1364,14 @@ export type UpsertProgress200 = DomainResponse & {
 };
 
 export type GetCourseProgressParams = {
-/**
- * Limit
- */
-limit?: number;
-/**
- * Offset
- */
-offset?: number;
+  /**
+   * Limit
+   */
+  limit?: number;
+  /**
+   * Offset
+   */
+  offset?: number;
 };
 
 export type GetCourseProgress200 = DomainResponse & {
@@ -1459,41 +1450,41 @@ export type AttachmentCreateBody = {
 };
 
 export type DownloadAttachmentParams = {
-/**
- * uuid-encoded file name
- */
-file: string;
+  /**
+   * uuid-encoded file name
+   */
+  file: string;
 };
 
 export type GetAuditLogsParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
-/**
- * Filter by user ID
- */
-userId?: number;
-/**
- * Filter by organization ID
- */
-orgId?: number;
-/**
- * Filter by entity type
- */
-entityType?: string;
-/**
- * Filter by entity ID
- */
-entityId?: number;
-/**
- * Filter by action
- */
-action?: string;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
+  /**
+   * Filter by user ID
+   */
+  userId?: number;
+  /**
+   * Filter by organization ID
+   */
+  orgId?: number;
+  /**
+   * Filter by entity type
+   */
+  entityType?: string;
+  /**
+   * Filter by entity ID
+   */
+  entityId?: number;
+  /**
+   * Filter by action
+   */
+  action?: string;
 };
 
 export type LoginHandler200 = DomainResponse & {
@@ -1513,40 +1504,40 @@ export type RegisterHandler201 = DomainResponse & {
 };
 
 export type CategoryGetAllParams = {
-/**
- * Search by name
- */
-search?: string;
-/**
- * Offset
- */
-start?: number;
-/**
- * Page size
- */
-limit?: number;
+  /**
+   * Search by name
+   */
+  search?: string;
+  /**
+   * Offset
+   */
+  start?: number;
+  /**
+   * Page size
+   */
+  limit?: number;
 };
 
 export type CategoryGetChildrenParams = {
-/**
- * Offset
- */
-start?: number;
-/**
- * Page size
- */
-limit?: number;
+  /**
+   * Offset
+   */
+  start?: number;
+  /**
+   * Page size
+   */
+  limit?: number;
 };
 
 export type CategoryGetRootsParams = {
-/**
- * Offset
- */
-start?: number;
-/**
- * Page size
- */
-limit?: number;
+  /**
+   * Offset
+   */
+  start?: number;
+  /**
+   * Page size
+   */
+  limit?: number;
 };
 
 export type CategorySetParentBody = {
@@ -1554,36 +1545,36 @@ export type CategorySetParentBody = {
 };
 
 export type GetUserCertificatesParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetCourseCertificatesParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetOrgCertificatesParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type CreateCoursePrerequisite201 = DomainResponse & {
@@ -1591,14 +1582,14 @@ export type CreateCoursePrerequisite201 = DomainResponse & {
 };
 
 export type GetCoursePrerequisitesParams = {
-/**
- * Page number
- */
-page?: number;
-/**
- * Page size
- */
-pageSize?: number;
+  /**
+   * Page number
+   */
+  page?: number;
+  /**
+   * Page size
+   */
+  pageSize?: number;
 };
 
 export type GetCoursePrerequisites200 = DomainPaginatedResponse & {
@@ -1610,14 +1601,14 @@ export type CreateLessonPrerequisite201 = DomainResponse & {
 };
 
 export type GetLessonPrerequisitesParams = {
-/**
- * Page number
- */
-page?: number;
-/**
- * Page size
- */
-pageSize?: number;
+  /**
+   * Page number
+   */
+  page?: number;
+  /**
+   * Page size
+   */
+  pageSize?: number;
 };
 
 export type GetLessonPrerequisites200 = DomainPaginatedResponse & {
@@ -1629,14 +1620,14 @@ export type CreateContentRevision201 = DomainResponse & {
 };
 
 export type GetBlockRevisionsParams = {
-/**
- * Limit
- */
-limit?: number;
-/**
- * Offset
- */
-offset?: number;
+  /**
+   * Limit
+   */
+  limit?: number;
+  /**
+   * Offset
+   */
+  offset?: number;
 };
 
 export type GetBlockRevisions200 = DomainPaginatedResponse & {
@@ -1648,14 +1639,14 @@ export type GetLatestContentRevision200 = DomainResponse & {
 };
 
 export type GetLessonRevisionsParams = {
-/**
- * Limit
- */
-limit?: number;
-/**
- * Offset
- */
-offset?: number;
+  /**
+   * Limit
+   */
+  limit?: number;
+  /**
+   * Offset
+   */
+  offset?: number;
 };
 
 export type GetLessonRevisions200 = DomainPaginatedResponse & {
@@ -1671,14 +1662,14 @@ export type CreateCourseVersion201 = DomainResponse & {
 };
 
 export type GetCourseVersionsParams = {
-/**
- * Limit
- */
-limit?: number;
-/**
- * Offset
- */
-offset?: number;
+  /**
+   * Limit
+   */
+  limit?: number;
+  /**
+   * Offset
+   */
+  offset?: number;
 };
 
 export type GetCourseVersions200 = DomainPaginatedResponse & {
@@ -1694,14 +1685,14 @@ export type GetCourseVersion200 = DomainResponse & {
 };
 
 export type CourseGetAllParams = {
-/**
- * start
- */
-start: number;
-/**
- * limit
- */
-limit: number;
+  /**
+   * start
+   */
+  start: number;
+  /**
+   * limit
+   */
+  limit: number;
 };
 
 export type CoursePartialUpdate200 = DomainResponse & {
@@ -1729,14 +1720,14 @@ export type CreateForum201 = DomainResponse & {
 };
 
 export type GetForumThreadsParams = {
-/**
- * Page number
- */
-page?: number;
-/**
- * Thread limit per page
- */
-limit?: number;
+  /**
+   * Page number
+   */
+  page?: number;
+  /**
+   * Thread limit per page
+   */
+  limit?: number;
 };
 
 export type GetForumThreads200 = DomainResponse & {
@@ -1748,18 +1739,18 @@ export type CreateThread201 = DomainResponse & {
 };
 
 export type SearchThreadsParams = {
-/**
- * Search query string
- */
-q: string;
-/**
- * Page number
- */
-page?: number;
-/**
- * Page size
- */
-limit?: number;
+  /**
+   * Search query string
+   */
+  q: string;
+  /**
+   * Page number
+   */
+  page?: number;
+  /**
+   * Page size
+   */
+  limit?: number;
 };
 
 export type SearchThreads200 = DomainResponse & {
@@ -1791,10 +1782,10 @@ export type UpdateReply200 = DomainResponse & {
 };
 
 export type MarkAsAnswerParams = {
-/**
- * Is it correct answer
- */
-isAnswer: boolean;
+  /**
+   * Is it correct answer
+   */
+  isAnswer: boolean;
 };
 
 export type SubscribeBody = { [key: string]: unknown };
@@ -1810,28 +1801,28 @@ export type UpdateThread200 = DomainResponse & {
 };
 
 export type LockThreadParams = {
-/**
- * Locked status
- */
-lock: boolean;
+  /**
+   * Locked status
+   */
+  lock: boolean;
 };
 
 export type PinThreadParams = {
-/**
- * Pinned status
- */
-pin: boolean;
+  /**
+   * Pinned status
+   */
+  pin: boolean;
 };
 
 export type GetThreadRepliesParams = {
-/**
- * Page number
- */
-page?: number;
-/**
- * Limit number
- */
-limit?: number;
+  /**
+   * Page number
+   */
+  page?: number;
+  /**
+   * Limit number
+   */
+  limit?: number;
 };
 
 export type GetThreadReplies200 = DomainResponse & {
@@ -1889,122 +1880,122 @@ export type InviteWaitlist200 = DomainResponse & {
 };
 
 export type GetOrgEventsParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetCourseEventsParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetEventsInTimeRangeParams = {
-/**
- * Start time (Unix timestamp)
- */
-startTime: number;
-/**
- * End time (Unix timestamp)
- */
-endTime: number;
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * Start time (Unix timestamp)
+   */
+  startTime: number;
+  /**
+   * End time (Unix timestamp)
+   */
+  endTime: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetEventsByTypeParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetUpcomingEventsParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetUserEventsParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetUserAttendeesParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetEventAttendeesParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type LearningPathGetAllParams = {
-/**
- * Search in title and description
- */
-search?: string;
-/**
- * Filter by category name
- */
-category?: string;
-/**
- * Filter by status: draft, published, archived
- */
-status?: string;
-/**
- * Page number (default: 1)
- */
-page?: number;
-/**
- * Items per page (default: 6)
- */
-limit?: number;
+  /**
+   * Search in title and description
+   */
+  search?: string;
+  /**
+   * Filter by category name
+   */
+  category?: string;
+  /**
+   * Filter by status: draft, published, archived
+   */
+  status?: string;
+  /**
+   * Page number (default: 1)
+   */
+  page?: number;
+  /**
+   * Items per page (default: 6)
+   */
+  limit?: number;
 };
 
 export type LearningPathGetAll200 = DomainResponse & {
@@ -2020,14 +2011,14 @@ export type GetCategories200 = DomainResponse & {
 };
 
 export type GetMyLearningPathEnrollmentsParams = {
-/**
- * Pagination offset
- */
-start?: number;
-/**
- * Page size
- */
-limit?: number;
+  /**
+   * Pagination offset
+   */
+  start?: number;
+  /**
+   * Page size
+   */
+  limit?: number;
 };
 
 export type GetMyLearningPathEnrollments200 = DomainResponse & {
@@ -2035,18 +2026,18 @@ export type GetMyLearningPathEnrollments200 = DomainResponse & {
 };
 
 export type LearningPathGetStatParams = {
-/**
- * Search in title and description
- */
-search?: string;
-/**
- * Filter by category
- */
-category?: string;
-/**
- * Filter by status
- */
-status?: string;
+  /**
+   * Search in title and description
+   */
+  search?: string;
+  /**
+   * Filter by category
+   */
+  category?: string;
+  /**
+   * Filter by status
+   */
+  status?: string;
 };
 
 export type LearningPathGetByID200 = DomainResponse & {
@@ -2057,7 +2048,7 @@ export type LearningPathUpdate200 = DomainResponse & {
   data?: DomainLearningPath;
 };
 
-export type LearningPathAdminEnrollTeam200Data = {[key: string]: number};
+export type LearningPathAdminEnrollTeam200Data = { [key: string]: number };
 
 export type LearningPathAdminEnrollTeam200 = DomainResponse & {
   data?: LearningPathAdminEnrollTeam200Data;
@@ -2080,14 +2071,14 @@ export type LearningPathGetProgress200 = DomainResponse & {
 };
 
 export type LessonGetAllParams = {
-/**
- * start
- */
-start: number;
-/**
- * limit
- */
-limit: number;
+  /**
+   * start
+   */
+  start: number;
+  /**
+   * limit
+   */
+  limit: number;
 };
 
 export type UploadBlockMediaBody = {
@@ -2101,10 +2092,10 @@ export type UploadLessonMediaBody = {
 };
 
 export type GetFoldersParams = {
-/**
- * Parent folder ID for nested folders
- */
-parentId?: number;
+  /**
+   * Parent folder ID for nested folders
+   */
+  parentId?: number;
 };
 
 export type MediaUploadBody = {
@@ -2135,14 +2126,14 @@ export type UpdateRoleHandler200 = DomainResponse & {
 };
 
 export type ListRubricsParams = {
-/**
- * Limit results
- */
-limit?: number;
-/**
- * Offset results
- */
-offset?: number;
+  /**
+   * Limit results
+   */
+  limit?: number;
+  /**
+   * Offset results
+   */
+  offset?: number;
 };
 
 export type ListRubrics200 = DomainResponse & {
@@ -2174,14 +2165,14 @@ export type StatsGet200 = DomainResponse & {
 };
 
 export type TeamGetAllParams = {
-/**
- * Pagination offset
- */
-start?: number;
-/**
- * Page size
- */
-limit?: number;
+  /**
+   * Pagination offset
+   */
+  start?: number;
+  /**
+   * Page size
+   */
+  limit?: number;
 };
 
 export type TeamGetAll200 = DomainResponse & {
@@ -2205,14 +2196,14 @@ export type GetMembers200 = DomainResponse & {
 };
 
 export type GetAllUsersHandlerParams = {
-/**
- * Pagination offset
- */
-start?: number;
-/**
- * Page size
- */
-limit?: number;
+  /**
+   * Pagination offset
+   */
+  start?: number;
+  /**
+   * Page size
+   */
+  limit?: number;
 };
 
 export type GetAllUsersHandler200 = DomainResponse & {
@@ -2222,4 +2213,3 @@ export type GetAllUsersHandler200 = DomainResponse & {
 export type GetUserHandler200 = DomainResponse & {
   data?: DomainUserResponse;
 };
-

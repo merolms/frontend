@@ -9,7 +9,12 @@ import {
   getEventStatus,
   getEventTypes,
 } from "@/app/utils/eventUtils";
-import { useEvents, useDeleteEvent, useUpdateEvent, useCreateEvent } from "@/hooks/queries/useEvents";
+import {
+  useEvents,
+  useDeleteEvent,
+  useUpdateEvent,
+  useCreateEvent,
+} from "@/hooks/queries/useEvents";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import DashboardLayout from "@/components/ui/dashboard-layout";

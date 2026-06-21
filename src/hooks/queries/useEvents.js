@@ -30,13 +30,15 @@ export const useEvents = (params = {}) => {
   const orvalParams = {};
   if (params.start !== undefined) orvalParams.start = params.start;
   if (params.limit !== undefined) orvalParams.limit = params.limit;
-  
+
   const result = useGetOrgEvents(orvalParams);
-  
+
   // Transform data to match expected format
   return {
     ...result,
-    data: result.data?.data ? { events: result.data.data, total: result.data.data.length } : { events: [], total: 0 },
+    data: result.data?.data
+      ? { events: result.data.data, total: result.data.data.length }
+      : { events: [], total: 0 },
   };
 };
 
@@ -61,9 +63,9 @@ export const useEventsByCourse = (courseId) => {
   if (courseId !== undefined) {
     // orval takes courseId as a parameter, not in params object
   }
-  
+
   const result = useGetCourseEvents(courseId, orvalParams);
-  
+
   return {
     ...result,
     data: result.data?.data || [],
@@ -74,9 +76,9 @@ export const useEventsByCourse = (courseId) => {
 export const useUpcomingEvents = (limit = 10) => {
   const orvalParams = {};
   if (limit !== undefined) orvalParams.limit = limit;
-  
+
   const result = useGetUpcomingEvents(orvalParams);
-  
+
   return {
     ...result,
     data: result.data?.data || [],
@@ -87,9 +89,9 @@ export const useUserEvents = (params = {}) => {
   const orvalParams = {};
   if (params.start !== undefined) orvalParams.start = params.start;
   if (params.limit !== undefined) orvalParams.limit = params.limit;
-  
+
   const result = useGetUserEvents(orvalParams);
-  
+
   return {
     ...result,
     data: result.data?.data || [],
@@ -100,9 +102,9 @@ export const useEventAttendees = (eventId, params = {}) => {
   const orvalParams = {};
   if (params.start !== undefined) orvalParams.start = params.start;
   if (params.limit !== undefined) orvalParams.limit = params.limit;
-  
+
   const result = useGetEventAttendees(eventId, orvalParams);
-  
+
   return {
     ...result,
     data: result.data?.data || [],
@@ -112,7 +114,7 @@ export const useEventAttendees = (eventId, params = {}) => {
 
 export const useEventAttendeeCount = (eventId) => {
   const result = useGetAttendeeCount(eventId);
-  
+
   return {
     ...result,
     data: result.data?.data?.count || 0,
@@ -122,7 +124,7 @@ export const useEventAttendeeCount = (eventId) => {
 
 export const useEventStats = (eventId) => {
   const result = useGetEventStats(eventId);
-  
+
   return {
     ...result,
     data: result.data?.data,
@@ -135,7 +137,7 @@ export const useEventStats = (eventId) => {
 export const useCreateEvent = () => {
   const qc = useQueryClient();
   const orvalMutation = useEventCreate();
-  
+
   return {
     ...orvalMutation,
     mutate: async (data) => {
@@ -151,7 +153,7 @@ export const useCreateEvent = () => {
 export const useUpdateEvent = () => {
   const qc = useQueryClient();
   const orvalMutation = useEventUpdate();
-  
+
   return {
     ...orvalMutation,
     mutate: async ({ id, data }) => {
@@ -167,7 +169,7 @@ export const useUpdateEvent = () => {
 export const useDeleteEvent = () => {
   const qc = useQueryClient();
   const orvalMutation = useEventDelete();
-  
+
   return {
     ...orvalMutation,
     mutate: async (id) => {
@@ -183,20 +185,20 @@ export const useDeleteEvent = () => {
 export const useAddEventAttendee = () => {
   const qc = useQueryClient();
   const orvalMutation = useAddAttendee();
-  
+
   return {
     ...orvalMutation,
     mutate: async ({ eventId, userId, status }) => {
       // Orval expects { eventId: number; data: DomainCreateEventAttendeeRequest }
-      return orvalMutation.mutateAsync({ 
-        eventId, 
-        data: { eventId, userId, status: status || "invited" } 
+      return orvalMutation.mutateAsync({
+        eventId,
+        data: { eventId, userId, status: status || "invited" },
       });
     },
     mutateAsync: async ({ eventId, userId, status }) => {
-      return orvalMutation.mutateAsync({ 
-        eventId, 
-        data: { eventId, userId, status: status || "invited" } 
+      return orvalMutation.mutateAsync({
+        eventId,
+        data: { eventId, userId, status: status || "invited" },
       });
     },
   };
@@ -205,22 +207,22 @@ export const useAddEventAttendee = () => {
 export const useUpdateAttendeeStatus = () => {
   const qc = useQueryClient();
   const orvalMutation = useOrvalUpdateAttendeeStatus();
-  
+
   return {
     ...orvalMutation,
     mutate: async ({ eventId, userId, status }) => {
       // Orval expects { eventId: number; userId: number; data: DomainUpdateEventAttendeeRequest }
-      return orvalMutation.mutateAsync({ 
-        eventId, 
-        userId, 
-        data: { status } 
+      return orvalMutation.mutateAsync({
+        eventId,
+        userId,
+        data: { status },
       });
     },
     mutateAsync: async ({ eventId, userId, status }) => {
-      return orvalMutation.mutateAsync({ 
-        eventId, 
-        userId, 
-        data: { status } 
+      return orvalMutation.mutateAsync({
+        eventId,
+        userId,
+        data: { status },
       });
     },
   };
@@ -229,7 +231,7 @@ export const useUpdateAttendeeStatus = () => {
 export const useRemoveEventAttendee = () => {
   const qc = useQueryClient();
   const orvalMutation = useRemoveAttendee();
-  
+
   return {
     ...orvalMutation,
     mutate: async ({ eventId, userId }) => {

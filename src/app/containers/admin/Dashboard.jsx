@@ -38,12 +38,7 @@ const AdminDashboard = () => {
               icon={Users}
               color="success"
             />
-            <StatCard
-              title="Teams"
-              value={stats.teamCount || 0}
-              icon={TrendingUp}
-              color="accent"
-            />
+            <StatCard title="Teams" value={stats.teamCount || 0} icon={TrendingUp} color="accent" />
             <StatCard
               title="Categories"
               value={stats.categoryCount || 0}

@@ -72,7 +72,8 @@ export const prepareEventUpdateData = (formData) => {
   const body = {};
   if (formData.title !== undefined) body.title = formData.title;
   if (formData.description !== undefined) body.description = formData.description;
-  if (formData.startDate !== undefined) body.startTime = new Date(formData.startDate).getTime() / 1000;
+  if (formData.startDate !== undefined)
+    body.startTime = new Date(formData.startDate).getTime() / 1000;
   if (formData.endDate !== undefined) body.endTime = new Date(formData.endDate).getTime() / 1000;
   if (formData.type !== undefined) body.eventType = formData.type;
   if (formData.location !== undefined) body.location = formData.location;

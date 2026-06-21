@@ -28,7 +28,7 @@ const CourseCreate = () => {
       if (saved) {
         const parsed = JSON.parse(saved);
         // Convert category from string to integer if it exists
-        if (parsed.category && typeof parsed.category === 'string') {
+        if (parsed.category && typeof parsed.category === "string") {
           parsed.category = parseInt(parsed.category, 10);
         }
         return parsed;

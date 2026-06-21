@@ -16,10 +16,7 @@ import {
   useTeamGetStat,
 } from "@/app/api/orval";
 // Keep user fetching for now - available-users endpoint missing in orval
-import {
-  fetchUsers as fetchTeamUsers,
-  getAvailableUsers,
-} from "@/app/services/teamService";
+import { fetchUsers as fetchTeamUsers, getAvailableUsers } from "@/app/services/teamService";
 import {
   fetchUsers,
   fetchUserById,
@@ -60,17 +57,9 @@ import {
   useEnrollmentGetProgress,
 } from "@/app/api/orval";
 // Certificate hooks - orval-generated
-import {
-  useCertificateGet,
-  useCertificateUpdate,
-  useCertificateDelete,
-} from "@/app/api/orval";
+import { useCertificateGet, useCertificateUpdate, useCertificateDelete } from "@/app/api/orval";
 // Notification hooks - orval-generated
-import {
-  useNotificationGet,
-  useNotificationCreate,
-  useNotificationDelete,
-} from "@/app/api/orval";
+import { useNotificationGet, useNotificationCreate, useNotificationDelete } from "@/app/api/orval";
 // Keep these functions from learning path service - not in orval or need custom handling
 import {
   getLearningPathCategories,
@@ -216,7 +205,7 @@ export const useAvailableUsers = (teamId) => {
 
 export const useTeamStat = () => {
   const result = useTeamGetStat();
-  
+
   return {
     ...result,
     data: result.data?.data,
@@ -269,7 +258,7 @@ export const useDeleteUser = () => {
 // Note: The following hooks are available from @/app/api/orval
 // Use them directly in components:
 // - useGetCourseInsights
-// - useGetCourseProgress  
+// - useGetCourseProgress
 // - useCreateCoursePrerequisite
 // - useDeleteCoursePrerequisite
 // - useEnrollTeam
@@ -290,12 +279,12 @@ export const useCategories = (params = {}) => {
   const orvalParams = {};
   if (params.start !== undefined) orvalParams.start = params.start;
   if (params.limit !== undefined) orvalParams.limit = params.limit;
-  
+
   const result = useCategoryGetAll(orvalParams);
-  
+
   // The custom fetcher unwraps { message, data } envelope
   // Orval's response structure: { data: DomainCategory[] }
-  return result
+  return result;
   return {
     ...result,
     data: result.data || [], // Handle both wrapped and unwrapped data
@@ -304,7 +293,7 @@ export const useCategories = (params = {}) => {
 
 export const useCategory = (id) => {
   const result = useCategoryGetByID(id);
-  
+
   return {
     ...result,
     data: result.data?.data,
@@ -315,7 +304,7 @@ export const useCategory = (id) => {
 export const useCreateCategory = () => {
   const qc = useQueryClient();
   const orvalMutation = useCategoryCreate();
-  
+
   return {
     ...orvalMutation,
     mutate: async (data) => {
@@ -331,7 +320,7 @@ export const useCreateCategory = () => {
 export const useUpdateCategory = () => {
   const qc = useQueryClient();
   const orvalMutation = useCategoryUpdate();
-  
+
   return {
     ...orvalMutation,
     mutate: async ({ id, data }) => {
@@ -347,7 +336,7 @@ export const useUpdateCategory = () => {
 export const useDeleteCategory = () => {
   const qc = useQueryClient();
   const orvalMutation = useCategoryDelete();
-  
+
   return {
     ...orvalMutation,
     mutate: async (id) => {
@@ -362,7 +351,7 @@ export const useDeleteCategory = () => {
 
 export const useCategoryChildren = (parentId) => {
   const result = useCategoryGetChildren(parentId);
-  
+
   return {
     ...result,
     data: result.data?.data || [],
@@ -374,9 +363,9 @@ export const useCategoryRoots = (params = {}) => {
   const orvalParams = {};
   if (params.start !== undefined) orvalParams.start = params.start;
   if (params.limit !== undefined) orvalParams.limit = params.limit;
-  
+
   const result = useCategoryGetRoots(orvalParams);
-  
+
   return {
     ...result,
     data: result.data?.data || [],
@@ -385,7 +374,7 @@ export const useCategoryRoots = (params = {}) => {
 
 export const useCategoryStat = () => {
   const result = useCategoryGetStat();
-  
+
   return {
     ...result,
     data: result.data?.data,
@@ -395,7 +384,7 @@ export const useCategoryStat = () => {
 export const useSetCategoryParent = () => {
   const qc = useQueryClient();
   const orvalMutation = useCategorySetParent();
-  
+
   return {
     ...orvalMutation,
     mutate: async ({ id, parentId }) => {
@@ -415,7 +404,8 @@ export const useLearningPaths = (params = {}) => {
   if (params.page !== undefined) orvalParams.page = params.page;
   if (params.limit !== undefined) orvalParams.limit = params.limit;
   if (params.search !== undefined) orvalParams.search = params.search;
-  if (params.category !== undefined && params.category !== "all") orvalParams.category = params.category;
+  if (params.category !== undefined && params.category !== "all")
+    orvalParams.category = params.category;
   if (params.status !== undefined && params.status !== "all") orvalParams.status = params.status;
 
   const result = useLearningPathGetAll(orvalParams);
@@ -423,7 +413,8 @@ export const useLearningPaths = (params = {}) => {
   // Transform data to match expected format
   return {
     ...result,
-    data: result.data?.data || result.data || { paths: [], total: 0, page: 1, limit: 6, totalPages: 1 },
+    data: result.data?.data ||
+      result.data || { paths: [], total: 0, page: 1, limit: 6, totalPages: 1 },
   };
 };
 
@@ -520,7 +511,8 @@ export const useEnrollInLearningPath = () => {
 export const useAdminEnrollUserInLearningPath = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ learningPathId, userId }) => adminEnrollUserInLearningPath(learningPathId, userId),
+    mutationFn: ({ learningPathId, userId }) =>
+      adminEnrollUserInLearningPath(learningPathId, userId),
     onSuccess: (_, { learningPathId }) => {
       qc.invalidateQueries({ queryKey: queryKeys.learningPaths.detail(learningPathId) });
     },
@@ -530,7 +522,8 @@ export const useAdminEnrollUserInLearningPath = () => {
 export const useAdminEnrollTeamInLearningPath = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ learningPathId, teamId }) => adminEnrollTeamInLearningPath(learningPathId, teamId),
+    mutationFn: ({ learningPathId, teamId }) =>
+      adminEnrollTeamInLearningPath(learningPathId, teamId),
     onSuccess: (_, { learningPathId }) => {
       qc.invalidateQueries({ queryKey: queryKeys.learningPaths.detail(learningPathId) });
     },
@@ -570,7 +563,7 @@ export const useDashboardStats = () => {
 
 export const useEnrollment = (id) => {
   const result = useEnrollmentGet(id);
-  
+
   return {
     ...result,
     data: result.data?.data,
@@ -580,7 +573,7 @@ export const useEnrollment = (id) => {
 
 export const useEnrollmentProgress = (id) => {
   const result = useEnrollmentGetProgress(id);
-  
+
   return {
     ...result,
     data: result.data?.data,
@@ -591,7 +584,7 @@ export const useEnrollmentProgress = (id) => {
 export const useEnrollInCourse = () => {
   const qc = useQueryClient();
   const orvalMutation = useEnrollmentEnroll();
-  
+
   return {
     ...orvalMutation,
     mutate: async (id) => {
@@ -607,7 +600,7 @@ export const useEnrollInCourse = () => {
 export const useDropFromCourse = () => {
   const qc = useQueryClient();
   const orvalMutation = useEnrollmentDrop();
-  
+
   return {
     ...orvalMutation,
     mutate: async (id) => {
@@ -623,7 +616,7 @@ export const useDropFromCourse = () => {
 export const useAdminEnrollUserInCourse = () => {
   const qc = useQueryClient();
   const orvalMutation = useEnrollmentAdminEnrollUser();
-  
+
   return {
     ...orvalMutation,
     mutate: async ({ id, data }) => {
@@ -639,7 +632,7 @@ export const useAdminEnrollUserInCourse = () => {
 export const useAdminEnrollTeamInCourse = () => {
   const qc = useQueryClient();
   const orvalMutation = useEnrollmentAdminEnrollTeam();
-  
+
   return {
     ...orvalMutation,
     mutate: async ({ id, data }) => {
@@ -656,7 +649,7 @@ export const useAdminEnrollTeamInCourse = () => {
 
 export const useCertificate = (id) => {
   const result = useCertificateGet(id);
-  
+
   return {
     ...result,
     data: result.data?.data,
@@ -667,7 +660,7 @@ export const useCertificate = (id) => {
 export const useUpdateCertificate = () => {
   const qc = useQueryClient();
   const orvalMutation = useCertificateUpdate();
-  
+
   return {
     ...orvalMutation,
     mutate: async ({ id, data }) => {
@@ -683,7 +676,7 @@ export const useUpdateCertificate = () => {
 export const useDeleteCertificate = () => {
   const qc = useQueryClient();
   const orvalMutation = useCertificateDelete();
-  
+
   return {
     ...orvalMutation,
     mutate: async (id) => {
@@ -700,7 +693,7 @@ export const useDeleteCertificate = () => {
 
 export const useNotification = (id) => {
   const result = useNotificationGet(id);
-  
+
   return {
     ...result,
     data: result.data?.data,
@@ -711,7 +704,7 @@ export const useNotification = (id) => {
 export const useCreateNotification = () => {
   const qc = useQueryClient();
   const orvalMutation = useNotificationCreate();
-  
+
   return {
     ...orvalMutation,
     mutate: async (data) => {
@@ -727,7 +720,7 @@ export const useCreateNotification = () => {
 export const useDeleteNotification = () => {
   const qc = useQueryClient();
   const orvalMutation = useNotificationDelete();
-  
+
   return {
     ...orvalMutation,
     mutate: async (id) => {

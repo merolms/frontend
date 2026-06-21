@@ -1,4 +1,14 @@
-import { Folder, Pencil, Plus, Search, ToggleLeft, Trash2, CheckSquare, Square, MoreHorizontal } from "lucide-react";
+import {
+  Folder,
+  Pencil,
+  Plus,
+  Search,
+  ToggleLeft,
+  Trash2,
+  CheckSquare,
+  Square,
+  MoreHorizontal,
+} from "lucide-react";
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -64,7 +74,6 @@ const CategoryManagement = () => {
     error: queryError,
     refetch,
   } = useCategories({ start: 0, limit: 100 });
-
 
   // Mutation hooks
   const createMutation = useCreateCategory();
@@ -152,7 +161,10 @@ const CategoryManagement = () => {
         updateMutation.mutateAsync({ id, data: { status: 1 } })
       );
       await Promise.all(promises);
-      addToast(`${selectedIds.size} categor${selectedIds.size === 1 ? "y" : "ies"} activated`, "success");
+      addToast(
+        `${selectedIds.size} categor${selectedIds.size === 1 ? "y" : "ies"} activated`,
+        "success"
+      );
       setSelectedIds(new Set());
       refetch();
     } catch (err) {
@@ -166,7 +178,10 @@ const CategoryManagement = () => {
         updateMutation.mutateAsync({ id, data: { status: 0 } })
       );
       await Promise.all(promises);
-      addToast(`${selectedIds.size} categor${selectedIds.size === 1 ? "y" : "ies"} deactivated`, "success");
+      addToast(
+        `${selectedIds.size} categor${selectedIds.size === 1 ? "y" : "ies"} deactivated`,
+        "success"
+      );
       setSelectedIds(new Set());
       refetch();
     } catch (err) {
@@ -178,7 +193,10 @@ const CategoryManagement = () => {
     try {
       const promises = Array.from(selectedIds).map((id) => deleteMutation.mutateAsync(id));
       await Promise.all(promises);
-      addToast(`${selectedIds.size} categor${selectedIds.size === 1 ? "y" : "ies"} deleted`, "success");
+      addToast(
+        `${selectedIds.size} categor${selectedIds.size === 1 ? "y" : "ies"} deleted`,
+        "success"
+      );
       setSelectedIds(new Set());
       setBulkDeleteTarget(null);
       refetch();
@@ -263,9 +281,7 @@ const CategoryManagement = () => {
         <div className="mb-4 flex items-center justify-between">
           {selectedIds.size > 0 && (
             <div className="flex items-center gap-2">
-              <span className="text-text-muted text-xs">
-                {selectedIds.size} selected
-              </span>
+              <span className="text-text-muted text-xs">{selectedIds.size} selected</span>
               <Button size="sm" variant="default" onClick={handleBulkActivate}>
                 Activate
               </Button>
@@ -287,7 +303,9 @@ const CategoryManagement = () => {
         </div>
 
         {/* Error */}
-        {queryError && <FormErrorBanner message={queryError?.message || "Failed to load categories"} />}
+        {queryError && (
+          <FormErrorBanner message={queryError?.message || "Failed to load categories"} />
+        )}
 
         {/* Filters */}
         <Paper className="mb-4 p-3">
@@ -351,13 +369,13 @@ const CategoryManagement = () => {
         {/* Table */}
         <Paper className="overflow-hidden">
           {isLoading ? (
-            <div className="p-4 space-y-3">
+            <div className="space-y-3 p-4">
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="flex items-center gap-4">
-                  <div className="h-8 w-8 animate-pulse rounded-full bg-bg-surface" />
+                  <div className="bg-bg-surface h-8 w-8 animate-pulse rounded-full" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 animate-pulse rounded bg-bg-surface" />
-                    <div className="h-3 w-3/4 animate-pulse rounded bg-bg-surface" />
+                    <div className="bg-bg-surface h-4 animate-pulse rounded" />
+                    <div className="bg-bg-surface h-3 w-3/4 animate-pulse rounded" />
                   </div>
                 </div>
               ))}

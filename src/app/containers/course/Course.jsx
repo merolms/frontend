@@ -7,7 +7,12 @@ import { PermissionGuard } from "@/app/components/ProtectedRoute/ProtectedRoute"
 import { hasPermission } from "@/app/services/authService";
 import { DeleteModal } from "@/app/containers/course/CourseActions/CourseActions";
 import { useToast } from "@/app/context/ToastContext";
-import { useCourses, usePublishCourse, useArchiveCourse, useDeleteCourse } from "@/hooks/queries/useCourses";
+import {
+  useCourses,
+  usePublishCourse,
+  useArchiveCourse,
+  useDeleteCourse,
+} from "@/hooks/queries/useCourses";
 import { useCategories } from "@/hooks/queries/useEntities";
 import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
@@ -127,12 +132,11 @@ const CourseContainer = () => {
     return { filteredCourses: data };
   }, [courses, duration, sort]);
 
-
   const categoryOptions = [
     { value: "all", label: "All Categories" },
     ...categories.map((cat) => ({ value: cat.name, label: cat.name })),
   ];
-  console.log("categoryOptions: ", categoryOptions)
+  console.log("categoryOptions: ", categoryOptions);
 
   const updateParams = (updates) => {
     const newParams = new URLSearchParams(searchParams);
@@ -185,7 +189,10 @@ const CourseContainer = () => {
     try {
       const promises = Array.from(selectedIds).map((id) => publishMutation.mutateAsync(id));
       await Promise.all(promises);
-      addToast(`${selectedIds.size} course${selectedIds.size === 1 ? "" : "s"} published successfully`, "success");
+      addToast(
+        `${selectedIds.size} course${selectedIds.size === 1 ? "" : "s"} published successfully`,
+        "success"
+      );
       setSelectedIds(new Set());
       refetch();
     } catch (err) {
@@ -197,7 +204,10 @@ const CourseContainer = () => {
     try {
       const promises = Array.from(selectedIds).map((id) => archiveMutation.mutateAsync(id));
       await Promise.all(promises);
-      addToast(`${selectedIds.size} course${selectedIds.size === 1 ? "" : "s"} archived successfully`, "success");
+      addToast(
+        `${selectedIds.size} course${selectedIds.size === 1 ? "" : "s"} archived successfully`,
+        "success"
+      );
       setSelectedIds(new Set());
       refetch();
     } catch (err) {
@@ -209,7 +219,10 @@ const CourseContainer = () => {
     try {
       const promises = Array.from(selectedIds).map((id) => deleteMutation.mutateAsync(id));
       await Promise.all(promises);
-      addToast(`${selectedIds.size} course${selectedIds.size === 1 ? "" : "s"} deleted successfully`, "success");
+      addToast(
+        `${selectedIds.size} course${selectedIds.size === 1 ? "" : "s"} deleted successfully`,
+        "success"
+      );
       setSelectedIds(new Set());
       setBulkDeleteTarget(false);
       refetch();
@@ -268,7 +281,9 @@ const CourseContainer = () => {
             <div className="text-text-muted mb-1 flex items-center gap-2 text-xs">
               <BookOpen size={14} /> Total Courses
             </div>
-            <div className="text-text-primary text-2xl font-semibold">{clientFilteredCourses.length}</div>
+            <div className="text-text-primary text-2xl font-semibold">
+              {clientFilteredCourses.length}
+            </div>
           </Paper>
           <Paper className="p-4">
             <div className="text-text-muted mb-1 flex items-center gap-2 text-xs">
@@ -304,7 +319,7 @@ const CourseContainer = () => {
             <span className="text-text-muted text-xs">
               {selectedIds.size} course{selectedIds.size === 1 ? "" : "s"} selected
             </span>
-            <Button size="sm" variant="default" onClick={handleBulkPublish}>
+            <Button size="sm" variant="primary" onClick={handleBulkPublish}>
               Publish
             </Button>
             <Button size="sm" variant="default" onClick={handleBulkArchive}>
@@ -477,7 +492,7 @@ const CourseContainer = () => {
                 : "Explore the course catalog and enroll in courses that interest you."
           }
           action={
-            (search || status || category || duration) ? (
+            search || status || category || duration ? (
               <Button size="sm" variant="outline" onClick={handleClear}>
                 Clear Filters
               </Button>

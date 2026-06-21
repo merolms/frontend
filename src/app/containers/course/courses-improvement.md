@@ -4,18 +4,18 @@
 
 The Course Management module currently supports:
 
-* Course listing with multiple view modes (Grid, List, Compact, Table)
-* Search courses by title/description
-* Status filtering (Published, Draft, Archived)
-* Category filtering
-* Sorting (Newest First, Title A-Z)
-* Pagination with customizable page sizes per view mode
-* Course detail page with actions (Publish, Archive, Restore, Delete)
-* Course builder for managing lessons
-* Enrollment management
-* View mode switcher
-* Skeleton loading in Grid view
-* Toast notifications for actions
+- Course listing with multiple view modes (Grid, List, Compact, Table)
+- Search courses by title/description
+- Status filtering (Published, Draft, Archived)
+- Category filtering
+- Sorting (Newest First, Title A-Z)
+- Pagination with customizable page sizes per view mode
+- Course detail page with actions (Publish, Archive, Restore, Delete)
+- Course builder for managing lessons
+- Enrollment management
+- View mode switcher
+- Skeleton loading in Grid view
+- Toast notifications for actions
 
 ---
 
@@ -27,14 +27,14 @@ Add advanced search capabilities.
 
 ### Improvements
 
-* Search by course title, description, instructor, tags
-* Search within specific fields (dropdown selector)
-* Quick search suggestions as user types
+- Search by course title, description, instructor, tags
+- Search within specific fields (dropdown selector)
+- Quick search suggestions as user types
 
 ### Benefits
 
-* More precise course discovery
-* Better scalability as course catalog grows
+- More precise course discovery
+- Better scalability as course catalog grows
 
 ---
 
@@ -42,19 +42,19 @@ Add advanced search capabilities.
 
 Provide comprehensive filter options:
 
-* Status: All, Published, Draft, Archived
-* Category: Dynamic list from categories API
-* Instructor: Filter by course author
-* Duration Range: < 2h, 2-5h, 5-10h, > 10h
-* Enrollment Count: Popular, Medium, Low
-* Tags: Multi-select tag filtering
-* Date Range: Created within X days/weeks/months
+- Status: All, Published, Draft, Archived
+- Category: Dynamic list from categories API
+- Instructor: Filter by course author
+- Duration Range: < 2h, 2-5h, 5-10h, > 10h
+- Enrollment Count: Popular, Medium, Low
+- Tags: Multi-select tag filtering
+- Date Range: Created within X days/weeks/months
 
 ### Benefits
 
-* Better course discovery
-* Improved course organization
-* Enhanced learner experience
+- Better course discovery
+- Improved course organization
+- Enhanced learner experience
 
 ---
 
@@ -62,18 +62,18 @@ Provide comprehensive filter options:
 
 Allow sorting by:
 
-* Newest First
-* Title A-Z / Z-A
-* Enrollment Count (High to Low)
-* Duration (Short to Long / Long to Short)
-* Rating (Highest Rated)
-* Last Updated
-* Completion Rate (for admins)
+- Newest First
+- Title A-Z / Z-A
+- Enrollment Count (High to Low)
+- Duration (Short to Long / Long to Short)
+- Rating (Highest Rated)
+- Last Updated
+- Completion Rate (for admins)
 
 ### Benefits
 
-* Faster course discovery based on preferences
-* Better data organization
+- Faster course discovery based on preferences
+- Better data organization
 
 ---
 
@@ -81,14 +81,14 @@ Allow sorting by:
 
 Allow page size selection:
 
-* Grid View: 8, 12, 16, 24
-* List View: 8, 12, 16, 24
-* Compact View: 12, 20, 30, 50
-* Table View: 10, 25, 50, 100
+- Grid View: 8, 12, 16, 24
+- List View: 8, 12, 16, 24
+- Compact View: 12, 20, 30, 50
+- Table View: 10, 25, 50, 100
 
 ### Benefits
 
-* Improved usability for different screen sizes and user preferences
+- Improved usability for different screen sizes and user preferences
 
 ---
 
@@ -96,26 +96,26 @@ Allow page size selection:
 
 ## Recommended Columns
 
-| Column         | Purpose                      |
-| -------------- | ---------------------------- |
-| Checkbox       | For bulk selection           |
-| Course         | Thumbnail + title + description |
-| Category       | Course category              |
-| Status         | Published/Draft/Archived      |
-| Instructor     | Course author/creator         |
-| Lessons        | Number of lessons             |
-| Enrolled       | Enrollment count              |
-| Completion     | Average completion rate       |
-| Rating         | Course rating (if available)  |
-| Duration       | Course duration               |
-| Created        | Creation date                 |
-| Updated        | Last updated date             |
-| Actions        | View, Edit, Builder, Delete   |
+| Column     | Purpose                         |
+| ---------- | ------------------------------- |
+| Checkbox   | For bulk selection              |
+| Course     | Thumbnail + title + description |
+| Category   | Course category                 |
+| Status     | Published/Draft/Archived        |
+| Instructor | Course author/creator           |
+| Lessons    | Number of lessons               |
+| Enrolled   | Enrollment count                |
+| Completion | Average completion rate         |
+| Rating     | Course rating (if available)    |
+| Duration   | Course duration                 |
+| Created    | Creation date                   |
+| Updated    | Last updated date               |
+| Actions    | View, Edit, Builder, Delete     |
 
 ### Benefits
 
-* Better visibility into course information
-* Reduced need to open detail screens
+- Better visibility into course information
+- Reduced need to open detail screens
 
 ---
 
@@ -139,16 +139,16 @@ Add checkboxes to each row in Table view.
 
 Available after selecting courses:
 
-* Publish
-* Archive
-* Delete
-* Change Category
-* Assign Instructor
+- Publish
+- Archive
+- Delete
+- Change Category
+- Assign Instructor
 
 ### Benefits
 
-* Significant time savings for administrators
-* Streamlined course management workflows
+- Significant time savings for administrators
+- Streamlined course management workflows
 
 ---
 
@@ -159,17 +159,19 @@ Available after selecting courses:
 Enhance status visibility on course cards.
 
 ### Current
+
 - Status badge with color coding
 
 ### Enhancement
+
 - Add progress indicators for draft courses
 - Show "Needs Review" badge for courses requiring attention
 - Display "New" badge for recently published courses (within 7 days)
 
 ### Benefits
 
-* Faster visual recognition
-* Improved course management
+- Faster visual recognition
+- Improved course management
 
 ---
 
@@ -177,16 +179,16 @@ Enhance status visibility on course cards.
 
 Add hover actions on course cards:
 
-* Quick View (eye icon)
-* Edit (pencil icon)
-* Builder (wrench icon)
-* Duplicate (copy icon)
-* More menu (⋮)
+- Quick View (eye icon)
+- Edit (pencil icon)
+- Builder (wrench icon)
+- Duplicate (copy icon)
+- More menu (⋮)
 
 ### Benefits
 
-* Faster workflows
-* Reduced navigation
+- Faster workflows
+- Reduced navigation
 
 ---
 
@@ -202,8 +204,8 @@ For enrolled courses, show progress bar on card.
 
 ### Benefits
 
-* Better learner motivation
-* Clear progress visibility
+- Better learner motivation
+- Clear progress visibility
 
 ---
 
@@ -225,9 +227,9 @@ Avg. Completion Rate: 67%
 
 ### Benefits
 
-* Quick visibility into course health
-* Data-driven decision making
-* Better course management oversight
+- Quick visibility into course health
+- Data-driven decision making
+- Better course management oversight
 
 ---
 
@@ -238,9 +240,11 @@ Avg. Completion Rate: 67%
 Add richer information to course detail header.
 
 ### Current
+
 - Basic course info, status badge, action buttons
 
 ### Enhancement
+
 ```text
 Course Title
 Status Badge | Last Updated: 2h ago | Viewed: 1,234 times
@@ -250,8 +254,8 @@ Status Badge | Last Updated: 2h ago | Viewed: 1,234 times
 
 ### Benefits
 
-* Better information hierarchy
-* Key metrics at a glance
+- Better information hierarchy
+- Key metrics at a glance
 
 ---
 
@@ -261,20 +265,20 @@ Add detailed statistics section.
 
 ### Metrics to Display
 
-* Total Enrollments
-* Active Enrollments (currently learning)
-* Completion Rate
-* Average Rating (if enabled)
-* Total Lessons Completed
-* Total Time Spent
-* Course Completion Time (avg)
-* Drop-off Rate (where learners quit)
+- Total Enrollments
+- Active Enrollments (currently learning)
+- Completion Rate
+- Average Rating (if enabled)
+- Total Lessons Completed
+- Total Time Spent
+- Course Completion Time (avg)
+- Drop-off Rate (where learners quit)
 
 ### Benefits
 
-* Data-driven course improvements
-* Identify underperforming areas
-* Track course effectiveness
+- Data-driven course improvements
+- Identify underperforming areas
+- Track course effectiveness
 
 ---
 
@@ -284,20 +288,20 @@ Replace separate action buttons with a cohesive menu.
 
 ### Options
 
-* Publish/Unpublish
-* Archive/Restore
-* Edit Course
-* Open Builder
-* Duplicate Course
-* Delete
-* Share (copy link)
-* Export Data
+- Publish/Unpublish
+- Archive/Restore
+- Edit Course
+- Open Builder
+- Duplicate Course
+- Delete
+- Share (copy link)
+- Export Data
 
 ### Benefits
 
-* Cleaner UI
-* All actions in one place
-* Better organization
+- Cleaner UI
+- All actions in one place
+- Better organization
 
 ---
 
@@ -309,15 +313,15 @@ Add bulk operations for enrollments.
 
 ### Actions
 
-* Bulk enroll (CSV upload)
-* Bulk remove
-* Bulk remind inactive learners
-* Export enrollment data
+- Bulk enroll (CSV upload)
+- Bulk remove
+- Bulk remind inactive learners
+- Export enrollment data
 
 ### Benefits
 
-* Efficient enrollment management
-* Better learner engagement
+- Efficient enrollment management
+- Better learner engagement
 
 ---
 
@@ -327,15 +331,15 @@ Add insights into enrollment patterns.
 
 ### Metrics
 
-* Enrollment trends over time
-* Completion by learner segment
-* Engagement patterns (when learners are most active)
-* Drop-off points in course
+- Enrollment trends over time
+- Completion by learner segment
+- Engagement patterns (when learners are most active)
+- Drop-off points in course
 
 ### Benefits
 
-* Identify improvement opportunities
-* Better course design decisions
+- Identify improvement opportunities
+- Better course design decisions
 
 ---
 
@@ -345,17 +349,17 @@ Enhanced progress visibility per learner.
 
 ### Display
 
-* Progress bar per lesson
-* Time spent per lesson
-* Last activity timestamp
-* Quiz scores (if applicable)
-* Assignment completion status
+- Progress bar per lesson
+- Time spent per lesson
+- Last activity timestamp
+- Quiz scores (if applicable)
+- Assignment completion status
 
 ### Benefits
 
-* Better learner support
-* Identify struggling learners
-* Targeted interventions
+- Better learner support
+- Identify struggling learners
+- Targeted interventions
 
 ---
 
@@ -367,8 +371,8 @@ Add ability to reorder lessons via drag-and-drop.
 
 ### Benefits
 
-* Easier lesson organization
-* Improved course structure management
+- Easier lesson organization
+- Improved course structure management
 
 ---
 
@@ -378,18 +382,18 @@ Provide templates for common lesson types.
 
 ### Templates
 
-* Video Lesson
-* Text/Reading Lesson
-* Quiz Lesson
-* Assignment Lesson
-* Discussion Lesson
-* Project Lesson
+- Video Lesson
+- Text/Reading Lesson
+- Quiz Lesson
+- Assignment Lesson
+- Discussion Lesson
+- Project Lesson
 
 ### Benefits
 
-* Faster course creation
-* Consistent lesson structure
-* Reduced setup time
+- Faster course creation
+- Consistent lesson structure
+- Reduced setup time
 
 ---
 
@@ -399,9 +403,9 @@ Add preview mode for lesson content.
 
 ### Benefits
 
-* Quick content review
-* Better quality control
-* Faster iteration
+- Quick content review
+- Better quality control
+- Faster iteration
 
 ---
 
@@ -411,16 +415,16 @@ Add operations for managing multiple lessons.
 
 ### Actions
 
-* Bulk publish/unpublish
-* Bulk change order
-* Bulk duplicate
-* Bulk delete
-* Bulk assign to module (if modules exist)
+- Bulk publish/unpublish
+- Bulk change order
+- Bulk duplicate
+- Bulk delete
+- Bulk assign to module (if modules exist)
 
 ### Benefits
 
-* Efficient lesson management
-* Streamlined course building
+- Efficient lesson management
+- Streamlined course building
 
 ---
 
@@ -442,9 +446,9 @@ Advanced React Patterns
 
 ### Benefits
 
-* Faster feedback
-* Better user experience
-* Fewer form submission errors
+- Faster feedback
+- Better user experience
+- Fewer form submission errors
 
 ---
 
@@ -462,9 +466,9 @@ Description
 
 ### Benefits
 
-* Prevents validation surprises
-* Improves content quality
-* Clear limits
+- Prevents validation surprises
+- Improves content quality
+- Clear limits
 
 ---
 
@@ -474,9 +478,9 @@ Add saved cover images gallery for quick selection.
 
 ### Benefits
 
-* Faster course creation
-* Consistent branding
-* Better asset management
+- Faster course creation
+- Consistent branding
+- Better asset management
 
 ---
 
@@ -486,9 +490,9 @@ Automatically save course drafts periodically.
 
 ### Benefits
 
-* Prevents data loss
-* Better user experience
-* Peace of mind
+- Prevents data loss
+- Better user experience
+- Peace of mind
 
 ---
 
@@ -498,18 +502,18 @@ Upgrade to rich text editor for course descriptions.
 
 ### Features
 
-* Bold, italic, underline
-* Headings
-* Lists (ordered, unordered)
-* Links
-* Images
-* Code blocks
+- Bold, italic, underline
+- Headings
+- Lists (ordered, unordered)
+- Links
+- Images
+- Code blocks
 
 ### Benefits
 
-* Better course descriptions
-* More engaging content
-* Professional presentation
+- Better course descriptions
+- More engaging content
+- Professional presentation
 
 ---
 
@@ -533,8 +537,8 @@ This action cannot be undone.
 
 ### Benefits
 
-* Reduces accidental deletions
-* Better decision making
+- Reduces accidental deletions
+- Better decision making
 
 ---
 
@@ -561,8 +565,8 @@ Deleting it will also delete:
 
 ### Benefits
 
-* Prevents unintended data loss
-* Clear impact assessment
+- Prevents unintended data loss
+- Clear impact assessment
 
 ---
 
@@ -581,9 +585,9 @@ Archived courses retain data but are hidden from learners.
 
 ### Benefits
 
-* Safer course management
-* Data preservation
-* Recovery option
+- Safer course management
+- Data preservation
+- Recovery option
 
 ---
 
@@ -596,6 +600,7 @@ Replace generic empty screens with context-aware states.
 ### Examples
 
 **No Courses (Admin):**
+
 ```text
 📚 No Courses Yet
 
@@ -605,6 +610,7 @@ Create your first course to start building your learning platform.
 ```
 
 **No Courses (Learner):**
+
 ```text
 🎓 No Courses Enrolled
 
@@ -614,6 +620,7 @@ Explore the course catalog and enroll in courses that interest you.
 ```
 
 **No Search Results:**
+
 ```text
 🔍 No Courses Found
 
@@ -623,9 +630,9 @@ Try adjusting your search terms or filters.
 
 ### Benefits
 
-* Better onboarding
-* Improved usability
-* Clear next steps
+- Better onboarding
+- Improved usability
+- Clear next steps
 
 ---
 
@@ -637,16 +644,16 @@ Replace spinner loading with skeleton animations across all views.
 
 ### Views to Update
 
-* List View skeleton cards
-* Compact View skeleton cards
-* Table View skeleton rows
-* Course Detail skeleton
+- List View skeleton cards
+- Compact View skeleton cards
+- Table View skeleton rows
+- Course Detail skeleton
 
 ### Benefits
 
-* Perceived faster loading
-* Modern UI experience
-* Consistent feel across app
+- Perceived faster loading
+- Modern UI experience
+- Consistent feel across app
 
 ---
 
@@ -660,9 +667,9 @@ When clicking "Enroll", immediately show "Enrolled" badge before API response.
 
 ### Benefits
 
-* Faster perceived response
-* Better user experience
-* Reduced perceived latency
+- Faster perceived response
+- Better user experience
+- Reduced perceived latency
 
 ---
 
@@ -690,9 +697,9 @@ Use detailed toast notifications for all actions.
 
 ### Benefits
 
-* Clear user feedback
-* Actionable notifications
-* Better confidence in actions
+- Clear user feedback
+- Actionable notifications
+- Better confidence in actions
 
 ---
 
@@ -709,9 +716,9 @@ Bulk publishing 25 courses...
 
 ### Benefits
 
-* Better UX for bulk operations
-* Clear progress visibility
-* Reduced user anxiety
+- Better UX for bulk operations
+- Clear progress visibility
+- Reduced user anxiety
 
 ---
 
@@ -719,21 +726,21 @@ Bulk publishing 25 courses...
 
 ## Recommended Enhancements
 
-* Keyboard navigation for all views
-* Enter key for form submission
-* Escape key to close modals
-* Proper focus indicators
-* ARIA labels for all interactive elements
-* Screen reader support
-* High contrast mode support
-* Reduced motion support
-* Focus trap in modals
+- Keyboard navigation for all views
+- Enter key for form submission
+- Escape key to close modals
+- Proper focus indicators
+- ARIA labels for all interactive elements
+- Screen reader support
+- High contrast mode support
+- Reduced motion support
+- Focus trap in modals
 
 ### Benefits
 
-* Improved accessibility compliance
-* Better experience for all users
-* Legal compliance (WCAG)
+- Improved accessibility compliance
+- Better experience for all users
+- Legal compliance (WCAG)
 
 ---
 
@@ -744,20 +751,22 @@ Bulk publishing 25 courses...
 Optimize course cards and table for mobile.
 
 ### Grid View Mobile
+
 - Single column layout
 - Larger touch targets
 - Swipe actions (edit, delete)
 
 ### Table View Mobile
+
 - Convert to card view on mobile
 - Collapsible sections
 - Bottom sheet for actions
 
 ### Benefits
 
-* Better mobile usability
-* Improved touch interactions
-* Consistent experience across devices
+- Better mobile usability
+- Improved touch interactions
+- Consistent experience across devices
 
 ---
 
@@ -769,15 +778,15 @@ Add ability to duplicate courses with all content.
 
 ### Options
 
-* Duplicate with lessons
-* Duplicate with enrollments (rarely)
-* Duplicate without content (structure only)
+- Duplicate with lessons
+- Duplicate with enrollments (rarely)
+- Duplicate without content (structure only)
 
 ### Benefits
 
-* Faster course creation
-* Template-based course creation
-* Time savings
+- Faster course creation
+- Template-based course creation
+- Time savings
 
 ---
 
@@ -787,16 +796,16 @@ Provide pre-built course templates.
 
 ### Template Categories
 
-* Technology (Python, React, ML)
-* Business (Management, Marketing)
-* Design (UI/UX, Graphic Design)
-* Soft Skills (Communication, Leadership)
+- Technology (Python, React, ML)
+- Business (Management, Marketing)
+- Design (UI/UX, Graphic Design)
+- Soft Skills (Communication, Leadership)
 
 ### Benefits
 
-* Faster course creation
-* Best practices baked in
-* Consistent structure
+- Faster course creation
+- Best practices baked in
+- Consistent structure
 
 ---
 
@@ -806,16 +815,16 @@ Track course changes with version history.
 
 ### Features
 
-* Automatic version tracking on publish
-* Version comparison
-* Rollback to previous version
-* Version notes/changelog
+- Automatic version tracking on publish
+- Version comparison
+- Rollback to previous version
+- Version notes/changelog
 
 ### Benefits
 
-* Safe course updates
-* Change tracking
-* Ability to revert if needed
+- Safe course updates
+- Change tracking
+- Ability to revert if needed
 
 ---
 
@@ -825,18 +834,18 @@ Add comprehensive analytics for each course.
 
 ### Metrics
 
-* Enrollment funnel (views → enrollments → completions)
-* Lesson completion heatmap
-* Engagement by time of day
-* Learner demographics
-* Revenue (if paid courses)
-* Course health score
+- Enrollment funnel (views → enrollments → completions)
+- Lesson completion heatmap
+- Engagement by time of day
+- Learner demographics
+- Revenue (if paid courses)
+- Course health score
 
 ### Benefits
 
-* Data-driven improvements
-* Better course decisions
-* Identify opportunities
+- Data-driven improvements
+- Better course decisions
+- Identify opportunities
 
 ---
 
@@ -856,9 +865,9 @@ Add peer review process before publishing.
 
 ### Benefits
 
-* Quality control
-* Better course quality
-* Collaborative improvement
+- Quality control
+- Better course quality
+- Collaborative improvement
 
 ---
 
@@ -868,16 +877,16 @@ Add private notes for instructors/admins.
 
 ### Use Cases
 
-* Course improvement ideas
-* Learner feedback summaries
-* Technical notes
-* Reminders
+- Course improvement ideas
+- Learner feedback summaries
+- Technical notes
+- Reminders
 
 ### Benefits
 
-* Knowledge sharing
-* Better continuity
-* Private documentation
+- Knowledge sharing
+- Better continuity
+- Private documentation
 
 ---
 
@@ -887,16 +896,16 @@ Track all changes to courses with audit log.
 
 ### Information Tracked
 
-* Who changed what
-* When changed
-* What was changed (diff)
-* Reason (optional)
+- Who changed what
+- When changed
+- What was changed (diff)
+- Reason (optional)
 
 ### Benefits
 
-* Accountability
-* Change tracking
-* Debugging issues
+- Accountability
+- Change tracking
+- Debugging issues
 
 ---
 
@@ -908,15 +917,15 @@ Add Learning Tools Interoperability support.
 
 ### Capabilities
 
-* LTI launch
-* Grade passback
-* Deep linking
+- LTI launch
+- Grade passback
+- Deep linking
 
 ### Benefits
 
-* Integration with LMS platforms
-* Broader reach
-* Enterprise adoption
+- Integration with LMS platforms
+- Broader reach
+- Enterprise adoption
 
 ---
 
@@ -926,9 +935,9 @@ Add SCORM package export capability.
 
 ### Benefits
 
-* Import into other LMS
-* Offline capability
-* Enterprise requirements
+- Import into other LMS
+- Offline capability
+- Enterprise requirements
 
 ---
 
@@ -938,16 +947,16 @@ Add webhooks for course events.
 
 ### Events
 
-* Course published
-* Enrollment created
-* Course completed
-* Lesson completed
+- Course published
+- Enrollment created
+- Course completed
+- Lesson completed
 
 ### Benefits
 
-* Integrations with external systems
-* Automation
-* Custom workflows
+- Integrations with external systems
+- Automation
+- Custom workflows
 
 ---
 

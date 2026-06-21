@@ -100,7 +100,10 @@ test.describe("Categories Page — Search & Filter", () => {
   test("sort by name A-Z", async ({ page }) => {
     const sortSelect = page.locator("button").filter({ hasText: "Sort" }).first();
     // The sort trigger is inside a Select component
-    const sortTrigger = page.locator("div").filter({ hasText: /^Sort$/ }).first();
+    const sortTrigger = page
+      .locator("div")
+      .filter({ hasText: /^Sort$/ })
+      .first();
     if (await sortTrigger.isVisible()) {
       await sortTrigger.click();
       await page.getByText("Name A-Z").click();
@@ -258,7 +261,9 @@ test.describe("Categories Page — Delete", () => {
     // Delete button is the last button (Trash2 icon)
     await actionsCell.locator("button").last().click();
 
-    await expect(page.getByText("Delete Category", { exact: true })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText("Delete Category", { exact: true })).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test("delete modal has confirm and cancel buttons", async ({ page }) => {
