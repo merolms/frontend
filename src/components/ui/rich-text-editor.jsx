@@ -2,11 +2,11 @@ import UnderlineExtension from "@tiptap/extension-underline";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Bold, Italic, List, ListOrdered, Underline } from "lucide-react";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 
 import { Button } from "./Button";
 
-const RichTextEditor = ({ value, onChange, placeholder = "Enter content...", rows = 4 }) => {
+const RichTextEditor = ({ value, onChange }) => {
   const editor = useEditor({
     extensions: [StarterKit, UnderlineExtension],
     content: value || "",
@@ -25,22 +25,6 @@ const RichTextEditor = ({ value, onChange, placeholder = "Enter content...", row
       editor.commands.setContent(value || "");
     }
   }, [value, editor]);
-
-  const setLink = useCallback(() => {
-    const previousUrl = editor.getAttributes("link").href;
-    const url = window.prompt("Enter URL:", previousUrl);
-
-    if (url === null) {
-      return;
-    }
-
-    if (url === "") {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
-      return;
-    }
-
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
-  }, [editor]);
 
   if (!editor) {
     return null;

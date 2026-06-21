@@ -54,7 +54,7 @@ const getMockResponse = (userText) => {
 const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export const sendMessage = async (messages, options = {}) => {
-  const { onChunk } = options;
+  const { onChunk, stream = false } = options;
   const settings = getChatSettings();
 
   // If no API key configured, use mock responses

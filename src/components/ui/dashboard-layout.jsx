@@ -1,6 +1,6 @@
 import { Bell, Check, CheckCheck } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import ThemeSwitcher from "@/app/components/ThemeSwitcher";
@@ -11,7 +11,6 @@ import {
   markAsRead,
 } from "@/app/services/notificationService";
 import RoleBasedSidebar from "@/components/layouts/RoleBasedSidebar";
-import { logoutUser } from "@/redux/slices/authSlice";
 
 const typeColors = {
   enrollment: "#22C55E",
@@ -22,7 +21,6 @@ const typeColors = {
 };
 
 export default function DashboardLayout({ children, title, subtitle }) {
-  const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -78,11 +76,6 @@ export default function DashboardLayout({ children, title, subtitle }) {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [showDropdown]);
-
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    navigate("/login");
-  };
 
   const handleBellClick = () => {
     setShowDropdown(!showDropdown);

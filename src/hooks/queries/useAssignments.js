@@ -1,6 +1,6 @@
 // TanStack Query hooks for Assignments
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   addAttachment,
@@ -92,6 +92,7 @@ export const useEnrolledTeams = (assignmentId) => {
 // ─── Mutations ─────────────────────────────────────────────
 
 export const useCreateAssignment = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ lessonId, data }) => createAssignment(lessonId, data),
     onSuccess: (data) => {
@@ -101,6 +102,7 @@ export const useCreateAssignment = () => {
 };
 
 export const useUpdateAssignment = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }) => updateAssignment(id, data),
     onSuccess: (data) => {

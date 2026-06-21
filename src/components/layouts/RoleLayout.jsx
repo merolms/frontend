@@ -9,7 +9,7 @@ import RoleBasedSidebar from "./RoleBasedSidebar";
  * Unauthenticated users are redirected to login.
  */
 const RoleLayout = ({ children }) => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const location = useLocation();
 
   if (!isAuthenticated) {

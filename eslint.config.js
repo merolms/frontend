@@ -64,6 +64,8 @@ export default defineConfig([
       "react/jsx-key": "warn",
       "no-unused-vars": "warn",
       "react-hooks/exhaustive-deps": "warn",
+      "react-hooks/set-state-in-effect": "warn",
+      "react-hooks/immutability": "warn",
 
       "unused-imports/no-unused-imports": "error",
     },
