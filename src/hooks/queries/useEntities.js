@@ -36,11 +36,6 @@ import {
   useLearningPathGetProgress,
   useLearningPathUpdate,
 } from "@/app/api/orval";
-// Learning path service for custom admin enroll functions
-import {
-  adminEnrollTeamInLearningPath,
-  adminEnrollUserInLearningPath,
-} from "@/app/services/learningPathService";
 // Enrollment hooks - orval-generated
 import {
   useEnrollmentAdminEnrollTeam,
@@ -56,6 +51,11 @@ import { useCertificateDelete, useCertificateGet, useCertificateUpdate } from "@
 import { useNotificationCreate, useNotificationDelete, useNotificationGet } from "@/app/api/orval";
 // Migrated to orval-generated hooks
 import { useStatsGet } from "@/app/api/orval";
+// Learning path service for custom admin enroll functions
+import {
+  adminEnrollTeamInLearningPath,
+  adminEnrollUserInLearningPath,
+} from "@/app/services/learningPathService";
 // Keep these functions from learning path service - not in orval or need custom handling
 import {
   getLearningPathCategories,
