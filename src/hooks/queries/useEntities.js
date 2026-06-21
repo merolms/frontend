@@ -32,8 +32,6 @@ import {
   useEnrollmentAdminEnrollUser,
   useEnrollmentDrop,
   useEnrollmentEnroll,
-  useEnrollmentGet,
-  useEnrollmentGetProgress,
 } from "@/app/api/orval";
 // Certificate hooks - orval-generated
 import { useCertificateDelete, useCertificateGet, useCertificateUpdate } from "@/app/api/orval";
@@ -486,25 +484,8 @@ export const useDashboardStats = () => {
 
 // ─── Enrollment Hooks (Orval-generated) ─────────────────────
 
-export const useEnrollment = (id) => {
-  const result = useEnrollmentGet(id);
-
-  return {
-    ...result,
-    data: result.data?.data,
-    enabled: !!id,
-  };
-};
-
-export const useEnrollmentProgress = (id) => {
-  const result = useEnrollmentGetProgress(id);
-
-  return {
-    ...result,
-    data: result.data?.data,
-    enabled: !!id,
-  };
-};
+// Note: useEnrollment and useEnrollmentProgress query hooks not available in orval
+// Use enrollmentService.getEnrollmentStatus() and enrollmentService.getCourseProgress() instead
 
 export const useEnrollInCourse = () => {
   const orvalMutation = useEnrollmentEnroll();

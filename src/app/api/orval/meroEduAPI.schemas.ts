@@ -229,6 +229,8 @@ export type DomainStatus = typeof DomainStatus[keyof typeof DomainStatus];
 
 
 export const DomainStatus = {
+  Success: 'success',
+  Error: 'error',
   CourseInDraft: 'draft',
   CourseArchived: 'archived',
   CourseAssigned: 'assigned',
@@ -236,13 +238,11 @@ export const DomainStatus = {
   CoursePublic: 'public',
   CourseCreated: 'created',
   CourseComplete: 'completed',
-  StatusSuccess: 'success',
-  StatusQueued: 'queued',
-  StatusSending: 'sending',
-  StatusUnknown: 'unknown',
-  StatusScheduled: 'scheduled',
-  StatusRetry: 'retrying',
-  Success: 'error',
+  StatusSuccess: 'queued',
+  StatusQueued: 'sending',
+  StatusSending: 'unknown',
+  StatusUnknown: 'scheduled',
+  StatusScheduled: 'retrying',
 } as const;
 
 export interface DomainCourse {
@@ -608,8 +608,8 @@ export interface DomainMediaFolder {
 }
 
 export interface DomainOrgInsights {
-  activeLearners7d?: number;
   activeLearners30d?: number;
+  activeLearners7d?: number;
   avgCourseProgress?: number;
   completedEnrollments?: number;
   id?: number;
@@ -920,6 +920,19 @@ export type GetLearnerStreak200 = Data & {
 
 export type GenerateContentBody = { [key: string]: unknown } | DomainAIGenerationRequest;
 
+export type DeleteAttachmentBody = { [key: string]: unknown };
+
+export type GetSubmissionByIDBody = { [key: string]: unknown };
+
+export type GetSubmissionByID200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type AssignmentGradeBody = { [key: string]: unknown };
+
+export type GradeTeamBody = { [key: string]: unknown };
+
 export type GetAttachmentsBody = { [key: string]: unknown };
 
 export type GetAttachments200 = Data & {
@@ -966,19 +979,6 @@ export type SubmitTeam201 = Data & {
   data?: unknown;
   message?: DomainStatus;
 };
-
-export type DeleteAttachmentBody = { [key: string]: unknown };
-
-export type GetSubmissionByIDBody = { [key: string]: unknown };
-
-export type GetSubmissionByID200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type AssignmentGradeBody = { [key: string]: unknown };
-
-export type GradeTeamBody = { [key: string]: unknown };
 
 export type GetAllAttachmentsParams = {
 /**
@@ -1094,16 +1094,6 @@ export type CategoryGetAllBody = { [key: string]: unknown };
 
 export type CategoryCreateBody = { [key: string]: unknown } | DomainCategory;
 
-export type CategoryDeleteBody = { [key: string]: unknown };
-
-export type CategoryGetByIDBody = { [key: string]: unknown };
-
-export type CategoryUpdateBody = { [key: string]: unknown } | DomainCategory;
-
-export type CategorySetParentBody = { [key: string]: unknown } | {
-  parentId?: number;
-};
-
 export type CategoryGetChildrenParams = {
 /**
  * Offset
@@ -1130,6 +1120,16 @@ limit?: number;
 
 export type CategoryGetRootsBody = { [key: string]: unknown };
 
+export type CategoryDeleteBody = { [key: string]: unknown };
+
+export type CategoryGetByIDBody = { [key: string]: unknown };
+
+export type CategoryUpdateBody = { [key: string]: unknown } | DomainCategory;
+
+export type CategorySetParentBody = { [key: string]: unknown } | {
+  parentId?: number;
+};
+
 export type GetUserCertificatesParams = {
 /**
  * start
@@ -1142,10 +1142,6 @@ limit?: number;
 };
 
 export type IssueCertificateBody = { [key: string]: unknown } | DomainCreateCertificateRequest;
-
-export type CertificateUpdateBody = { [key: string]: unknown } | DomainUpdateCertificateRequest;
-
-export type RevokeCertificateBody = { [key: string]: unknown } | DomainRevokeCertificateRequest;
 
 export type GetCourseCertificatesParams = {
 /**
@@ -1172,6 +1168,10 @@ limit?: number;
 export type CreateTemplateBody = { [key: string]: unknown } | DomainCreateCertificateTemplateRequest;
 
 export type UpdateTemplateBody = { [key: string]: unknown } | DomainUpdateCertificateTemplateRequest;
+
+export type CertificateUpdateBody = { [key: string]: unknown } | DomainUpdateCertificateRequest;
+
+export type RevokeCertificateBody = { [key: string]: unknown } | DomainRevokeCertificateRequest;
 
 export type CreateCoursePrerequisiteBody = { [key: string]: unknown } | DomainCoursePrerequisite;
 
@@ -1238,11 +1238,6 @@ export type CreateContentRevision201 = Data & {
   message?: DomainStatus;
 };
 
-export type GetContentRevision200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
 export type GetBlockRevisionsParams = {
 /**
  * Limit
@@ -1292,14 +1287,14 @@ export type GetLessonRevisions200 = Data & {
   totalPages?: number;
 };
 
-export type CreateCourseVersionBody = { [key: string]: unknown } | DomainCourseVersion;
-
-export type CreateCourseVersion201 = Data & {
+export type GetContentRevision200 = Data & {
   data?: unknown;
   message?: DomainStatus;
 };
 
-export type GetCourseVersion200 = Data & {
+export type CreateCourseVersionBody = { [key: string]: unknown } | DomainCourseVersion;
+
+export type CreateCourseVersion201 = Data & {
   data?: unknown;
   message?: DomainStatus;
 };
@@ -1327,6 +1322,11 @@ export type GetCourseVersions200 = Data & {
 };
 
 export type GetLatestCourseVersion200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type GetCourseVersion200 = Data & {
   data?: unknown;
   message?: DomainStatus;
 };
@@ -1528,23 +1528,6 @@ limit?: number;
 
 export type EventCreateBody = { [key: string]: unknown } | DomainCreateEventRequest;
 
-export type GetEventAttendeesParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
-};
-
-export type AddAttendeeBody = { [key: string]: unknown } | DomainCreateEventAttendeeRequest;
-
-export type UpdateAttendeeStatusBody = { [key: string]: unknown } | DomainUpdateEventAttendeeRequest;
-
-export type EventUpdateBody = { [key: string]: unknown } | DomainUpdateEventRequest;
-
 export type GetCourseEventsParams = {
 /**
  * start
@@ -1618,6 +1601,23 @@ start?: number;
  */
 limit?: number;
 };
+
+export type GetEventAttendeesParams = {
+/**
+ * start
+ */
+start?: number;
+/**
+ * limit
+ */
+limit?: number;
+};
+
+export type AddAttendeeBody = { [key: string]: unknown } | DomainCreateEventAttendeeRequest;
+
+export type UpdateAttendeeStatusBody = { [key: string]: unknown } | DomainUpdateEventAttendeeRequest;
+
+export type EventUpdateBody = { [key: string]: unknown } | DomainUpdateEventRequest;
 
 export type LessonGetAllParams = {
 /**
@@ -1706,18 +1706,6 @@ export type CreateRubric201 = Data & {
   message?: DomainStatus;
 };
 
-export type GetRubricByID200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type UpdateRubricBody = { [key: string]: unknown } | DomainRubric;
-
-export type UpdateRubric200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
 export type SaveRubricGradeBody = { [key: string]: unknown } | DomainRubricGrade;
 
 export type SaveRubricGrade200 = Data & {
@@ -1726,6 +1714,18 @@ export type SaveRubricGrade200 = Data & {
 };
 
 export type GetGradesBySubmission200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type GetRubricByID200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type UpdateRubricBody = { [key: string]: unknown } | DomainRubric;
+
+export type UpdateRubric200 = Data & {
   data?: unknown;
   message?: DomainStatus;
 };

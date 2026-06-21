@@ -1,6 +1,18 @@
 // Assignment API Service
-// Handles all API calls related to assignments and submissions
+// Migrated to use orval-generated functions where available
+// Normalization logic kept for data transformation
 
+import {
+  addAttachment as orvalAddAttachment,
+  assignmentGrade,
+  deleteAttachment as orvalDeleteAttachment,
+  enrollTeam as orvalEnrollTeam,
+  enrollUser as orvalEnrollUser,
+  getEnrolledTeams as orvalGetEnrolledTeams,
+  getEnrolledUsers as orvalGetEnrolledUsers,
+  getSubmissionByID,
+  gradeTeam,
+} from "@/app/api/orval";
 import { apiDelete, apiGet, apiPost, apiPut } from "@/app/services/http";
 
 // ==================== FIELD MAPPING ====================
@@ -226,8 +238,13 @@ export const getSubmissions = async (assignmentId) => {
  * GET /assignments/submissions/{id} returns Response { data: Submission }
  */
 export const getSubmissionById = async (submissionId) => {
-  const data = await apiGet(`/assignments/submissions/${submissionId}`);
-  return normalizeSubmission(data);
+  try {
+    const data = await getSubmissionByID(submissionId);
+    return normalizeSubmission(data);
+  } catch (error) {
+    console.error("Error fetching submission:", error);
+    throw error;
+  }
 };
 
 /**
@@ -235,12 +252,17 @@ export const getSubmissionById = async (submissionId) => {
  * PUT /assignments/submissions/{id}/grade returns Response { data: Submission }
  */
 export const gradeSubmission = async (submissionId, gradingData) => {
-  const payload = {
-    score: gradingData.score,
-    feedback: gradingData.feedback,
-  };
-  const data = await apiPut(`/assignments/submissions/${submissionId}/grade`, payload);
-  return normalizeSubmission(data);
+  try {
+    const payload = {
+      score: gradingData.score,
+      feedback: gradingData.feedback,
+    };
+    const data = await assignmentGrade(submissionId, payload);
+    return normalizeSubmission(data);
+  } catch (error) {
+    console.error("Error grading submission:", error);
+    throw error;
+  }
 };
 
 /**
@@ -248,12 +270,17 @@ export const gradeSubmission = async (submissionId, gradingData) => {
  * PUT /assignments/submissions/{id}/grade-team returns Response { data: Submission }
  */
 export const gradeTeamSubmission = async (submissionId, gradingData) => {
-  const payload = {
-    score: gradingData.score,
-    feedback: gradingData.feedback,
-  };
-  const data = await apiPut(`/assignments/submissions/${submissionId}/grade-team`, payload);
-  return normalizeSubmission(data);
+  try {
+    const payload = {
+      score: gradingData.score,
+      feedback: gradingData.feedback,
+    };
+    const data = await gradeTeam(submissionId, payload);
+    return normalizeSubmission(data);
+  } catch (error) {
+    console.error("Error grading team submission:", error);
+    throw error;
+  }
 };
 
 // ==================== ATTACHMENTS ====================
@@ -274,9 +301,13 @@ export const getAttachments = async (assignmentId) => {
  * Returns Response { data: AssignmentAttachment }
  */
 export const addAttachment = async (assignmentId, mediaId) => {
-  const payload = { mediaId };
-  const data = await apiPost(`/assignments/${assignmentId}/attachments`, payload);
-  return normalizeAttachment(data);
+  try {
+    const data = await orvalAddAttachment(assignmentId, { mediaId });
+    return normalizeAttachment(data);
+  } catch (error) {
+    console.error("Error adding attachment:", error);
+    throw error;
+  }
 };
 
 /**
@@ -284,7 +315,12 @@ export const addAttachment = async (assignmentId, mediaId) => {
  * DELETE /assignments/attachments/{id} returns 204 No Content
  */
 export const deleteAttachment = async (attachmentId) => {
-  await apiDelete(`/assignments/attachments/${attachmentId}`);
+  try {
+    await orvalDeleteAttachment(attachmentId);
+  } catch (error) {
+    console.error("Error deleting attachment:", error);
+    throw error;
+  }
 };
 
 // ==================== ENROLLMENTS ====================
@@ -295,9 +331,13 @@ export const deleteAttachment = async (attachmentId) => {
  * Returns Response { data: AssignmentEnrollment }
  */
 export const enrollUser = async (assignmentId, userId) => {
-  const payload = { userId };
-  const data = await apiPost(`/assignments/${assignmentId}/enroll-user`, payload);
-  return normalizeEnrollment(data);
+  try {
+    const data = await orvalEnrollUser(assignmentId, { userId });
+    return normalizeEnrollment(data);
+  } catch (error) {
+    console.error("Error enrolling user:", error);
+    throw error;
+  }
 };
 
 /**
@@ -313,9 +353,14 @@ export const removeUserEnrollment = async (assignmentId, userId) => {
  * GET /assignments/{id}/enrolled-users returns Response { data: AssignmentEnrollment[] }
  */
 export const getEnrolledUsers = async (assignmentId) => {
-  const data = await apiGet(`/assignments/${assignmentId}/enrolled-users`);
-  const enrollments = Array.isArray(data) ? data : [];
-  return enrollments.map(normalizeEnrollment);
+  try {
+    const data = await orvalGetEnrolledUsers(assignmentId);
+    const enrollments = data?.data || [];
+    return enrollments.map(normalizeEnrollment);
+  } catch (error) {
+    console.error("Error fetching enrolled users:", error);
+    throw error;
+  }
 };
 
 /**
@@ -324,9 +369,13 @@ export const getEnrolledUsers = async (assignmentId) => {
  * Returns Response { data: AssignmentTeamEnrollment }
  */
 export const enrollTeam = async (assignmentId, teamId) => {
-  const payload = { teamId };
-  const data = await apiPost(`/assignments/${assignmentId}/enroll-team`, payload);
-  return normalizeTeamEnrollment(data);
+  try {
+    const data = await orvalEnrollTeam(assignmentId, { teamId });
+    return normalizeTeamEnrollment(data);
+  } catch (error) {
+    console.error("Error enrolling team:", error);
+    throw error;
+  }
 };
 
 /**
@@ -342,7 +391,12 @@ export const removeTeamEnrollment = async (assignmentId, teamId) => {
  * GET /assignments/{id}/enrolled-teams returns Response { data: AssignmentTeamEnrollment[] }
  */
 export const getEnrolledTeams = async (assignmentId) => {
-  const data = await apiGet(`/assignments/${assignmentId}/enrolled-teams`);
-  const enrollments = Array.isArray(data) ? data : [];
-  return enrollments.map(normalizeTeamEnrollment);
+  try {
+    const data = await orvalGetEnrolledTeams(assignmentId);
+    const enrollments = data?.data || [];
+    return enrollments.map(normalizeTeamEnrollment);
+  } catch (error) {
+    console.error("Error fetching enrolled teams:", error);
+    throw error;
+  }
 };

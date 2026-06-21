@@ -937,6 +937,467 @@ export const useGenerateContent = <TError = HttpResponseError,
       return useMutation(getGenerateContentMutationOptions(options), queryClient);
     }
 
+export type deleteAttachmentResponse204 = {
+  data: void
+  status: 204
+}
+
+export type deleteAttachmentResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type deleteAttachmentResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type deleteAttachmentResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type deleteAttachmentResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type deleteAttachmentResponseSuccess = (deleteAttachmentResponse204) & {
+  headers: Headers;
+};
+export type deleteAttachmentResponseError = (deleteAttachmentResponse400 | deleteAttachmentResponse401 | deleteAttachmentResponse404 | deleteAttachmentResponse500) & {
+  headers: Headers;
+};
+
+export type deleteAttachmentResponse = (deleteAttachmentResponseSuccess | deleteAttachmentResponseError)
+
+export const getDeleteAttachmentUrl = (id: number,) => {
+
+
+
+
+  return `/assignments/attachments/${id}`
+}
+
+/**
+ * Remove an attachment from an assignment
+ * @summary Delete assignment attachment
+ */
+export const deleteAttachment = async (id: number,
+    deleteAttachmentBody?: DeleteAttachmentBody, options?: RequestInit): Promise<deleteAttachmentResponse> => {
+
+  return customFetcher<deleteAttachmentResponse>(getDeleteAttachmentUrl(id),
+  {
+    ...options,
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(deleteAttachmentBody)
+  }
+);}
+
+
+
+
+export const getDeleteAttachmentMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAttachment>>, TError,{id: number;data?: DeleteAttachmentBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteAttachment>>, TError,{id: number;data?: DeleteAttachmentBody}, TContext> => {
+
+const mutationKey = ['deleteAttachment'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteAttachment>>, {id: number;data?: DeleteAttachmentBody}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  deleteAttachment(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteAttachmentMutationResult = NonNullable<Awaited<ReturnType<typeof deleteAttachment>>>
+    export type DeleteAttachmentMutationBody = DeleteAttachmentBody | undefined
+    export type DeleteAttachmentMutationError = HttpResponseError
+
+    /**
+ * @summary Delete assignment attachment
+ */
+export const useDeleteAttachment = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAttachment>>, TError,{id: number;data?: DeleteAttachmentBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteAttachment>>,
+        TError,
+        {id: number;data?: DeleteAttachmentBody},
+        TContext
+      > => {
+      return useMutation(getDeleteAttachmentMutationOptions(options), queryClient);
+    }
+
+export type getSubmissionByIDResponse200 = {
+  data: GetSubmissionByID200
+  status: 200
+}
+
+export type getSubmissionByIDResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type getSubmissionByIDResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getSubmissionByIDResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type getSubmissionByIDResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type getSubmissionByIDResponseSuccess = (getSubmissionByIDResponse200) & {
+  headers: Headers;
+};
+export type getSubmissionByIDResponseError = (getSubmissionByIDResponse400 | getSubmissionByIDResponse401 | getSubmissionByIDResponse404 | getSubmissionByIDResponse500) & {
+  headers: Headers;
+};
+
+export type getSubmissionByIDResponse = (getSubmissionByIDResponseSuccess | getSubmissionByIDResponseError)
+
+export const getGetSubmissionByIDUrl = (id: number,) => {
+
+
+
+
+  return `/assignments/submissions/${id}`
+}
+
+/**
+ * Get a single assignment submission by ID
+ * @summary Get submission by ID
+ */
+export const getSubmissionByID = async (id: number,
+    getSubmissionByIDBody?: GetSubmissionByIDBody, options?: RequestInit): Promise<getSubmissionByIDResponse> => {
+
+  return customFetcher<getSubmissionByIDResponse>(getGetSubmissionByIDUrl(id),
+  {
+    ...options,
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(getSubmissionByIDBody)
+  }
+);}
+
+
+
+
+
+export const getGetSubmissionByIDQueryKey = (id: number,
+    getSubmissionByIDBody?: GetSubmissionByIDBody,) => {
+    return [
+    `/assignments/submissions/${id}`, getSubmissionByIDBody
+    ] as const;
+    }
+
+
+export const getGetSubmissionByIDQueryOptions = <TData = Awaited<ReturnType<typeof getSubmissionByID>>, TError = HttpResponseError>(id: number,
+    getSubmissionByIDBody?: GetSubmissionByIDBody, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSubmissionByID>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetSubmissionByIDQueryKey(id,getSubmissionByIDBody);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSubmissionByID>>> = ({ signal }) => getSubmissionByID(id,getSubmissionByIDBody, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getSubmissionByID>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetSubmissionByIDQueryResult = NonNullable<Awaited<ReturnType<typeof getSubmissionByID>>>
+export type GetSubmissionByIDQueryError = HttpResponseError
+
+
+export function useGetSubmissionByID<TData = Awaited<ReturnType<typeof getSubmissionByID>>, TError = HttpResponseError>(
+ id: number,
+    getSubmissionByIDBody: undefined |  GetSubmissionByIDBody, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSubmissionByID>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSubmissionByID>>,
+          TError,
+          Awaited<ReturnType<typeof getSubmissionByID>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetSubmissionByID<TData = Awaited<ReturnType<typeof getSubmissionByID>>, TError = HttpResponseError>(
+ id: number,
+    getSubmissionByIDBody?: GetSubmissionByIDBody, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSubmissionByID>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSubmissionByID>>,
+          TError,
+          Awaited<ReturnType<typeof getSubmissionByID>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetSubmissionByID<TData = Awaited<ReturnType<typeof getSubmissionByID>>, TError = HttpResponseError>(
+ id: number,
+    getSubmissionByIDBody?: GetSubmissionByIDBody, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSubmissionByID>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get submission by ID
+ */
+
+export function useGetSubmissionByID<TData = Awaited<ReturnType<typeof getSubmissionByID>>, TError = HttpResponseError>(
+ id: number,
+    getSubmissionByIDBody?: GetSubmissionByIDBody, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSubmissionByID>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetSubmissionByIDQueryOptions(id,getSubmissionByIDBody,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type assignmentGradeResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type assignmentGradeResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type assignmentGradeResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type assignmentGradeResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type assignmentGradeResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type assignmentGradeResponseSuccess = (assignmentGradeResponse200) & {
+  headers: Headers;
+};
+export type assignmentGradeResponseError = (assignmentGradeResponse400 | assignmentGradeResponse401 | assignmentGradeResponse404 | assignmentGradeResponse500) & {
+  headers: Headers;
+};
+
+export type assignmentGradeResponse = (assignmentGradeResponseSuccess | assignmentGradeResponseError)
+
+export const getAssignmentGradeUrl = (id: number,) => {
+
+
+
+
+  return `/assignments/submissions/${id}/grade`
+}
+
+/**
+ * Grade an individual assignment submission
+ * @summary Grade submission
+ */
+export const assignmentGrade = async (id: number,
+    assignmentGradeBody: AssignmentGradeBody, options?: RequestInit): Promise<assignmentGradeResponse> => {
+
+  return customFetcher<assignmentGradeResponse>(getAssignmentGradeUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(assignmentGradeBody)
+  }
+);}
+
+
+
+
+export const getAssignmentGradeMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignmentGrade>>, TError,{id: number;data: AssignmentGradeBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof assignmentGrade>>, TError,{id: number;data: AssignmentGradeBody}, TContext> => {
+
+const mutationKey = ['assignmentGrade'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof assignmentGrade>>, {id: number;data: AssignmentGradeBody}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  assignmentGrade(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AssignmentGradeMutationResult = NonNullable<Awaited<ReturnType<typeof assignmentGrade>>>
+    export type AssignmentGradeMutationBody = AssignmentGradeBody
+    export type AssignmentGradeMutationError = HttpResponseError
+
+    /**
+ * @summary Grade submission
+ */
+export const useAssignmentGrade = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignmentGrade>>, TError,{id: number;data: AssignmentGradeBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof assignmentGrade>>,
+        TError,
+        {id: number;data: AssignmentGradeBody},
+        TContext
+      > => {
+      return useMutation(getAssignmentGradeMutationOptions(options), queryClient);
+    }
+
+export type gradeTeamResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type gradeTeamResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type gradeTeamResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type gradeTeamResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type gradeTeamResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type gradeTeamResponseSuccess = (gradeTeamResponse200) & {
+  headers: Headers;
+};
+export type gradeTeamResponseError = (gradeTeamResponse400 | gradeTeamResponse401 | gradeTeamResponse404 | gradeTeamResponse500) & {
+  headers: Headers;
+};
+
+export type gradeTeamResponse = (gradeTeamResponseSuccess | gradeTeamResponseError)
+
+export const getGradeTeamUrl = (id: number,) => {
+
+
+
+
+  return `/assignments/submissions/${id}/grade-team`
+}
+
+/**
+ * Grade a team assignment submission
+ * @summary Grade team submission
+ */
+export const gradeTeam = async (id: number,
+    gradeTeamBody: GradeTeamBody, options?: RequestInit): Promise<gradeTeamResponse> => {
+
+  return customFetcher<gradeTeamResponse>(getGradeTeamUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(gradeTeamBody)
+  }
+);}
+
+
+
+
+export const getGradeTeamMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof gradeTeam>>, TError,{id: number;data: GradeTeamBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof gradeTeam>>, TError,{id: number;data: GradeTeamBody}, TContext> => {
+
+const mutationKey = ['gradeTeam'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof gradeTeam>>, {id: number;data: GradeTeamBody}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  gradeTeam(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GradeTeamMutationResult = NonNullable<Awaited<ReturnType<typeof gradeTeam>>>
+    export type GradeTeamMutationBody = GradeTeamBody
+    export type GradeTeamMutationError = HttpResponseError
+
+    /**
+ * @summary Grade team submission
+ */
+export const useGradeTeam = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof gradeTeam>>, TError,{id: number;data: GradeTeamBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof gradeTeam>>,
+        TError,
+        {id: number;data: GradeTeamBody},
+        TContext
+      > => {
+      return useMutation(getGradeTeamMutationOptions(options), queryClient);
+    }
+
 export type getAttachmentsResponse200 = {
   data: GetAttachments200
   status: 200
@@ -2246,467 +2707,6 @@ export const useSubmitTeam = <TError = HttpResponseError,
         TContext
       > => {
       return useMutation(getSubmitTeamMutationOptions(options), queryClient);
-    }
-
-export type deleteAttachmentResponse204 = {
-  data: void
-  status: 204
-}
-
-export type deleteAttachmentResponse400 = {
-  data: HttpResponseError
-  status: 400
-}
-
-export type deleteAttachmentResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type deleteAttachmentResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type deleteAttachmentResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type deleteAttachmentResponseSuccess = (deleteAttachmentResponse204) & {
-  headers: Headers;
-};
-export type deleteAttachmentResponseError = (deleteAttachmentResponse400 | deleteAttachmentResponse401 | deleteAttachmentResponse404 | deleteAttachmentResponse500) & {
-  headers: Headers;
-};
-
-export type deleteAttachmentResponse = (deleteAttachmentResponseSuccess | deleteAttachmentResponseError)
-
-export const getDeleteAttachmentUrl = (id: number,) => {
-
-
-
-
-  return `/assignments/attachments/${id}`
-}
-
-/**
- * Remove an attachment from an assignment
- * @summary Delete assignment attachment
- */
-export const deleteAttachment = async (id: number,
-    deleteAttachmentBody?: DeleteAttachmentBody, options?: RequestInit): Promise<deleteAttachmentResponse> => {
-
-  return customFetcher<deleteAttachmentResponse>(getDeleteAttachmentUrl(id),
-  {
-    ...options,
-    method: 'DELETE',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(deleteAttachmentBody)
-  }
-);}
-
-
-
-
-export const getDeleteAttachmentMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAttachment>>, TError,{id: number;data?: DeleteAttachmentBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteAttachment>>, TError,{id: number;data?: DeleteAttachmentBody}, TContext> => {
-
-const mutationKey = ['deleteAttachment'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteAttachment>>, {id: number;data?: DeleteAttachmentBody}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  deleteAttachment(id,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteAttachmentMutationResult = NonNullable<Awaited<ReturnType<typeof deleteAttachment>>>
-    export type DeleteAttachmentMutationBody = DeleteAttachmentBody | undefined
-    export type DeleteAttachmentMutationError = HttpResponseError
-
-    /**
- * @summary Delete assignment attachment
- */
-export const useDeleteAttachment = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAttachment>>, TError,{id: number;data?: DeleteAttachmentBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteAttachment>>,
-        TError,
-        {id: number;data?: DeleteAttachmentBody},
-        TContext
-      > => {
-      return useMutation(getDeleteAttachmentMutationOptions(options), queryClient);
-    }
-
-export type getSubmissionByIDResponse200 = {
-  data: GetSubmissionByID200
-  status: 200
-}
-
-export type getSubmissionByIDResponse400 = {
-  data: HttpResponseError
-  status: 400
-}
-
-export type getSubmissionByIDResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type getSubmissionByIDResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type getSubmissionByIDResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type getSubmissionByIDResponseSuccess = (getSubmissionByIDResponse200) & {
-  headers: Headers;
-};
-export type getSubmissionByIDResponseError = (getSubmissionByIDResponse400 | getSubmissionByIDResponse401 | getSubmissionByIDResponse404 | getSubmissionByIDResponse500) & {
-  headers: Headers;
-};
-
-export type getSubmissionByIDResponse = (getSubmissionByIDResponseSuccess | getSubmissionByIDResponseError)
-
-export const getGetSubmissionByIDUrl = (id: number,) => {
-
-
-
-
-  return `/assignments/submissions/${id}`
-}
-
-/**
- * Get a single assignment submission by ID
- * @summary Get submission by ID
- */
-export const getSubmissionByID = async (id: number,
-    getSubmissionByIDBody?: GetSubmissionByIDBody, options?: RequestInit): Promise<getSubmissionByIDResponse> => {
-
-  return customFetcher<getSubmissionByIDResponse>(getGetSubmissionByIDUrl(id),
-  {
-    ...options,
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(getSubmissionByIDBody)
-  }
-);}
-
-
-
-
-
-export const getGetSubmissionByIDQueryKey = (id: number,
-    getSubmissionByIDBody?: GetSubmissionByIDBody,) => {
-    return [
-    `/assignments/submissions/${id}`, getSubmissionByIDBody
-    ] as const;
-    }
-
-
-export const getGetSubmissionByIDQueryOptions = <TData = Awaited<ReturnType<typeof getSubmissionByID>>, TError = HttpResponseError>(id: number,
-    getSubmissionByIDBody?: GetSubmissionByIDBody, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSubmissionByID>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetSubmissionByIDQueryKey(id,getSubmissionByIDBody);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSubmissionByID>>> = ({ signal }) => getSubmissionByID(id,getSubmissionByIDBody, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getSubmissionByID>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetSubmissionByIDQueryResult = NonNullable<Awaited<ReturnType<typeof getSubmissionByID>>>
-export type GetSubmissionByIDQueryError = HttpResponseError
-
-
-export function useGetSubmissionByID<TData = Awaited<ReturnType<typeof getSubmissionByID>>, TError = HttpResponseError>(
- id: number,
-    getSubmissionByIDBody: undefined |  GetSubmissionByIDBody, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSubmissionByID>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getSubmissionByID>>,
-          TError,
-          Awaited<ReturnType<typeof getSubmissionByID>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetSubmissionByID<TData = Awaited<ReturnType<typeof getSubmissionByID>>, TError = HttpResponseError>(
- id: number,
-    getSubmissionByIDBody?: GetSubmissionByIDBody, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSubmissionByID>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getSubmissionByID>>,
-          TError,
-          Awaited<ReturnType<typeof getSubmissionByID>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetSubmissionByID<TData = Awaited<ReturnType<typeof getSubmissionByID>>, TError = HttpResponseError>(
- id: number,
-    getSubmissionByIDBody?: GetSubmissionByIDBody, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSubmissionByID>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get submission by ID
- */
-
-export function useGetSubmissionByID<TData = Awaited<ReturnType<typeof getSubmissionByID>>, TError = HttpResponseError>(
- id: number,
-    getSubmissionByIDBody?: GetSubmissionByIDBody, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSubmissionByID>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetSubmissionByIDQueryOptions(id,getSubmissionByIDBody,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export type assignmentGradeResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type assignmentGradeResponse400 = {
-  data: HttpResponseError
-  status: 400
-}
-
-export type assignmentGradeResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type assignmentGradeResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type assignmentGradeResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type assignmentGradeResponseSuccess = (assignmentGradeResponse200) & {
-  headers: Headers;
-};
-export type assignmentGradeResponseError = (assignmentGradeResponse400 | assignmentGradeResponse401 | assignmentGradeResponse404 | assignmentGradeResponse500) & {
-  headers: Headers;
-};
-
-export type assignmentGradeResponse = (assignmentGradeResponseSuccess | assignmentGradeResponseError)
-
-export const getAssignmentGradeUrl = (id: number,) => {
-
-
-
-
-  return `/assignments/submissions/${id}/grade`
-}
-
-/**
- * Grade an individual assignment submission
- * @summary Grade submission
- */
-export const assignmentGrade = async (id: number,
-    assignmentGradeBody: AssignmentGradeBody, options?: RequestInit): Promise<assignmentGradeResponse> => {
-
-  return customFetcher<assignmentGradeResponse>(getAssignmentGradeUrl(id),
-  {
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(assignmentGradeBody)
-  }
-);}
-
-
-
-
-export const getAssignmentGradeMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignmentGrade>>, TError,{id: number;data: AssignmentGradeBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof assignmentGrade>>, TError,{id: number;data: AssignmentGradeBody}, TContext> => {
-
-const mutationKey = ['assignmentGrade'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof assignmentGrade>>, {id: number;data: AssignmentGradeBody}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  assignmentGrade(id,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type AssignmentGradeMutationResult = NonNullable<Awaited<ReturnType<typeof assignmentGrade>>>
-    export type AssignmentGradeMutationBody = AssignmentGradeBody
-    export type AssignmentGradeMutationError = HttpResponseError
-
-    /**
- * @summary Grade submission
- */
-export const useAssignmentGrade = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignmentGrade>>, TError,{id: number;data: AssignmentGradeBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof assignmentGrade>>,
-        TError,
-        {id: number;data: AssignmentGradeBody},
-        TContext
-      > => {
-      return useMutation(getAssignmentGradeMutationOptions(options), queryClient);
-    }
-
-export type gradeTeamResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type gradeTeamResponse400 = {
-  data: HttpResponseError
-  status: 400
-}
-
-export type gradeTeamResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type gradeTeamResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type gradeTeamResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type gradeTeamResponseSuccess = (gradeTeamResponse200) & {
-  headers: Headers;
-};
-export type gradeTeamResponseError = (gradeTeamResponse400 | gradeTeamResponse401 | gradeTeamResponse404 | gradeTeamResponse500) & {
-  headers: Headers;
-};
-
-export type gradeTeamResponse = (gradeTeamResponseSuccess | gradeTeamResponseError)
-
-export const getGradeTeamUrl = (id: number,) => {
-
-
-
-
-  return `/assignments/submissions/${id}/grade-team`
-}
-
-/**
- * Grade a team assignment submission
- * @summary Grade team submission
- */
-export const gradeTeam = async (id: number,
-    gradeTeamBody: GradeTeamBody, options?: RequestInit): Promise<gradeTeamResponse> => {
-
-  return customFetcher<gradeTeamResponse>(getGradeTeamUrl(id),
-  {
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(gradeTeamBody)
-  }
-);}
-
-
-
-
-export const getGradeTeamMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof gradeTeam>>, TError,{id: number;data: GradeTeamBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof gradeTeam>>, TError,{id: number;data: GradeTeamBody}, TContext> => {
-
-const mutationKey = ['gradeTeam'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof gradeTeam>>, {id: number;data: GradeTeamBody}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  gradeTeam(id,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type GradeTeamMutationResult = NonNullable<Awaited<ReturnType<typeof gradeTeam>>>
-    export type GradeTeamMutationBody = GradeTeamBody
-    export type GradeTeamMutationError = HttpResponseError
-
-    /**
- * @summary Grade team submission
- */
-export const useGradeTeam = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof gradeTeam>>, TError,{id: number;data: GradeTeamBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof gradeTeam>>,
-        TError,
-        {id: number;data: GradeTeamBody},
-        TContext
-      > => {
-      return useMutation(getGradeTeamMutationOptions(options), queryClient);
     }
 
 export type getAllAttachmentsResponse200 = {
@@ -5211,6 +5211,415 @@ export const useCategoryCreate = <TError = HttpResponseError,
       return useMutation(getCategoryCreateMutationOptions(options), queryClient);
     }
 
+export type categoryGetChildrenResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type categoryGetChildrenResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type categoryGetChildrenResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type categoryGetChildrenResponseSuccess = (categoryGetChildrenResponse200) & {
+  headers: Headers;
+};
+export type categoryGetChildrenResponseError = (categoryGetChildrenResponse400 | categoryGetChildrenResponse401) & {
+  headers: Headers;
+};
+
+export type categoryGetChildrenResponse = (categoryGetChildrenResponseSuccess | categoryGetChildrenResponseError)
+
+export const getCategoryGetChildrenUrl = (parentID: number,
+    params?: CategoryGetChildrenParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/categories/children/${parentID}?${stringifiedParams}` : `/categories/children/${parentID}`
+}
+
+/**
+ * Get paginated list of child categories for a given parent
+ * @summary Get child categories
+ */
+export const categoryGetChildren = async (parentID: number,
+    categoryGetChildrenBody?: CategoryGetChildrenBody,
+    params?: CategoryGetChildrenParams, options?: RequestInit): Promise<categoryGetChildrenResponse> => {
+
+  return customFetcher<categoryGetChildrenResponse>(getCategoryGetChildrenUrl(parentID,params),
+  {
+    ...options,
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(categoryGetChildrenBody)
+  }
+);}
+
+
+
+
+
+export const getCategoryGetChildrenQueryKey = (parentID: number,
+    categoryGetChildrenBody?: CategoryGetChildrenBody,
+    params?: CategoryGetChildrenParams,) => {
+    return [
+    `/categories/children/${parentID}`, ...(params ? [params] : []), categoryGetChildrenBody
+    ] as const;
+    }
+
+
+export const getCategoryGetChildrenQueryOptions = <TData = Awaited<ReturnType<typeof categoryGetChildren>>, TError = HttpResponseError>(parentID: number,
+    categoryGetChildrenBody?: CategoryGetChildrenBody,
+    params?: CategoryGetChildrenParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetChildren>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCategoryGetChildrenQueryKey(parentID,categoryGetChildrenBody,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof categoryGetChildren>>> = ({ signal }) => categoryGetChildren(parentID,categoryGetChildrenBody,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: parentID !== null && parentID !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof categoryGetChildren>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CategoryGetChildrenQueryResult = NonNullable<Awaited<ReturnType<typeof categoryGetChildren>>>
+export type CategoryGetChildrenQueryError = HttpResponseError
+
+
+export function useCategoryGetChildren<TData = Awaited<ReturnType<typeof categoryGetChildren>>, TError = HttpResponseError>(
+ parentID: number,
+    categoryGetChildrenBody: undefined |  CategoryGetChildrenBody,
+    params: undefined |  CategoryGetChildrenParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetChildren>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof categoryGetChildren>>,
+          TError,
+          Awaited<ReturnType<typeof categoryGetChildren>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCategoryGetChildren<TData = Awaited<ReturnType<typeof categoryGetChildren>>, TError = HttpResponseError>(
+ parentID: number,
+    categoryGetChildrenBody?: CategoryGetChildrenBody,
+    params?: CategoryGetChildrenParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetChildren>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof categoryGetChildren>>,
+          TError,
+          Awaited<ReturnType<typeof categoryGetChildren>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCategoryGetChildren<TData = Awaited<ReturnType<typeof categoryGetChildren>>, TError = HttpResponseError>(
+ parentID: number,
+    categoryGetChildrenBody?: CategoryGetChildrenBody,
+    params?: CategoryGetChildrenParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetChildren>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get child categories
+ */
+
+export function useCategoryGetChildren<TData = Awaited<ReturnType<typeof categoryGetChildren>>, TError = HttpResponseError>(
+ parentID: number,
+    categoryGetChildrenBody?: CategoryGetChildrenBody,
+    params?: CategoryGetChildrenParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetChildren>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getCategoryGetChildrenQueryOptions(parentID,categoryGetChildrenBody,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type categoryGetRootsResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type categoryGetRootsResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type categoryGetRootsResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type categoryGetRootsResponseSuccess = (categoryGetRootsResponse200) & {
+  headers: Headers;
+};
+export type categoryGetRootsResponseError = (categoryGetRootsResponse400 | categoryGetRootsResponse401) & {
+  headers: Headers;
+};
+
+export type categoryGetRootsResponse = (categoryGetRootsResponseSuccess | categoryGetRootsResponseError)
+
+export const getCategoryGetRootsUrl = (params?: CategoryGetRootsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/categories/roots?${stringifiedParams}` : `/categories/roots`
+}
+
+/**
+ * Get paginated list of root (top-level) categories
+ * @summary Get root categories
+ */
+export const categoryGetRoots = async (categoryGetRootsBody?: CategoryGetRootsBody,
+    params?: CategoryGetRootsParams, options?: RequestInit): Promise<categoryGetRootsResponse> => {
+
+  return customFetcher<categoryGetRootsResponse>(getCategoryGetRootsUrl(params),
+  {
+    ...options,
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(categoryGetRootsBody)
+  }
+);}
+
+
+
+
+
+export const getCategoryGetRootsQueryKey = (categoryGetRootsBody?: CategoryGetRootsBody,
+    params?: CategoryGetRootsParams,) => {
+    return [
+    `/categories/roots`, ...(params ? [params] : []), categoryGetRootsBody
+    ] as const;
+    }
+
+
+export const getCategoryGetRootsQueryOptions = <TData = Awaited<ReturnType<typeof categoryGetRoots>>, TError = HttpResponseError>(categoryGetRootsBody?: CategoryGetRootsBody,
+    params?: CategoryGetRootsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetRoots>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCategoryGetRootsQueryKey(categoryGetRootsBody,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof categoryGetRoots>>> = ({ signal }) => categoryGetRoots(categoryGetRootsBody,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof categoryGetRoots>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CategoryGetRootsQueryResult = NonNullable<Awaited<ReturnType<typeof categoryGetRoots>>>
+export type CategoryGetRootsQueryError = HttpResponseError
+
+
+export function useCategoryGetRoots<TData = Awaited<ReturnType<typeof categoryGetRoots>>, TError = HttpResponseError>(
+ categoryGetRootsBody: undefined |  CategoryGetRootsBody,
+    params: undefined |  CategoryGetRootsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetRoots>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof categoryGetRoots>>,
+          TError,
+          Awaited<ReturnType<typeof categoryGetRoots>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCategoryGetRoots<TData = Awaited<ReturnType<typeof categoryGetRoots>>, TError = HttpResponseError>(
+ categoryGetRootsBody?: CategoryGetRootsBody,
+    params?: CategoryGetRootsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetRoots>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof categoryGetRoots>>,
+          TError,
+          Awaited<ReturnType<typeof categoryGetRoots>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCategoryGetRoots<TData = Awaited<ReturnType<typeof categoryGetRoots>>, TError = HttpResponseError>(
+ categoryGetRootsBody?: CategoryGetRootsBody,
+    params?: CategoryGetRootsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetRoots>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get root categories
+ */
+
+export function useCategoryGetRoots<TData = Awaited<ReturnType<typeof categoryGetRoots>>, TError = HttpResponseError>(
+ categoryGetRootsBody?: CategoryGetRootsBody,
+    params?: CategoryGetRootsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetRoots>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getCategoryGetRootsQueryOptions(categoryGetRootsBody,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type categoryGetStatResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type categoryGetStatResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type categoryGetStatResponseSuccess = (categoryGetStatResponse200) & {
+  headers: Headers;
+};
+export type categoryGetStatResponseError = (categoryGetStatResponse401) & {
+  headers: Headers;
+};
+
+export type categoryGetStatResponse = (categoryGetStatResponseSuccess | categoryGetStatResponseError)
+
+export const getCategoryGetStatUrl = () => {
+
+
+
+
+  return `/categories/stat`
+}
+
+/**
+ * Get the total number of categories
+ * @summary Get total category count
+ */
+export const categoryGetStat = async ( options?: RequestInit): Promise<categoryGetStatResponse> => {
+
+  return customFetcher<categoryGetStatResponse>(getCategoryGetStatUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getCategoryGetStatQueryKey = () => {
+    return [
+    `/categories/stat`
+    ] as const;
+    }
+
+
+export const getCategoryGetStatQueryOptions = <TData = Awaited<ReturnType<typeof categoryGetStat>>, TError = HttpResponseError>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCategoryGetStatQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof categoryGetStat>>> = ({ signal }) => categoryGetStat({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof categoryGetStat>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CategoryGetStatQueryResult = NonNullable<Awaited<ReturnType<typeof categoryGetStat>>>
+export type CategoryGetStatQueryError = HttpResponseError
+
+
+export function useCategoryGetStat<TData = Awaited<ReturnType<typeof categoryGetStat>>, TError = HttpResponseError>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetStat>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof categoryGetStat>>,
+          TError,
+          Awaited<ReturnType<typeof categoryGetStat>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCategoryGetStat<TData = Awaited<ReturnType<typeof categoryGetStat>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetStat>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof categoryGetStat>>,
+          TError,
+          Awaited<ReturnType<typeof categoryGetStat>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCategoryGetStat<TData = Awaited<ReturnType<typeof categoryGetStat>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get total category count
+ */
+
+export function useCategoryGetStat<TData = Awaited<ReturnType<typeof categoryGetStat>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getCategoryGetStatQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
 export type categoryDeleteResponse200 = {
   data: DomainResponse
   status: 200
@@ -5642,415 +6051,6 @@ export const useCategorySetParent = <TError = HttpResponseError,
       return useMutation(getCategorySetParentMutationOptions(options), queryClient);
     }
 
-export type categoryGetChildrenResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type categoryGetChildrenResponse400 = {
-  data: HttpResponseError
-  status: 400
-}
-
-export type categoryGetChildrenResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type categoryGetChildrenResponseSuccess = (categoryGetChildrenResponse200) & {
-  headers: Headers;
-};
-export type categoryGetChildrenResponseError = (categoryGetChildrenResponse400 | categoryGetChildrenResponse401) & {
-  headers: Headers;
-};
-
-export type categoryGetChildrenResponse = (categoryGetChildrenResponseSuccess | categoryGetChildrenResponseError)
-
-export const getCategoryGetChildrenUrl = (parentID: number,
-    params?: CategoryGetChildrenParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/categories/children/${parentID}?${stringifiedParams}` : `/categories/children/${parentID}`
-}
-
-/**
- * Get paginated list of child categories for a given parent
- * @summary Get child categories
- */
-export const categoryGetChildren = async (parentID: number,
-    categoryGetChildrenBody?: CategoryGetChildrenBody,
-    params?: CategoryGetChildrenParams, options?: RequestInit): Promise<categoryGetChildrenResponse> => {
-
-  return customFetcher<categoryGetChildrenResponse>(getCategoryGetChildrenUrl(parentID,params),
-  {
-    ...options,
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(categoryGetChildrenBody)
-  }
-);}
-
-
-
-
-
-export const getCategoryGetChildrenQueryKey = (parentID: number,
-    categoryGetChildrenBody?: CategoryGetChildrenBody,
-    params?: CategoryGetChildrenParams,) => {
-    return [
-    `/categories/children/${parentID}`, ...(params ? [params] : []), categoryGetChildrenBody
-    ] as const;
-    }
-
-
-export const getCategoryGetChildrenQueryOptions = <TData = Awaited<ReturnType<typeof categoryGetChildren>>, TError = HttpResponseError>(parentID: number,
-    categoryGetChildrenBody?: CategoryGetChildrenBody,
-    params?: CategoryGetChildrenParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetChildren>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getCategoryGetChildrenQueryKey(parentID,categoryGetChildrenBody,params);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof categoryGetChildren>>> = ({ signal }) => categoryGetChildren(parentID,categoryGetChildrenBody,params, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: parentID !== null && parentID !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof categoryGetChildren>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type CategoryGetChildrenQueryResult = NonNullable<Awaited<ReturnType<typeof categoryGetChildren>>>
-export type CategoryGetChildrenQueryError = HttpResponseError
-
-
-export function useCategoryGetChildren<TData = Awaited<ReturnType<typeof categoryGetChildren>>, TError = HttpResponseError>(
- parentID: number,
-    categoryGetChildrenBody: undefined |  CategoryGetChildrenBody,
-    params: undefined |  CategoryGetChildrenParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetChildren>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof categoryGetChildren>>,
-          TError,
-          Awaited<ReturnType<typeof categoryGetChildren>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCategoryGetChildren<TData = Awaited<ReturnType<typeof categoryGetChildren>>, TError = HttpResponseError>(
- parentID: number,
-    categoryGetChildrenBody?: CategoryGetChildrenBody,
-    params?: CategoryGetChildrenParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetChildren>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof categoryGetChildren>>,
-          TError,
-          Awaited<ReturnType<typeof categoryGetChildren>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCategoryGetChildren<TData = Awaited<ReturnType<typeof categoryGetChildren>>, TError = HttpResponseError>(
- parentID: number,
-    categoryGetChildrenBody?: CategoryGetChildrenBody,
-    params?: CategoryGetChildrenParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetChildren>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get child categories
- */
-
-export function useCategoryGetChildren<TData = Awaited<ReturnType<typeof categoryGetChildren>>, TError = HttpResponseError>(
- parentID: number,
-    categoryGetChildrenBody?: CategoryGetChildrenBody,
-    params?: CategoryGetChildrenParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetChildren>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getCategoryGetChildrenQueryOptions(parentID,categoryGetChildrenBody,params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export type categoryGetRootsResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type categoryGetRootsResponse400 = {
-  data: HttpResponseError
-  status: 400
-}
-
-export type categoryGetRootsResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type categoryGetRootsResponseSuccess = (categoryGetRootsResponse200) & {
-  headers: Headers;
-};
-export type categoryGetRootsResponseError = (categoryGetRootsResponse400 | categoryGetRootsResponse401) & {
-  headers: Headers;
-};
-
-export type categoryGetRootsResponse = (categoryGetRootsResponseSuccess | categoryGetRootsResponseError)
-
-export const getCategoryGetRootsUrl = (params?: CategoryGetRootsParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/categories/roots?${stringifiedParams}` : `/categories/roots`
-}
-
-/**
- * Get paginated list of root (top-level) categories
- * @summary Get root categories
- */
-export const categoryGetRoots = async (categoryGetRootsBody?: CategoryGetRootsBody,
-    params?: CategoryGetRootsParams, options?: RequestInit): Promise<categoryGetRootsResponse> => {
-
-  return customFetcher<categoryGetRootsResponse>(getCategoryGetRootsUrl(params),
-  {
-    ...options,
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(categoryGetRootsBody)
-  }
-);}
-
-
-
-
-
-export const getCategoryGetRootsQueryKey = (categoryGetRootsBody?: CategoryGetRootsBody,
-    params?: CategoryGetRootsParams,) => {
-    return [
-    `/categories/roots`, ...(params ? [params] : []), categoryGetRootsBody
-    ] as const;
-    }
-
-
-export const getCategoryGetRootsQueryOptions = <TData = Awaited<ReturnType<typeof categoryGetRoots>>, TError = HttpResponseError>(categoryGetRootsBody?: CategoryGetRootsBody,
-    params?: CategoryGetRootsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetRoots>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getCategoryGetRootsQueryKey(categoryGetRootsBody,params);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof categoryGetRoots>>> = ({ signal }) => categoryGetRoots(categoryGetRootsBody,params, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof categoryGetRoots>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type CategoryGetRootsQueryResult = NonNullable<Awaited<ReturnType<typeof categoryGetRoots>>>
-export type CategoryGetRootsQueryError = HttpResponseError
-
-
-export function useCategoryGetRoots<TData = Awaited<ReturnType<typeof categoryGetRoots>>, TError = HttpResponseError>(
- categoryGetRootsBody: undefined |  CategoryGetRootsBody,
-    params: undefined |  CategoryGetRootsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetRoots>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof categoryGetRoots>>,
-          TError,
-          Awaited<ReturnType<typeof categoryGetRoots>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCategoryGetRoots<TData = Awaited<ReturnType<typeof categoryGetRoots>>, TError = HttpResponseError>(
- categoryGetRootsBody?: CategoryGetRootsBody,
-    params?: CategoryGetRootsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetRoots>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof categoryGetRoots>>,
-          TError,
-          Awaited<ReturnType<typeof categoryGetRoots>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCategoryGetRoots<TData = Awaited<ReturnType<typeof categoryGetRoots>>, TError = HttpResponseError>(
- categoryGetRootsBody?: CategoryGetRootsBody,
-    params?: CategoryGetRootsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetRoots>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get root categories
- */
-
-export function useCategoryGetRoots<TData = Awaited<ReturnType<typeof categoryGetRoots>>, TError = HttpResponseError>(
- categoryGetRootsBody?: CategoryGetRootsBody,
-    params?: CategoryGetRootsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetRoots>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getCategoryGetRootsQueryOptions(categoryGetRootsBody,params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export type categoryGetStatResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type categoryGetStatResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type categoryGetStatResponseSuccess = (categoryGetStatResponse200) & {
-  headers: Headers;
-};
-export type categoryGetStatResponseError = (categoryGetStatResponse401) & {
-  headers: Headers;
-};
-
-export type categoryGetStatResponse = (categoryGetStatResponseSuccess | categoryGetStatResponseError)
-
-export const getCategoryGetStatUrl = () => {
-
-
-
-
-  return `/categories/stat`
-}
-
-/**
- * Get the total number of categories
- * @summary Get total category count
- */
-export const categoryGetStat = async ( options?: RequestInit): Promise<categoryGetStatResponse> => {
-
-  return customFetcher<categoryGetStatResponse>(getCategoryGetStatUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getCategoryGetStatQueryKey = () => {
-    return [
-    `/categories/stat`
-    ] as const;
-    }
-
-
-export const getCategoryGetStatQueryOptions = <TData = Awaited<ReturnType<typeof categoryGetStat>>, TError = HttpResponseError>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getCategoryGetStatQueryKey();
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof categoryGetStat>>> = ({ signal }) => categoryGetStat({ signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof categoryGetStat>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type CategoryGetStatQueryResult = NonNullable<Awaited<ReturnType<typeof categoryGetStat>>>
-export type CategoryGetStatQueryError = HttpResponseError
-
-
-export function useCategoryGetStat<TData = Awaited<ReturnType<typeof categoryGetStat>>, TError = HttpResponseError>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetStat>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof categoryGetStat>>,
-          TError,
-          Awaited<ReturnType<typeof categoryGetStat>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCategoryGetStat<TData = Awaited<ReturnType<typeof categoryGetStat>>, TError = HttpResponseError>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetStat>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof categoryGetStat>>,
-          TError,
-          Awaited<ReturnType<typeof categoryGetStat>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCategoryGetStat<TData = Awaited<ReturnType<typeof categoryGetStat>>, TError = HttpResponseError>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get total category count
- */
-
-export function useCategoryGetStat<TData = Awaited<ReturnType<typeof categoryGetStat>>, TError = HttpResponseError>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof categoryGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getCategoryGetStatQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
 export type getUserCertificatesResponse200 = {
   data: DomainResponse
   status: 200
@@ -6289,467 +6289,6 @@ export const useIssueCertificate = <TError = HttpResponseError,
         TContext
       > => {
       return useMutation(getIssueCertificateMutationOptions(options), queryClient);
-    }
-
-export type certificateDeleteResponse204 = {
-  data: void
-  status: 204
-}
-
-export type certificateDeleteResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type certificateDeleteResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type certificateDeleteResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type certificateDeleteResponseSuccess = (certificateDeleteResponse204) & {
-  headers: Headers;
-};
-export type certificateDeleteResponseError = (certificateDeleteResponse401 | certificateDeleteResponse404 | certificateDeleteResponse500) & {
-  headers: Headers;
-};
-
-export type certificateDeleteResponse = (certificateDeleteResponseSuccess | certificateDeleteResponseError)
-
-export const getCertificateDeleteUrl = (id: number,) => {
-
-
-
-
-  return `/certificates/${id}`
-}
-
-/**
- * Delete a certificate
- * @summary Delete certificate
- */
-export const certificateDelete = async (id: number,
-    certificateDeleteBody?: string, options?: RequestInit): Promise<certificateDeleteResponse> => {
-
-  return customFetcher<certificateDeleteResponse>(getCertificateDeleteUrl(id),
-  {
-    ...options,
-    method: 'DELETE',
-    headers: { 'Content-Type': '*/*', ...options?.headers },
-    body: JSON.stringify(certificateDeleteBody)
-  }
-);}
-
-
-
-
-export const getCertificateDeleteMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof certificateDelete>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof certificateDelete>>, TError,{id: number;data?: string}, TContext> => {
-
-const mutationKey = ['certificateDelete'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof certificateDelete>>, {id: number;data?: string}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  certificateDelete(id,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type CertificateDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof certificateDelete>>>
-    export type CertificateDeleteMutationBody = string | undefined
-    export type CertificateDeleteMutationError = HttpResponseError
-
-    /**
- * @summary Delete certificate
- */
-export const useCertificateDelete = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof certificateDelete>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof certificateDelete>>,
-        TError,
-        {id: number;data?: string},
-        TContext
-      > => {
-      return useMutation(getCertificateDeleteMutationOptions(options), queryClient);
-    }
-
-export type certificateGetResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type certificateGetResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type certificateGetResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type certificateGetResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type certificateGetResponseSuccess = (certificateGetResponse200) & {
-  headers: Headers;
-};
-export type certificateGetResponseError = (certificateGetResponse401 | certificateGetResponse404 | certificateGetResponse500) & {
-  headers: Headers;
-};
-
-export type certificateGetResponse = (certificateGetResponseSuccess | certificateGetResponseError)
-
-export const getCertificateGetUrl = (id: number,) => {
-
-
-
-
-  return `/certificates/${id}`
-}
-
-/**
- * Get a specific certificate by ID
- * @summary Get certificate by ID
- */
-export const certificateGet = async (id: number,
-    certificateGetBody?: string, options?: RequestInit): Promise<certificateGetResponse> => {
-
-  return customFetcher<certificateGetResponse>(getCertificateGetUrl(id),
-  {
-    ...options,
-    method: 'GET',
-    headers: { 'Content-Type': '*/*', ...options?.headers },
-    body: JSON.stringify(certificateGetBody)
-  }
-);}
-
-
-
-
-
-export const getCertificateGetQueryKey = (id: number,
-    certificateGetBody?: string,) => {
-    return [
-    `/certificates/${id}`, certificateGetBody
-    ] as const;
-    }
-
-
-export const getCertificateGetQueryOptions = <TData = Awaited<ReturnType<typeof certificateGet>>, TError = HttpResponseError>(id: number,
-    certificateGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof certificateGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getCertificateGetQueryKey(id,certificateGetBody);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof certificateGet>>> = ({ signal }) => certificateGet(id,certificateGetBody, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof certificateGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type CertificateGetQueryResult = NonNullable<Awaited<ReturnType<typeof certificateGet>>>
-export type CertificateGetQueryError = HttpResponseError
-
-
-export function useCertificateGet<TData = Awaited<ReturnType<typeof certificateGet>>, TError = HttpResponseError>(
- id: number,
-    certificateGetBody: undefined |  string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof certificateGet>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof certificateGet>>,
-          TError,
-          Awaited<ReturnType<typeof certificateGet>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCertificateGet<TData = Awaited<ReturnType<typeof certificateGet>>, TError = HttpResponseError>(
- id: number,
-    certificateGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof certificateGet>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof certificateGet>>,
-          TError,
-          Awaited<ReturnType<typeof certificateGet>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCertificateGet<TData = Awaited<ReturnType<typeof certificateGet>>, TError = HttpResponseError>(
- id: number,
-    certificateGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof certificateGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get certificate by ID
- */
-
-export function useCertificateGet<TData = Awaited<ReturnType<typeof certificateGet>>, TError = HttpResponseError>(
- id: number,
-    certificateGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof certificateGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getCertificateGetQueryOptions(id,certificateGetBody,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export type certificateUpdateResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type certificateUpdateResponse400 = {
-  data: HttpResponseError
-  status: 400
-}
-
-export type certificateUpdateResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type certificateUpdateResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type certificateUpdateResponse422 = {
-  data: HttpResponseError
-  status: 422
-}
-
-export type certificateUpdateResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type certificateUpdateResponseSuccess = (certificateUpdateResponse200) & {
-  headers: Headers;
-};
-export type certificateUpdateResponseError = (certificateUpdateResponse400 | certificateUpdateResponse401 | certificateUpdateResponse404 | certificateUpdateResponse422 | certificateUpdateResponse500) & {
-  headers: Headers;
-};
-
-export type certificateUpdateResponse = (certificateUpdateResponseSuccess | certificateUpdateResponseError)
-
-export const getCertificateUpdateUrl = (id: number,) => {
-
-
-
-
-  return `/certificates/${id}`
-}
-
-/**
- * Update an existing certificate
- * @summary Update certificate
- */
-export const certificateUpdate = async (id: number,
-    certificateUpdateBody: CertificateUpdateBody, options?: RequestInit): Promise<certificateUpdateResponse> => {
-
-  return customFetcher<certificateUpdateResponse>(getCertificateUpdateUrl(id),
-  {
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(certificateUpdateBody)
-  }
-);}
-
-
-
-
-export const getCertificateUpdateMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof certificateUpdate>>, TError,{id: number;data: CertificateUpdateBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof certificateUpdate>>, TError,{id: number;data: CertificateUpdateBody}, TContext> => {
-
-const mutationKey = ['certificateUpdate'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof certificateUpdate>>, {id: number;data: CertificateUpdateBody}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  certificateUpdate(id,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type CertificateUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof certificateUpdate>>>
-    export type CertificateUpdateMutationBody = CertificateUpdateBody
-    export type CertificateUpdateMutationError = HttpResponseError
-
-    /**
- * @summary Update certificate
- */
-export const useCertificateUpdate = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof certificateUpdate>>, TError,{id: number;data: CertificateUpdateBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof certificateUpdate>>,
-        TError,
-        {id: number;data: CertificateUpdateBody},
-        TContext
-      > => {
-      return useMutation(getCertificateUpdateMutationOptions(options), queryClient);
-    }
-
-export type revokeCertificateResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type revokeCertificateResponse400 = {
-  data: HttpResponseError
-  status: 400
-}
-
-export type revokeCertificateResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type revokeCertificateResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type revokeCertificateResponse422 = {
-  data: HttpResponseError
-  status: 422
-}
-
-export type revokeCertificateResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type revokeCertificateResponseSuccess = (revokeCertificateResponse200) & {
-  headers: Headers;
-};
-export type revokeCertificateResponseError = (revokeCertificateResponse400 | revokeCertificateResponse401 | revokeCertificateResponse404 | revokeCertificateResponse422 | revokeCertificateResponse500) & {
-  headers: Headers;
-};
-
-export type revokeCertificateResponse = (revokeCertificateResponseSuccess | revokeCertificateResponseError)
-
-export const getRevokeCertificateUrl = (id: number,) => {
-
-
-
-
-  return `/certificates/${id}/revoke`
-}
-
-/**
- * Revoke a certificate
- * @summary Revoke certificate
- */
-export const revokeCertificate = async (id: number,
-    revokeCertificateBody: RevokeCertificateBody, options?: RequestInit): Promise<revokeCertificateResponse> => {
-
-  return customFetcher<revokeCertificateResponse>(getRevokeCertificateUrl(id),
-  {
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(revokeCertificateBody)
-  }
-);}
-
-
-
-
-export const getRevokeCertificateMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof revokeCertificate>>, TError,{id: number;data: RevokeCertificateBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof revokeCertificate>>, TError,{id: number;data: RevokeCertificateBody}, TContext> => {
-
-const mutationKey = ['revokeCertificate'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof revokeCertificate>>, {id: number;data: RevokeCertificateBody}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  revokeCertificate(id,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type RevokeCertificateMutationResult = NonNullable<Awaited<ReturnType<typeof revokeCertificate>>>
-    export type RevokeCertificateMutationBody = RevokeCertificateBody
-    export type RevokeCertificateMutationError = HttpResponseError
-
-    /**
- * @summary Revoke certificate
- */
-export const useRevokeCertificate = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof revokeCertificate>>, TError,{id: number;data: RevokeCertificateBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof revokeCertificate>>,
-        TError,
-        {id: number;data: RevokeCertificateBody},
-        TContext
-      > => {
-      return useMutation(getRevokeCertificateMutationOptions(options), queryClient);
     }
 
 export type getCourseCertificatesResponse200 = {
@@ -7878,6 +7417,467 @@ export function useVerifyCertificate<TData = Awaited<ReturnType<typeof verifyCer
 
 
 
+export type certificateDeleteResponse204 = {
+  data: void
+  status: 204
+}
+
+export type certificateDeleteResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type certificateDeleteResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type certificateDeleteResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type certificateDeleteResponseSuccess = (certificateDeleteResponse204) & {
+  headers: Headers;
+};
+export type certificateDeleteResponseError = (certificateDeleteResponse401 | certificateDeleteResponse404 | certificateDeleteResponse500) & {
+  headers: Headers;
+};
+
+export type certificateDeleteResponse = (certificateDeleteResponseSuccess | certificateDeleteResponseError)
+
+export const getCertificateDeleteUrl = (id: number,) => {
+
+
+
+
+  return `/certificates/${id}`
+}
+
+/**
+ * Delete a certificate
+ * @summary Delete certificate
+ */
+export const certificateDelete = async (id: number,
+    certificateDeleteBody?: string, options?: RequestInit): Promise<certificateDeleteResponse> => {
+
+  return customFetcher<certificateDeleteResponse>(getCertificateDeleteUrl(id),
+  {
+    ...options,
+    method: 'DELETE',
+    headers: { 'Content-Type': '*/*', ...options?.headers },
+    body: JSON.stringify(certificateDeleteBody)
+  }
+);}
+
+
+
+
+export const getCertificateDeleteMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof certificateDelete>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof certificateDelete>>, TError,{id: number;data?: string}, TContext> => {
+
+const mutationKey = ['certificateDelete'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof certificateDelete>>, {id: number;data?: string}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  certificateDelete(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CertificateDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof certificateDelete>>>
+    export type CertificateDeleteMutationBody = string | undefined
+    export type CertificateDeleteMutationError = HttpResponseError
+
+    /**
+ * @summary Delete certificate
+ */
+export const useCertificateDelete = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof certificateDelete>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof certificateDelete>>,
+        TError,
+        {id: number;data?: string},
+        TContext
+      > => {
+      return useMutation(getCertificateDeleteMutationOptions(options), queryClient);
+    }
+
+export type certificateGetResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type certificateGetResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type certificateGetResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type certificateGetResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type certificateGetResponseSuccess = (certificateGetResponse200) & {
+  headers: Headers;
+};
+export type certificateGetResponseError = (certificateGetResponse401 | certificateGetResponse404 | certificateGetResponse500) & {
+  headers: Headers;
+};
+
+export type certificateGetResponse = (certificateGetResponseSuccess | certificateGetResponseError)
+
+export const getCertificateGetUrl = (id: number,) => {
+
+
+
+
+  return `/certificates/${id}`
+}
+
+/**
+ * Get a specific certificate by ID
+ * @summary Get certificate by ID
+ */
+export const certificateGet = async (id: number,
+    certificateGetBody?: string, options?: RequestInit): Promise<certificateGetResponse> => {
+
+  return customFetcher<certificateGetResponse>(getCertificateGetUrl(id),
+  {
+    ...options,
+    method: 'GET',
+    headers: { 'Content-Type': '*/*', ...options?.headers },
+    body: JSON.stringify(certificateGetBody)
+  }
+);}
+
+
+
+
+
+export const getCertificateGetQueryKey = (id: number,
+    certificateGetBody?: string,) => {
+    return [
+    `/certificates/${id}`, certificateGetBody
+    ] as const;
+    }
+
+
+export const getCertificateGetQueryOptions = <TData = Awaited<ReturnType<typeof certificateGet>>, TError = HttpResponseError>(id: number,
+    certificateGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof certificateGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCertificateGetQueryKey(id,certificateGetBody);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof certificateGet>>> = ({ signal }) => certificateGet(id,certificateGetBody, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof certificateGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CertificateGetQueryResult = NonNullable<Awaited<ReturnType<typeof certificateGet>>>
+export type CertificateGetQueryError = HttpResponseError
+
+
+export function useCertificateGet<TData = Awaited<ReturnType<typeof certificateGet>>, TError = HttpResponseError>(
+ id: number,
+    certificateGetBody: undefined |  string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof certificateGet>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof certificateGet>>,
+          TError,
+          Awaited<ReturnType<typeof certificateGet>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCertificateGet<TData = Awaited<ReturnType<typeof certificateGet>>, TError = HttpResponseError>(
+ id: number,
+    certificateGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof certificateGet>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof certificateGet>>,
+          TError,
+          Awaited<ReturnType<typeof certificateGet>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCertificateGet<TData = Awaited<ReturnType<typeof certificateGet>>, TError = HttpResponseError>(
+ id: number,
+    certificateGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof certificateGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get certificate by ID
+ */
+
+export function useCertificateGet<TData = Awaited<ReturnType<typeof certificateGet>>, TError = HttpResponseError>(
+ id: number,
+    certificateGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof certificateGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getCertificateGetQueryOptions(id,certificateGetBody,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type certificateUpdateResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type certificateUpdateResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type certificateUpdateResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type certificateUpdateResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type certificateUpdateResponse422 = {
+  data: HttpResponseError
+  status: 422
+}
+
+export type certificateUpdateResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type certificateUpdateResponseSuccess = (certificateUpdateResponse200) & {
+  headers: Headers;
+};
+export type certificateUpdateResponseError = (certificateUpdateResponse400 | certificateUpdateResponse401 | certificateUpdateResponse404 | certificateUpdateResponse422 | certificateUpdateResponse500) & {
+  headers: Headers;
+};
+
+export type certificateUpdateResponse = (certificateUpdateResponseSuccess | certificateUpdateResponseError)
+
+export const getCertificateUpdateUrl = (id: number,) => {
+
+
+
+
+  return `/certificates/${id}`
+}
+
+/**
+ * Update an existing certificate
+ * @summary Update certificate
+ */
+export const certificateUpdate = async (id: number,
+    certificateUpdateBody: CertificateUpdateBody, options?: RequestInit): Promise<certificateUpdateResponse> => {
+
+  return customFetcher<certificateUpdateResponse>(getCertificateUpdateUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(certificateUpdateBody)
+  }
+);}
+
+
+
+
+export const getCertificateUpdateMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof certificateUpdate>>, TError,{id: number;data: CertificateUpdateBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof certificateUpdate>>, TError,{id: number;data: CertificateUpdateBody}, TContext> => {
+
+const mutationKey = ['certificateUpdate'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof certificateUpdate>>, {id: number;data: CertificateUpdateBody}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  certificateUpdate(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CertificateUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof certificateUpdate>>>
+    export type CertificateUpdateMutationBody = CertificateUpdateBody
+    export type CertificateUpdateMutationError = HttpResponseError
+
+    /**
+ * @summary Update certificate
+ */
+export const useCertificateUpdate = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof certificateUpdate>>, TError,{id: number;data: CertificateUpdateBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof certificateUpdate>>,
+        TError,
+        {id: number;data: CertificateUpdateBody},
+        TContext
+      > => {
+      return useMutation(getCertificateUpdateMutationOptions(options), queryClient);
+    }
+
+export type revokeCertificateResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type revokeCertificateResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type revokeCertificateResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type revokeCertificateResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type revokeCertificateResponse422 = {
+  data: HttpResponseError
+  status: 422
+}
+
+export type revokeCertificateResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type revokeCertificateResponseSuccess = (revokeCertificateResponse200) & {
+  headers: Headers;
+};
+export type revokeCertificateResponseError = (revokeCertificateResponse400 | revokeCertificateResponse401 | revokeCertificateResponse404 | revokeCertificateResponse422 | revokeCertificateResponse500) & {
+  headers: Headers;
+};
+
+export type revokeCertificateResponse = (revokeCertificateResponseSuccess | revokeCertificateResponseError)
+
+export const getRevokeCertificateUrl = (id: number,) => {
+
+
+
+
+  return `/certificates/${id}/revoke`
+}
+
+/**
+ * Revoke a certificate
+ * @summary Revoke certificate
+ */
+export const revokeCertificate = async (id: number,
+    revokeCertificateBody: RevokeCertificateBody, options?: RequestInit): Promise<revokeCertificateResponse> => {
+
+  return customFetcher<revokeCertificateResponse>(getRevokeCertificateUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(revokeCertificateBody)
+  }
+);}
+
+
+
+
+export const getRevokeCertificateMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof revokeCertificate>>, TError,{id: number;data: RevokeCertificateBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof revokeCertificate>>, TError,{id: number;data: RevokeCertificateBody}, TContext> => {
+
+const mutationKey = ['revokeCertificate'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof revokeCertificate>>, {id: number;data: RevokeCertificateBody}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  revokeCertificate(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RevokeCertificateMutationResult = NonNullable<Awaited<ReturnType<typeof revokeCertificate>>>
+    export type RevokeCertificateMutationBody = RevokeCertificateBody
+    export type RevokeCertificateMutationError = HttpResponseError
+
+    /**
+ * @summary Revoke certificate
+ */
+export const useRevokeCertificate = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof revokeCertificate>>, TError,{id: number;data: RevokeCertificateBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof revokeCertificate>>,
+        TError,
+        {id: number;data: RevokeCertificateBody},
+        TContext
+      > => {
+      return useMutation(getRevokeCertificateMutationOptions(options), queryClient);
+    }
+
 export type createCoursePrerequisiteResponse201 = {
   data: CreateCoursePrerequisite201
   status: 201
@@ -8572,210 +8572,6 @@ export const useCreateContentRevision = <TError = HttpResponseError,
       return useMutation(getCreateContentRevisionMutationOptions(options), queryClient);
     }
 
-export type deleteContentRevisionResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type deleteContentRevisionResponseSuccess = (deleteContentRevisionResponse200) & {
-  headers: Headers;
-};
-;
-
-export type deleteContentRevisionResponse = (deleteContentRevisionResponseSuccess)
-
-export const getDeleteContentRevisionUrl = (id: number,) => {
-
-
-
-
-  return `/content/revisions/${id}`
-}
-
-/**
- * Delete a content revision by ID
- * @summary Delete content revision
- */
-export const deleteContentRevision = async (id: number, options?: RequestInit): Promise<deleteContentRevisionResponse> => {
-
-  return customFetcher<deleteContentRevisionResponse>(getDeleteContentRevisionUrl(id),
-  {
-    ...options,
-    method: 'DELETE'
-
-
-  }
-);}
-
-
-
-
-export const getDeleteContentRevisionMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteContentRevision>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteContentRevision>>, TError,{id: number}, TContext> => {
-
-const mutationKey = ['deleteContentRevision'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteContentRevision>>, {id: number}> = (props) => {
-          const {id} = props ?? {};
-
-          return  deleteContentRevision(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteContentRevisionMutationResult = NonNullable<Awaited<ReturnType<typeof deleteContentRevision>>>
-
-    export type DeleteContentRevisionMutationError = unknown
-
-    /**
- * @summary Delete content revision
- */
-export const useDeleteContentRevision = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteContentRevision>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteContentRevision>>,
-        TError,
-        {id: number},
-        TContext
-      > => {
-      return useMutation(getDeleteContentRevisionMutationOptions(options), queryClient);
-    }
-
-export type getContentRevisionResponse200 = {
-  data: GetContentRevision200
-  status: 200
-}
-
-export type getContentRevisionResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type getContentRevisionResponseSuccess = (getContentRevisionResponse200) & {
-  headers: Headers;
-};
-export type getContentRevisionResponseError = (getContentRevisionResponse404) & {
-  headers: Headers;
-};
-
-export type getContentRevisionResponse = (getContentRevisionResponseSuccess | getContentRevisionResponseError)
-
-export const getGetContentRevisionUrl = (id: number,) => {
-
-
-
-
-  return `/content/revisions/${id}`
-}
-
-/**
- * Retrieve a specific content revision by ID
- * @summary Get content revision
- */
-export const getContentRevision = async (id: number, options?: RequestInit): Promise<getContentRevisionResponse> => {
-
-  return customFetcher<getContentRevisionResponse>(getGetContentRevisionUrl(id),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getGetContentRevisionQueryKey = (id: number,) => {
-    return [
-    `/content/revisions/${id}`
-    ] as const;
-    }
-
-
-export const getGetContentRevisionQueryOptions = <TData = Awaited<ReturnType<typeof getContentRevision>>, TError = HttpResponseError>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContentRevision>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetContentRevisionQueryKey(id);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getContentRevision>>> = ({ signal }) => getContentRevision(id, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getContentRevision>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetContentRevisionQueryResult = NonNullable<Awaited<ReturnType<typeof getContentRevision>>>
-export type GetContentRevisionQueryError = HttpResponseError
-
-
-export function useGetContentRevision<TData = Awaited<ReturnType<typeof getContentRevision>>, TError = HttpResponseError>(
- id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContentRevision>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getContentRevision>>,
-          TError,
-          Awaited<ReturnType<typeof getContentRevision>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetContentRevision<TData = Awaited<ReturnType<typeof getContentRevision>>, TError = HttpResponseError>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContentRevision>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getContentRevision>>,
-          TError,
-          Awaited<ReturnType<typeof getContentRevision>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetContentRevision<TData = Awaited<ReturnType<typeof getContentRevision>>, TError = HttpResponseError>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContentRevision>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get content revision
- */
-
-export function useGetContentRevision<TData = Awaited<ReturnType<typeof getContentRevision>>, TError = HttpResponseError>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContentRevision>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetContentRevisionQueryOptions(id,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
 export type getBlockRevisionsResponse200 = {
   data: GetBlockRevisions200
   status: 200
@@ -9171,6 +8967,210 @@ export function useGetLessonRevisions<TData = Awaited<ReturnType<typeof getLesso
 
 
 
+export type deleteContentRevisionResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type deleteContentRevisionResponseSuccess = (deleteContentRevisionResponse200) & {
+  headers: Headers;
+};
+;
+
+export type deleteContentRevisionResponse = (deleteContentRevisionResponseSuccess)
+
+export const getDeleteContentRevisionUrl = (id: number,) => {
+
+
+
+
+  return `/content/revisions/${id}`
+}
+
+/**
+ * Delete a content revision by ID
+ * @summary Delete content revision
+ */
+export const deleteContentRevision = async (id: number, options?: RequestInit): Promise<deleteContentRevisionResponse> => {
+
+  return customFetcher<deleteContentRevisionResponse>(getDeleteContentRevisionUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteContentRevisionMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteContentRevision>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteContentRevision>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteContentRevision'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteContentRevision>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteContentRevision(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteContentRevisionMutationResult = NonNullable<Awaited<ReturnType<typeof deleteContentRevision>>>
+
+    export type DeleteContentRevisionMutationError = unknown
+
+    /**
+ * @summary Delete content revision
+ */
+export const useDeleteContentRevision = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteContentRevision>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteContentRevision>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getDeleteContentRevisionMutationOptions(options), queryClient);
+    }
+
+export type getContentRevisionResponse200 = {
+  data: GetContentRevision200
+  status: 200
+}
+
+export type getContentRevisionResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type getContentRevisionResponseSuccess = (getContentRevisionResponse200) & {
+  headers: Headers;
+};
+export type getContentRevisionResponseError = (getContentRevisionResponse404) & {
+  headers: Headers;
+};
+
+export type getContentRevisionResponse = (getContentRevisionResponseSuccess | getContentRevisionResponseError)
+
+export const getGetContentRevisionUrl = (id: number,) => {
+
+
+
+
+  return `/content/revisions/${id}`
+}
+
+/**
+ * Retrieve a specific content revision by ID
+ * @summary Get content revision
+ */
+export const getContentRevision = async (id: number, options?: RequestInit): Promise<getContentRevisionResponse> => {
+
+  return customFetcher<getContentRevisionResponse>(getGetContentRevisionUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetContentRevisionQueryKey = (id: number,) => {
+    return [
+    `/content/revisions/${id}`
+    ] as const;
+    }
+
+
+export const getGetContentRevisionQueryOptions = <TData = Awaited<ReturnType<typeof getContentRevision>>, TError = HttpResponseError>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContentRevision>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetContentRevisionQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getContentRevision>>> = ({ signal }) => getContentRevision(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getContentRevision>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetContentRevisionQueryResult = NonNullable<Awaited<ReturnType<typeof getContentRevision>>>
+export type GetContentRevisionQueryError = HttpResponseError
+
+
+export function useGetContentRevision<TData = Awaited<ReturnType<typeof getContentRevision>>, TError = HttpResponseError>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContentRevision>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getContentRevision>>,
+          TError,
+          Awaited<ReturnType<typeof getContentRevision>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetContentRevision<TData = Awaited<ReturnType<typeof getContentRevision>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContentRevision>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getContentRevision>>,
+          TError,
+          Awaited<ReturnType<typeof getContentRevision>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetContentRevision<TData = Awaited<ReturnType<typeof getContentRevision>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContentRevision>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get content revision
+ */
+
+export function useGetContentRevision<TData = Awaited<ReturnType<typeof getContentRevision>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getContentRevision>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetContentRevisionQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
 export type createCourseVersionResponse201 = {
   data: CreateCourseVersion201
   status: 201
@@ -9265,217 +9265,6 @@ export const useCreateCourseVersion = <TError = HttpResponseError,
       > => {
       return useMutation(getCreateCourseVersionMutationOptions(options), queryClient);
     }
-
-export type deleteCourseVersionResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type deleteCourseVersionResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type deleteCourseVersionResponseSuccess = (deleteCourseVersionResponse200) & {
-  headers: Headers;
-};
-export type deleteCourseVersionResponseError = (deleteCourseVersionResponse404) & {
-  headers: Headers;
-};
-
-export type deleteCourseVersionResponse = (deleteCourseVersionResponseSuccess | deleteCourseVersionResponseError)
-
-export const getDeleteCourseVersionUrl = (id: number,) => {
-
-
-
-
-  return `/content/versions/${id}`
-}
-
-/**
- * Delete a course version by ID
- * @summary Delete course version
- */
-export const deleteCourseVersion = async (id: number, options?: RequestInit): Promise<deleteCourseVersionResponse> => {
-
-  return customFetcher<deleteCourseVersionResponse>(getDeleteCourseVersionUrl(id),
-  {
-    ...options,
-    method: 'DELETE'
-
-
-  }
-);}
-
-
-
-
-export const getDeleteCourseVersionMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCourseVersion>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteCourseVersion>>, TError,{id: number}, TContext> => {
-
-const mutationKey = ['deleteCourseVersion'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteCourseVersion>>, {id: number}> = (props) => {
-          const {id} = props ?? {};
-
-          return  deleteCourseVersion(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteCourseVersionMutationResult = NonNullable<Awaited<ReturnType<typeof deleteCourseVersion>>>
-
-    export type DeleteCourseVersionMutationError = HttpResponseError
-
-    /**
- * @summary Delete course version
- */
-export const useDeleteCourseVersion = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCourseVersion>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteCourseVersion>>,
-        TError,
-        {id: number},
-        TContext
-      > => {
-      return useMutation(getDeleteCourseVersionMutationOptions(options), queryClient);
-    }
-
-export type getCourseVersionResponse200 = {
-  data: GetCourseVersion200
-  status: 200
-}
-
-export type getCourseVersionResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type getCourseVersionResponseSuccess = (getCourseVersionResponse200) & {
-  headers: Headers;
-};
-export type getCourseVersionResponseError = (getCourseVersionResponse404) & {
-  headers: Headers;
-};
-
-export type getCourseVersionResponse = (getCourseVersionResponseSuccess | getCourseVersionResponseError)
-
-export const getGetCourseVersionUrl = (id: number,) => {
-
-
-
-
-  return `/content/versions/${id}`
-}
-
-/**
- * Retrieve a specific course version by ID
- * @summary Get course version
- */
-export const getCourseVersion = async (id: number, options?: RequestInit): Promise<getCourseVersionResponse> => {
-
-  return customFetcher<getCourseVersionResponse>(getGetCourseVersionUrl(id),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getGetCourseVersionQueryKey = (id: number,) => {
-    return [
-    `/content/versions/${id}`
-    ] as const;
-    }
-
-
-export const getGetCourseVersionQueryOptions = <TData = Awaited<ReturnType<typeof getCourseVersion>>, TError = HttpResponseError>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCourseVersion>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetCourseVersionQueryKey(id);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getCourseVersion>>> = ({ signal }) => getCourseVersion(id, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getCourseVersion>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetCourseVersionQueryResult = NonNullable<Awaited<ReturnType<typeof getCourseVersion>>>
-export type GetCourseVersionQueryError = HttpResponseError
-
-
-export function useGetCourseVersion<TData = Awaited<ReturnType<typeof getCourseVersion>>, TError = HttpResponseError>(
- id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCourseVersion>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getCourseVersion>>,
-          TError,
-          Awaited<ReturnType<typeof getCourseVersion>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCourseVersion<TData = Awaited<ReturnType<typeof getCourseVersion>>, TError = HttpResponseError>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCourseVersion>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getCourseVersion>>,
-          TError,
-          Awaited<ReturnType<typeof getCourseVersion>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetCourseVersion<TData = Awaited<ReturnType<typeof getCourseVersion>>, TError = HttpResponseError>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCourseVersion>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get course version
- */
-
-export function useGetCourseVersion<TData = Awaited<ReturnType<typeof getCourseVersion>>, TError = HttpResponseError>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCourseVersion>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetCourseVersionQueryOptions(id,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
 
 export type getCourseVersionsResponse200 = {
   data: GetCourseVersions200
@@ -9715,6 +9504,217 @@ export function useGetLatestCourseVersion<TData = Awaited<ReturnType<typeof getL
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetLatestCourseVersionQueryOptions(courseId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type deleteCourseVersionResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type deleteCourseVersionResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type deleteCourseVersionResponseSuccess = (deleteCourseVersionResponse200) & {
+  headers: Headers;
+};
+export type deleteCourseVersionResponseError = (deleteCourseVersionResponse404) & {
+  headers: Headers;
+};
+
+export type deleteCourseVersionResponse = (deleteCourseVersionResponseSuccess | deleteCourseVersionResponseError)
+
+export const getDeleteCourseVersionUrl = (id: number,) => {
+
+
+
+
+  return `/content/versions/${id}`
+}
+
+/**
+ * Delete a course version by ID
+ * @summary Delete course version
+ */
+export const deleteCourseVersion = async (id: number, options?: RequestInit): Promise<deleteCourseVersionResponse> => {
+
+  return customFetcher<deleteCourseVersionResponse>(getDeleteCourseVersionUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteCourseVersionMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCourseVersion>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteCourseVersion>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteCourseVersion'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteCourseVersion>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteCourseVersion(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteCourseVersionMutationResult = NonNullable<Awaited<ReturnType<typeof deleteCourseVersion>>>
+
+    export type DeleteCourseVersionMutationError = HttpResponseError
+
+    /**
+ * @summary Delete course version
+ */
+export const useDeleteCourseVersion = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCourseVersion>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteCourseVersion>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getDeleteCourseVersionMutationOptions(options), queryClient);
+    }
+
+export type getCourseVersionResponse200 = {
+  data: GetCourseVersion200
+  status: 200
+}
+
+export type getCourseVersionResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type getCourseVersionResponseSuccess = (getCourseVersionResponse200) & {
+  headers: Headers;
+};
+export type getCourseVersionResponseError = (getCourseVersionResponse404) & {
+  headers: Headers;
+};
+
+export type getCourseVersionResponse = (getCourseVersionResponseSuccess | getCourseVersionResponseError)
+
+export const getGetCourseVersionUrl = (id: number,) => {
+
+
+
+
+  return `/content/versions/${id}`
+}
+
+/**
+ * Retrieve a specific course version by ID
+ * @summary Get course version
+ */
+export const getCourseVersion = async (id: number, options?: RequestInit): Promise<getCourseVersionResponse> => {
+
+  return customFetcher<getCourseVersionResponse>(getGetCourseVersionUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetCourseVersionQueryKey = (id: number,) => {
+    return [
+    `/content/versions/${id}`
+    ] as const;
+    }
+
+
+export const getGetCourseVersionQueryOptions = <TData = Awaited<ReturnType<typeof getCourseVersion>>, TError = HttpResponseError>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCourseVersion>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetCourseVersionQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getCourseVersion>>> = ({ signal }) => getCourseVersion(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getCourseVersion>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetCourseVersionQueryResult = NonNullable<Awaited<ReturnType<typeof getCourseVersion>>>
+export type GetCourseVersionQueryError = HttpResponseError
+
+
+export function useGetCourseVersion<TData = Awaited<ReturnType<typeof getCourseVersion>>, TError = HttpResponseError>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCourseVersion>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCourseVersion>>,
+          TError,
+          Awaited<ReturnType<typeof getCourseVersion>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetCourseVersion<TData = Awaited<ReturnType<typeof getCourseVersion>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCourseVersion>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getCourseVersion>>,
+          TError,
+          Awaited<ReturnType<typeof getCourseVersion>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetCourseVersion<TData = Awaited<ReturnType<typeof getCourseVersion>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCourseVersion>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get course version
+ */
+
+export function useGetCourseVersion<TData = Awaited<ReturnType<typeof getCourseVersion>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCourseVersion>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetCourseVersionQueryOptions(id,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -9971,6 +9971,246 @@ export const useCourseCreate = <TError = HttpResponseError,
       > => {
       return useMutation(getCourseCreateMutationOptions(options), queryClient);
     }
+
+export type getMyEnrollmentsResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type getMyEnrollmentsResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getMyEnrollmentsResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type getMyEnrollmentsResponseSuccess = (getMyEnrollmentsResponse200) & {
+  headers: Headers;
+};
+export type getMyEnrollmentsResponseError = (getMyEnrollmentsResponse401 | getMyEnrollmentsResponse500) & {
+  headers: Headers;
+};
+
+export type getMyEnrollmentsResponse = (getMyEnrollmentsResponseSuccess | getMyEnrollmentsResponseError)
+
+export const getGetMyEnrollmentsUrl = () => {
+
+
+
+
+  return `/courses/my/enrollments`
+}
+
+/**
+ * Returns all course enrollments for the current user (from JWT)
+ * @summary Get the current user's course enrollments
+ */
+export const getMyEnrollments = async ( options?: RequestInit): Promise<getMyEnrollmentsResponse> => {
+
+  return customFetcher<getMyEnrollmentsResponse>(getGetMyEnrollmentsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetMyEnrollmentsQueryKey = () => {
+    return [
+    `/courses/my/enrollments`
+    ] as const;
+    }
+
+
+export const getGetMyEnrollmentsQueryOptions = <TData = Awaited<ReturnType<typeof getMyEnrollments>>, TError = HttpResponseError>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyEnrollments>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetMyEnrollmentsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyEnrollments>>> = ({ signal }) => getMyEnrollments({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMyEnrollments>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetMyEnrollmentsQueryResult = NonNullable<Awaited<ReturnType<typeof getMyEnrollments>>>
+export type GetMyEnrollmentsQueryError = HttpResponseError
+
+
+export function useGetMyEnrollments<TData = Awaited<ReturnType<typeof getMyEnrollments>>, TError = HttpResponseError>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyEnrollments>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMyEnrollments>>,
+          TError,
+          Awaited<ReturnType<typeof getMyEnrollments>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetMyEnrollments<TData = Awaited<ReturnType<typeof getMyEnrollments>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyEnrollments>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getMyEnrollments>>,
+          TError,
+          Awaited<ReturnType<typeof getMyEnrollments>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetMyEnrollments<TData = Awaited<ReturnType<typeof getMyEnrollments>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyEnrollments>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get the current user's course enrollments
+ */
+
+export function useGetMyEnrollments<TData = Awaited<ReturnType<typeof getMyEnrollments>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyEnrollments>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetMyEnrollmentsQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type courseGetStatResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type courseGetStatResponseSuccess = (courseGetStatResponse200) & {
+  headers: Headers;
+};
+;
+
+export type courseGetStatResponse = (courseGetStatResponseSuccess)
+
+export const getCourseGetStatUrl = () => {
+
+
+
+
+  return `/courses/statistics`
+}
+
+/**
+ * Get the total number of courses
+ * @summary Get total course count
+ */
+export const courseGetStat = async ( options?: RequestInit): Promise<courseGetStatResponse> => {
+
+  return customFetcher<courseGetStatResponse>(getCourseGetStatUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getCourseGetStatQueryKey = () => {
+    return [
+    `/courses/statistics`
+    ] as const;
+    }
+
+
+export const getCourseGetStatQueryOptions = <TData = Awaited<ReturnType<typeof courseGetStat>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof courseGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCourseGetStatQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof courseGetStat>>> = ({ signal }) => courseGetStat({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof courseGetStat>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CourseGetStatQueryResult = NonNullable<Awaited<ReturnType<typeof courseGetStat>>>
+export type CourseGetStatQueryError = unknown
+
+
+export function useCourseGetStat<TData = Awaited<ReturnType<typeof courseGetStat>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof courseGetStat>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof courseGetStat>>,
+          TError,
+          Awaited<ReturnType<typeof courseGetStat>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCourseGetStat<TData = Awaited<ReturnType<typeof courseGetStat>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof courseGetStat>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof courseGetStat>>,
+          TError,
+          Awaited<ReturnType<typeof courseGetStat>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCourseGetStat<TData = Awaited<ReturnType<typeof courseGetStat>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof courseGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get total course count
+ */
+
+export function useCourseGetStat<TData = Awaited<ReturnType<typeof courseGetStat>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof courseGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getCourseGetStatQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export type courseDeleteResponse204 = {
   data: void
@@ -11465,246 +11705,6 @@ export const useUpdateCourseStatus = <TError = HttpResponseError,
       > => {
       return useMutation(getUpdateCourseStatusMutationOptions(options), queryClient);
     }
-
-export type getMyEnrollmentsResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type getMyEnrollmentsResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type getMyEnrollmentsResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type getMyEnrollmentsResponseSuccess = (getMyEnrollmentsResponse200) & {
-  headers: Headers;
-};
-export type getMyEnrollmentsResponseError = (getMyEnrollmentsResponse401 | getMyEnrollmentsResponse500) & {
-  headers: Headers;
-};
-
-export type getMyEnrollmentsResponse = (getMyEnrollmentsResponseSuccess | getMyEnrollmentsResponseError)
-
-export const getGetMyEnrollmentsUrl = () => {
-
-
-
-
-  return `/courses/my/enrollments`
-}
-
-/**
- * Returns all course enrollments for the current user (from JWT)
- * @summary Get the current user's course enrollments
- */
-export const getMyEnrollments = async ( options?: RequestInit): Promise<getMyEnrollmentsResponse> => {
-
-  return customFetcher<getMyEnrollmentsResponse>(getGetMyEnrollmentsUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getGetMyEnrollmentsQueryKey = () => {
-    return [
-    `/courses/my/enrollments`
-    ] as const;
-    }
-
-
-export const getGetMyEnrollmentsQueryOptions = <TData = Awaited<ReturnType<typeof getMyEnrollments>>, TError = HttpResponseError>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyEnrollments>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetMyEnrollmentsQueryKey();
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyEnrollments>>> = ({ signal }) => getMyEnrollments({ signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMyEnrollments>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetMyEnrollmentsQueryResult = NonNullable<Awaited<ReturnType<typeof getMyEnrollments>>>
-export type GetMyEnrollmentsQueryError = HttpResponseError
-
-
-export function useGetMyEnrollments<TData = Awaited<ReturnType<typeof getMyEnrollments>>, TError = HttpResponseError>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyEnrollments>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getMyEnrollments>>,
-          TError,
-          Awaited<ReturnType<typeof getMyEnrollments>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMyEnrollments<TData = Awaited<ReturnType<typeof getMyEnrollments>>, TError = HttpResponseError>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyEnrollments>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getMyEnrollments>>,
-          TError,
-          Awaited<ReturnType<typeof getMyEnrollments>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMyEnrollments<TData = Awaited<ReturnType<typeof getMyEnrollments>>, TError = HttpResponseError>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyEnrollments>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get the current user's course enrollments
- */
-
-export function useGetMyEnrollments<TData = Awaited<ReturnType<typeof getMyEnrollments>>, TError = HttpResponseError>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyEnrollments>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetMyEnrollmentsQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export type courseGetStatResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type courseGetStatResponseSuccess = (courseGetStatResponse200) & {
-  headers: Headers;
-};
-;
-
-export type courseGetStatResponse = (courseGetStatResponseSuccess)
-
-export const getCourseGetStatUrl = () => {
-
-
-
-
-  return `/courses/statistics`
-}
-
-/**
- * Get the total number of courses
- * @summary Get total course count
- */
-export const courseGetStat = async ( options?: RequestInit): Promise<courseGetStatResponse> => {
-
-  return customFetcher<courseGetStatResponse>(getCourseGetStatUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getCourseGetStatQueryKey = () => {
-    return [
-    `/courses/statistics`
-    ] as const;
-    }
-
-
-export const getCourseGetStatQueryOptions = <TData = Awaited<ReturnType<typeof courseGetStat>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof courseGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getCourseGetStatQueryKey();
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof courseGetStat>>> = ({ signal }) => courseGetStat({ signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof courseGetStat>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type CourseGetStatQueryResult = NonNullable<Awaited<ReturnType<typeof courseGetStat>>>
-export type CourseGetStatQueryError = unknown
-
-
-export function useCourseGetStat<TData = Awaited<ReturnType<typeof courseGetStat>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof courseGetStat>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof courseGetStat>>,
-          TError,
-          Awaited<ReturnType<typeof courseGetStat>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCourseGetStat<TData = Awaited<ReturnType<typeof courseGetStat>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof courseGetStat>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof courseGetStat>>,
-          TError,
-          Awaited<ReturnType<typeof courseGetStat>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCourseGetStat<TData = Awaited<ReturnType<typeof courseGetStat>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof courseGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get total course count
- */
-
-export function useCourseGetStat<TData = Awaited<ReturnType<typeof courseGetStat>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof courseGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getCourseGetStatQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
 
 export type getCourseForumsResponse200 = {
   data: GetCourseForums200
@@ -14478,1097 +14478,6 @@ export const useEventCreate = <TError = HttpResponseError,
       return useMutation(getEventCreateMutationOptions(options), queryClient);
     }
 
-export type getEventAttendeesResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type getEventAttendeesResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type getEventAttendeesResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type getEventAttendeesResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type getEventAttendeesResponseSuccess = (getEventAttendeesResponse200) & {
-  headers: Headers;
-};
-export type getEventAttendeesResponseError = (getEventAttendeesResponse401 | getEventAttendeesResponse404 | getEventAttendeesResponse500) & {
-  headers: Headers;
-};
-
-export type getEventAttendeesResponse = (getEventAttendeesResponseSuccess | getEventAttendeesResponseError)
-
-export const getGetEventAttendeesUrl = (eventId: number,
-    params?: GetEventAttendeesParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/events/${eventId}/attendees?${stringifiedParams}` : `/events/${eventId}/attendees`
-}
-
-/**
- * Get attendees for a specific event
- * @summary Get event attendees
- */
-export const getEventAttendees = async (eventId: number,
-    getEventAttendeesBody?: string,
-    params?: GetEventAttendeesParams, options?: RequestInit): Promise<getEventAttendeesResponse> => {
-
-  return customFetcher<getEventAttendeesResponse>(getGetEventAttendeesUrl(eventId,params),
-  {
-    ...options,
-    method: 'GET',
-    headers: { 'Content-Type': '*/*', ...options?.headers },
-    body: JSON.stringify(getEventAttendeesBody)
-  }
-);}
-
-
-
-
-
-export const getGetEventAttendeesQueryKey = (eventId: number,
-    getEventAttendeesBody?: string,
-    params?: GetEventAttendeesParams,) => {
-    return [
-    `/events/${eventId}/attendees`, ...(params ? [params] : []), getEventAttendeesBody
-    ] as const;
-    }
-
-
-export const getGetEventAttendeesQueryOptions = <TData = Awaited<ReturnType<typeof getEventAttendees>>, TError = HttpResponseError>(eventId: number,
-    getEventAttendeesBody?: string,
-    params?: GetEventAttendeesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventAttendees>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetEventAttendeesQueryKey(eventId,getEventAttendeesBody,params);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getEventAttendees>>> = ({ signal }) => getEventAttendees(eventId,getEventAttendeesBody,params, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: eventId !== null && eventId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getEventAttendees>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetEventAttendeesQueryResult = NonNullable<Awaited<ReturnType<typeof getEventAttendees>>>
-export type GetEventAttendeesQueryError = HttpResponseError
-
-
-export function useGetEventAttendees<TData = Awaited<ReturnType<typeof getEventAttendees>>, TError = HttpResponseError>(
- eventId: number,
-    getEventAttendeesBody: undefined |  string,
-    params: undefined |  GetEventAttendeesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventAttendees>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getEventAttendees>>,
-          TError,
-          Awaited<ReturnType<typeof getEventAttendees>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetEventAttendees<TData = Awaited<ReturnType<typeof getEventAttendees>>, TError = HttpResponseError>(
- eventId: number,
-    getEventAttendeesBody?: string,
-    params?: GetEventAttendeesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventAttendees>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getEventAttendees>>,
-          TError,
-          Awaited<ReturnType<typeof getEventAttendees>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetEventAttendees<TData = Awaited<ReturnType<typeof getEventAttendees>>, TError = HttpResponseError>(
- eventId: number,
-    getEventAttendeesBody?: string,
-    params?: GetEventAttendeesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventAttendees>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get event attendees
- */
-
-export function useGetEventAttendees<TData = Awaited<ReturnType<typeof getEventAttendees>>, TError = HttpResponseError>(
- eventId: number,
-    getEventAttendeesBody?: string,
-    params?: GetEventAttendeesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventAttendees>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetEventAttendeesQueryOptions(eventId,getEventAttendeesBody,params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export type addAttendeeResponse201 = {
-  data: DomainResponse
-  status: 201
-}
-
-export type addAttendeeResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type addAttendeeResponse422 = {
-  data: HttpResponseError
-  status: 422
-}
-
-export type addAttendeeResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type addAttendeeResponseSuccess = (addAttendeeResponse201) & {
-  headers: Headers;
-};
-export type addAttendeeResponseError = (addAttendeeResponse401 | addAttendeeResponse422 | addAttendeeResponse500) & {
-  headers: Headers;
-};
-
-export type addAttendeeResponse = (addAttendeeResponseSuccess | addAttendeeResponseError)
-
-export const getAddAttendeeUrl = (eventId: number,) => {
-
-
-
-
-  return `/events/${eventId}/attendees`
-}
-
-/**
- * Add a user as an attendee to an event
- * @summary Add event attendee
- */
-export const addAttendee = async (eventId: number,
-    addAttendeeBody: AddAttendeeBody, options?: RequestInit): Promise<addAttendeeResponse> => {
-
-  return customFetcher<addAttendeeResponse>(getAddAttendeeUrl(eventId),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(addAttendeeBody)
-  }
-);}
-
-
-
-
-export const getAddAttendeeMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addAttendee>>, TError,{eventId: number;data: AddAttendeeBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof addAttendee>>, TError,{eventId: number;data: AddAttendeeBody}, TContext> => {
-
-const mutationKey = ['addAttendee'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof addAttendee>>, {eventId: number;data: AddAttendeeBody}> = (props) => {
-          const {eventId,data} = props ?? {};
-
-          return  addAttendee(eventId,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type AddAttendeeMutationResult = NonNullable<Awaited<ReturnType<typeof addAttendee>>>
-    export type AddAttendeeMutationBody = AddAttendeeBody
-    export type AddAttendeeMutationError = HttpResponseError
-
-    /**
- * @summary Add event attendee
- */
-export const useAddAttendee = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addAttendee>>, TError,{eventId: number;data: AddAttendeeBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof addAttendee>>,
-        TError,
-        {eventId: number;data: AddAttendeeBody},
-        TContext
-      > => {
-      return useMutation(getAddAttendeeMutationOptions(options), queryClient);
-    }
-
-export type removeAttendeeResponse204 = {
-  data: void
-  status: 204
-}
-
-export type removeAttendeeResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type removeAttendeeResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type removeAttendeeResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type removeAttendeeResponseSuccess = (removeAttendeeResponse204) & {
-  headers: Headers;
-};
-export type removeAttendeeResponseError = (removeAttendeeResponse401 | removeAttendeeResponse404 | removeAttendeeResponse500) & {
-  headers: Headers;
-};
-
-export type removeAttendeeResponse = (removeAttendeeResponseSuccess | removeAttendeeResponseError)
-
-export const getRemoveAttendeeUrl = (eventId: number,
-    userId: number,) => {
-
-
-
-
-  return `/events/${eventId}/attendees/${userId}`
-}
-
-/**
- * Remove a user from an event
- * @summary Remove event attendee
- */
-export const removeAttendee = async (eventId: number,
-    userId: number,
-    removeAttendeeBody?: string, options?: RequestInit): Promise<removeAttendeeResponse> => {
-
-  return customFetcher<removeAttendeeResponse>(getRemoveAttendeeUrl(eventId,userId),
-  {
-    ...options,
-    method: 'DELETE',
-    headers: { 'Content-Type': '*/*', ...options?.headers },
-    body: JSON.stringify(removeAttendeeBody)
-  }
-);}
-
-
-
-
-export const getRemoveAttendeeMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeAttendee>>, TError,{eventId: number;userId: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof removeAttendee>>, TError,{eventId: number;userId: number;data?: string}, TContext> => {
-
-const mutationKey = ['removeAttendee'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeAttendee>>, {eventId: number;userId: number;data?: string}> = (props) => {
-          const {eventId,userId,data} = props ?? {};
-
-          return  removeAttendee(eventId,userId,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type RemoveAttendeeMutationResult = NonNullable<Awaited<ReturnType<typeof removeAttendee>>>
-    export type RemoveAttendeeMutationBody = string | undefined
-    export type RemoveAttendeeMutationError = HttpResponseError
-
-    /**
- * @summary Remove event attendee
- */
-export const useRemoveAttendee = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeAttendee>>, TError,{eventId: number;userId: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof removeAttendee>>,
-        TError,
-        {eventId: number;userId: number;data?: string},
-        TContext
-      > => {
-      return useMutation(getRemoveAttendeeMutationOptions(options), queryClient);
-    }
-
-export type updateAttendeeStatusResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type updateAttendeeStatusResponse400 = {
-  data: HttpResponseError
-  status: 400
-}
-
-export type updateAttendeeStatusResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type updateAttendeeStatusResponse422 = {
-  data: HttpResponseError
-  status: 422
-}
-
-export type updateAttendeeStatusResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type updateAttendeeStatusResponseSuccess = (updateAttendeeStatusResponse200) & {
-  headers: Headers;
-};
-export type updateAttendeeStatusResponseError = (updateAttendeeStatusResponse400 | updateAttendeeStatusResponse401 | updateAttendeeStatusResponse422 | updateAttendeeStatusResponse500) & {
-  headers: Headers;
-};
-
-export type updateAttendeeStatusResponse = (updateAttendeeStatusResponseSuccess | updateAttendeeStatusResponseError)
-
-export const getUpdateAttendeeStatusUrl = (eventId: number,
-    userId: number,) => {
-
-
-
-
-  return `/events/${eventId}/attendees/${userId}`
-}
-
-/**
- * Update the status of an event attendee
- * @summary Update attendee status
- */
-export const updateAttendeeStatus = async (eventId: number,
-    userId: number,
-    updateAttendeeStatusBody: UpdateAttendeeStatusBody, options?: RequestInit): Promise<updateAttendeeStatusResponse> => {
-
-  return customFetcher<updateAttendeeStatusResponse>(getUpdateAttendeeStatusUrl(eventId,userId),
-  {
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(updateAttendeeStatusBody)
-  }
-);}
-
-
-
-
-export const getUpdateAttendeeStatusMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAttendeeStatus>>, TError,{eventId: number;userId: number;data: UpdateAttendeeStatusBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof updateAttendeeStatus>>, TError,{eventId: number;userId: number;data: UpdateAttendeeStatusBody}, TContext> => {
-
-const mutationKey = ['updateAttendeeStatus'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateAttendeeStatus>>, {eventId: number;userId: number;data: UpdateAttendeeStatusBody}> = (props) => {
-          const {eventId,userId,data} = props ?? {};
-
-          return  updateAttendeeStatus(eventId,userId,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type UpdateAttendeeStatusMutationResult = NonNullable<Awaited<ReturnType<typeof updateAttendeeStatus>>>
-    export type UpdateAttendeeStatusMutationBody = UpdateAttendeeStatusBody
-    export type UpdateAttendeeStatusMutationError = HttpResponseError
-
-    /**
- * @summary Update attendee status
- */
-export const useUpdateAttendeeStatus = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAttendeeStatus>>, TError,{eventId: number;userId: number;data: UpdateAttendeeStatusBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updateAttendeeStatus>>,
-        TError,
-        {eventId: number;userId: number;data: UpdateAttendeeStatusBody},
-        TContext
-      > => {
-      return useMutation(getUpdateAttendeeStatusMutationOptions(options), queryClient);
-    }
-
-export type getAttendeeCountResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type getAttendeeCountResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type getAttendeeCountResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type getAttendeeCountResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type getAttendeeCountResponseSuccess = (getAttendeeCountResponse200) & {
-  headers: Headers;
-};
-export type getAttendeeCountResponseError = (getAttendeeCountResponse401 | getAttendeeCountResponse404 | getAttendeeCountResponse500) & {
-  headers: Headers;
-};
-
-export type getAttendeeCountResponse = (getAttendeeCountResponseSuccess | getAttendeeCountResponseError)
-
-export const getGetAttendeeCountUrl = (eventId: number,) => {
-
-
-
-
-  return `/events/${eventId}/attendees/count`
-}
-
-/**
- * Get the number of attendees for an event
- * @summary Get attendee count
- */
-export const getAttendeeCount = async (eventId: number,
-    getAttendeeCountBody?: string, options?: RequestInit): Promise<getAttendeeCountResponse> => {
-
-  return customFetcher<getAttendeeCountResponse>(getGetAttendeeCountUrl(eventId),
-  {
-    ...options,
-    method: 'GET',
-    headers: { 'Content-Type': '*/*', ...options?.headers },
-    body: JSON.stringify(getAttendeeCountBody)
-  }
-);}
-
-
-
-
-
-export const getGetAttendeeCountQueryKey = (eventId: number,
-    getAttendeeCountBody?: string,) => {
-    return [
-    `/events/${eventId}/attendees/count`, getAttendeeCountBody
-    ] as const;
-    }
-
-
-export const getGetAttendeeCountQueryOptions = <TData = Awaited<ReturnType<typeof getAttendeeCount>>, TError = HttpResponseError>(eventId: number,
-    getAttendeeCountBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAttendeeCount>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetAttendeeCountQueryKey(eventId,getAttendeeCountBody);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAttendeeCount>>> = ({ signal }) => getAttendeeCount(eventId,getAttendeeCountBody, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: eventId !== null && eventId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAttendeeCount>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetAttendeeCountQueryResult = NonNullable<Awaited<ReturnType<typeof getAttendeeCount>>>
-export type GetAttendeeCountQueryError = HttpResponseError
-
-
-export function useGetAttendeeCount<TData = Awaited<ReturnType<typeof getAttendeeCount>>, TError = HttpResponseError>(
- eventId: number,
-    getAttendeeCountBody: undefined |  string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAttendeeCount>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAttendeeCount>>,
-          TError,
-          Awaited<ReturnType<typeof getAttendeeCount>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAttendeeCount<TData = Awaited<ReturnType<typeof getAttendeeCount>>, TError = HttpResponseError>(
- eventId: number,
-    getAttendeeCountBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAttendeeCount>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getAttendeeCount>>,
-          TError,
-          Awaited<ReturnType<typeof getAttendeeCount>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetAttendeeCount<TData = Awaited<ReturnType<typeof getAttendeeCount>>, TError = HttpResponseError>(
- eventId: number,
-    getAttendeeCountBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAttendeeCount>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get attendee count
- */
-
-export function useGetAttendeeCount<TData = Awaited<ReturnType<typeof getAttendeeCount>>, TError = HttpResponseError>(
- eventId: number,
-    getAttendeeCountBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAttendeeCount>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetAttendeeCountQueryOptions(eventId,getAttendeeCountBody,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export type eventDeleteResponse204 = {
-  data: void
-  status: 204
-}
-
-export type eventDeleteResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type eventDeleteResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type eventDeleteResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type eventDeleteResponseSuccess = (eventDeleteResponse204) & {
-  headers: Headers;
-};
-export type eventDeleteResponseError = (eventDeleteResponse401 | eventDeleteResponse404 | eventDeleteResponse500) & {
-  headers: Headers;
-};
-
-export type eventDeleteResponse = (eventDeleteResponseSuccess | eventDeleteResponseError)
-
-export const getEventDeleteUrl = (id: number,) => {
-
-
-
-
-  return `/events/${id}`
-}
-
-/**
- * Delete an event
- * @summary Delete event
- */
-export const eventDelete = async (id: number,
-    eventDeleteBody?: string, options?: RequestInit): Promise<eventDeleteResponse> => {
-
-  return customFetcher<eventDeleteResponse>(getEventDeleteUrl(id),
-  {
-    ...options,
-    method: 'DELETE',
-    headers: { 'Content-Type': '*/*', ...options?.headers },
-    body: JSON.stringify(eventDeleteBody)
-  }
-);}
-
-
-
-
-export const getEventDeleteMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof eventDelete>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof eventDelete>>, TError,{id: number;data?: string}, TContext> => {
-
-const mutationKey = ['eventDelete'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof eventDelete>>, {id: number;data?: string}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  eventDelete(id,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type EventDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof eventDelete>>>
-    export type EventDeleteMutationBody = string | undefined
-    export type EventDeleteMutationError = HttpResponseError
-
-    /**
- * @summary Delete event
- */
-export const useEventDelete = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof eventDelete>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof eventDelete>>,
-        TError,
-        {id: number;data?: string},
-        TContext
-      > => {
-      return useMutation(getEventDeleteMutationOptions(options), queryClient);
-    }
-
-export type eventGetResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type eventGetResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type eventGetResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type eventGetResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type eventGetResponseSuccess = (eventGetResponse200) & {
-  headers: Headers;
-};
-export type eventGetResponseError = (eventGetResponse401 | eventGetResponse404 | eventGetResponse500) & {
-  headers: Headers;
-};
-
-export type eventGetResponse = (eventGetResponseSuccess | eventGetResponseError)
-
-export const getEventGetUrl = (id: number,) => {
-
-
-
-
-  return `/events/${id}`
-}
-
-/**
- * Get a specific event
- * @summary Get event by ID
- */
-export const eventGet = async (id: number,
-    eventGetBody?: string, options?: RequestInit): Promise<eventGetResponse> => {
-
-  return customFetcher<eventGetResponse>(getEventGetUrl(id),
-  {
-    ...options,
-    method: 'GET',
-    headers: { 'Content-Type': '*/*', ...options?.headers },
-    body: JSON.stringify(eventGetBody)
-  }
-);}
-
-
-
-
-
-export const getEventGetQueryKey = (id: number,
-    eventGetBody?: string,) => {
-    return [
-    `/events/${id}`, eventGetBody
-    ] as const;
-    }
-
-
-export const getEventGetQueryOptions = <TData = Awaited<ReturnType<typeof eventGet>>, TError = HttpResponseError>(id: number,
-    eventGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getEventGetQueryKey(id,eventGetBody);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof eventGet>>> = ({ signal }) => eventGet(id,eventGetBody, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof eventGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type EventGetQueryResult = NonNullable<Awaited<ReturnType<typeof eventGet>>>
-export type EventGetQueryError = HttpResponseError
-
-
-export function useEventGet<TData = Awaited<ReturnType<typeof eventGet>>, TError = HttpResponseError>(
- id: number,
-    eventGetBody: undefined |  string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventGet>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof eventGet>>,
-          TError,
-          Awaited<ReturnType<typeof eventGet>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useEventGet<TData = Awaited<ReturnType<typeof eventGet>>, TError = HttpResponseError>(
- id: number,
-    eventGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventGet>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof eventGet>>,
-          TError,
-          Awaited<ReturnType<typeof eventGet>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useEventGet<TData = Awaited<ReturnType<typeof eventGet>>, TError = HttpResponseError>(
- id: number,
-    eventGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get event by ID
- */
-
-export function useEventGet<TData = Awaited<ReturnType<typeof eventGet>>, TError = HttpResponseError>(
- id: number,
-    eventGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getEventGetQueryOptions(id,eventGetBody,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export type eventUpdateResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type eventUpdateResponse400 = {
-  data: HttpResponseError
-  status: 400
-}
-
-export type eventUpdateResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type eventUpdateResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type eventUpdateResponse422 = {
-  data: HttpResponseError
-  status: 422
-}
-
-export type eventUpdateResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type eventUpdateResponseSuccess = (eventUpdateResponse200) & {
-  headers: Headers;
-};
-export type eventUpdateResponseError = (eventUpdateResponse400 | eventUpdateResponse401 | eventUpdateResponse404 | eventUpdateResponse422 | eventUpdateResponse500) & {
-  headers: Headers;
-};
-
-export type eventUpdateResponse = (eventUpdateResponseSuccess | eventUpdateResponseError)
-
-export const getEventUpdateUrl = (id: number,) => {
-
-
-
-
-  return `/events/${id}`
-}
-
-/**
- * Update an existing event
- * @summary Update event
- */
-export const eventUpdate = async (id: number,
-    eventUpdateBody: EventUpdateBody, options?: RequestInit): Promise<eventUpdateResponse> => {
-
-  return customFetcher<eventUpdateResponse>(getEventUpdateUrl(id),
-  {
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(eventUpdateBody)
-  }
-);}
-
-
-
-
-export const getEventUpdateMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof eventUpdate>>, TError,{id: number;data: EventUpdateBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof eventUpdate>>, TError,{id: number;data: EventUpdateBody}, TContext> => {
-
-const mutationKey = ['eventUpdate'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof eventUpdate>>, {id: number;data: EventUpdateBody}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  eventUpdate(id,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type EventUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof eventUpdate>>>
-    export type EventUpdateMutationBody = EventUpdateBody
-    export type EventUpdateMutationError = HttpResponseError
-
-    /**
- * @summary Update event
- */
-export const useEventUpdate = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof eventUpdate>>, TError,{id: number;data: EventUpdateBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof eventUpdate>>,
-        TError,
-        {id: number;data: EventUpdateBody},
-        TContext
-      > => {
-      return useMutation(getEventUpdateMutationOptions(options), queryClient);
-    }
-
-export type getEventStatsResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type getEventStatsResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type getEventStatsResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type getEventStatsResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type getEventStatsResponseSuccess = (getEventStatsResponse200) & {
-  headers: Headers;
-};
-export type getEventStatsResponseError = (getEventStatsResponse401 | getEventStatsResponse404 | getEventStatsResponse500) & {
-  headers: Headers;
-};
-
-export type getEventStatsResponse = (getEventStatsResponseSuccess | getEventStatsResponseError)
-
-export const getGetEventStatsUrl = (id: number,) => {
-
-
-
-
-  return `/events/${id}/stats`
-}
-
-/**
- * Get statistics for the organization's events
- * @summary Get event statistics
- */
-export const getEventStats = async (id: number,
-    getEventStatsBody?: string, options?: RequestInit): Promise<getEventStatsResponse> => {
-
-  return customFetcher<getEventStatsResponse>(getGetEventStatsUrl(id),
-  {
-    ...options,
-    method: 'GET',
-    headers: { 'Content-Type': '*/*', ...options?.headers },
-    body: JSON.stringify(getEventStatsBody)
-  }
-);}
-
-
-
-
-
-export const getGetEventStatsQueryKey = (id: number,
-    getEventStatsBody?: string,) => {
-    return [
-    `/events/${id}/stats`, getEventStatsBody
-    ] as const;
-    }
-
-
-export const getGetEventStatsQueryOptions = <TData = Awaited<ReturnType<typeof getEventStats>>, TError = HttpResponseError>(id: number,
-    getEventStatsBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventStats>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetEventStatsQueryKey(id,getEventStatsBody);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getEventStats>>> = ({ signal }) => getEventStats(id,getEventStatsBody, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getEventStats>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetEventStatsQueryResult = NonNullable<Awaited<ReturnType<typeof getEventStats>>>
-export type GetEventStatsQueryError = HttpResponseError
-
-
-export function useGetEventStats<TData = Awaited<ReturnType<typeof getEventStats>>, TError = HttpResponseError>(
- id: number,
-    getEventStatsBody: undefined |  string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventStats>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getEventStats>>,
-          TError,
-          Awaited<ReturnType<typeof getEventStats>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetEventStats<TData = Awaited<ReturnType<typeof getEventStats>>, TError = HttpResponseError>(
- id: number,
-    getEventStatsBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventStats>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getEventStats>>,
-          TError,
-          Awaited<ReturnType<typeof getEventStats>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetEventStats<TData = Awaited<ReturnType<typeof getEventStats>>, TError = HttpResponseError>(
- id: number,
-    getEventStatsBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventStats>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get event statistics
- */
-
-export function useGetEventStats<TData = Awaited<ReturnType<typeof getEventStats>>, TError = HttpResponseError>(
- id: number,
-    getEventStatsBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventStats>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetEventStatsQueryOptions(id,getEventStatsBody,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
 export type getCourseEventsResponse200 = {
   data: DomainResponse
   status: 200
@@ -16423,6 +15332,1097 @@ export function useGetUserAttendees<TData = Awaited<ReturnType<typeof getUserAtt
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetUserAttendeesQueryOptions(getUserAttendeesBody,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type getEventAttendeesResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type getEventAttendeesResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getEventAttendeesResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type getEventAttendeesResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type getEventAttendeesResponseSuccess = (getEventAttendeesResponse200) & {
+  headers: Headers;
+};
+export type getEventAttendeesResponseError = (getEventAttendeesResponse401 | getEventAttendeesResponse404 | getEventAttendeesResponse500) & {
+  headers: Headers;
+};
+
+export type getEventAttendeesResponse = (getEventAttendeesResponseSuccess | getEventAttendeesResponseError)
+
+export const getGetEventAttendeesUrl = (eventId: number,
+    params?: GetEventAttendeesParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/events/${eventId}/attendees?${stringifiedParams}` : `/events/${eventId}/attendees`
+}
+
+/**
+ * Get attendees for a specific event
+ * @summary Get event attendees
+ */
+export const getEventAttendees = async (eventId: number,
+    getEventAttendeesBody?: string,
+    params?: GetEventAttendeesParams, options?: RequestInit): Promise<getEventAttendeesResponse> => {
+
+  return customFetcher<getEventAttendeesResponse>(getGetEventAttendeesUrl(eventId,params),
+  {
+    ...options,
+    method: 'GET',
+    headers: { 'Content-Type': '*/*', ...options?.headers },
+    body: JSON.stringify(getEventAttendeesBody)
+  }
+);}
+
+
+
+
+
+export const getGetEventAttendeesQueryKey = (eventId: number,
+    getEventAttendeesBody?: string,
+    params?: GetEventAttendeesParams,) => {
+    return [
+    `/events/${eventId}/attendees`, ...(params ? [params] : []), getEventAttendeesBody
+    ] as const;
+    }
+
+
+export const getGetEventAttendeesQueryOptions = <TData = Awaited<ReturnType<typeof getEventAttendees>>, TError = HttpResponseError>(eventId: number,
+    getEventAttendeesBody?: string,
+    params?: GetEventAttendeesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventAttendees>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetEventAttendeesQueryKey(eventId,getEventAttendeesBody,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getEventAttendees>>> = ({ signal }) => getEventAttendees(eventId,getEventAttendeesBody,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: eventId !== null && eventId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getEventAttendees>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetEventAttendeesQueryResult = NonNullable<Awaited<ReturnType<typeof getEventAttendees>>>
+export type GetEventAttendeesQueryError = HttpResponseError
+
+
+export function useGetEventAttendees<TData = Awaited<ReturnType<typeof getEventAttendees>>, TError = HttpResponseError>(
+ eventId: number,
+    getEventAttendeesBody: undefined |  string,
+    params: undefined |  GetEventAttendeesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventAttendees>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEventAttendees>>,
+          TError,
+          Awaited<ReturnType<typeof getEventAttendees>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetEventAttendees<TData = Awaited<ReturnType<typeof getEventAttendees>>, TError = HttpResponseError>(
+ eventId: number,
+    getEventAttendeesBody?: string,
+    params?: GetEventAttendeesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventAttendees>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEventAttendees>>,
+          TError,
+          Awaited<ReturnType<typeof getEventAttendees>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetEventAttendees<TData = Awaited<ReturnType<typeof getEventAttendees>>, TError = HttpResponseError>(
+ eventId: number,
+    getEventAttendeesBody?: string,
+    params?: GetEventAttendeesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventAttendees>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get event attendees
+ */
+
+export function useGetEventAttendees<TData = Awaited<ReturnType<typeof getEventAttendees>>, TError = HttpResponseError>(
+ eventId: number,
+    getEventAttendeesBody?: string,
+    params?: GetEventAttendeesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventAttendees>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetEventAttendeesQueryOptions(eventId,getEventAttendeesBody,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type addAttendeeResponse201 = {
+  data: DomainResponse
+  status: 201
+}
+
+export type addAttendeeResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type addAttendeeResponse422 = {
+  data: HttpResponseError
+  status: 422
+}
+
+export type addAttendeeResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type addAttendeeResponseSuccess = (addAttendeeResponse201) & {
+  headers: Headers;
+};
+export type addAttendeeResponseError = (addAttendeeResponse401 | addAttendeeResponse422 | addAttendeeResponse500) & {
+  headers: Headers;
+};
+
+export type addAttendeeResponse = (addAttendeeResponseSuccess | addAttendeeResponseError)
+
+export const getAddAttendeeUrl = (eventId: number,) => {
+
+
+
+
+  return `/events/${eventId}/attendees`
+}
+
+/**
+ * Add a user as an attendee to an event
+ * @summary Add event attendee
+ */
+export const addAttendee = async (eventId: number,
+    addAttendeeBody: AddAttendeeBody, options?: RequestInit): Promise<addAttendeeResponse> => {
+
+  return customFetcher<addAttendeeResponse>(getAddAttendeeUrl(eventId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(addAttendeeBody)
+  }
+);}
+
+
+
+
+export const getAddAttendeeMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addAttendee>>, TError,{eventId: number;data: AddAttendeeBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof addAttendee>>, TError,{eventId: number;data: AddAttendeeBody}, TContext> => {
+
+const mutationKey = ['addAttendee'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof addAttendee>>, {eventId: number;data: AddAttendeeBody}> = (props) => {
+          const {eventId,data} = props ?? {};
+
+          return  addAttendee(eventId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AddAttendeeMutationResult = NonNullable<Awaited<ReturnType<typeof addAttendee>>>
+    export type AddAttendeeMutationBody = AddAttendeeBody
+    export type AddAttendeeMutationError = HttpResponseError
+
+    /**
+ * @summary Add event attendee
+ */
+export const useAddAttendee = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addAttendee>>, TError,{eventId: number;data: AddAttendeeBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof addAttendee>>,
+        TError,
+        {eventId: number;data: AddAttendeeBody},
+        TContext
+      > => {
+      return useMutation(getAddAttendeeMutationOptions(options), queryClient);
+    }
+
+export type getAttendeeCountResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type getAttendeeCountResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getAttendeeCountResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type getAttendeeCountResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type getAttendeeCountResponseSuccess = (getAttendeeCountResponse200) & {
+  headers: Headers;
+};
+export type getAttendeeCountResponseError = (getAttendeeCountResponse401 | getAttendeeCountResponse404 | getAttendeeCountResponse500) & {
+  headers: Headers;
+};
+
+export type getAttendeeCountResponse = (getAttendeeCountResponseSuccess | getAttendeeCountResponseError)
+
+export const getGetAttendeeCountUrl = (eventId: number,) => {
+
+
+
+
+  return `/events/${eventId}/attendees/count`
+}
+
+/**
+ * Get the number of attendees for an event
+ * @summary Get attendee count
+ */
+export const getAttendeeCount = async (eventId: number,
+    getAttendeeCountBody?: string, options?: RequestInit): Promise<getAttendeeCountResponse> => {
+
+  return customFetcher<getAttendeeCountResponse>(getGetAttendeeCountUrl(eventId),
+  {
+    ...options,
+    method: 'GET',
+    headers: { 'Content-Type': '*/*', ...options?.headers },
+    body: JSON.stringify(getAttendeeCountBody)
+  }
+);}
+
+
+
+
+
+export const getGetAttendeeCountQueryKey = (eventId: number,
+    getAttendeeCountBody?: string,) => {
+    return [
+    `/events/${eventId}/attendees/count`, getAttendeeCountBody
+    ] as const;
+    }
+
+
+export const getGetAttendeeCountQueryOptions = <TData = Awaited<ReturnType<typeof getAttendeeCount>>, TError = HttpResponseError>(eventId: number,
+    getAttendeeCountBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAttendeeCount>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAttendeeCountQueryKey(eventId,getAttendeeCountBody);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAttendeeCount>>> = ({ signal }) => getAttendeeCount(eventId,getAttendeeCountBody, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: eventId !== null && eventId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAttendeeCount>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetAttendeeCountQueryResult = NonNullable<Awaited<ReturnType<typeof getAttendeeCount>>>
+export type GetAttendeeCountQueryError = HttpResponseError
+
+
+export function useGetAttendeeCount<TData = Awaited<ReturnType<typeof getAttendeeCount>>, TError = HttpResponseError>(
+ eventId: number,
+    getAttendeeCountBody: undefined |  string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAttendeeCount>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAttendeeCount>>,
+          TError,
+          Awaited<ReturnType<typeof getAttendeeCount>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAttendeeCount<TData = Awaited<ReturnType<typeof getAttendeeCount>>, TError = HttpResponseError>(
+ eventId: number,
+    getAttendeeCountBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAttendeeCount>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAttendeeCount>>,
+          TError,
+          Awaited<ReturnType<typeof getAttendeeCount>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAttendeeCount<TData = Awaited<ReturnType<typeof getAttendeeCount>>, TError = HttpResponseError>(
+ eventId: number,
+    getAttendeeCountBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAttendeeCount>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get attendee count
+ */
+
+export function useGetAttendeeCount<TData = Awaited<ReturnType<typeof getAttendeeCount>>, TError = HttpResponseError>(
+ eventId: number,
+    getAttendeeCountBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAttendeeCount>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetAttendeeCountQueryOptions(eventId,getAttendeeCountBody,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type removeAttendeeResponse204 = {
+  data: void
+  status: 204
+}
+
+export type removeAttendeeResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type removeAttendeeResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type removeAttendeeResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type removeAttendeeResponseSuccess = (removeAttendeeResponse204) & {
+  headers: Headers;
+};
+export type removeAttendeeResponseError = (removeAttendeeResponse401 | removeAttendeeResponse404 | removeAttendeeResponse500) & {
+  headers: Headers;
+};
+
+export type removeAttendeeResponse = (removeAttendeeResponseSuccess | removeAttendeeResponseError)
+
+export const getRemoveAttendeeUrl = (eventId: number,
+    userId: number,) => {
+
+
+
+
+  return `/events/${eventId}/attendees/${userId}`
+}
+
+/**
+ * Remove a user from an event
+ * @summary Remove event attendee
+ */
+export const removeAttendee = async (eventId: number,
+    userId: number,
+    removeAttendeeBody?: string, options?: RequestInit): Promise<removeAttendeeResponse> => {
+
+  return customFetcher<removeAttendeeResponse>(getRemoveAttendeeUrl(eventId,userId),
+  {
+    ...options,
+    method: 'DELETE',
+    headers: { 'Content-Type': '*/*', ...options?.headers },
+    body: JSON.stringify(removeAttendeeBody)
+  }
+);}
+
+
+
+
+export const getRemoveAttendeeMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeAttendee>>, TError,{eventId: number;userId: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof removeAttendee>>, TError,{eventId: number;userId: number;data?: string}, TContext> => {
+
+const mutationKey = ['removeAttendee'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeAttendee>>, {eventId: number;userId: number;data?: string}> = (props) => {
+          const {eventId,userId,data} = props ?? {};
+
+          return  removeAttendee(eventId,userId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RemoveAttendeeMutationResult = NonNullable<Awaited<ReturnType<typeof removeAttendee>>>
+    export type RemoveAttendeeMutationBody = string | undefined
+    export type RemoveAttendeeMutationError = HttpResponseError
+
+    /**
+ * @summary Remove event attendee
+ */
+export const useRemoveAttendee = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeAttendee>>, TError,{eventId: number;userId: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof removeAttendee>>,
+        TError,
+        {eventId: number;userId: number;data?: string},
+        TContext
+      > => {
+      return useMutation(getRemoveAttendeeMutationOptions(options), queryClient);
+    }
+
+export type updateAttendeeStatusResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type updateAttendeeStatusResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type updateAttendeeStatusResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type updateAttendeeStatusResponse422 = {
+  data: HttpResponseError
+  status: 422
+}
+
+export type updateAttendeeStatusResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type updateAttendeeStatusResponseSuccess = (updateAttendeeStatusResponse200) & {
+  headers: Headers;
+};
+export type updateAttendeeStatusResponseError = (updateAttendeeStatusResponse400 | updateAttendeeStatusResponse401 | updateAttendeeStatusResponse422 | updateAttendeeStatusResponse500) & {
+  headers: Headers;
+};
+
+export type updateAttendeeStatusResponse = (updateAttendeeStatusResponseSuccess | updateAttendeeStatusResponseError)
+
+export const getUpdateAttendeeStatusUrl = (eventId: number,
+    userId: number,) => {
+
+
+
+
+  return `/events/${eventId}/attendees/${userId}`
+}
+
+/**
+ * Update the status of an event attendee
+ * @summary Update attendee status
+ */
+export const updateAttendeeStatus = async (eventId: number,
+    userId: number,
+    updateAttendeeStatusBody: UpdateAttendeeStatusBody, options?: RequestInit): Promise<updateAttendeeStatusResponse> => {
+
+  return customFetcher<updateAttendeeStatusResponse>(getUpdateAttendeeStatusUrl(eventId,userId),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(updateAttendeeStatusBody)
+  }
+);}
+
+
+
+
+export const getUpdateAttendeeStatusMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAttendeeStatus>>, TError,{eventId: number;userId: number;data: UpdateAttendeeStatusBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateAttendeeStatus>>, TError,{eventId: number;userId: number;data: UpdateAttendeeStatusBody}, TContext> => {
+
+const mutationKey = ['updateAttendeeStatus'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateAttendeeStatus>>, {eventId: number;userId: number;data: UpdateAttendeeStatusBody}> = (props) => {
+          const {eventId,userId,data} = props ?? {};
+
+          return  updateAttendeeStatus(eventId,userId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateAttendeeStatusMutationResult = NonNullable<Awaited<ReturnType<typeof updateAttendeeStatus>>>
+    export type UpdateAttendeeStatusMutationBody = UpdateAttendeeStatusBody
+    export type UpdateAttendeeStatusMutationError = HttpResponseError
+
+    /**
+ * @summary Update attendee status
+ */
+export const useUpdateAttendeeStatus = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAttendeeStatus>>, TError,{eventId: number;userId: number;data: UpdateAttendeeStatusBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateAttendeeStatus>>,
+        TError,
+        {eventId: number;userId: number;data: UpdateAttendeeStatusBody},
+        TContext
+      > => {
+      return useMutation(getUpdateAttendeeStatusMutationOptions(options), queryClient);
+    }
+
+export type eventDeleteResponse204 = {
+  data: void
+  status: 204
+}
+
+export type eventDeleteResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type eventDeleteResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type eventDeleteResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type eventDeleteResponseSuccess = (eventDeleteResponse204) & {
+  headers: Headers;
+};
+export type eventDeleteResponseError = (eventDeleteResponse401 | eventDeleteResponse404 | eventDeleteResponse500) & {
+  headers: Headers;
+};
+
+export type eventDeleteResponse = (eventDeleteResponseSuccess | eventDeleteResponseError)
+
+export const getEventDeleteUrl = (id: number,) => {
+
+
+
+
+  return `/events/${id}`
+}
+
+/**
+ * Delete an event
+ * @summary Delete event
+ */
+export const eventDelete = async (id: number,
+    eventDeleteBody?: string, options?: RequestInit): Promise<eventDeleteResponse> => {
+
+  return customFetcher<eventDeleteResponse>(getEventDeleteUrl(id),
+  {
+    ...options,
+    method: 'DELETE',
+    headers: { 'Content-Type': '*/*', ...options?.headers },
+    body: JSON.stringify(eventDeleteBody)
+  }
+);}
+
+
+
+
+export const getEventDeleteMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof eventDelete>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof eventDelete>>, TError,{id: number;data?: string}, TContext> => {
+
+const mutationKey = ['eventDelete'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof eventDelete>>, {id: number;data?: string}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  eventDelete(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type EventDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof eventDelete>>>
+    export type EventDeleteMutationBody = string | undefined
+    export type EventDeleteMutationError = HttpResponseError
+
+    /**
+ * @summary Delete event
+ */
+export const useEventDelete = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof eventDelete>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof eventDelete>>,
+        TError,
+        {id: number;data?: string},
+        TContext
+      > => {
+      return useMutation(getEventDeleteMutationOptions(options), queryClient);
+    }
+
+export type eventGetResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type eventGetResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type eventGetResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type eventGetResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type eventGetResponseSuccess = (eventGetResponse200) & {
+  headers: Headers;
+};
+export type eventGetResponseError = (eventGetResponse401 | eventGetResponse404 | eventGetResponse500) & {
+  headers: Headers;
+};
+
+export type eventGetResponse = (eventGetResponseSuccess | eventGetResponseError)
+
+export const getEventGetUrl = (id: number,) => {
+
+
+
+
+  return `/events/${id}`
+}
+
+/**
+ * Get a specific event
+ * @summary Get event by ID
+ */
+export const eventGet = async (id: number,
+    eventGetBody?: string, options?: RequestInit): Promise<eventGetResponse> => {
+
+  return customFetcher<eventGetResponse>(getEventGetUrl(id),
+  {
+    ...options,
+    method: 'GET',
+    headers: { 'Content-Type': '*/*', ...options?.headers },
+    body: JSON.stringify(eventGetBody)
+  }
+);}
+
+
+
+
+
+export const getEventGetQueryKey = (id: number,
+    eventGetBody?: string,) => {
+    return [
+    `/events/${id}`, eventGetBody
+    ] as const;
+    }
+
+
+export const getEventGetQueryOptions = <TData = Awaited<ReturnType<typeof eventGet>>, TError = HttpResponseError>(id: number,
+    eventGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getEventGetQueryKey(id,eventGetBody);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof eventGet>>> = ({ signal }) => eventGet(id,eventGetBody, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof eventGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type EventGetQueryResult = NonNullable<Awaited<ReturnType<typeof eventGet>>>
+export type EventGetQueryError = HttpResponseError
+
+
+export function useEventGet<TData = Awaited<ReturnType<typeof eventGet>>, TError = HttpResponseError>(
+ id: number,
+    eventGetBody: undefined |  string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventGet>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof eventGet>>,
+          TError,
+          Awaited<ReturnType<typeof eventGet>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useEventGet<TData = Awaited<ReturnType<typeof eventGet>>, TError = HttpResponseError>(
+ id: number,
+    eventGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventGet>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof eventGet>>,
+          TError,
+          Awaited<ReturnType<typeof eventGet>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useEventGet<TData = Awaited<ReturnType<typeof eventGet>>, TError = HttpResponseError>(
+ id: number,
+    eventGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get event by ID
+ */
+
+export function useEventGet<TData = Awaited<ReturnType<typeof eventGet>>, TError = HttpResponseError>(
+ id: number,
+    eventGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getEventGetQueryOptions(id,eventGetBody,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type eventUpdateResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type eventUpdateResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type eventUpdateResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type eventUpdateResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type eventUpdateResponse422 = {
+  data: HttpResponseError
+  status: 422
+}
+
+export type eventUpdateResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type eventUpdateResponseSuccess = (eventUpdateResponse200) & {
+  headers: Headers;
+};
+export type eventUpdateResponseError = (eventUpdateResponse400 | eventUpdateResponse401 | eventUpdateResponse404 | eventUpdateResponse422 | eventUpdateResponse500) & {
+  headers: Headers;
+};
+
+export type eventUpdateResponse = (eventUpdateResponseSuccess | eventUpdateResponseError)
+
+export const getEventUpdateUrl = (id: number,) => {
+
+
+
+
+  return `/events/${id}`
+}
+
+/**
+ * Update an existing event
+ * @summary Update event
+ */
+export const eventUpdate = async (id: number,
+    eventUpdateBody: EventUpdateBody, options?: RequestInit): Promise<eventUpdateResponse> => {
+
+  return customFetcher<eventUpdateResponse>(getEventUpdateUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(eventUpdateBody)
+  }
+);}
+
+
+
+
+export const getEventUpdateMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof eventUpdate>>, TError,{id: number;data: EventUpdateBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof eventUpdate>>, TError,{id: number;data: EventUpdateBody}, TContext> => {
+
+const mutationKey = ['eventUpdate'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof eventUpdate>>, {id: number;data: EventUpdateBody}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  eventUpdate(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type EventUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof eventUpdate>>>
+    export type EventUpdateMutationBody = EventUpdateBody
+    export type EventUpdateMutationError = HttpResponseError
+
+    /**
+ * @summary Update event
+ */
+export const useEventUpdate = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof eventUpdate>>, TError,{id: number;data: EventUpdateBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof eventUpdate>>,
+        TError,
+        {id: number;data: EventUpdateBody},
+        TContext
+      > => {
+      return useMutation(getEventUpdateMutationOptions(options), queryClient);
+    }
+
+export type getEventStatsResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type getEventStatsResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getEventStatsResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type getEventStatsResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type getEventStatsResponseSuccess = (getEventStatsResponse200) & {
+  headers: Headers;
+};
+export type getEventStatsResponseError = (getEventStatsResponse401 | getEventStatsResponse404 | getEventStatsResponse500) & {
+  headers: Headers;
+};
+
+export type getEventStatsResponse = (getEventStatsResponseSuccess | getEventStatsResponseError)
+
+export const getGetEventStatsUrl = (id: number,) => {
+
+
+
+
+  return `/events/${id}/stats`
+}
+
+/**
+ * Get statistics for the organization's events
+ * @summary Get event statistics
+ */
+export const getEventStats = async (id: number,
+    getEventStatsBody?: string, options?: RequestInit): Promise<getEventStatsResponse> => {
+
+  return customFetcher<getEventStatsResponse>(getGetEventStatsUrl(id),
+  {
+    ...options,
+    method: 'GET',
+    headers: { 'Content-Type': '*/*', ...options?.headers },
+    body: JSON.stringify(getEventStatsBody)
+  }
+);}
+
+
+
+
+
+export const getGetEventStatsQueryKey = (id: number,
+    getEventStatsBody?: string,) => {
+    return [
+    `/events/${id}/stats`, getEventStatsBody
+    ] as const;
+    }
+
+
+export const getGetEventStatsQueryOptions = <TData = Awaited<ReturnType<typeof getEventStats>>, TError = HttpResponseError>(id: number,
+    getEventStatsBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventStats>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetEventStatsQueryKey(id,getEventStatsBody);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getEventStats>>> = ({ signal }) => getEventStats(id,getEventStatsBody, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getEventStats>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetEventStatsQueryResult = NonNullable<Awaited<ReturnType<typeof getEventStats>>>
+export type GetEventStatsQueryError = HttpResponseError
+
+
+export function useGetEventStats<TData = Awaited<ReturnType<typeof getEventStats>>, TError = HttpResponseError>(
+ id: number,
+    getEventStatsBody: undefined |  string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventStats>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEventStats>>,
+          TError,
+          Awaited<ReturnType<typeof getEventStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetEventStats<TData = Awaited<ReturnType<typeof getEventStats>>, TError = HttpResponseError>(
+ id: number,
+    getEventStatsBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventStats>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEventStats>>,
+          TError,
+          Awaited<ReturnType<typeof getEventStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetEventStats<TData = Awaited<ReturnType<typeof getEventStats>>, TError = HttpResponseError>(
+ id: number,
+    getEventStatsBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventStats>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get event statistics
+ */
+
+export function useGetEventStats<TData = Awaited<ReturnType<typeof getEventStats>>, TError = HttpResponseError>(
+ id: number,
+    getEventStatsBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEventStats>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetEventStatsQueryOptions(id,getEventStatsBody,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -17625,351 +17625,6 @@ export function useServeMedia<TData = Awaited<ReturnType<typeof serveMedia>>, TE
 
 
 
-export type mediaDeleteResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type mediaDeleteResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type mediaDeleteResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type mediaDeleteResponseSuccess = (mediaDeleteResponse200) & {
-  headers: Headers;
-};
-export type mediaDeleteResponseError = (mediaDeleteResponse401 | mediaDeleteResponse404) & {
-  headers: Headers;
-};
-
-export type mediaDeleteResponse = (mediaDeleteResponseSuccess | mediaDeleteResponseError)
-
-export const getMediaDeleteUrl = (uuid: string,) => {
-
-
-
-
-  return `/media/${uuid}`
-}
-
-/**
- * Soft-deletes a media file and removes it from storage.
- * @summary Delete a media file
- */
-export const mediaDelete = async (uuid: string, options?: RequestInit): Promise<mediaDeleteResponse> => {
-
-  return customFetcher<mediaDeleteResponse>(getMediaDeleteUrl(uuid),
-  {
-    ...options,
-    method: 'DELETE'
-
-
-  }
-);}
-
-
-
-
-export const getMediaDeleteMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mediaDelete>>, TError,{uuid: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof mediaDelete>>, TError,{uuid: string}, TContext> => {
-
-const mutationKey = ['mediaDelete'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof mediaDelete>>, {uuid: string}> = (props) => {
-          const {uuid} = props ?? {};
-
-          return  mediaDelete(uuid,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type MediaDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof mediaDelete>>>
-
-    export type MediaDeleteMutationError = HttpResponseError
-
-    /**
- * @summary Delete a media file
- */
-export const useMediaDelete = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mediaDelete>>, TError,{uuid: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof mediaDelete>>,
-        TError,
-        {uuid: string},
-        TContext
-      > => {
-      return useMutation(getMediaDeleteMutationOptions(options), queryClient);
-    }
-
-export type serveFileResponse302 = {
-  data: string
-  status: 302
-}
-
-export type serveFileResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type serveFileResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-;
-export type serveFileResponseError = (serveFileResponse302 | serveFileResponse401 | serveFileResponse404) & {
-  headers: Headers;
-};
-
-export type serveFileResponse = (serveFileResponseError)
-
-export const getServeFileUrl = (uuid: string,) => {
-
-
-
-
-  return `/media/${uuid}`
-}
-
-/**
- * Returns a presigned redirect URL. RustFS handles streaming, range requests, and content delivery.
- * @summary Serve a media file by UUID
- */
-export const serveFile = async (uuid: string, options?: RequestInit): Promise<serveFileResponse> => {
-
-  return customFetcher<serveFileResponse>(getServeFileUrl(uuid),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getServeFileQueryKey = (uuid: string,) => {
-    return [
-    `/media/${uuid}`
-    ] as const;
-    }
-
-
-export const getServeFileQueryOptions = <TData = Awaited<ReturnType<typeof serveFile>>, TError = string | HttpResponseError>(uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof serveFile>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getServeFileQueryKey(uuid);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof serveFile>>> = ({ signal }) => serveFile(uuid, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: uuid !== null && uuid !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof serveFile>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type ServeFileQueryResult = NonNullable<Awaited<ReturnType<typeof serveFile>>>
-export type ServeFileQueryError = string | HttpResponseError
-
-
-export function useServeFile<TData = Awaited<ReturnType<typeof serveFile>>, TError = string | HttpResponseError>(
- uuid: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof serveFile>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof serveFile>>,
-          TError,
-          Awaited<ReturnType<typeof serveFile>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useServeFile<TData = Awaited<ReturnType<typeof serveFile>>, TError = string | HttpResponseError>(
- uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof serveFile>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof serveFile>>,
-          TError,
-          Awaited<ReturnType<typeof serveFile>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useServeFile<TData = Awaited<ReturnType<typeof serveFile>>, TError = string | HttpResponseError>(
- uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof serveFile>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Serve a media file by UUID
- */
-
-export function useServeFile<TData = Awaited<ReturnType<typeof serveFile>>, TError = string | HttpResponseError>(
- uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof serveFile>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getServeFileQueryOptions(uuid,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export type mediaGetInfoResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type mediaGetInfoResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type mediaGetInfoResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type mediaGetInfoResponseSuccess = (mediaGetInfoResponse200) & {
-  headers: Headers;
-};
-export type mediaGetInfoResponseError = (mediaGetInfoResponse401 | mediaGetInfoResponse404) & {
-  headers: Headers;
-};
-
-export type mediaGetInfoResponse = (mediaGetInfoResponseSuccess | mediaGetInfoResponseError)
-
-export const getMediaGetInfoUrl = (uuid: string,) => {
-
-
-
-
-  return `/media/${uuid}/info`
-}
-
-/**
- * Returns metadata for a media file by UUID.
- * @summary Get media file metadata
- */
-export const mediaGetInfo = async (uuid: string, options?: RequestInit): Promise<mediaGetInfoResponse> => {
-
-  return customFetcher<mediaGetInfoResponse>(getMediaGetInfoUrl(uuid),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getMediaGetInfoQueryKey = (uuid: string,) => {
-    return [
-    `/media/${uuid}/info`
-    ] as const;
-    }
-
-
-export const getMediaGetInfoQueryOptions = <TData = Awaited<ReturnType<typeof mediaGetInfo>>, TError = HttpResponseError>(uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaGetInfo>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getMediaGetInfoQueryKey(uuid);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof mediaGetInfo>>> = ({ signal }) => mediaGetInfo(uuid, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: uuid !== null && uuid !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof mediaGetInfo>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type MediaGetInfoQueryResult = NonNullable<Awaited<ReturnType<typeof mediaGetInfo>>>
-export type MediaGetInfoQueryError = HttpResponseError
-
-
-export function useMediaGetInfo<TData = Awaited<ReturnType<typeof mediaGetInfo>>, TError = HttpResponseError>(
- uuid: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaGetInfo>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof mediaGetInfo>>,
-          TError,
-          Awaited<ReturnType<typeof mediaGetInfo>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useMediaGetInfo<TData = Awaited<ReturnType<typeof mediaGetInfo>>, TError = HttpResponseError>(
- uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaGetInfo>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof mediaGetInfo>>,
-          TError,
-          Awaited<ReturnType<typeof mediaGetInfo>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useMediaGetInfo<TData = Awaited<ReturnType<typeof mediaGetInfo>>, TError = HttpResponseError>(
- uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaGetInfo>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get media file metadata
- */
-
-export function useMediaGetInfo<TData = Awaited<ReturnType<typeof mediaGetInfo>>, TError = HttpResponseError>(
- uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaGetInfo>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getMediaGetInfoQueryOptions(uuid,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
 export type getFoldersResponse200 = {
   data: DomainResponse
   status: 200
@@ -18645,6 +18300,351 @@ export const useMediaUpload = <TError = HttpResponseError,
       return useMutation(getMediaUploadMutationOptions(options), queryClient);
     }
 
+export type mediaDeleteResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type mediaDeleteResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type mediaDeleteResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type mediaDeleteResponseSuccess = (mediaDeleteResponse200) & {
+  headers: Headers;
+};
+export type mediaDeleteResponseError = (mediaDeleteResponse401 | mediaDeleteResponse404) & {
+  headers: Headers;
+};
+
+export type mediaDeleteResponse = (mediaDeleteResponseSuccess | mediaDeleteResponseError)
+
+export const getMediaDeleteUrl = (uuid: string,) => {
+
+
+
+
+  return `/media/${uuid}`
+}
+
+/**
+ * Soft-deletes a media file and removes it from storage.
+ * @summary Delete a media file
+ */
+export const mediaDelete = async (uuid: string, options?: RequestInit): Promise<mediaDeleteResponse> => {
+
+  return customFetcher<mediaDeleteResponse>(getMediaDeleteUrl(uuid),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getMediaDeleteMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mediaDelete>>, TError,{uuid: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof mediaDelete>>, TError,{uuid: string}, TContext> => {
+
+const mutationKey = ['mediaDelete'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof mediaDelete>>, {uuid: string}> = (props) => {
+          const {uuid} = props ?? {};
+
+          return  mediaDelete(uuid,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MediaDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof mediaDelete>>>
+
+    export type MediaDeleteMutationError = HttpResponseError
+
+    /**
+ * @summary Delete a media file
+ */
+export const useMediaDelete = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mediaDelete>>, TError,{uuid: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof mediaDelete>>,
+        TError,
+        {uuid: string},
+        TContext
+      > => {
+      return useMutation(getMediaDeleteMutationOptions(options), queryClient);
+    }
+
+export type serveFileResponse302 = {
+  data: string
+  status: 302
+}
+
+export type serveFileResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type serveFileResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+;
+export type serveFileResponseError = (serveFileResponse302 | serveFileResponse401 | serveFileResponse404) & {
+  headers: Headers;
+};
+
+export type serveFileResponse = (serveFileResponseError)
+
+export const getServeFileUrl = (uuid: string,) => {
+
+
+
+
+  return `/media/${uuid}`
+}
+
+/**
+ * Returns a presigned redirect URL. RustFS handles streaming, range requests, and content delivery.
+ * @summary Serve a media file by UUID
+ */
+export const serveFile = async (uuid: string, options?: RequestInit): Promise<serveFileResponse> => {
+
+  return customFetcher<serveFileResponse>(getServeFileUrl(uuid),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getServeFileQueryKey = (uuid: string,) => {
+    return [
+    `/media/${uuid}`
+    ] as const;
+    }
+
+
+export const getServeFileQueryOptions = <TData = Awaited<ReturnType<typeof serveFile>>, TError = string | HttpResponseError>(uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof serveFile>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getServeFileQueryKey(uuid);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof serveFile>>> = ({ signal }) => serveFile(uuid, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: uuid !== null && uuid !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof serveFile>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ServeFileQueryResult = NonNullable<Awaited<ReturnType<typeof serveFile>>>
+export type ServeFileQueryError = string | HttpResponseError
+
+
+export function useServeFile<TData = Awaited<ReturnType<typeof serveFile>>, TError = string | HttpResponseError>(
+ uuid: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof serveFile>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof serveFile>>,
+          TError,
+          Awaited<ReturnType<typeof serveFile>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useServeFile<TData = Awaited<ReturnType<typeof serveFile>>, TError = string | HttpResponseError>(
+ uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof serveFile>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof serveFile>>,
+          TError,
+          Awaited<ReturnType<typeof serveFile>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useServeFile<TData = Awaited<ReturnType<typeof serveFile>>, TError = string | HttpResponseError>(
+ uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof serveFile>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Serve a media file by UUID
+ */
+
+export function useServeFile<TData = Awaited<ReturnType<typeof serveFile>>, TError = string | HttpResponseError>(
+ uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof serveFile>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getServeFileQueryOptions(uuid,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type mediaGetInfoResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type mediaGetInfoResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type mediaGetInfoResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type mediaGetInfoResponseSuccess = (mediaGetInfoResponse200) & {
+  headers: Headers;
+};
+export type mediaGetInfoResponseError = (mediaGetInfoResponse401 | mediaGetInfoResponse404) & {
+  headers: Headers;
+};
+
+export type mediaGetInfoResponse = (mediaGetInfoResponseSuccess | mediaGetInfoResponseError)
+
+export const getMediaGetInfoUrl = (uuid: string,) => {
+
+
+
+
+  return `/media/${uuid}/info`
+}
+
+/**
+ * Returns metadata for a media file by UUID.
+ * @summary Get media file metadata
+ */
+export const mediaGetInfo = async (uuid: string, options?: RequestInit): Promise<mediaGetInfoResponse> => {
+
+  return customFetcher<mediaGetInfoResponse>(getMediaGetInfoUrl(uuid),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getMediaGetInfoQueryKey = (uuid: string,) => {
+    return [
+    `/media/${uuid}/info`
+    ] as const;
+    }
+
+
+export const getMediaGetInfoQueryOptions = <TData = Awaited<ReturnType<typeof mediaGetInfo>>, TError = HttpResponseError>(uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaGetInfo>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getMediaGetInfoQueryKey(uuid);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof mediaGetInfo>>> = ({ signal }) => mediaGetInfo(uuid, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: uuid !== null && uuid !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof mediaGetInfo>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type MediaGetInfoQueryResult = NonNullable<Awaited<ReturnType<typeof mediaGetInfo>>>
+export type MediaGetInfoQueryError = HttpResponseError
+
+
+export function useMediaGetInfo<TData = Awaited<ReturnType<typeof mediaGetInfo>>, TError = HttpResponseError>(
+ uuid: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaGetInfo>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mediaGetInfo>>,
+          TError,
+          Awaited<ReturnType<typeof mediaGetInfo>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useMediaGetInfo<TData = Awaited<ReturnType<typeof mediaGetInfo>>, TError = HttpResponseError>(
+ uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaGetInfo>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mediaGetInfo>>,
+          TError,
+          Awaited<ReturnType<typeof mediaGetInfo>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useMediaGetInfo<TData = Awaited<ReturnType<typeof mediaGetInfo>>, TError = HttpResponseError>(
+ uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaGetInfo>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get media file metadata
+ */
+
+export function useMediaGetInfo<TData = Awaited<ReturnType<typeof mediaGetInfo>>, TError = HttpResponseError>(
+ uuid: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaGetInfo>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getMediaGetInfoQueryOptions(uuid,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
 export type notificationCreateResponse201 = {
   data: DomainResponse
   status: 201
@@ -18743,351 +18743,6 @@ export const useNotificationCreate = <TError = HttpResponseError,
         TContext
       > => {
       return useMutation(getNotificationCreateMutationOptions(options), queryClient);
-    }
-
-export type notificationDeleteResponse204 = {
-  data: void
-  status: 204
-}
-
-export type notificationDeleteResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type notificationDeleteResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type notificationDeleteResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type notificationDeleteResponseSuccess = (notificationDeleteResponse204) & {
-  headers: Headers;
-};
-export type notificationDeleteResponseError = (notificationDeleteResponse401 | notificationDeleteResponse404 | notificationDeleteResponse500) & {
-  headers: Headers;
-};
-
-export type notificationDeleteResponse = (notificationDeleteResponseSuccess | notificationDeleteResponseError)
-
-export const getNotificationDeleteUrl = (id: number,) => {
-
-
-
-
-  return `/notifications/${id}`
-}
-
-/**
- * Delete a notification by ID
- * @summary Delete notification
- */
-export const notificationDelete = async (id: number,
-    notificationDeleteBody?: string, options?: RequestInit): Promise<notificationDeleteResponse> => {
-
-  return customFetcher<notificationDeleteResponse>(getNotificationDeleteUrl(id),
-  {
-    ...options,
-    method: 'DELETE',
-    headers: { 'Content-Type': '*/*', ...options?.headers },
-    body: JSON.stringify(notificationDeleteBody)
-  }
-);}
-
-
-
-
-export const getNotificationDeleteMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof notificationDelete>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof notificationDelete>>, TError,{id: number;data?: string}, TContext> => {
-
-const mutationKey = ['notificationDelete'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof notificationDelete>>, {id: number;data?: string}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  notificationDelete(id,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type NotificationDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof notificationDelete>>>
-    export type NotificationDeleteMutationBody = string | undefined
-    export type NotificationDeleteMutationError = HttpResponseError
-
-    /**
- * @summary Delete notification
- */
-export const useNotificationDelete = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof notificationDelete>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof notificationDelete>>,
-        TError,
-        {id: number;data?: string},
-        TContext
-      > => {
-      return useMutation(getNotificationDeleteMutationOptions(options), queryClient);
-    }
-
-export type notificationGetResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type notificationGetResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type notificationGetResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type notificationGetResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type notificationGetResponseSuccess = (notificationGetResponse200) & {
-  headers: Headers;
-};
-export type notificationGetResponseError = (notificationGetResponse401 | notificationGetResponse404 | notificationGetResponse500) & {
-  headers: Headers;
-};
-
-export type notificationGetResponse = (notificationGetResponseSuccess | notificationGetResponseError)
-
-export const getNotificationGetUrl = (id: number,) => {
-
-
-
-
-  return `/notifications/${id}`
-}
-
-/**
- * Get a single notification by ID
- * @summary Get notification by ID
- */
-export const notificationGet = async (id: number,
-    notificationGetBody?: string, options?: RequestInit): Promise<notificationGetResponse> => {
-
-  return customFetcher<notificationGetResponse>(getNotificationGetUrl(id),
-  {
-    ...options,
-    method: 'GET',
-    headers: { 'Content-Type': '*/*', ...options?.headers },
-    body: JSON.stringify(notificationGetBody)
-  }
-);}
-
-
-
-
-
-export const getNotificationGetQueryKey = (id: number,
-    notificationGetBody?: string,) => {
-    return [
-    `/notifications/${id}`, notificationGetBody
-    ] as const;
-    }
-
-
-export const getNotificationGetQueryOptions = <TData = Awaited<ReturnType<typeof notificationGet>>, TError = HttpResponseError>(id: number,
-    notificationGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificationGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getNotificationGetQueryKey(id,notificationGetBody);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof notificationGet>>> = ({ signal }) => notificationGet(id,notificationGetBody, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof notificationGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type NotificationGetQueryResult = NonNullable<Awaited<ReturnType<typeof notificationGet>>>
-export type NotificationGetQueryError = HttpResponseError
-
-
-export function useNotificationGet<TData = Awaited<ReturnType<typeof notificationGet>>, TError = HttpResponseError>(
- id: number,
-    notificationGetBody: undefined |  string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificationGet>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof notificationGet>>,
-          TError,
-          Awaited<ReturnType<typeof notificationGet>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useNotificationGet<TData = Awaited<ReturnType<typeof notificationGet>>, TError = HttpResponseError>(
- id: number,
-    notificationGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificationGet>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof notificationGet>>,
-          TError,
-          Awaited<ReturnType<typeof notificationGet>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useNotificationGet<TData = Awaited<ReturnType<typeof notificationGet>>, TError = HttpResponseError>(
- id: number,
-    notificationGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificationGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get notification by ID
- */
-
-export function useNotificationGet<TData = Awaited<ReturnType<typeof notificationGet>>, TError = HttpResponseError>(
- id: number,
-    notificationGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificationGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getNotificationGetQueryOptions(id,notificationGetBody,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
-export type markAsReadResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type markAsReadResponse400 = {
-  data: HttpResponseError
-  status: 400
-}
-
-export type markAsReadResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type markAsReadResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type markAsReadResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type markAsReadResponseSuccess = (markAsReadResponse200) & {
-  headers: Headers;
-};
-export type markAsReadResponseError = (markAsReadResponse400 | markAsReadResponse401 | markAsReadResponse404 | markAsReadResponse500) & {
-  headers: Headers;
-};
-
-export type markAsReadResponse = (markAsReadResponseSuccess | markAsReadResponseError)
-
-export const getMarkAsReadUrl = (id: number,) => {
-
-
-
-
-  return `/notifications/${id}/read`
-}
-
-/**
- * Mark a specific notification as read
- * @summary Mark notification as read
- */
-export const markAsRead = async (id: number,
-    markAsReadBody?: string, options?: RequestInit): Promise<markAsReadResponse> => {
-
-  return customFetcher<markAsReadResponse>(getMarkAsReadUrl(id),
-  {
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': '*/*', ...options?.headers },
-    body: JSON.stringify(markAsReadBody)
-  }
-);}
-
-
-
-
-export const getMarkAsReadMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markAsRead>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof markAsRead>>, TError,{id: number;data?: string}, TContext> => {
-
-const mutationKey = ['markAsRead'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof markAsRead>>, {id: number;data?: string}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  markAsRead(id,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type MarkAsReadMutationResult = NonNullable<Awaited<ReturnType<typeof markAsRead>>>
-    export type MarkAsReadMutationBody = string | undefined
-    export type MarkAsReadMutationError = HttpResponseError
-
-    /**
- * @summary Mark notification as read
- */
-export const useMarkAsRead = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markAsRead>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof markAsRead>>,
-        TError,
-        {id: number;data?: string},
-        TContext
-      > => {
-      return useMutation(getMarkAsReadMutationOptions(options), queryClient);
     }
 
 export type getUserPreferencesResponse200 = {
@@ -19892,6 +19547,351 @@ export function useGetNotificationSummary<TData = Awaited<ReturnType<typeof getN
 
 
 
+export type notificationDeleteResponse204 = {
+  data: void
+  status: 204
+}
+
+export type notificationDeleteResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type notificationDeleteResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type notificationDeleteResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type notificationDeleteResponseSuccess = (notificationDeleteResponse204) & {
+  headers: Headers;
+};
+export type notificationDeleteResponseError = (notificationDeleteResponse401 | notificationDeleteResponse404 | notificationDeleteResponse500) & {
+  headers: Headers;
+};
+
+export type notificationDeleteResponse = (notificationDeleteResponseSuccess | notificationDeleteResponseError)
+
+export const getNotificationDeleteUrl = (id: number,) => {
+
+
+
+
+  return `/notifications/${id}`
+}
+
+/**
+ * Delete a notification by ID
+ * @summary Delete notification
+ */
+export const notificationDelete = async (id: number,
+    notificationDeleteBody?: string, options?: RequestInit): Promise<notificationDeleteResponse> => {
+
+  return customFetcher<notificationDeleteResponse>(getNotificationDeleteUrl(id),
+  {
+    ...options,
+    method: 'DELETE',
+    headers: { 'Content-Type': '*/*', ...options?.headers },
+    body: JSON.stringify(notificationDeleteBody)
+  }
+);}
+
+
+
+
+export const getNotificationDeleteMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof notificationDelete>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof notificationDelete>>, TError,{id: number;data?: string}, TContext> => {
+
+const mutationKey = ['notificationDelete'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof notificationDelete>>, {id: number;data?: string}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  notificationDelete(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type NotificationDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof notificationDelete>>>
+    export type NotificationDeleteMutationBody = string | undefined
+    export type NotificationDeleteMutationError = HttpResponseError
+
+    /**
+ * @summary Delete notification
+ */
+export const useNotificationDelete = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof notificationDelete>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof notificationDelete>>,
+        TError,
+        {id: number;data?: string},
+        TContext
+      > => {
+      return useMutation(getNotificationDeleteMutationOptions(options), queryClient);
+    }
+
+export type notificationGetResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type notificationGetResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type notificationGetResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type notificationGetResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type notificationGetResponseSuccess = (notificationGetResponse200) & {
+  headers: Headers;
+};
+export type notificationGetResponseError = (notificationGetResponse401 | notificationGetResponse404 | notificationGetResponse500) & {
+  headers: Headers;
+};
+
+export type notificationGetResponse = (notificationGetResponseSuccess | notificationGetResponseError)
+
+export const getNotificationGetUrl = (id: number,) => {
+
+
+
+
+  return `/notifications/${id}`
+}
+
+/**
+ * Get a single notification by ID
+ * @summary Get notification by ID
+ */
+export const notificationGet = async (id: number,
+    notificationGetBody?: string, options?: RequestInit): Promise<notificationGetResponse> => {
+
+  return customFetcher<notificationGetResponse>(getNotificationGetUrl(id),
+  {
+    ...options,
+    method: 'GET',
+    headers: { 'Content-Type': '*/*', ...options?.headers },
+    body: JSON.stringify(notificationGetBody)
+  }
+);}
+
+
+
+
+
+export const getNotificationGetQueryKey = (id: number,
+    notificationGetBody?: string,) => {
+    return [
+    `/notifications/${id}`, notificationGetBody
+    ] as const;
+    }
+
+
+export const getNotificationGetQueryOptions = <TData = Awaited<ReturnType<typeof notificationGet>>, TError = HttpResponseError>(id: number,
+    notificationGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificationGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getNotificationGetQueryKey(id,notificationGetBody);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof notificationGet>>> = ({ signal }) => notificationGet(id,notificationGetBody, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof notificationGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type NotificationGetQueryResult = NonNullable<Awaited<ReturnType<typeof notificationGet>>>
+export type NotificationGetQueryError = HttpResponseError
+
+
+export function useNotificationGet<TData = Awaited<ReturnType<typeof notificationGet>>, TError = HttpResponseError>(
+ id: number,
+    notificationGetBody: undefined |  string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificationGet>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof notificationGet>>,
+          TError,
+          Awaited<ReturnType<typeof notificationGet>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useNotificationGet<TData = Awaited<ReturnType<typeof notificationGet>>, TError = HttpResponseError>(
+ id: number,
+    notificationGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificationGet>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof notificationGet>>,
+          TError,
+          Awaited<ReturnType<typeof notificationGet>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useNotificationGet<TData = Awaited<ReturnType<typeof notificationGet>>, TError = HttpResponseError>(
+ id: number,
+    notificationGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificationGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get notification by ID
+ */
+
+export function useNotificationGet<TData = Awaited<ReturnType<typeof notificationGet>>, TError = HttpResponseError>(
+ id: number,
+    notificationGetBody?: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificationGet>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getNotificationGetQueryOptions(id,notificationGetBody,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type markAsReadResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type markAsReadResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type markAsReadResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type markAsReadResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type markAsReadResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type markAsReadResponseSuccess = (markAsReadResponse200) & {
+  headers: Headers;
+};
+export type markAsReadResponseError = (markAsReadResponse400 | markAsReadResponse401 | markAsReadResponse404 | markAsReadResponse500) & {
+  headers: Headers;
+};
+
+export type markAsReadResponse = (markAsReadResponseSuccess | markAsReadResponseError)
+
+export const getMarkAsReadUrl = (id: number,) => {
+
+
+
+
+  return `/notifications/${id}/read`
+}
+
+/**
+ * Mark a specific notification as read
+ * @summary Mark notification as read
+ */
+export const markAsRead = async (id: number,
+    markAsReadBody?: string, options?: RequestInit): Promise<markAsReadResponse> => {
+
+  return customFetcher<markAsReadResponse>(getMarkAsReadUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': '*/*', ...options?.headers },
+    body: JSON.stringify(markAsReadBody)
+  }
+);}
+
+
+
+
+export const getMarkAsReadMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markAsRead>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof markAsRead>>, TError,{id: number;data?: string}, TContext> => {
+
+const mutationKey = ['markAsRead'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof markAsRead>>, {id: number;data?: string}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  markAsRead(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MarkAsReadMutationResult = NonNullable<Awaited<ReturnType<typeof markAsRead>>>
+    export type MarkAsReadMutationBody = string | undefined
+    export type MarkAsReadMutationError = HttpResponseError
+
+    /**
+ * @summary Mark notification as read
+ */
+export const useMarkAsRead = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markAsRead>>, TError,{id: number;data?: string}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof markAsRead>>,
+        TError,
+        {id: number;data?: string},
+        TContext
+      > => {
+      return useMutation(getMarkAsReadMutationOptions(options), queryClient);
+    }
+
 export type getAllRolesHandlerResponse200 = {
   data: GetAllRolesHandler200
   status: 200
@@ -20673,6 +20673,242 @@ export const useCreateRubric = <TError = HttpResponseError,
       return useMutation(getCreateRubricMutationOptions(options), queryClient);
     }
 
+export type saveRubricGradeResponse200 = {
+  data: SaveRubricGrade200
+  status: 200
+}
+
+export type saveRubricGradeResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type saveRubricGradeResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type saveRubricGradeResponse422 = {
+  data: HttpResponseError
+  status: 422
+}
+
+export type saveRubricGradeResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type saveRubricGradeResponseSuccess = (saveRubricGradeResponse200) & {
+  headers: Headers;
+};
+export type saveRubricGradeResponseError = (saveRubricGradeResponse400 | saveRubricGradeResponse401 | saveRubricGradeResponse422 | saveRubricGradeResponse500) & {
+  headers: Headers;
+};
+
+export type saveRubricGradeResponse = (saveRubricGradeResponseSuccess | saveRubricGradeResponseError)
+
+export const getSaveRubricGradeUrl = () => {
+
+
+
+
+  return `/rubrics/grades`
+}
+
+/**
+ * Submit a specific rubric scoring criteria grade for a student assignment submission
+ * @summary Save rubric grade
+ */
+export const saveRubricGrade = async (saveRubricGradeBody: SaveRubricGradeBody, options?: RequestInit): Promise<saveRubricGradeResponse> => {
+
+  return customFetcher<saveRubricGradeResponse>(getSaveRubricGradeUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(saveRubricGradeBody)
+  }
+);}
+
+
+
+
+export const getSaveRubricGradeMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveRubricGrade>>, TError,{data: SaveRubricGradeBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof saveRubricGrade>>, TError,{data: SaveRubricGradeBody}, TContext> => {
+
+const mutationKey = ['saveRubricGrade'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof saveRubricGrade>>, {data: SaveRubricGradeBody}> = (props) => {
+          const {data} = props ?? {};
+
+          return  saveRubricGrade(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SaveRubricGradeMutationResult = NonNullable<Awaited<ReturnType<typeof saveRubricGrade>>>
+    export type SaveRubricGradeMutationBody = SaveRubricGradeBody
+    export type SaveRubricGradeMutationError = HttpResponseError
+
+    /**
+ * @summary Save rubric grade
+ */
+export const useSaveRubricGrade = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveRubricGrade>>, TError,{data: SaveRubricGradeBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof saveRubricGrade>>,
+        TError,
+        {data: SaveRubricGradeBody},
+        TContext
+      > => {
+      return useMutation(getSaveRubricGradeMutationOptions(options), queryClient);
+    }
+
+export type getGradesBySubmissionResponse200 = {
+  data: GetGradesBySubmission200
+  status: 200
+}
+
+export type getGradesBySubmissionResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getGradesBySubmissionResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type getGradesBySubmissionResponse500 = {
+  data: HttpResponseError
+  status: 500
+}
+
+export type getGradesBySubmissionResponseSuccess = (getGradesBySubmissionResponse200) & {
+  headers: Headers;
+};
+export type getGradesBySubmissionResponseError = (getGradesBySubmissionResponse401 | getGradesBySubmissionResponse404 | getGradesBySubmissionResponse500) & {
+  headers: Headers;
+};
+
+export type getGradesBySubmissionResponse = (getGradesBySubmissionResponseSuccess | getGradesBySubmissionResponseError)
+
+export const getGetGradesBySubmissionUrl = (submissionId: number,) => {
+
+
+
+
+  return `/rubrics/submissions/${submissionId}/grades`
+}
+
+/**
+ * Retrieve rubric scoring criteria grades for a specific student assignment submission
+ * @summary Get grades for a submission
+ */
+export const getGradesBySubmission = async (submissionId: number, options?: RequestInit): Promise<getGradesBySubmissionResponse> => {
+
+  return customFetcher<getGradesBySubmissionResponse>(getGetGradesBySubmissionUrl(submissionId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetGradesBySubmissionQueryKey = (submissionId: number,) => {
+    return [
+    `/rubrics/submissions/${submissionId}/grades`
+    ] as const;
+    }
+
+
+export const getGetGradesBySubmissionQueryOptions = <TData = Awaited<ReturnType<typeof getGradesBySubmission>>, TError = HttpResponseError>(submissionId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGradesBySubmission>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetGradesBySubmissionQueryKey(submissionId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGradesBySubmission>>> = ({ signal }) => getGradesBySubmission(submissionId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: submissionId !== null && submissionId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGradesBySubmission>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetGradesBySubmissionQueryResult = NonNullable<Awaited<ReturnType<typeof getGradesBySubmission>>>
+export type GetGradesBySubmissionQueryError = HttpResponseError
+
+
+export function useGetGradesBySubmission<TData = Awaited<ReturnType<typeof getGradesBySubmission>>, TError = HttpResponseError>(
+ submissionId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGradesBySubmission>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getGradesBySubmission>>,
+          TError,
+          Awaited<ReturnType<typeof getGradesBySubmission>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetGradesBySubmission<TData = Awaited<ReturnType<typeof getGradesBySubmission>>, TError = HttpResponseError>(
+ submissionId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGradesBySubmission>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getGradesBySubmission>>,
+          TError,
+          Awaited<ReturnType<typeof getGradesBySubmission>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetGradesBySubmission<TData = Awaited<ReturnType<typeof getGradesBySubmission>>, TError = HttpResponseError>(
+ submissionId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGradesBySubmission>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get grades for a submission
+ */
+
+export function useGetGradesBySubmission<TData = Awaited<ReturnType<typeof getGradesBySubmission>>, TError = HttpResponseError>(
+ submissionId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGradesBySubmission>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetGradesBySubmissionQueryOptions(submissionId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
 export type deleteRubricResponse200 = {
   data: DomainResponse
   status: 200
@@ -21014,242 +21250,6 @@ export const useUpdateRubric = <TError = HttpResponseError,
       > => {
       return useMutation(getUpdateRubricMutationOptions(options), queryClient);
     }
-
-export type saveRubricGradeResponse200 = {
-  data: SaveRubricGrade200
-  status: 200
-}
-
-export type saveRubricGradeResponse400 = {
-  data: HttpResponseError
-  status: 400
-}
-
-export type saveRubricGradeResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type saveRubricGradeResponse422 = {
-  data: HttpResponseError
-  status: 422
-}
-
-export type saveRubricGradeResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type saveRubricGradeResponseSuccess = (saveRubricGradeResponse200) & {
-  headers: Headers;
-};
-export type saveRubricGradeResponseError = (saveRubricGradeResponse400 | saveRubricGradeResponse401 | saveRubricGradeResponse422 | saveRubricGradeResponse500) & {
-  headers: Headers;
-};
-
-export type saveRubricGradeResponse = (saveRubricGradeResponseSuccess | saveRubricGradeResponseError)
-
-export const getSaveRubricGradeUrl = () => {
-
-
-
-
-  return `/rubrics/grades`
-}
-
-/**
- * Submit a specific rubric scoring criteria grade for a student assignment submission
- * @summary Save rubric grade
- */
-export const saveRubricGrade = async (saveRubricGradeBody: SaveRubricGradeBody, options?: RequestInit): Promise<saveRubricGradeResponse> => {
-
-  return customFetcher<saveRubricGradeResponse>(getSaveRubricGradeUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(saveRubricGradeBody)
-  }
-);}
-
-
-
-
-export const getSaveRubricGradeMutationOptions = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveRubricGrade>>, TError,{data: SaveRubricGradeBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof saveRubricGrade>>, TError,{data: SaveRubricGradeBody}, TContext> => {
-
-const mutationKey = ['saveRubricGrade'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof saveRubricGrade>>, {data: SaveRubricGradeBody}> = (props) => {
-          const {data} = props ?? {};
-
-          return  saveRubricGrade(data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type SaveRubricGradeMutationResult = NonNullable<Awaited<ReturnType<typeof saveRubricGrade>>>
-    export type SaveRubricGradeMutationBody = SaveRubricGradeBody
-    export type SaveRubricGradeMutationError = HttpResponseError
-
-    /**
- * @summary Save rubric grade
- */
-export const useSaveRubricGrade = <TError = HttpResponseError,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveRubricGrade>>, TError,{data: SaveRubricGradeBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof saveRubricGrade>>,
-        TError,
-        {data: SaveRubricGradeBody},
-        TContext
-      > => {
-      return useMutation(getSaveRubricGradeMutationOptions(options), queryClient);
-    }
-
-export type getGradesBySubmissionResponse200 = {
-  data: GetGradesBySubmission200
-  status: 200
-}
-
-export type getGradesBySubmissionResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type getGradesBySubmissionResponse404 = {
-  data: HttpResponseError
-  status: 404
-}
-
-export type getGradesBySubmissionResponse500 = {
-  data: HttpResponseError
-  status: 500
-}
-
-export type getGradesBySubmissionResponseSuccess = (getGradesBySubmissionResponse200) & {
-  headers: Headers;
-};
-export type getGradesBySubmissionResponseError = (getGradesBySubmissionResponse401 | getGradesBySubmissionResponse404 | getGradesBySubmissionResponse500) & {
-  headers: Headers;
-};
-
-export type getGradesBySubmissionResponse = (getGradesBySubmissionResponseSuccess | getGradesBySubmissionResponseError)
-
-export const getGetGradesBySubmissionUrl = (submissionId: number,) => {
-
-
-
-
-  return `/rubrics/submissions/${submissionId}/grades`
-}
-
-/**
- * Retrieve rubric scoring criteria grades for a specific student assignment submission
- * @summary Get grades for a submission
- */
-export const getGradesBySubmission = async (submissionId: number, options?: RequestInit): Promise<getGradesBySubmissionResponse> => {
-
-  return customFetcher<getGradesBySubmissionResponse>(getGetGradesBySubmissionUrl(submissionId),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getGetGradesBySubmissionQueryKey = (submissionId: number,) => {
-    return [
-    `/rubrics/submissions/${submissionId}/grades`
-    ] as const;
-    }
-
-
-export const getGetGradesBySubmissionQueryOptions = <TData = Awaited<ReturnType<typeof getGradesBySubmission>>, TError = HttpResponseError>(submissionId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGradesBySubmission>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetGradesBySubmissionQueryKey(submissionId);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGradesBySubmission>>> = ({ signal }) => getGradesBySubmission(submissionId, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: submissionId !== null && submissionId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGradesBySubmission>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetGradesBySubmissionQueryResult = NonNullable<Awaited<ReturnType<typeof getGradesBySubmission>>>
-export type GetGradesBySubmissionQueryError = HttpResponseError
-
-
-export function useGetGradesBySubmission<TData = Awaited<ReturnType<typeof getGradesBySubmission>>, TError = HttpResponseError>(
- submissionId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGradesBySubmission>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getGradesBySubmission>>,
-          TError,
-          Awaited<ReturnType<typeof getGradesBySubmission>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetGradesBySubmission<TData = Awaited<ReturnType<typeof getGradesBySubmission>>, TError = HttpResponseError>(
- submissionId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGradesBySubmission>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getGradesBySubmission>>,
-          TError,
-          Awaited<ReturnType<typeof getGradesBySubmission>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetGradesBySubmission<TData = Awaited<ReturnType<typeof getGradesBySubmission>>, TError = HttpResponseError>(
- submissionId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGradesBySubmission>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get grades for a submission
- */
-
-export function useGetGradesBySubmission<TData = Awaited<ReturnType<typeof getGradesBySubmission>>, TError = HttpResponseError>(
- submissionId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGradesBySubmission>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetGradesBySubmissionQueryOptions(submissionId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
 
 export type statsGetResponse200 = {
   data: StatsGet200
@@ -21594,6 +21594,127 @@ export const useTeamCreate = <TError = HttpResponseError,
       > => {
       return useMutation(getTeamCreateMutationOptions(options), queryClient);
     }
+
+export type teamGetStatResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type teamGetStatResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type teamGetStatResponseSuccess = (teamGetStatResponse200) & {
+  headers: Headers;
+};
+export type teamGetStatResponseError = (teamGetStatResponse401) & {
+  headers: Headers;
+};
+
+export type teamGetStatResponse = (teamGetStatResponseSuccess | teamGetStatResponseError)
+
+export const getTeamGetStatUrl = () => {
+
+
+
+
+  return `/teams/stat`
+}
+
+/**
+ * Get the total number of teams
+ * @summary Get total team count
+ */
+export const teamGetStat = async ( options?: RequestInit): Promise<teamGetStatResponse> => {
+
+  return customFetcher<teamGetStatResponse>(getTeamGetStatUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getTeamGetStatQueryKey = () => {
+    return [
+    `/teams/stat`
+    ] as const;
+    }
+
+
+export const getTeamGetStatQueryOptions = <TData = Awaited<ReturnType<typeof teamGetStat>>, TError = HttpResponseError>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof teamGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getTeamGetStatQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof teamGetStat>>> = ({ signal }) => teamGetStat({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof teamGetStat>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type TeamGetStatQueryResult = NonNullable<Awaited<ReturnType<typeof teamGetStat>>>
+export type TeamGetStatQueryError = HttpResponseError
+
+
+export function useTeamGetStat<TData = Awaited<ReturnType<typeof teamGetStat>>, TError = HttpResponseError>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof teamGetStat>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof teamGetStat>>,
+          TError,
+          Awaited<ReturnType<typeof teamGetStat>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useTeamGetStat<TData = Awaited<ReturnType<typeof teamGetStat>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof teamGetStat>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof teamGetStat>>,
+          TError,
+          Awaited<ReturnType<typeof teamGetStat>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useTeamGetStat<TData = Awaited<ReturnType<typeof teamGetStat>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof teamGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get total team count
+ */
+
+export function useTeamGetStat<TData = Awaited<ReturnType<typeof teamGetStat>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof teamGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getTeamGetStatQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export type teamDeleteResponse200 = {
   data: DomainResponse
@@ -22407,127 +22528,6 @@ export const useRemoveMember = <TError = HttpResponseError,
       return useMutation(getRemoveMemberMutationOptions(options), queryClient);
     }
 
-export type teamGetStatResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type teamGetStatResponse401 = {
-  data: HttpResponseError
-  status: 401
-}
-
-export type teamGetStatResponseSuccess = (teamGetStatResponse200) & {
-  headers: Headers;
-};
-export type teamGetStatResponseError = (teamGetStatResponse401) & {
-  headers: Headers;
-};
-
-export type teamGetStatResponse = (teamGetStatResponseSuccess | teamGetStatResponseError)
-
-export const getTeamGetStatUrl = () => {
-
-
-
-
-  return `/teams/stat`
-}
-
-/**
- * Get the total number of teams
- * @summary Get total team count
- */
-export const teamGetStat = async ( options?: RequestInit): Promise<teamGetStatResponse> => {
-
-  return customFetcher<teamGetStatResponse>(getTeamGetStatUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getTeamGetStatQueryKey = () => {
-    return [
-    `/teams/stat`
-    ] as const;
-    }
-
-
-export const getTeamGetStatQueryOptions = <TData = Awaited<ReturnType<typeof teamGetStat>>, TError = HttpResponseError>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof teamGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getTeamGetStatQueryKey();
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof teamGetStat>>> = ({ signal }) => teamGetStat({ signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof teamGetStat>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type TeamGetStatQueryResult = NonNullable<Awaited<ReturnType<typeof teamGetStat>>>
-export type TeamGetStatQueryError = HttpResponseError
-
-
-export function useTeamGetStat<TData = Awaited<ReturnType<typeof teamGetStat>>, TError = HttpResponseError>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof teamGetStat>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof teamGetStat>>,
-          TError,
-          Awaited<ReturnType<typeof teamGetStat>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useTeamGetStat<TData = Awaited<ReturnType<typeof teamGetStat>>, TError = HttpResponseError>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof teamGetStat>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof teamGetStat>>,
-          TError,
-          Awaited<ReturnType<typeof teamGetStat>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useTeamGetStat<TData = Awaited<ReturnType<typeof teamGetStat>>, TError = HttpResponseError>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof teamGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get total team count
- */
-
-export function useTeamGetStat<TData = Awaited<ReturnType<typeof teamGetStat>>, TError = HttpResponseError>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof teamGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getTeamGetStatQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-
 export type getAllUsersHandlerResponse200 = {
   data: GetAllUsersHandler200
   status: 200
@@ -22644,6 +22644,120 @@ export function useGetAllUsersHandler<TData = Awaited<ReturnType<typeof getAllUs
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetAllUsersHandlerQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type userGetStatResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type userGetStatResponseSuccess = (userGetStatResponse200) & {
+  headers: Headers;
+};
+;
+
+export type userGetStatResponse = (userGetStatResponseSuccess)
+
+export const getUserGetStatUrl = () => {
+
+
+
+
+  return `/users/stat`
+}
+
+/**
+ * Get the total number of users
+ * @summary Get total user count
+ */
+export const userGetStat = async ( options?: RequestInit): Promise<userGetStatResponse> => {
+
+  return customFetcher<userGetStatResponse>(getUserGetStatUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getUserGetStatQueryKey = () => {
+    return [
+    `/users/stat`
+    ] as const;
+    }
+
+
+export const getUserGetStatQueryOptions = <TData = Awaited<ReturnType<typeof userGetStat>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getUserGetStatQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof userGetStat>>> = ({ signal }) => userGetStat({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof userGetStat>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type UserGetStatQueryResult = NonNullable<Awaited<ReturnType<typeof userGetStat>>>
+export type UserGetStatQueryError = unknown
+
+
+export function useUserGetStat<TData = Awaited<ReturnType<typeof userGetStat>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof userGetStat>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof userGetStat>>,
+          TError,
+          Awaited<ReturnType<typeof userGetStat>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useUserGetStat<TData = Awaited<ReturnType<typeof userGetStat>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userGetStat>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof userGetStat>>,
+          TError,
+          Awaited<ReturnType<typeof userGetStat>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useUserGetStat<TData = Awaited<ReturnType<typeof userGetStat>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get total user count
+ */
+
+export function useUserGetStat<TData = Awaited<ReturnType<typeof userGetStat>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getUserGetStatQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -22987,118 +23101,4 @@ export const useUpdateUserHandler = <TError = HttpResponseError,
       > => {
       return useMutation(getUpdateUserHandlerMutationOptions(options), queryClient);
     }
-
-export type userGetStatResponse200 = {
-  data: DomainResponse
-  status: 200
-}
-
-export type userGetStatResponseSuccess = (userGetStatResponse200) & {
-  headers: Headers;
-};
-;
-
-export type userGetStatResponse = (userGetStatResponseSuccess)
-
-export const getUserGetStatUrl = () => {
-
-
-
-
-  return `/users/stat`
-}
-
-/**
- * Get the total number of users
- * @summary Get total user count
- */
-export const userGetStat = async ( options?: RequestInit): Promise<userGetStatResponse> => {
-
-  return customFetcher<userGetStatResponse>(getUserGetStatUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getUserGetStatQueryKey = () => {
-    return [
-    `/users/stat`
-    ] as const;
-    }
-
-
-export const getUserGetStatQueryOptions = <TData = Awaited<ReturnType<typeof userGetStat>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getUserGetStatQueryKey();
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof userGetStat>>> = ({ signal }) => userGetStat({ signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof userGetStat>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type UserGetStatQueryResult = NonNullable<Awaited<ReturnType<typeof userGetStat>>>
-export type UserGetStatQueryError = unknown
-
-
-export function useUserGetStat<TData = Awaited<ReturnType<typeof userGetStat>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof userGetStat>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof userGetStat>>,
-          TError,
-          Awaited<ReturnType<typeof userGetStat>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUserGetStat<TData = Awaited<ReturnType<typeof userGetStat>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userGetStat>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof userGetStat>>,
-          TError,
-          Awaited<ReturnType<typeof userGetStat>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUserGetStat<TData = Awaited<ReturnType<typeof userGetStat>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get total user count
- */
-
-export function useUserGetStat<TData = Awaited<ReturnType<typeof userGetStat>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userGetStat>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getUserGetStatQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
 

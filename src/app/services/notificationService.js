@@ -1,21 +1,11 @@
 // Notification Service
-// Real API integration matching swagger endpoints.
-//
-// Endpoints:
-//   GET    /notifications                    — List notifications
-//   POST   /notifications                    — Create notification
-//   GET    /notifications/unread             — Get unread notifications
-//   GET    /notifications/summary            — Get notification summary
-//   PUT    /notifications/read-all           — Mark all as read
-//   GET    /notifications/{id}               — Get notification by ID
-//   DELETE /notifications/{id}               — Delete notification
-//   PUT    /notifications/{id}/read          — Mark as read
-//   GET    /notifications/preferences        — Get preferences
-//   POST   /notifications/preferences        — Create preference
-//   GET    /notifications/preferences/{type} — Get preference by type
-//   PUT    /notifications/preferences/{type} — Update preference
-//   DELETE /notifications/preferences/{type} — Delete preference
+// Migrated to use orval-generated functions where available
 
+import {
+  notificationCreate as orvalNotificationCreate,
+  notificationDelete as orvalNotificationDelete,
+  notificationGet as orvalNotificationGet,
+} from "@/app/api/orval";
 import { apiDelete, apiGet, apiPost, apiPut } from "@/app/services/http";
 
 // ==================== NOTIFICATIONS ====================
@@ -67,7 +57,7 @@ export const fetchNotificationSummary = async () => {
  */
 export const fetchNotificationById = async (id) => {
   try {
-    return await apiGet(`/notifications/${id}`);
+    return await orvalNotificationGet(id);
   } catch (error) {
     console.error("Error fetching notification:", error);
     throw error;
@@ -80,7 +70,7 @@ export const fetchNotificationById = async (id) => {
  */
 export const createNotification = async (data) => {
   try {
-    return await apiPost("/notifications", data);
+    return await orvalNotificationCreate(data);
   } catch (error) {
     console.error("Error creating notification:", error);
     throw error;
@@ -119,7 +109,7 @@ export const markAllAsRead = async () => {
  */
 export const deleteNotification = async (id) => {
   try {
-    await apiDelete(`/notifications/${id}`);
+    await orvalNotificationDelete(id);
   } catch (error) {
     console.error("Error deleting notification:", error);
     throw error;
