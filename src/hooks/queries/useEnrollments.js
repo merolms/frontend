@@ -19,10 +19,10 @@ import { queryKeys } from "@/lib/queryKeys";
 
 // ─── Queries ──────────────────────────────────────────────
 
-export const useMyEnrollments = (limit = 100) => {
+export const useMyEnrollments = () => {
   return useQuery({
     queryKey: queryKeys.enrollments.my(),
-    queryFn: () => getMyEnrollments(limit),
+    queryFn: () => getMyEnrollments(),
   });
 };
 

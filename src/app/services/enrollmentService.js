@@ -3,18 +3,18 @@
 // Lesson completion functions kept custom as they're not in orval
 
 import {
-  courseMyEnrollments,
   enrollmentAdminEnrollTeam,
   enrollmentAdminEnrollUser,
   enrollmentDrop,
   enrollmentEnroll,
   enrollmentGet,
+  getMyEnrollments as orvalGetMyEnrollments,
 } from "@/app/api/orval";
 import { apiGet, apiPost } from "@/app/services/http";
 
 // ==================== ORVAL-BASED FUNCTIONS ====================
 
-export const enrollInCourseAPI = async (courseId) => {
+export const enrollInCourse = async (courseId) => {
   try {
     return await enrollmentEnroll(courseId);
   } catch (error) {
@@ -41,10 +41,9 @@ export const dropCourseAPI = async (courseId) => {
   }
 };
 
-export const getMyEnrollments = async (limit = 100) => {
+export const getMyEnrollments = async () => {
   try {
-    const orvalParams = { limit: limit || 100 };
-    const data = await courseMyEnrollments(orvalParams);
+    const data = await orvalGetMyEnrollments();
     return data?.data || [];
   } catch (error) {
     console.error("Error fetching my enrollments:", error);

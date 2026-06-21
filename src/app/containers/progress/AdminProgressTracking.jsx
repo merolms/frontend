@@ -3,7 +3,7 @@ import { Award, BarChart3, Search, TrendingUp, Users } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { fetchEnrollments } from "@/app/services/enrollmentService";
+import { getMyEnrollments } from "@/app/services/enrollmentService";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
@@ -32,7 +32,7 @@ const AdminProgressTracking = () => {
   // TanStack Query for fetching all enrollments
   const { data: allEnrollments = [], isLoading } = useQuery({
     queryKey: ["enrollments", "admin", "all"],
-    queryFn: () => fetchEnrollments({ sort: "recent" }),
+    queryFn: () => getMyEnrollments(),
   });
 
   // Client-side filtering and pagination

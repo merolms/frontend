@@ -89,7 +89,9 @@ const CourseContainer = () => {
     page,
     limit,
   });
-
+  if(!isLoading){
+    console.log("courses:", data)
+  }
   const { data: categories = [] } = useCategories({ start: 0, limit: 100 });
 
   // Bulk operation mutations
@@ -104,7 +106,7 @@ const CourseContainer = () => {
   // Client-side filtering and sorting for duration and advanced sorting
   const { filteredCourses: clientFilteredCourses } = useMemo(() => {
     let data = [...courses];
-
+    
     // Duration filtering
     if (duration && duration !== "all") {
       data = data.filter((course) => {
