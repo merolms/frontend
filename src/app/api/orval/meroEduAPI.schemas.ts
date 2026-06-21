@@ -226,8 +226,6 @@ export type DomainStatus = typeof DomainStatus[keyof typeof DomainStatus];
 
 
 export const DomainStatus = {
-  Success: 'success',
-  Error: 'error',
   CourseInDraft: 'draft',
   CourseArchived: 'archived',
   CourseAssigned: 'assigned',
@@ -235,11 +233,13 @@ export const DomainStatus = {
   CoursePublic: 'public',
   CourseCreated: 'created',
   CourseComplete: 'completed',
-  StatusSuccess: 'queued',
-  StatusQueued: 'sending',
-  StatusSending: 'unknown',
-  StatusUnknown: 'scheduled',
-  StatusScheduled: 'retrying',
+  StatusSuccess: 'success',
+  StatusQueued: 'queued',
+  StatusSending: 'sending',
+  StatusUnknown: 'unknown',
+  StatusScheduled: 'scheduled',
+  StatusRetry: 'retrying',
+  Success: 'error',
 } as const;
 
 export interface DomainCourse {
@@ -307,41 +307,6 @@ export interface DomainCoursePrerequisite {
   id?: number;
   prerequisiteCourseId?: number;
   prerequisiteType?: DomainPrerequisiteType;
-}
-
-export type DomainCourseUpdateDTOEnrollmentType = typeof DomainCourseUpdateDTOEnrollmentType[keyof typeof DomainCourseUpdateDTOEnrollmentType];
-
-
-export const DomainCourseUpdateDTOEnrollmentType = {
-  open: 'open',
-  approval: 'approval',
-  invite_only: 'invite_only',
-  paid: 'paid',
-} as const;
-
-export interface DomainCourseUpdateDTO {
-  authorId?: number;
-  categoryId?: number;
-  /**
-     * @minimum 0
-     * @maximum 100
-     */
-  completionThreshold?: number;
-  /** @maxLength 5000 */
-  description?: string;
-  /** @minimum 0 */
-  duration?: number;
-  enrollmentType?: DomainCourseUpdateDTOEnrollmentType;
-  imageUrl?: string;
-  isCertificateEnabled?: boolean;
-  isFeatured?: boolean;
-  status?: DomainStatus;
-  /**
-     * @minLength 3
-     * @maxLength 256
-     */
-  title?: string;
-  version?: number;
 }
 
 export interface DomainCourseVersion {
@@ -1461,13 +1426,6 @@ limit: number;
 
 export type CourseCreateBody = { [key: string]: unknown } | DomainCourse;
 
-export type CoursePartialUpdateBody = { [key: string]: unknown } | DomainCourseUpdateDTO;
-
-export type CoursePartialUpdate200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
 export type CourseUpdateBody = { [key: string]: unknown } | DomainCourse;
 
 export type EnrollmentAdminEnrollTeamBody = { [key: string]: unknown } | HttpAdminEnrollTeamRequest;
@@ -1477,11 +1435,6 @@ export type EnrollmentAdminEnrollUserBody = { [key: string]: unknown } | HttpAdm
 export type EnrollmentDropBody = { [key: string]: unknown };
 
 export type EnrollmentEnrollBody = { [key: string]: unknown };
-
-export type ToggleImportant200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
 
 export type CreateLessonForCourseBody = { [key: string]: unknown } | DomainLesson;
 
