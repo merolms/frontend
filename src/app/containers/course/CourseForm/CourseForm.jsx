@@ -46,7 +46,7 @@ const CourseForm = ({
 
   const handleUnsplashSelect = (url) => {
     setCoverError?.(false);
-    setForm?.((prev) => ({ ...prev, coverImage: url }));
+    setForm?.((prev) => ({ ...prev, imageUrl: url }));
     setUnsplashOpen(false);
   };
 
@@ -58,7 +58,7 @@ const CourseForm = ({
       setCoverUploading?.(true);
       setCoverError?.(false);
       const response = await uploadCourseImage(file);
-      setForm?.((prev) => ({ ...prev, coverImage: response?.url || response?.imageURL || "" }));
+      setForm?.((prev) => ({ ...prev, imageUrl: response?.url || response?.imageURL || "" }));
     } catch (err) {
       setCoverError?.(true);
       console.error("Upload failed:", err);
@@ -209,13 +209,13 @@ const CourseForm = ({
         <label className="text-text-primary text-xs font-semibold">Cover Image</label>
         <div className="mt-1 flex gap-2">
           <input
-            name="coverImage"
+            name="imageUrl"
             placeholder="https://example.com/cover.jpg"
-            value={form?.coverImage || ""}
+            value={form?.imageUrl || ""}
             onChange={(e) => {
               setCoverError?.(false);
-              onFieldChange?.("coverImage", e.target.value);
-              setForm?.((prev) => ({ ...prev, coverImage: e.target.value }));
+              onFieldChange?.("imageUrl", e.target.value);
+              setForm?.((prev) => ({ ...prev, imageUrl: e.target.value }));
             }}
             className={`${inputCls} flex-1`}
           />
@@ -235,10 +235,10 @@ const CourseForm = ({
             />
           </label>
         </div>
-        {form?.coverImage && (
+        {form?.imageUrl && (
           <div className="relative mt-2 inline-block">
             <img
-              src={form.coverImage}
+              src={form.imageUrl}
               alt="Cover"
               className="h-36 w-36 rounded-md object-cover"
               onError={() => setCoverError?.(true)}
@@ -249,8 +249,8 @@ const CourseForm = ({
               variant="danger"
               onClick={() => {
                 setCoverError?.(false);
-                onFieldChange?.("coverImage", "");
-                setForm?.((prev) => ({ ...prev, coverImage: "" }));
+                onFieldChange?.("imageUrl", "");
+                setForm?.((prev) => ({ ...prev, imageUrl: "" }));
               }}
               className="absolute top-1 right-1"
             >

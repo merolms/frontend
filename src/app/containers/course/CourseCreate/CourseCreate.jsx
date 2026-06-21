@@ -34,7 +34,7 @@ const CourseCreate = () => {
     } catch {
       /* ignore */
     }
-    return { title: "", description: "", category: null, coverImage: "", duration: "" };
+    return { title: "", description: "", category: null, imageUrl: "", duration: "" };
   });
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState(null);
@@ -45,7 +45,7 @@ const CourseCreate = () => {
 
   const { updateForm, clearDirty } = useUnsavedChanges(
     form,
-    { title: "", description: "", category: null, coverImage: "", duration: "" },
+    { title: "", description: "", category: null, imageUrl: "", duration: "" },
     setForm,
     draft_KEY
   );
@@ -74,7 +74,7 @@ const CourseCreate = () => {
         title: form.title,
         description: form.description,
         category: form.category,
-        coverImage: form.coverImage,
+        imageUrl: form.imageUrl,
         duration: form.duration ? parseInt(form.duration) : null,
         instructorID: currentUser?.id,
       });

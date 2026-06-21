@@ -29,7 +29,7 @@ const CourseEdit = () => {
     title: "",
     description: "",
     category: null,
-    coverImage: "",
+    imageUrl: "",
     duration: "",
     status: "draft",
   });
@@ -41,7 +41,7 @@ const CourseEdit = () => {
       title: course.title || "",
       description: course.description || "",
       category: course.categoryId || null,
-      coverImage: course.coverImage || course.imageURL || "",
+      imageUrl: course.imageUrl || course.imageURL || "",
       duration: course.duration || "",
       status: course.status || "draft",
     });
@@ -54,7 +54,7 @@ const CourseEdit = () => {
       title: course?.title || "",
       description: course?.description || "",
       category: course?.categoryId || null,
-      coverImage: course?.coverImage || course?.imageURL || "",
+      imageUrl: course?.imageUrl || course?.imageURL || "",
       duration: course?.duration || "",
       status: course?.status || "draft",
     },
@@ -82,7 +82,7 @@ const CourseEdit = () => {
           title: form.title,
           description: form.description,
           category: form.category,
-          coverImage: form.coverImage,
+          imageUrl: form.imageUrl,
           duration: form.duration ? parseInt(form.duration) : null,
         },
       });
