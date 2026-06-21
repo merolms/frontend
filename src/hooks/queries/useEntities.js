@@ -26,16 +26,6 @@ import {
   useCategorySetParent,
   useCategoryUpdate,
 } from "@/app/api/orval";
-// Migrated to orval-generated hooks for learning paths
-import {
-  useLearningPathCreate,
-  useLearningPathDelete,
-  useLearningPathEnroll,
-  useLearningPathGetAll,
-  useLearningPathGetByID,
-  useLearningPathGetProgress,
-  useLearningPathUpdate,
-} from "@/app/api/orval";
 // Enrollment hooks - orval-generated
 import {
   useEnrollmentAdminEnrollTeam,
@@ -55,9 +45,6 @@ import { useStatsGet } from "@/app/api/orval";
 import {
   adminEnrollTeamInLearningPath,
   adminEnrollUserInLearningPath,
-} from "@/app/services/learningPathService";
-// Keep these functions from learning path service - not in orval or need custom handling
-import {
   getLearningPathCategories,
   getLearningPathEnrollments,
   reorderLearningPathCourses,
@@ -279,15 +266,11 @@ export const useCategories = (params = {}) => {
   if (params.start !== undefined) orvalParams.start = params.start;
   if (params.limit !== undefined) orvalParams.limit = params.limit;
 
-  const result = useCategoryGetAll(orvalParams);
+  const result = useCategoryGetAll(undefined, orvalParams);
 
   // The custom fetcher unwraps { message, data } envelope
   // Orval's response structure: { data: DomainCategory[] }
   return result;
-  return {
-    ...result,
-    data: result.data || [], // Handle both wrapped and unwrapped data
-  };
 };
 
 export const useCategory = (id) => {
@@ -392,43 +375,30 @@ export const useSetCategoryParent = () => {
   };
 };
 
-// ─── Learning Path Hooks (Orval-generated) ─────────────────
+// ─── Learning Path Hooks (NOT IMPLEMENTED YET) ─────────────────
+// Learning paths are not yet available in the backend API
 
-export const useLearningPaths = (params = {}) => {
-  const orvalParams = {};
-  if (params.page !== undefined) orvalParams.page = params.page;
-  if (params.limit !== undefined) orvalParams.limit = params.limit;
-  if (params.search !== undefined) orvalParams.search = params.search;
-  if (params.category !== undefined && params.category !== "all")
-    orvalParams.category = params.category;
-  if (params.status !== undefined && params.status !== "all") orvalParams.status = params.status;
-
-  const result = useLearningPathGetAll(orvalParams);
-
-  // Transform data to match expected format
-  return {
-    ...result,
-    data: result.data?.data ||
-      result.data || { paths: [], total: 0, page: 1, limit: 6, totalPages: 1 },
-  };
+export const useLearningPaths = () => {
+  return useQuery({
+    queryKey: queryKeys.learningPaths.list(),
+    queryFn: () => Promise.resolve({ paths: [], total: 0, page: 1, limit: 6, totalPages: 1 }),
+  });
 };
 
-export const useLearningPath = (id) => {
-  const result = useLearningPathGetByID(id);
-
-  return {
-    ...result,
-    enabled: !!id,
-  };
+export const useLearningPath = () => {
+  return useQuery({
+    queryKey: queryKeys.learningPaths.detail(0),
+    queryFn: () => Promise.resolve(null),
+    enabled: false,
+  });
 };
 
-export const useLearningPathProgress = (id) => {
-  const result = useLearningPathGetProgress(id);
-
-  return {
-    ...result,
-    enabled: !!id,
-  };
+export const useLearningPathProgress = () => {
+  return useQuery({
+    queryKey: queryKeys.learningPaths.progress(0),
+    queryFn: () => Promise.resolve(null),
+    enabled: false,
+  });
 };
 
 export const useLearningPathCategories = () => {
@@ -439,63 +409,27 @@ export const useLearningPathCategories = () => {
 };
 
 export const useCreateLearningPath = () => {
-  const orvalMutation = useLearningPathCreate();
-
-  return {
-    ...orvalMutation,
-    mutate: async (data) => {
-      // Orval expects { data: DomainCreateLearningPathRequest }
-      return orvalMutation.mutateAsync({ data });
-    },
-    mutateAsync: async (data) => {
-      return orvalMutation.mutateAsync({ data });
-    },
-  };
+  return useMutation({
+    mutationFn: () => Promise.reject(new Error("Learning paths not implemented yet")),
+  });
 };
 
 export const useUpdateLearningPath = () => {
-  const orvalMutation = useLearningPathUpdate();
-
-  return {
-    ...orvalMutation,
-    mutate: async ({ id, data }) => {
-      // Orval expects { id: number; data: DomainUpdateLearningPathRequest }
-      return orvalMutation.mutateAsync({ id, data });
-    },
-    mutateAsync: async ({ id, data }) => {
-      return orvalMutation.mutateAsync({ id, data });
-    },
-  };
+  return useMutation({
+    mutationFn: () => Promise.reject(new Error("Learning paths not implemented yet")),
+  });
 };
 
 export const useDeleteLearningPath = () => {
-  const orvalMutation = useLearningPathDelete();
-
-  return {
-    ...orvalMutation,
-    mutate: async (id) => {
-      // Orval expects { id: number }
-      return orvalMutation.mutateAsync({ id });
-    },
-    mutateAsync: async (id) => {
-      return orvalMutation.mutateAsync({ id });
-    },
-  };
+  return useMutation({
+    mutationFn: () => Promise.reject(new Error("Learning paths not implemented yet")),
+  });
 };
 
 export const useEnrollInLearningPath = () => {
-  const orvalMutation = useLearningPathEnroll();
-
-  return {
-    ...orvalMutation,
-    mutate: async (id) => {
-      // Orval expects just the id as a parameter, not wrapped
-      return orvalMutation.mutateAsync({ id });
-    },
-    mutateAsync: async (id) => {
-      return orvalMutation.mutateAsync({ id });
-    },
-  };
+  return useMutation({
+    mutationFn: () => Promise.reject(new Error("Learning paths not implemented yet")),
+  });
 };
 
 // Keep admin enroll functions as they use the service for now

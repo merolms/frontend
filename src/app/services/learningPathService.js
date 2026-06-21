@@ -1,8 +1,8 @@
 // Learning Path API Service - Reduced
 // Only contains helper functions that aren't available in orval or need special handling
-// All main CRUD operations have been migrated to orval-generated hooks
+// Learning path CRUD operations are NOT implemented in backend yet
 
-import { apiGet, apiPost, apiPut } from "@/app/services/http";
+import { apiPost, apiPut } from "@/app/services/http";
 
 // ==================== CATEGORIES ====================
 // GET /learning-paths/categories

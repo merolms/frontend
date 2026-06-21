@@ -1,7 +1,19 @@
 // Course API Service
 // Handles all API calls related to courses and lessons
+// Migrated to use orval-generated functions where available
 
-import { apiDelete, apiGet, apiPost, apiPut, apiUpload } from "@/app/services/http";
+import {
+  courseCreate,
+  courseDelete,
+  courseGetAll,
+  courseGetByID,
+  courseUpdate,
+  lessonCreate,
+  lessonDelete,
+  lessonGetAll,
+  lessonUpdate,
+  reorderLessons as orvalReorderLessons,
+} from "@/app/api/orval";
 
 // ==================== FIELD MAPPING ====================
 // Backend sends: created_at, updated_at (integer unix timestamps)
@@ -51,9 +63,6 @@ const normalizeCourse = (c) => ({
  * Fetch paginated courses. Frontend uses page/limit; backend uses start/limit.
  * Returns { courses, total, page, limit, totalPages } for the frontend.
  */
-// GET /courses returns Summaries { total, data: Course[] }
-// apiGet unwraps to data, so we get the array directly.
-// For total, we need the raw envelope — use a separate fetch for that.
 const CLIENT_FILTER_FETCH_LIMIT = 500;
 
 export const fetchCourses = async (params = {}) => {
@@ -65,21 +74,20 @@ export const fetchCourses = async (params = {}) => {
     const category = params.category && params.category !== "all" ? params.category : "";
     const sort = params.sort && params.sort !== "all" ? params.sort : "";
 
-    const searchQS = search ? `&search=${encodeURIComponent(search)}` : "";
+    const orvalParams = {
+      start: (page - 1) * limit,
+      limit,
+      search: search || undefined,
+    };
+
     const needsClientFiltering = Boolean(status || category || sort);
 
     if (!needsClientFiltering) {
-      const start = (page - 1) * limit;
-      const [list, stat] = await Promise.all([
-        apiGet(`/courses?start=${start}&limit=${limit}${searchQS}`),
-        apiGet(`/courses/stat${search ? `?search=${encodeURIComponent(search)}` : ""}`).catch(
-          () => null
-        ),
-      ]);
-      const total =
-        typeof stat?.count === "number" ? stat.count : Array.isArray(list) ? list.length : 0;
+      const data = await courseGetAll(orvalParams);
+      const list = data?.data || [];
+      const total = data?.total || Array.isArray(list) ? list.length : 0;
       return {
-        courses: (Array.isArray(list) ? list : []).map(normalizeCourse),
+        courses: list.map(normalizeCourse),
         total,
         page,
         limit,
@@ -87,8 +95,12 @@ export const fetchCourses = async (params = {}) => {
       };
     }
 
-    const list = await apiGet(`/courses?start=0&limit=${CLIENT_FILTER_FETCH_LIMIT}${searchQS}`);
-    let courses = (Array.isArray(list) ? list : []).map(normalizeCourse);
+    const data = await courseGetAll({
+      start: 0,
+      limit: CLIENT_FILTER_FETCH_LIMIT,
+      search: search || undefined,
+    });
+    let courses = (data?.data || []).map(normalizeCourse);
     if (status) courses = courses.filter((c) => c.status === status);
     if (category) courses = courses.filter((c) => c.category === category);
     if (sort === "title") {
@@ -111,11 +123,10 @@ export const fetchCourses = async (params = {}) => {
 
 /**
  * Fetch a single course by ID
- * GET /courses/{id} returns Response { data: Course }
  */
 export const fetchCourseById = async (id) => {
   try {
-    const data = await apiGet(`/courses/${id}`);
+    const data = await courseGetByID(id);
     return normalizeCourse(data);
   } catch (error) {
     console.error("Error fetching course:", error);
@@ -124,7 +135,9 @@ export const fetchCourseById = async (id) => {
 };
 
 // Upload a course cover image; returns the public URL string.
+// Uses custom FormData upload - orval mediaUpload uses JSON body
 export const uploadCourseImage = async (file) => {
+  const { apiUpload } = await import("@/app/services/http");
   const formData = new FormData();
   formData.append("file", file);
   formData.append("entity_type", "course");
@@ -135,7 +148,6 @@ export const uploadCourseImage = async (file) => {
 
 /**
  * Create a new course
- * POST /courses returns Response { data: Course }
  */
 export const createCourse = async (courseData) => {
   try {
@@ -148,7 +160,7 @@ export const createCourse = async (courseData) => {
       duration: parseInt(courseData.duration, 10) || 0,
       status: courseData.status || "draft",
     };
-    const data = await apiPost("/courses", payload);
+    const data = await courseCreate({ data: payload });
     return normalizeCourse(data);
   } catch (error) {
     console.error("Error creating course:", error);
@@ -158,7 +170,6 @@ export const createCourse = async (courseData) => {
 
 /**
  * Update an existing course
- * PUT /courses/{id} returns Response { data: Course }
  */
 export const updateCourse = async (id, courseData) => {
   try {
@@ -170,7 +181,7 @@ export const updateCourse = async (id, courseData) => {
       duration: parseInt(courseData.duration, 10) || 0,
       status: courseData.status || "draft",
     };
-    const data = await apiPut(`/courses/${id}`, payload);
+    const data = await courseUpdate(id, { data: payload });
     return normalizeCourse(data);
   } catch (error) {
     console.error("Error updating course:", error);
@@ -180,41 +191,12 @@ export const updateCourse = async (id, courseData) => {
 
 /**
  * Delete a course
- * DELETE /courses/{id} returns 204 No Content
  */
 export const deleteCourse = async (id) => {
   try {
-    return await apiDelete(`/courses/${id}`);
+    return await courseDelete(id);
   } catch (error) {
     console.error("Error deleting course:", error);
-    throw error;
-  }
-};
-
-/**
- * Publish a course
- * PUT /courses/{id}/publish returns Response { data: Course }
- */
-export const publishCourse = async (id) => {
-  try {
-    const data = await apiPut(`/courses/${id}/publish`);
-    return normalizeCourse(data);
-  } catch (error) {
-    console.error("Error publishing course:", error);
-    throw error;
-  }
-};
-
-/**
- * Archive a course
- * PUT /courses/{id}/archive returns Response { data: Course }
- */
-export const archiveCourse = async (id) => {
-  try {
-    const data = await apiPut(`/courses/${id}/archive`);
-    return normalizeCourse(data);
-  } catch (error) {
-    console.error("Error archiving course:", error);
     throw error;
   }
 };
@@ -225,21 +207,11 @@ export const archiveCourse = async (id) => {
  */
 export const markCourseImportant = async (id) => {
   try {
+    const { apiPut } = await import("@/app/services/http");
     const data = await apiPut(`/courses/${id}/important`);
     return normalizeCourse(data);
   } catch (error) {
     console.error("Error marking course important:", error);
-    throw error;
-  }
-};
-
-// Restore an archived course back to draft so it can be edited/republished.
-export const restoreCourse = async (id) => {
-  try {
-    const data = await apiPut(`/courses/${id}`, { status: "draft" });
-    return normalizeCourse(data);
-  } catch (error) {
-    console.error("Error restoring course:", error);
     throw error;
   }
 };
@@ -284,13 +256,12 @@ const normalizeLesson = (l) => {
 
 /**
  * Get lessons for a course
- * GET /courses/{id}/lessons returns Response { data: Lesson[] }
- * apiGet unwraps to data array
  */
 export const fetchLessons = async (courseId) => {
   try {
-    const data = await apiGet(`/courses/${courseId}/lessons`);
-    const list = Array.isArray(data) ? data : [];
+    const orvalParams = { courseId: parseInt(courseId, 10) };
+    const data = await lessonGetAll(orvalParams);
+    const list = data?.data || [];
     return list.map(normalizeLesson);
   } catch (error) {
     console.error("Error fetching lessons:", error);
@@ -300,7 +271,6 @@ export const fetchLessons = async (courseId) => {
 
 /**
  * Create a lesson
- * POST /courses/{id}/lessons returns Response { data: Lesson }
  */
 export const createLesson = async (courseId, lessonData) => {
   try {
@@ -313,7 +283,7 @@ export const createLesson = async (courseId, lessonData) => {
       durationMinutes: lessonData.durationMinutes || 0,
       isFreePreview: lessonData.isFreePreview || false,
     };
-    const data = await apiPost(`/courses/${courseId}/lessons`, payload);
+    const data = await lessonCreate({ data: payload });
     return normalizeLesson(data);
   } catch (error) {
     console.error("Error creating lesson:", error);
@@ -323,7 +293,6 @@ export const createLesson = async (courseId, lessonData) => {
 
 /**
  * Update a lesson
- * PUT /lessons/{id} returns Response { data: Lesson }
  */
 export const updateLesson = async (courseId, lessonId, lessonData) => {
   try {
@@ -336,7 +305,7 @@ export const updateLesson = async (courseId, lessonId, lessonData) => {
       durationMinutes: lessonData.durationMinutes || 0,
       isFreePreview: lessonData.isFreePreview || false,
     };
-    const data = await apiPut(`/lessons/${lessonId}`, payload);
+    const data = await lessonUpdate(lessonId, { data: payload });
     return normalizeLesson(data);
   } catch (error) {
     console.error("Error updating lesson:", error);
@@ -346,11 +315,10 @@ export const updateLesson = async (courseId, lessonId, lessonData) => {
 
 /**
  * Delete a lesson
- * DELETE /lessons/{id} returns 204 No Content
  */
 export const deleteLesson = async (courseId, lessonId) => {
   try {
-    return await apiDelete(`/lessons/${lessonId}`);
+    return await lessonDelete(lessonId);
   } catch (error) {
     console.error("Error deleting lesson:", error);
     throw error;
@@ -359,12 +327,11 @@ export const deleteLesson = async (courseId, lessonId) => {
 
 /**
  * Reorder lessons within a course
- * PUT /courses/{id}/lessons/reorder body: ReorderRequest[] = [{ id, orderNumber }]
  */
 export const reorderLessons = async (courseId, lessons) => {
   try {
     const payload = lessons.map((l, i) => ({ id: l.id, orderNumber: i + 1 }));
-    const data = await apiPut(`/courses/${courseId}/lessons/reorder`, payload);
+    const data = await orvalReorderLessons(courseId, payload);
     return data;
   } catch (error) {
     console.error("Error reordering lessons:", error);

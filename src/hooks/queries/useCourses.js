@@ -3,8 +3,8 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { useUpdateCourseStatus } from "@/app/api/orval";
 import {
-  archiveCourse,
   createCourse,
   createLesson,
   deleteCourse,
@@ -12,9 +12,7 @@ import {
   fetchCourseById,
   fetchCourses,
   fetchLessons,
-  publishCourse,
   reorderLessons,
-  restoreCourse,
   updateCourse,
   updateLesson,
 } from "@/app/services/courseService";
@@ -71,8 +69,10 @@ export const useUpdateCourse = () => {
 
 export const usePublishCourse = () => {
   const qc = useQueryClient();
+  const updateStatus = useUpdateCourseStatus();
+
   return useMutation({
-    mutationFn: publishCourse,
+    mutationFn: (id) => updateStatus.mutateAsync({ id, data: "published" }),
     onSuccess: (data) => {
       qc.setQueryData(queryKeys.courses.detail(data.id), data);
       qc.invalidateQueries({ queryKey: queryKeys.courses.all });
@@ -82,8 +82,10 @@ export const usePublishCourse = () => {
 
 export const useArchiveCourse = () => {
   const qc = useQueryClient();
+  const updateStatus = useUpdateCourseStatus();
+
   return useMutation({
-    mutationFn: archiveCourse,
+    mutationFn: (id) => updateStatus.mutateAsync({ id, data: "archived" }),
     onSuccess: (data) => {
       qc.setQueryData(queryKeys.courses.detail(data.id), data);
       qc.invalidateQueries({ queryKey: queryKeys.courses.all });
@@ -93,8 +95,10 @@ export const useArchiveCourse = () => {
 
 export const useRestoreCourse = () => {
   const qc = useQueryClient();
+  const updateStatus = useUpdateCourseStatus();
+
   return useMutation({
-    mutationFn: restoreCourse,
+    mutationFn: (id) => updateStatus.mutateAsync({ id, data: "draft" }),
     onSuccess: (data) => {
       qc.setQueryData(queryKeys.courses.detail(data.id), data);
       qc.invalidateQueries({ queryKey: queryKeys.courses.all });
