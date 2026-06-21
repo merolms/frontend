@@ -49,14 +49,11 @@ const DEFAULT_CONTENT = {
 
 function MeroEduEditor({
   initialContent,
-  onSave,
   onContentChange,
   editable = true,
   showToolbar = true,
   lessonId = null,
 }) {
-  const [editorReady, setEditorReady] = React.useState(false);
-
   const extensions = React.useMemo(
     () => [
       StarterKit.configure({
@@ -106,7 +103,6 @@ function MeroEduEditor({
     [editable]
   );
   const [content, setContent] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
 
   // 1. Debounce function to delay saving
   const useDebounce = (value, delay) => {
@@ -124,9 +120,7 @@ function MeroEduEditor({
   useEffect(() => {
     if (debouncedContent) {
       const saveToServer = async () => {
-        setIsSaving(true);
         onContentChange(debouncedContent); // Call the passed-in onSave handler
-        setIsSaving(false);
       };
       saveToServer();
     }
@@ -137,9 +131,6 @@ function MeroEduEditor({
     extensions,
     immediatelyRender: false,
     autofocus: "start",
-    onCreate: () => {
-      setTimeout(() => setEditorReady(true), 0);
-    },
     onUpdate: ({ editor }) => {
       // Get JSON format (recommended) or editor.getHTML()
       setContent(editor.getJSON());
