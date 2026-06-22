@@ -61,16 +61,17 @@ const CourseBuilder = () => {
     lessonsPerPage: 10,
   });
 
-  const loadData = useCallback(async (page = 1) => {
+  const loadData = useCallback(async (page = null) => {
     try {
       setLoading(true);
       setError(null);
-      const courseData = await fetchCourseById(id);
-      setCourse(courseData);
+      
+      // Use page from parameter or URL
+      let actualPage = page !== null ? page : getPageFromUrl();
       
       // Calculate pagination
       const lessonsPerPage = 10; // Fixed at 10
-      const start = (page - 1) * lessonsPerPage;
+      const start = (actualPage - 1) * lessonsPerPage;
       const limit = lessonsPerPage;
       
       // Fetch lessons with pagination
@@ -79,35 +80,87 @@ const CourseBuilder = () => {
       lessonList.sort((a, b) => (a.displayOrder || a.sort_order || 0) - (b.displayOrder || b.sort_order || 0));
       
       // Update pagination state with backend-provided metadata
+      const totalPages = result.totalPages || 1;
       setPagination((prev) => ({
         ...prev,
-        currentPage: result.currentPage || page,
-        totalPages: result.totalPages || 1,
+        currentPage: result.currentPage || actualPage,
+        totalPages: totalPages,
         totalLessons: result.total || lessonList.length,
       }));
       
-      if (lessonList?.length > 0) {
-        setLessons(lessonList);
-        // If URL has a lessonId, try to select that lesson; otherwise fall back to first
-        let targetLesson = lessonList[0];
-        if (lessonId) {
-          const found = lessonList.find((l) => String(l.id) === String(lessonId));
-          if (found) targetLesson = found;
+      // Check if the requested page is invalid (greater than total pages or empty)
+      if (actualPage > totalPages || lessonList.length === 0) {
+        console.warn(`Page ${actualPage} is invalid or empty, redirecting to page 1`);
+        // Reset to page 1
+        const searchParams = new URLSearchParams(location.search);
+        searchParams.delete('page');
+        navigate(`${location.pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`, { replace: true });
+        loadData(1); // Reload with page 1
+        return;
+      }
+      
+      setLessons(lessonList);
+      
+      // Update URL if page changed
+      const currentPage = getPageFromUrl();
+      if (page !== null && page !== currentPage) {
+        const searchParams = new URLSearchParams(location.search);
+        if (page > 1) {
+          searchParams.set('page', page);
+        } else {
+          searchParams.delete('page');
         }
-        await loadLesson(targetLesson);
+        const queryString = searchParams.toString();
+        navigate(`${location.pathname}${queryString ? `?${queryString}` : ''}`, { replace: true });
+      }
+      
+      // If URL has a lessonId, try to select that lesson
+      if (lessonId) {
+        const found = lessonList.find((l) => String(l.id) === String(lessonId));
+        if (found) {
+          // Lesson found on current page
+          await loadLesson(found, actualPage);
+        } else {
+          // Lesson not found on current page
+          // It might be on a different page or deleted
+          console.warn(`Lesson ${lessonId} not found in page ${actualPage}, searching all pages...`);
+          
+          // Try to find the lesson by fetching all lessons
+          try {
+            const allLessonsResult = await fetchLessons(id, { start: 0, limit: 1000 });
+            const allLessons = allLessonsResult.lessons || [];
+            const foundAnywhere = allLessons.find((l) => String(l.id) === String(lessonId));
+            
+            if (foundAnywhere) {
+              // Lesson exists, calculate its page
+              const lessonIndex = allLessons.findIndex((l) => String(l.id) === String(lessonId));
+              const lessonPage = Math.floor(lessonIndex / 10) + 1;
+              
+              console.log(`Lesson ${lessonId} found on page ${lessonPage}, switching to that page`);
+              // Load the correct page
+              loadData(lessonPage);
+              return; // Early return, loadData will handle loading the lesson
+            } else {
+              // Lesson doesn't exist (deleted)
+              console.warn(`Lesson ${lessonId} not found (deleted), falling back to first lesson`);
+              await loadLesson(lessonList[0], actualPage);
+            }
+          } catch (searchError) {
+            console.error('Error searching for lesson:', searchError);
+            // Fall back to first lesson
+            await loadLesson(lessonList[0], actualPage);
+          }
+        }
       } else {
-        // Only create first lesson if we have no lessons at all
-        // Don't auto-create - let the user click the add button
-        setLessons([]);
-        setSelectedLesson(null);
-        setContent("");
+        // No lessonId in URL, select first lesson
+        await loadLesson(lessonList[0], actualPage);
       }
     } catch (err) {
       setError(err.message || "Failed to load course.");
     } finally {
       setLoading(false);
     }
-  }, [id, lessonId, navigate]);
+  }, [id, lessonId, location.search, location.pathname, navigate]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.totalPages) {
@@ -116,15 +169,23 @@ const CourseBuilder = () => {
   };
 
   const loadLesson = useCallback(
-    async (lesson) => {
+    async (lesson, currentPage = null) => {
       setSelectedLesson(lesson);
       setContent("");
       contentRef.current = "";
       clearTimeout(autosaveTimer.current);
       lastAutosaveContent.current = "";
 
-      // Update URL to reflect selected lesson (replace to avoid history spam)
-      navigate(`/courses/${id}/builder/${lesson.id}`, { replace: true });
+      // Preserve page from URL if not provided
+      const actualPage = currentPage !== null ? currentPage : getPageFromUrl();
+
+      // Update URL to reflect selected lesson and page (replace to avoid history spam)
+      const searchParams = new URLSearchParams();
+      if (actualPage > 1) {
+        searchParams.set('page', actualPage);
+      }
+      const queryString = searchParams.toString();
+      navigate(`/courses/${id}/builder/${lesson.id}${queryString ? `?${queryString}` : ''}`, { replace: true });
 
       // Autosave snapshot first, then DB blocks (shared parse rules)
       const doc = await loadLessonDoc(lesson.id);
@@ -133,12 +194,12 @@ const CourseBuilder = () => {
       setContent(json);
       contentRef.current = json;
     },
-    [id, navigate]
+    [id, location.search, navigate]
   );
 
   useEffect(() => {
     loadData();
-  }, [id, lessonId]);
+  }, [id, lessonId, location.search]);
 
   const handleSave = async () => {
     if (!selectedLesson) return;
@@ -303,9 +364,9 @@ const CourseBuilder = () => {
       
       // Add to state and select the new lesson
       setLessons([...lessons, newLesson]);
-      await loadLesson(newLesson);
+      await loadLesson(newLesson, pagination.currentPage);
       
-      // Refresh to update pagination state
+      // Refresh pagination state after adding
       loadData(pagination.currentPage);
     } catch (err) {
       setError(err.message || "Failed to add lesson.");
@@ -360,7 +421,7 @@ const CourseBuilder = () => {
         }
       }
       setLessons(newLessons);
-      // Refresh to update pagination
+      // Refresh pagination after duplicating
       loadData(pagination.currentPage);
     } catch (err) {
       setError(err.message || "Failed to duplicate lessons.");

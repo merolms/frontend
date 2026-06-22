@@ -106,7 +106,6 @@ const TeamContainer = () => {
     setSearchInput("");
     setSearchParams(new URLSearchParams());
   };
-  console.log("teams", teams);
   return (
     <>
       <DashboardLayout title="Teams">

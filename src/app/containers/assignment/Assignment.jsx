@@ -64,7 +64,6 @@ const AssignmentContainer = () => {
         const start = (page - 1) * limit;
         const { getAssignments } = await import("@/app/services/assignmentService");
         const result = await getAssignments({ start, limit });
-        console.log("API result:", result);
         setAssignments(result.assignments || []);
         setTotal(result.total || 0);
         setTotalPages(Math.ceil((result.total || 0) / limit) || 1);

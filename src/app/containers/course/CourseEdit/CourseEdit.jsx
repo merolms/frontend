@@ -37,7 +37,6 @@ const CourseEdit = () => {
 
   // Sync form when course data loads
   if (course && !formInitialized) {
-    console.log("course data is ", course)
     setForm({
       title: course.title || "",
       description: course.description || "",
