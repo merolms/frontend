@@ -1,7 +1,57 @@
+import {
+  Book,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Copy,
+  Globe,
+  GripVertical,
+  Loader2,
+  Lock,
+  Pencil,
+  Plus,
+  Trash2,
+  X,
+} from "lucide-react";
 import React, { useCallback, useRef, useState } from "react";
-import { Book, Copy, Trash2, Loader2, Plus, GripVertical, Check, X, Pencil, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+
+// Helper function to get status icon and color
+const getStatusConfig = (status) => {
+  switch (status) {
+    case "published":
+      return {
+        icon: Globe,
+        color: "text-green-500",
+        bgColor: "bg-green-500/10",
+        label: "Published",
+      };
+    case "scheduled":
+      return {
+        icon: Clock,
+        color: "text-yellow-500",
+        bgColor: "bg-yellow-500/10",
+        label: "Scheduled",
+      };
+    case "private":
+      return {
+        icon: Lock,
+        color: "text-red-500",
+        bgColor: "bg-red-500/10",
+        label: "Private",
+      };
+    case "draft":
+    default:
+      return {
+        icon: Book,
+        color: "text-gray-400",
+        bgColor: "bg-gray-400/10",
+        label: "Draft",
+      };
+  }
+};
 
 const LessonPanel = ({
   lessons = [],
@@ -135,22 +185,26 @@ const LessonPanel = ({
   return (
     <aside
       className={cn(
-        "flex flex-col overflow-hidden bg-background border-r border-border/30",
-        isDragging && "border-r-2 border-primary/50"
+        "bg-background border-border/30 flex flex-col overflow-hidden border-r",
+        isDragging && "border-primary/50 border-r-2"
       )}
       style={{ width, flexShrink: 0, height: "fit-content" }}
     >
       {/* Header */}
-      <div className="flex flex-shrink-0 items-center justify-between px-4 py-3 border-b border-border/30 bg-gradient-to-r from-accent/30 via-transparent to-accent/30">
+      <div className="border-border/30 from-accent/30 to-accent/30 flex flex-shrink-0 items-center justify-between border-b bg-gradient-to-r via-transparent px-4 py-3">
         <div className="flex items-center gap-2">
           {lessons.length > 0 && (
             <button
               onClick={() => handleSelectAll(selectedIds.size !== lessons.length)}
               title={selectedIds.size === lessons.length ? "Deselect all" : "Select all"}
-              className="flex h-4 w-4 items-center justify-center rounded border transition-colors hover:border-primary"
+              className="hover:border-primary flex h-4 w-4 items-center justify-center rounded border transition-colors"
               style={{
-                borderColor: selectedIds.size === lessons.length ? "hsl(var(--primary))" : "hsl(var(--border))",
-                background: selectedIds.size === lessons.length ? "hsl(var(--primary))" : "transparent",
+                borderColor:
+                  selectedIds.size === lessons.length
+                    ? "hsl(var(--primary))"
+                    : "hsl(var(--border))",
+                background:
+                  selectedIds.size === lessons.length ? "hsl(var(--primary))" : "transparent",
               }}
             >
               {selectedIds.size === lessons.length && (
@@ -160,11 +214,11 @@ const LessonPanel = ({
           )}
           <div className="flex items-center gap-2">
             <Book size={14} className="text-muted-foreground" />
-            <span className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground">
+            <span className="text-muted-foreground text-[10px] font-bold tracking-wider uppercase">
               Lessons
             </span>
-            {(pagination.totalPages > 1) && (
-              <span className="text-[10px] text-muted-foreground font-normal">
+            {pagination.totalPages > 1 && (
+              <span className="text-muted-foreground text-[10px] font-normal">
                 ({pagination.currentPage}/{pagination.totalPages})
               </span>
             )}
@@ -177,14 +231,14 @@ const LessonPanel = ({
               <button
                 onClick={handleBulkDuplicateClick}
                 title="Duplicate selected"
-                className="flex h-5 w-5 items-center justify-center rounded transition-all hover:bg-accent hover:text-foreground text-muted-foreground"
+                className="hover:bg-accent hover:text-foreground text-muted-foreground flex h-5 w-5 items-center justify-center rounded transition-all"
               >
                 <Copy size={12} />
               </button>
               <button
                 onClick={handleBulkDeleteClick}
                 title="Delete selected"
-                className="flex h-5 w-5 items-center justify-center rounded transition-all hover:bg-red-500/20 hover:text-red-500 text-red-600 dark:text-red-400"
+                className="flex h-5 w-5 items-center justify-center rounded text-red-600 transition-all hover:bg-red-500/20 hover:text-red-500 dark:text-red-400"
               >
                 <Trash2 size={12} />
               </button>
@@ -195,13 +249,9 @@ const LessonPanel = ({
               onClick={onAddLesson}
               disabled={adding}
               title="Add lesson"
-              className="flex h-6 w-6 items-center justify-center rounded-lg transition-all hover:bg-accent hover:text-foreground text-muted-foreground disabled:opacity-50"
+              className="hover:bg-accent hover:text-foreground text-muted-foreground flex h-6 w-6 items-center justify-center rounded-lg transition-all disabled:opacity-50"
             >
-              {adding ? (
-                <Loader2 size={14} className="animate-spin" />
-              ) : (
-                <Plus size={14} />
-              )}
+              {adding ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
             </button>
           )}
         </div>
@@ -210,7 +260,7 @@ const LessonPanel = ({
       {/* List */}
       <div className="flex-1 overflow-y-auto p-2">
         {lessons.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+          <div className="text-muted-foreground flex flex-col items-center justify-center py-8">
             <Book size={32} className="mb-2 opacity-30" />
             <span className="text-sm">No lessons yet</span>
           </div>
@@ -255,29 +305,29 @@ const LessonPanel = ({
 
       {/* Footer */}
       {lessons.length > 0 && (
-        <div className="flex-shrink-0 px-4 py-2 border-t border-border/30 bg-gradient-to-r from-accent/20 via-transparent to-accent/20">
+        <div className="border-border/30 from-accent/20 to-accent/20 flex-shrink-0 border-t bg-gradient-to-r via-transparent px-4 py-2">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-muted-foreground">
+            <span className="text-muted-foreground text-[10px]">
               {pagination.totalLessons} {pagination.totalLessons === 1 ? "lesson" : "lessons"}
             </span>
-            
-            {(pagination.totalPages > 1) && (
+
+            {pagination.totalPages > 1 && (
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => onPageChange?.(pagination.currentPage - 1)}
                   disabled={pagination.currentPage === 1}
-                  className="flex h-5 w-5 items-center justify-center rounded transition-colors hover:bg-accent text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="hover:bg-accent text-muted-foreground hover:text-foreground flex h-5 w-5 items-center justify-center rounded transition-colors disabled:cursor-not-allowed disabled:opacity-30"
                   title="Previous page"
                 >
                   <ChevronLeft size={12} />
                 </button>
-                <span className="text-[10px] text-muted-foreground min-w-[40px] text-center">
+                <span className="text-muted-foreground min-w-[40px] text-center text-[10px]">
                   {pagination.currentPage} / {pagination.totalPages}
                 </span>
                 <button
                   onClick={() => onPageChange?.(pagination.currentPage + 1)}
                   disabled={pagination.currentPage === pagination.totalPages}
-                  className="flex h-5 w-5 items-center justify-center rounded transition-colors hover:bg-accent text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="hover:bg-accent text-muted-foreground hover:text-foreground flex h-5 w-5 items-center justify-center rounded transition-colors disabled:cursor-not-allowed disabled:opacity-30"
                   title="Next page"
                 >
                   <ChevronRight size={12} />
@@ -321,12 +371,12 @@ const LessonItem = ({
   return (
     <div
       className={cn(
-        "relative flex items-center gap-1.5 rounded-lg px-2.5 py-2 mb-0.5 transition-all duration-150",
+        "relative mb-0.5 flex items-center gap-1.5 rounded-lg px-2.5 py-2 transition-all duration-150",
         "border-l-2",
         isDragging && "opacity-40",
-        isActive 
-          ? "bg-primary/10 border-l-primary" 
-          : "border-l-transparent hover:bg-accent/50 cursor-pointer"
+        isActive
+          ? "bg-primary/10 border-l-primary"
+          : "hover:bg-accent/50 cursor-pointer border-l-transparent"
       )}
       onClick={onSelect}
       onMouseEnter={() => setHovered(true)}
@@ -341,7 +391,7 @@ const LessonItem = ({
       onDragEnd={onDragEnd}
     >
       {isDropTarget && (
-        <div className="absolute -top-0.5 left-1 right-1 h-0.5 bg-primary rounded-sm" />
+        <div className="bg-primary absolute -top-0.5 right-1 left-1 h-0.5 rounded-sm" />
       )}
 
       {/* Checkbox */}
@@ -359,15 +409,13 @@ const LessonItem = ({
             isSelected ? "border-primary bg-primary" : "border-border hover:border-primary"
           )}
         >
-          {isSelected && (
-            <Check size={9} className="text-background" />
-          )}
+          {isSelected && <Check size={9} className="text-background" />}
         </button>
       </div>
 
       {/* Drag handle */}
       <div
-        className="flex h-4.5 w-3.5 flex-shrink-0 items-center justify-center cursor-grab text-muted-foreground hover:text-foreground"
+        className="text-muted-foreground hover:text-foreground flex h-4.5 w-3.5 flex-shrink-0 cursor-grab items-center justify-center"
         onMouseDown={(e) => e.stopPropagation()}
       >
         <GripVertical size={10} />
@@ -377,13 +425,28 @@ const LessonItem = ({
       <div
         className={cn(
           "flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-full text-[10px] font-bold transition-colors",
-          isActive 
-            ? "bg-primary text-primary-foreground" 
-            : "bg-accent/50 text-muted-foreground"
+          isActive ? "bg-primary text-primary-foreground" : "bg-accent/50 text-muted-foreground"
         )}
       >
         {index + 1}
       </div>
+
+      {/* Status Indicator */}
+      {(() => {
+        const statusConfig = getStatusConfig(lesson.status);
+        const StatusIcon = statusConfig.icon;
+        return (
+          <div
+            className={cn(
+              "flex h-4 w-4 flex-shrink-0 items-center justify-center rounded",
+              statusConfig.bgColor
+            )}
+            title={statusConfig.label}
+          >
+            <StatusIcon size={10} className={statusConfig.color} />
+          </div>
+        );
+      })()}
 
       {isEditing ? (
         <input
@@ -393,17 +456,15 @@ const LessonItem = ({
           onBlur={onCommit}
           onKeyDown={onKeyDown}
           onClick={(e) => e.stopPropagation()}
-          className="flex-1 min-w-0 px-2 py-0.5 text-sm bg-background border border-primary rounded-md outline-none focus:ring-2 focus:ring-primary/50"
+          className="bg-background border-primary focus:ring-primary/50 min-w-0 flex-1 rounded-md border px-2 py-0.5 text-sm outline-none focus:ring-2"
           autoFocus
         />
       ) : (
         <>
           <span
             className={cn(
-              "flex-1 min-w-0 truncate text-sm",
-              isActive 
-                ? "text-foreground font-semibold" 
-                : "text-muted-foreground font-medium"
+              "min-w-0 flex-1 truncate text-sm",
+              isActive ? "text-foreground font-semibold" : "text-muted-foreground font-medium"
             )}
             onDoubleClick={onStartEdit}
           >
@@ -415,7 +476,7 @@ const LessonItem = ({
               <button
                 onClick={onStartEdit}
                 title="Rename"
-                className="flex h-5 w-5 items-center justify-center rounded transition-colors hover:bg-accent text-muted-foreground hover:text-foreground"
+                className="hover:bg-accent text-muted-foreground hover:text-foreground flex h-5 w-5 items-center justify-center rounded transition-colors"
               >
                 <Pencil size={11} />
               </button>
@@ -439,7 +500,7 @@ const LessonItem = ({
                       setShowConfirm(false);
                     }}
                     title="Cancel"
-                    className="flex h-5 w-5 items-center justify-center rounded transition-colors hover:bg-accent text-muted-foreground hover:text-foreground"
+                    className="hover:bg-accent text-muted-foreground hover:text-foreground flex h-5 w-5 items-center justify-center rounded transition-colors"
                   >
                     <X size={10} />
                   </button>
@@ -451,7 +512,7 @@ const LessonItem = ({
                     setShowConfirm(true);
                   }}
                   title="Delete lesson"
-                  className="flex h-5 w-5 items-center justify-center rounded transition-colors hover:bg-red-500/10 text-muted-foreground hover:text-red-500"
+                  className="text-muted-foreground flex h-5 w-5 items-center justify-center rounded transition-colors hover:bg-red-500/10 hover:text-red-500"
                 >
                   <Trash2 size={11} />
                 </button>

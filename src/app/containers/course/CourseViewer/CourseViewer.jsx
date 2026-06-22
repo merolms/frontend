@@ -1,12 +1,15 @@
-import { ArrowLeft, ArrowRight, BookOpen, Loader2, Sparkles, Lock, Menu, X, Settings } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Loader2, Menu, Settings, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
+import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 import { useToast } from "@/app/context/ToastContext";
 import { hasPermission } from "@/app/services/authService";
 import CourseCompletionCelebration from "@/components/CourseCompletionCelebration";
+import RoleBasedSidebar from "@/components/layouts/RoleBasedSidebar";
 import { Badge } from "@/components/ui/badge";
+import { useSidebar } from "@/contexts/SidebarContext";
 import MeroEduEditor from "@/editor/Editor";
 import { loadLessonDoc } from "@/editor/utils/lessonContent";
 import { usePageTitle } from "@/hooks";
@@ -17,10 +20,7 @@ import {
   useMarkLessonComplete,
   useMyLessonCompletions,
 } from "@/hooks/queries/useEnrollments";
-import RoleBasedSidebar from "@/components/layouts/RoleBasedSidebar";
-import { useSidebar } from "@/contexts/SidebarContext";
 import { cn } from "@/lib/utils";
-import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 
 const CourseViewer = () => {
   usePageTitle("Course Viewer");
@@ -51,7 +51,9 @@ const CourseViewer = () => {
 
   // Sort lessons by order
   const sortedLessons = [...lessons].sort(
-    (a, b) => (a.displayOrder || a.sortOrder || a.sort_order || 0) - (b.displayOrder || b.sortOrder || b.sort_order || 0)
+    (a, b) =>
+      (a.displayOrder || a.sortOrder || a.sort_order || 0) -
+      (b.displayOrder || b.sortOrder || b.sort_order || 0)
   );
 
   // Build completion status from completions data
@@ -240,12 +242,12 @@ const CourseViewer = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+      <div className="from-background via-background to-background/95 flex min-h-screen bg-gradient-to-br">
         <RoleBasedSidebar />
-        <main className="flex-1 flex items-center justify-center">
+        <main className="flex flex-1 items-center justify-center">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <span className="text-sm text-muted-foreground">Loading course…</span>
+            <Loader2 className="text-primary h-8 w-8 animate-spin" />
+            <span className="text-muted-foreground text-sm">Loading course…</span>
           </div>
         </main>
       </div>
@@ -253,9 +255,9 @@ const CourseViewer = () => {
   }
   if (error) {
     return (
-      <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+      <div className="from-background via-background to-background/95 flex min-h-screen bg-gradient-to-br">
         <RoleBasedSidebar />
-        <main className="flex-1 flex items-center justify-center">
+        <main className="flex flex-1 items-center justify-center">
           <p className="text-red-500">{error}</p>
         </main>
       </div>
@@ -263,9 +265,9 @@ const CourseViewer = () => {
   }
   if (!course) {
     return (
-      <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+      <div className="from-background via-background to-background/95 flex min-h-screen bg-gradient-to-br">
         <RoleBasedSidebar />
-        <main className="flex-1 flex items-center justify-center">
+        <main className="flex flex-1 items-center justify-center">
           <p className="text-muted-foreground">Course not found.</p>
         </main>
       </div>
@@ -281,13 +283,13 @@ const CourseViewer = () => {
     // draft/archived: show info message instead of enroll button (unless admin)
     if (!ispublished && !isAdmin) {
       return (
-        <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+        <div className="from-background via-background to-background/95 flex min-h-screen bg-gradient-to-br">
           <RoleBasedSidebar />
-          <main className="flex-1 flex items-center justify-center p-4">
-            <div className="bg-background rounded-xl p-10 text-center max-w-md shadow-lg border border-border/50">
+          <main className="flex flex-1 items-center justify-center p-4">
+            <div className="bg-background border-border/50 max-w-md rounded-xl border p-10 text-center shadow-lg">
               <BookOpen size={48} className="text-muted-foreground mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-foreground mb-2">{course.title}</h2>
-              <p className="text-sm text-muted-foreground mb-4">
+              <h2 className="text-foreground mb-2 text-xl font-semibold">{course.title}</h2>
+              <p className="text-muted-foreground mb-4 text-sm">
                 {course.status === "draft"
                   ? "This course is not yet available. It is currently being prepared."
                   : "This course is no longer available for enrollment."}
@@ -302,19 +304,19 @@ const CourseViewer = () => {
     }
 
     return (
-      <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+      <div className="from-background via-background to-background/95 flex min-h-screen bg-gradient-to-br">
         <RoleBasedSidebar />
-        <main className="flex-1 flex items-center justify-center p-4">
-          <div className="bg-background rounded-xl p-10 text-center max-w-md shadow-lg border border-border/50">
+        <main className="flex flex-1 items-center justify-center p-4">
+          <div className="bg-background border-border/50 max-w-md rounded-xl border p-10 text-center shadow-lg">
             <BookOpen size={48} className="text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-foreground mb-2">{course.title}</h2>
-            <p className="text-sm text-muted-foreground mb-6">
+            <h2 className="text-foreground mb-2 text-xl font-semibold">{course.title}</h2>
+            <p className="text-muted-foreground mb-6 text-sm">
               Enroll to track your progress and mark lessons complete.
             </p>
             <button
               onClick={handleEnroll}
               disabled={enrollMutation.isPending || !ispublished}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-6 py-2 text-sm font-medium disabled:opacity-50 transition-all"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-6 py-2 text-sm font-medium transition-all disabled:opacity-50"
             >
               {enrollMutation.isPending
                 ? "Enrolling…"
@@ -329,9 +331,9 @@ const CourseViewer = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+    <div className="from-background via-background to-background/95 flex min-h-screen bg-gradient-to-br">
       <RoleBasedSidebar />
-      
+
       {/* Mobile backdrop */}
       {isMobileOpen && (
         <div
@@ -343,20 +345,20 @@ const CourseViewer = () => {
       <main
         onClick={() => isMobileOpen && setIsMobileOpen(false)}
         className={cn(
-          "flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out",
+          "flex flex-1 flex-col overflow-hidden transition-all duration-300 ease-in-out",
           "lg:ml-16",
           isExpanded && "lg:ml-64"
         )}
       >
         {/* Course content */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex flex-1 flex-col">
           {/* Header */}
-          <header className="sticky top-0 z-30 border-b border-border/30 bg-gradient-to-r from-background via-background/95 to-background backdrop-blur-xl shadow-sm px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between max-w-4xl mx-auto">
+          <header className="border-border/30 from-background via-background/95 to-background sticky top-0 z-30 border-b bg-gradient-to-r px-4 shadow-sm backdrop-blur-xl sm:px-6 lg:px-8">
+            <div className="mx-auto flex max-w-4xl items-center justify-between">
               {/* Mobile menu toggle */}
               <button
                 onClick={() => setIsMobileOpen(!isMobileOpen)}
-                className="lg:hidden flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-accent hover:text-foreground"
+                className="text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg transition-all lg:hidden"
                 aria-label="Toggle menu"
               >
                 {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -364,17 +366,17 @@ const CourseViewer = () => {
 
               {/* Course title */}
               <div className="flex-1 lg:ml-0">
-                <h1 className="text-lg sm:text-xl font-semibold text-foreground">
+                <h1 className="text-foreground text-lg font-semibold sm:text-xl">
                   {course?.title}
                 </h1>
               </div>
 
               {/* Right side actions */}
-              <div className="flex items-center gap-3 flex-shrink-0">
+              <div className="flex flex-shrink-0 items-center gap-3">
                 <ThemeSwitcher />
                 <button
                   onClick={() => navigate("/settings")}
-                  className="lg:hidden flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-accent hover:text-foreground"
+                  className="text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg transition-all lg:hidden"
                   aria-label="Settings"
                 >
                   <Settings size={18} />
@@ -384,12 +386,12 @@ const CourseViewer = () => {
           </header>
 
           {/* Lesson header */}
-          <div className="border-b border-border/30 bg-gradient-to-r from-background via-background/95 to-background px-4 sm:px-6 lg:px-8 py-4">
-            <div className="max-w-4xl mx-auto">
-              <p className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground mb-1">
+          <div className="border-border/30 from-background via-background/95 to-background border-b bg-gradient-to-r px-4 py-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-4xl">
+              <p className="text-muted-foreground mb-1 text-[10px] font-bold tracking-wider uppercase">
                 Lesson {activeIndex + 1}
               </p>
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground">
+              <h2 className="text-foreground text-xl font-bold sm:text-2xl">
                 {activeLesson?.title || "Untitled Lesson"}
               </h2>
             </div>
@@ -397,7 +399,7 @@ const CourseViewer = () => {
 
           {/* Content area */}
           <div className="flex-1 overflow-y-auto">
-            <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+            <div className="mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">
               {activeContent ? (
                 <div>
                   <MeroEduEditor
@@ -408,8 +410,8 @@ const CourseViewer = () => {
                   />
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center min-h-[300px] text-muted-foreground">
-                  <BookOpen size={32} className="opacity-30 mb-3" />
+                <div className="text-muted-foreground flex min-h-[300px] flex-col items-center justify-center">
+                  <BookOpen size={32} className="mb-3 opacity-30" />
                   <span>This lesson has no content yet.</span>
                 </div>
               )}
@@ -417,22 +419,22 @@ const CourseViewer = () => {
           </div>
 
           {/* Navigation footer */}
-          <div className="border-t border-border/30 bg-gradient-to-r from-background via-background/95 to-background px-4 sm:px-6 lg:px-8 py-4">
-            <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <div className="border-border/30 from-background via-background/95 to-background border-t bg-gradient-to-r px-4 py-4 sm:px-6 lg:px-8">
+            <div className="mx-auto flex max-w-4xl items-center justify-between">
               <button
                 onClick={() => goToLesson(activeIndex - 1)}
                 disabled={activeIndex === 0}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="text-muted-foreground hover:bg-accent hover:text-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <ArrowLeft size={14} /> Previous
               </button>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-muted-foreground text-xs">
                 {activeIndex + 1} / {lessons.length}
               </span>
               <button
                 onClick={() => goToLesson(activeIndex + 1)}
                 disabled={activeIndex >= lessons.length - 1}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="text-muted-foreground hover:bg-accent hover:text-foreground flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Next <ArrowRight size={14} />
               </button>
@@ -440,7 +442,7 @@ const CourseViewer = () => {
           </div>
         </div>
       </main>
-      
+
       {showCelebration && (
         <CourseCompletionCelebration
           courseTitle={course?.title}

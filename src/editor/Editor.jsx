@@ -40,6 +40,7 @@ import UserBlock from "./extensions/Users/UserBlock";
 import VideoBlock from "./extensions/Video/VideoBlock";
 import WebPreview from "./extensions/WebPreview/WebPreview";
 import { ToolbarButtons } from "./Toolbar/ToolbarButtons";
+// import { placeholder } from "@codemirror/view";
 
 const DEFAULT_CONTENT = {
   type: "doc",
@@ -62,21 +63,15 @@ function MeroEduEditor({
         orderedList: { HTMLAttributes: { class: "ordered-list" } },
       }),
       Placeholder.configure({
-        placeholder: "Start writing something amazing…",
+        placeholder: "Type some content here!",
       }),
+      // Color.configure({ types: [TextStyleKit.name, ListItem.name] }),
       TextStyleKit,
       Callout,
       InfoCallout.configure({ editable }),
       WarningCallout.configure({ editable }),
-      // 👇 Add premium block hover classes to your node wrappers
-      ImageBlock.configure({
-        editable,
-        HTMLAttributes: { class: "image-block-wrapper" },
-      }),
-      VideoBlock.configure({
-        editable,
-        HTMLAttributes: { class: "video-block-wrapper" },
-      }),
+      ImageBlock.configure({ editable }),
+      VideoBlock.configure({ editable }),
       AudioBlock.configure({ editable }),
       PDFBlock.configure({ editable }),
       MathEquationBlock.configure({ editable }),
@@ -101,17 +96,13 @@ function MeroEduEditor({
       AISelectionHighlight,
       AIStreamingMark,
       DragHandle,
-      // 👇 For slash command staggered animation, in SlashCommands component
-      // add style={{ animationDelay: `${index * 30}ms` }} to each item.
       SlashCommands.configure({ currentPlan: "pro" }),
       Highlight.configure({ multicolor: true }),
       PasteFileHandler.configure({ activity: null, getAccessToken: () => undefined }),
     ],
     [editable]
   );
-
   const [content, setContent] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
 
   // 1. Debounce function to delay saving
   const useDebounce = (value, delay) => {
@@ -123,22 +114,17 @@ function MeroEduEditor({
     return debouncedValue;
   };
 
-  const debouncedContent = useDebounce(content, 1000);
+  const debouncedContent = useDebounce(content, 1000); // Saves 1 second after last keystroke
 
-  // 2. Trigger save and show saving indicator
+  // 2. Trigger save to backend
   useEffect(() => {
     if (debouncedContent) {
-      setIsSaving(true);
       const saveToServer = async () => {
-        await onContentChange(debouncedContent);
-        // The indicator disappears automatically via CSS animation
+        onContentChange(debouncedContent); // Call the passed-in onSave handler
       };
       saveToServer();
-      // Reset saving state after a short delay for the animation to play
-      const timer = setTimeout(() => setIsSaving(false), 800);
-      return () => clearTimeout(timer);
     }
-  }, [debouncedContent, onContentChange]);
+  }, [debouncedContent]);
 
   const editor = useEditor({
     editable,
@@ -146,16 +132,17 @@ function MeroEduEditor({
     immediatelyRender: false,
     autofocus: "start",
     onUpdate: ({ editor }) => {
+      // Get JSON format (recommended) or editor.getHTML()
       setContent(editor.getJSON());
     },
   });
-
   const hasLoadedRef = useRef(false);
   const prevContentRef = useRef(null);
 
   useEffect(() => {
     if (!editor || !initialContent) return;
 
+    // Reset loaded flag when content actually changes
     const contentKey =
       typeof initialContent === "string" ? initialContent : JSON.stringify(initialContent);
     if (contentKey !== prevContentRef.current) {
@@ -191,18 +178,9 @@ function MeroEduEditor({
     }
   }, [editor, initialContent]);
 
-  // Determine if editor is empty (for premium empty state)
-  const isEditorEmpty = editor?.isEmpty;
-
   return (
     <EditorProvider isEditable={editable} lessonId={lessonId}>
-      {/* Improved saving indicator */}
-      {isSaving && (
-        <div className="editor-saving-indicator">
-          <span className="saving-pulse">Saving...</span>
-        </div>
-      )}
-
+      <Toaster position="top-right" />
       {showToolbar && (
         <div className="editor-topbar">
           <div className="editor-toolbar-center">
@@ -213,34 +191,6 @@ function MeroEduEditor({
       <div className="editor-content-area">
         <div className="editor-content-inner activity-editor-content-wrapper">
           <EditorContent editor={editor} dark={"false"} />
-          
-          {/* Enhanced empty state */}
-          {isEditorEmpty && editable && (
-            <div className="editor-empty-state">
-              <div className="empty-state-icon">✨</div>
-              <h3 className="empty-state-title">Start creating content</h3>
-              <p className="empty-state-hint">
-                Press <kbd>/</kbd> for quick blocks or type to begin
-              </p>
-              <div className="empty-state-actions">
-                <button
-                  onClick={() => editor?.chain().focus().insertContent({ type: 'paragraph' }).run()}
-                  className="empty-state-action"
-                >
-                  Type to start
-                </button>
-              </div>
-            </div>
-          )}
-          
-          {/* Read-only empty state */}
-          {isEditorEmpty && !editable && (
-            <div className="editor-empty-state">
-              <div className="empty-state-icon">📝</div>
-              <h3 className="empty-state-title">No content yet</h3>
-              <p className="empty-state-hint">This lesson is waiting for content</p>
-            </div>
-          )}
         </div>
       </div>
     </EditorProvider>

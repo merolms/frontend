@@ -107,9 +107,9 @@ export default function DashboardLayout({ children, title, subtitle }) {
   const pageTitle = title || getPageTitle(location.pathname);
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+    <div className="from-background via-background to-background/95 flex min-h-screen bg-gradient-to-br">
       <RoleBasedSidebar />
-      
+
       {/* Main content area */}
       <main
         onClick={() => isMobileOpen && setIsMobileOpen(false)}
@@ -120,14 +120,14 @@ export default function DashboardLayout({ children, title, subtitle }) {
         )}
       >
         {/* Top bar */}
-        <header className="sticky top-0 z-30 border-b border-border/30 bg-gradient-to-r from-background via-background/95 to-background backdrop-blur-xl shadow-sm">
+        <header className="border-border/30 from-background via-background/95 to-background sticky top-0 z-30 border-b bg-gradient-to-r shadow-sm backdrop-blur-xl">
           <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
             {/* Left: mobile menu toggle + page title */}
             <div className="flex items-center gap-3">
               {/* Mobile menu toggle */}
               <button
                 onClick={() => setIsMobileOpen(!isMobileOpen)}
-                className="lg:hidden flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-accent hover:text-foreground"
+                className="text-muted-foreground hover:bg-accent hover:text-foreground flex h-10 w-10 items-center justify-center rounded-lg transition-all lg:hidden"
                 aria-label="Toggle menu"
               >
                 {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -135,19 +135,15 @@ export default function DashboardLayout({ children, title, subtitle }) {
 
               {/* Page title */}
               <div className="flex flex-col">
-                <h1 className="text-lg font-semibold text-foreground sm:text-2xl">
-                  {pageTitle}
-                </h1>
-                {subtitle && (
-                  <p className="text-xs text-muted-foreground sm:text-sm">{subtitle}</p>
-                )}
+                <h1 className="text-foreground text-lg font-semibold sm:text-2xl">{pageTitle}</h1>
+                {subtitle && <p className="text-muted-foreground text-xs sm:text-sm">{subtitle}</p>}
               </div>
             </div>
 
             {/* Right: notifications + theme switcher */}
             <div className="flex items-center gap-3">
               <ThemeSwitcher />
-              
+
               {/* Notification bell */}
               <div className="relative" ref={bellRef}>
                 <button
@@ -161,9 +157,12 @@ export default function DashboardLayout({ children, title, subtitle }) {
                   aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
                   aria-expanded={showDropdown}
                   aria-haspopup="true"
-                  className="group relative flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-all duration-300 hover:bg-accent hover:text-foreground hover:shadow-md"
+                  className="group text-muted-foreground hover:bg-accent hover:text-foreground relative flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-300 hover:shadow-md"
                 >
-                  <Bell size={18} className="transition-transform duration-300 group-hover:scale-110" />
+                  <Bell
+                    size={18}
+                    className="transition-transform duration-300 group-hover:scale-110"
+                  />
                   {unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-red-600 px-1 text-[10px] font-bold text-white shadow-lg shadow-red-500/30">
                       {unreadCount > 9 ? "9+" : unreadCount}
@@ -177,15 +176,15 @@ export default function DashboardLayout({ children, title, subtitle }) {
                     ref={dropdownRef}
                     role="menu"
                     aria-label="Notifications"
-                    className="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background to-background/95 shadow-2xl backdrop-blur-xl"
+                    className="border-border/50 from-background to-background/95 absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-xl border bg-gradient-to-b shadow-2xl backdrop-blur-xl"
                   >
                     {/* Header */}
-                    <div className="flex items-center justify-between border-b border-border/30 bg-gradient-to-r from-accent/30 via-transparent to-transparent px-4 py-3">
-                      <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
+                    <div className="border-border/30 from-accent/30 flex items-center justify-between border-b bg-gradient-to-r via-transparent to-transparent px-4 py-3">
+                      <h3 className="text-foreground text-sm font-semibold">Notifications</h3>
                       {unreadCount > 0 && (
                         <button
                           onClick={handleMarkAllRead}
-                          className="flex cursor-pointer items-center gap-1 text-[11px] text-muted-foreground transition-colors hover:text-primary"
+                          className="text-muted-foreground hover:text-primary flex cursor-pointer items-center gap-1 text-[11px] transition-colors"
                         >
                           <CheckCheck size={12} /> Mark all read
                         </button>
@@ -193,13 +192,13 @@ export default function DashboardLayout({ children, title, subtitle }) {
                     </div>
 
                     {/* Notification list */}
-                    <div className="max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-border/20 scrollbar-track-transparent">
+                    <div className="scrollbar-thumb-border/20 max-h-80 scrollbar-thin scrollbar-track-transparent overflow-y-auto">
                       {loadingNotifs ? (
                         <div className="flex items-center justify-center py-8">
-                          <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                          <div className="border-primary h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" />
                         </div>
                       ) : notifications.length === 0 ? (
-                        <div className="py-8 text-center text-sm text-muted-foreground">
+                        <div className="text-muted-foreground py-8 text-center text-sm">
                           No notifications
                         </div>
                       ) : (
@@ -209,7 +208,7 @@ export default function DashboardLayout({ children, title, subtitle }) {
                             role="menuitem"
                             tabIndex={0}
                             className={cn(
-                              "flex cursor-pointer items-start gap-3 border-b border-border/20 px-4 py-3 transition-all duration-200 hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
+                              "border-border/20 hover:bg-accent/50 focus-visible:ring-primary/50 flex cursor-pointer items-start gap-3 border-b px-4 py-3 transition-all duration-200 focus-visible:ring-2 focus-visible:outline-none",
                               !notif.read && "bg-primary/5"
                             )}
                             onClick={() => handleMarkRead(notif.id, { stopPropagation: () => {} })}
@@ -240,17 +239,17 @@ export default function DashboardLayout({ children, title, subtitle }) {
                                 {!notif.read && (
                                   <button
                                     onClick={(e) => handleMarkRead(notif.id, e)}
-                                    className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                                    className="text-muted-foreground hover:bg-primary/10 hover:text-primary flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded transition-colors"
                                     title="Mark as read"
                                   >
                                     <Check size={12} />
                                   </button>
                                 )}
                               </div>
-                              <p className="mt-1 line-clamp-2 text-[11px] text-muted-foreground">
+                              <p className="text-muted-foreground mt-1 line-clamp-2 text-[11px]">
                                 {notif.message}
                               </p>
-                              <p className="mt-1 text-[10px] text-muted-foreground/70">
+                              <p className="text-muted-foreground/70 mt-1 text-[10px]">
                                 {getTimeAgo(notif.createdAt)}
                               </p>
                             </div>
@@ -261,9 +260,9 @@ export default function DashboardLayout({ children, title, subtitle }) {
 
                     {/* Footer */}
                     {notifications.length > 0 && (
-                      <div className="border-t border-border/30 bg-gradient-to-r from-accent/20 via-transparent to-accent/20 px-4 py-2.5 text-center">
+                      <div className="border-border/30 from-accent/20 to-accent/20 border-t bg-gradient-to-r via-transparent px-4 py-2.5 text-center">
                         <button
-                          className="text-xs text-primary transition-colors hover:text-primary/80 hover:underline"
+                          className="text-primary hover:text-primary/80 text-xs transition-colors hover:underline"
                           onClick={() => setShowDropdown(false)}
                         >
                           View all notifications

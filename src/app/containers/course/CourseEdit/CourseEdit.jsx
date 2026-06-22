@@ -34,7 +34,6 @@ const CourseEdit = () => {
     status: "draft",
   });
 
-
   // Sync form when course data loads
   if (course && !formInitialized) {
     setForm({
@@ -157,7 +156,7 @@ const CourseEdit = () => {
                 Use the course detail page to publish, archive, or restore.
               </span>
             </div>
-            
+
             <CourseForm
               mode="edit"
               status={form.status}

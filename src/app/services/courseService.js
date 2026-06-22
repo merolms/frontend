@@ -11,10 +11,8 @@ import {
   courseUpdate,
   createLessonForCourse,
   lessonDelete,
-  lessonGetAll,
   lessonUpdate,
   reorderLessons as orvalReorderLessons,
-  getLessonsByCourse,
 } from "@/app/api/orval";
 
 // ==================== COURSES ====================
@@ -160,7 +158,7 @@ export const fetchLessons = async (courseId, params = {}) => {
     // Use URL search params to pass pagination
     const url = `/courses/${courseId}/lessons?start=${start}&limit=${limit}`;
     const { API_BASE, request } = await import("@/app/services/http");
-    
+
     // Custom fetch to get full response including pagination metadata
     const token = localStorage.getItem("auth_token");
     const response = await fetch(`${API_BASE}${url}`, {
@@ -176,7 +174,7 @@ export const fetchLessons = async (courseId, params = {}) => {
     }
 
     const body = await response.json();
-    
+
     // The backend returns { message, data: [...], total, page, pageSize, totalPages, hasNext, hasPrev }
     const lessons = body.data || [];
     return {
@@ -238,9 +236,9 @@ export const deleteLesson = async (courseId, lessonId) => {
  */
 export const reorderLessons = async (courseId, lessons) => {
   try {
-    const payload = lessons.map((l, i) => ({ 
-      id: l.id, 
-      displayOrder: i + 1 
+    const payload = lessons.map((l, i) => ({
+      id: l.id,
+      displayOrder: i + 1,
     }));
     const data = await orvalReorderLessons(parseInt(courseId, 10), payload);
     return data;

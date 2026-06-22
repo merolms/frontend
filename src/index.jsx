@@ -11,8 +11,8 @@ import { Toaster } from "sonner";
 import { ThemeProvider } from "@/app/context/ThemeContext";
 import { ToastProvider } from "@/app/context/ToastContext";
 import AppRoutes from "@/app/Routes";
-import { SidebarProvider } from "@/contexts/SidebarContext";
 import { setAuthErrorHandler } from "@/app/services/http";
+import { SidebarProvider } from "@/contexts/SidebarContext";
 import { clearAuth, restoreSession } from "@/redux/slices/authSlice";
 import store from "@/redux/store";
 

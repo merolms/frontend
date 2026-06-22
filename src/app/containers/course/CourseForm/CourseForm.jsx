@@ -32,7 +32,7 @@ const CourseForm = ({
 }) => {
   const [unsplashOpen, setUnsplashOpen] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
-  console.log("categories receive", categories, form)
+  console.log("categories receive", categories, form);
   // Auto-save to localStorage
   useEffect(() => {
     if (autoSave && form) {

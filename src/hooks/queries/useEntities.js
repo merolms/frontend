@@ -19,7 +19,6 @@ import {
   useCategoryCreate,
   useCategoryDelete,
   useCategoryGetAll,
-  useCategoryGetByID,
   useCategoryGetChildren,
   useCategoryGetRoots,
   useCategoryGetStat,
@@ -265,8 +264,6 @@ export const useCategories = (params = {}) => {
   if (params.limit !== undefined) orvalParams.limit = params.limit;
 
   return useCategoryGetAll(undefined, orvalParams);
-
-
 };
 
 export const useCategory = (id) => {
@@ -320,7 +317,6 @@ export const useDeleteCategory = () => {
 
 export const useCategoryChildren = (parentId) => {
   return useCategoryGetChildren(parentId);
-
 };
 
 export const useCategoryRoots = (params = {}) => {

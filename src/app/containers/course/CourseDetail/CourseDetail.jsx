@@ -445,12 +445,9 @@ const CourseDetail = () => {
                         <div className="flex items-start gap-2">
                           <User size={14} className="mt-0.5" style={{ color: t("accent") }} />
                           <div>
-                            <div className="text-text-primary text-xs font-semibold">
-                              Author
-                            </div>
+                            <div className="text-text-primary text-xs font-semibold">Author</div>
                             <div className="text-text-muted text-xs">
                               {course.author?.firstname} {course.author?.lastname}
-                              
                             </div>
                           </div>
                         </div>
