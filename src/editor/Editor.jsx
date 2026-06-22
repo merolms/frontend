@@ -196,25 +196,49 @@ function MeroEduEditor({
 
   return (
     <EditorProvider isEditable={editable} lessonId={lessonId}>
-      {isSaving && <span className="editor-saving-pulse">Saved</span>}
-      {/* <Toaster position="top-right" /> */}
-       
+      {/* Improved saving indicator */}
+      {isSaving && (
+        <div className="editor-saving-indicator">
+          <span className="saving-pulse">Saving...</span>
+        </div>
+      )}
+
       {showToolbar && (
         <div className="editor-topbar">
           <div className="editor-toolbar-center">
             <ToolbarButtons editor={editor} />
-            {/* Premium saving indicator */}
-           
           </div>
         </div>
       )}
       <div className="editor-content-area">
         <div className="editor-content-inner activity-editor-content-wrapper">
           <EditorContent editor={editor} dark={"false"} />
-          {/* Premium empty state */}
-          {isEditorEmpty && (
+          
+          {/* Enhanced empty state */}
+          {isEditorEmpty && editable && (
             <div className="editor-empty-state">
-              <p>Press <kbd>/</kbd> for magic blocks or start typing…</p>
+              <div className="empty-state-icon">✨</div>
+              <h3 className="empty-state-title">Start creating content</h3>
+              <p className="empty-state-hint">
+                Press <kbd>/</kbd> for quick blocks or type to begin
+              </p>
+              <div className="empty-state-actions">
+                <button
+                  onClick={() => editor?.chain().focus().insertContent({ type: 'paragraph' }).run()}
+                  className="empty-state-action"
+                >
+                  Type to start
+                </button>
+              </div>
+            </div>
+          )}
+          
+          {/* Read-only empty state */}
+          {isEditorEmpty && !editable && (
+            <div className="editor-empty-state">
+              <div className="empty-state-icon">📝</div>
+              <h3 className="empty-state-title">No content yet</h3>
+              <p className="empty-state-hint">This lesson is waiting for content</p>
             </div>
           )}
         </div>

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { ChevronRight, Save, Eye, AlertCircle, Check, Loader2, X, GripVertical, Menu, Book } from "lucide-react";
+import { ChevronRight, Save, Eye, AlertCircle, Check, Loader2, X, GripVertical, Menu, Book, ArrowLeft, ArrowRight, Pencil } from "lucide-react";
 
 import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 import { saveLessonBlocks } from "@/app/services/blockService";
@@ -52,6 +52,7 @@ const CourseBuilder = () => {
   const [addingLesson, setAddingLesson] = useState(false);
   const [error, setError] = useState(null);
   const [words, setWords] = useState(0);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   // Pagination state
   const [pagination, setPagination] = useState({
@@ -430,6 +431,20 @@ const CourseBuilder = () => {
 
   const lessonIndex = lessons.findIndex((l) => l.id === selectedLesson?.id);
 
+  const handlePreviousLesson = () => {
+    const currentIndex = lessons.findIndex((l) => l.id === selectedLesson?.id);
+    if (currentIndex > 0) {
+      handleSelectLesson(lessons[currentIndex - 1].id);
+    }
+  };
+
+  const handleNextLesson = () => {
+    const currentIndex = lessons.findIndex((l) => l.id === selectedLesson?.id);
+    if (currentIndex >= 0 && currentIndex < lessons.length - 1) {
+      handleSelectLesson(lessons[currentIndex + 1].id);
+    }
+  };
+
   // ─── Loading ───────────────────────────────────────────────────
   if (loading) {
     return (
@@ -510,12 +525,11 @@ const CourseBuilder = () => {
               </span>
             )}
             <button
-              onClick={() =>
-                navigate(`/courses/${id}/preview/${selectedLesson?.id || lessonId || ""}`)
-              }
+              onClick={() => setIsPreviewMode(!isPreviewMode)}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-muted-foreground transition-all hover:bg-accent hover:text-foreground"
             >
-              <Eye size={14} /> Preview
+              {isPreviewMode ? <Pencil size={14} /> : <Eye size={14} />}
+              {isPreviewMode ? "Edit" : "Preview"}
             </button>
             <button
               onClick={handleSave}
@@ -546,7 +560,8 @@ const CourseBuilder = () => {
 
         {/* ── Editor layout (fills remaining height, scrollable) ── */}
         <div className="flex-1 flex overflow-hidden min-h-0">
-          <LessonPanel
+          {!isPreviewMode && (
+            <LessonPanel
             lessons={lessons}
             selectedLessonId={selectedLesson?.id}
             onSelectLesson={handleSelectLesson}
@@ -562,8 +577,10 @@ const CourseBuilder = () => {
             pagination={pagination}
             onPageChange={handlePageChange}
           />
+          )}
 
-          {/* Resize handle */}
+          {/* Resize handle - hide in preview mode */}
+          {!isPreviewMode && (
           <div
             onMouseDown={handleResizeStart}
             className={cn(
@@ -571,6 +588,7 @@ const CourseBuilder = () => {
               isResizing ? "bg-primary/30" : "bg-transparent hover:bg-border/50"
             )}
           />
+          )}
 
           {/* Scrollable canvas */}
           <main className="flex-1 overflow-y-auto overflow-x-hidden bg-muted/30 p-4 sm:p-6 lg:p-8">
@@ -594,6 +612,8 @@ const CourseBuilder = () => {
                   onContentChange={handleContentChange}
                   onStatsChange={handleStatsChange}
                   lessonId={selectedLesson?.id}
+                  editable={!isPreviewMode}
+                  showToolbar={!isPreviewMode}
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center min-h-[400px] text-muted-foreground">
@@ -606,6 +626,33 @@ const CourseBuilder = () => {
               )}
             </div>
           </main>
+
+          {/* Lesson navigation footer for preview mode */}
+          {isPreviewMode && lessons.length > 0 && selectedLesson && (
+            <div className="flex-shrink-0 px-4 py-3 border-t border-border/30 bg-gradient-to-r from-background via-background/95 to-background">
+              <div className="max-w-6xl mx-auto flex items-center justify-between">
+                <button
+                  onClick={handlePreviousLesson}
+                  disabled={lessonIndex <= 0}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent hover:text-foreground text-muted-foreground"
+                >
+                  <ArrowLeft size={16} />
+                  Previous
+                </button>
+                <span className="text-sm font-medium text-muted-foreground">
+                  {lessonIndex + 1} / {lessons.length}
+                </span>
+                <button
+                  onClick={handleNextLesson}
+                  disabled={lessonIndex >= lessons.length - 1}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent hover:text-foreground text-muted-foreground"
+                >
+                  Next
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>

@@ -15,7 +15,6 @@ import CourseBuilder from "@/app/containers/course/CourseBuilder/CourseBuilder";
 import CourseCreate from "@/app/containers/course/CourseCreate/CourseCreate";
 import CourseDetail from "@/app/containers/course/CourseDetail/CourseDetail";
 import CourseEdit from "@/app/containers/course/CourseEdit/CourseEdit";
-import CoursePreview from "@/app/containers/course/CoursePreview/CoursePreview";
 import CourseViewer from "@/app/containers/course/CourseViewer/CourseViewer";
 import MyLearning from "@/app/containers/course/MyLearning/MyLearning";
 import Dashboard from "@/app/containers/Dashboard/Dashboard";
@@ -121,7 +120,6 @@ const instructorRoutes = [
   instructorPlus(<InstructorDashboard />, "/instructor/dashboard"),
   instructorPlus(<CourseCreate />, "/courses/create", ["courses.create"]),
   instructorPlus(<CourseBuilder />, "/courses/:id/builder/:lessonId?", ["courses.lessons.manage"]),
-  instructorPlus(<CoursePreview />, "/courses/:id/preview/:lessonId?", ["courses.lessons.manage"]),
   instructorPlus(<CourseEdit />, "/courses/:id/edit", ["courses.edit"]),
   instructorPlus(<LearningPathForm />, "/learning-paths/create"),
   instructorPlus(<LearningPathForm />, "/learning-paths/:id/edit"),

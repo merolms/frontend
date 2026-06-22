@@ -153,23 +153,6 @@ const RoleBasedSidebar = () => {
 
       {/* Bottom section */}
       <div className="border-t border-border/30 bg-gradient-to-t from-background via-background/95 to-transparent p-3">
-        {/* Role indicator */}
-        {user?.role && (
-          <div className={cn(
-            "flex pb-3 transition-all duration-300",
-            isExpanded ? "justify-start px-2" : "justify-center"
-          )}>
-            <div className="rounded-full bg-gradient-to-br from-primary/10 to-primary/5 px-3 py-1.5 shadow-sm transition-all duration-300 hover:shadow-md">
-              <RoleBadge role={user.role} size="sm" />
-            </div>
-            {isExpanded && (
-              <span className="ml-2 text-xs text-muted-foreground self-center">
-                Current Role
-              </span>
-            )}
-          </div>
-        )}
-
         {user && (
           <div className="flex flex-col gap-2">
             {/* User avatar */}
@@ -190,6 +173,12 @@ const RoleBasedSidebar = () => {
                       alt={user.firstName}
                       className="relative z-10 h-9 w-9 rounded-full object-cover ring-2 ring-border/30 transition-all duration-300 group-hover:ring-primary/50"
                     />
+                    {/* Role badge */}
+                    {user?.role && (
+                      <div className="absolute -bottom-1 -right-1 z-20">
+                        <RoleBadge role={user.role} size="xs" />
+                      </div>
+                    )}
                   </div>
                   {isExpanded && (
                     <div className="flex flex-col items-start">
@@ -209,6 +198,12 @@ const RoleBasedSidebar = () => {
                     <div className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 text-xs font-semibold text-primary-foreground ring-2 ring-border/30 transition-all duration-300 group-hover:ring-primary/50">
                       {user.firstName?.[0] || "U"}
                     </div>
+                    {/* Role badge */}
+                    {user?.role && (
+                      <div className="absolute -bottom-1 -right-1 z-20">
+                        <RoleBadge role={user.role} size="xs" />
+                      </div>
+                    )}
                   </div>
                   {isExpanded && (
                     <div className="flex flex-col items-start">

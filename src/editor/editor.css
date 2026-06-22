@@ -1,0 +1,1018 @@
+/* ═══════════════════════════════════════════════════════════════
+   EDITOR STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════
+   THEME TOKENS (defaults = light, overridden for [data-theme="dark"])
+   Defined at :root so tokens are globally available; dark overrides
+   use [data-theme="dark"] which sits on <html>, acting as global override.
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --editor-bg: rgb(241, 245, 249);
+  --editor-bg-dot: rgba(203, 213, 225, 1);
+  --editor-surface: #ffffff;
+  --editor-surface-hover: #f3f4f6;
+  --editor-surface-active: #e5e7eb;
+  --editor-overlay: rgba(255, 255, 255, 0.9);
+
+  --editor-text: #4b5563;
+  --editor-text-heading: #111827;
+  --editor-text-muted: #6b7280;
+  --editor-text-faint: #9ca3af;
+  --editor-text-inverse: #ffffff;
+
+  --editor-border: #e5e7eb;
+  --editor-border-subtle: rgba(229, 231, 235, 0.4);
+  --editor-border-ghost: rgba(209, 213, 219, 0.25);
+
+  --editor-accent: #3b82f6;
+  --editor-accent-hover: #2563eb;
+  --editor-accent-light: rgba(59, 130, 246, 0.08);
+  --editor-danger: #dc2626;
+  --editor-danger-light: #fee2e2;
+  --editor-warning: #f59e0b;
+  --editor-warning-light: #fef3c7;
+
+  --editor-drag-bg: #ffffff;
+  --editor-drag-hover: #f3f4f6;
+  --editor-drag-active: #e5e7eb;
+
+  --editor-tooltip-bg: #1f2937;
+  --editor-tooltip-text: #f9fafb;
+  --editor-tooltip-shadow: rgba(0, 0, 0, 0.4);
+
+  --editor-content-bg: white;
+  --editor-content-border: rgba(229, 231, 235, 0.4);
+  --editor-code-bg: #0d0d0d;
+  --editor-code-text: #ffffff;
+  --editor-table-border: rgba(71, 7, 7, 0.4);
+  --editor-table-header: rgba(217, 217, 217, 0.4);
+  --editor-table-selected: rgba(139, 139, 139, 0.2);
+
+  --editor-placeholder: #adb5bd;
+
+  --editor-shadow-color: rgba(209, 213, 219, 0.25);
+  --editor-shadow-strong: rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] {
+  --editor-bg: rgb(30, 41, 59);
+  --editor-bg-dot: rgba(71, 85, 105, 1);
+  --editor-surface: rgb(51, 65, 85);
+  --editor-surface-hover: rgb(71, 85, 105);
+  --editor-surface-active: rgb(51, 65, 85);
+
+  --editor-text: #cbd5e1;
+  --editor-text-heading: #f1f5f9;
+  --editor-text-muted: #94a3b8;
+  --editor-text-faint: #64748b;
+  --editor-text-inverse: #1e293b;
+
+  --editor-border: rgb(51, 65, 85);
+  --editor-border-subtle: rgba(71, 85, 105, 0.4);
+  --editor-border-ghost: rgba(71, 85, 105, 0.25);
+
+  --editor-accent: #60a5fa;
+  --editor-accent-hover: #3b82f6;
+  --editor-accent-light: rgba(96, 165, 250, 0.12);
+  --editor-danger: #f87171;
+  --editor-danger-light: rgba(248, 113, 113, 0.15);
+  --editor-warning: #fbbf24;
+  --editor-warning-light: rgba(251, 191, 36, 0.15);
+
+  --editor-drag-bg: #334155;
+  --editor-drag-hover: #475569;
+  --editor-drag-active: #64748b;
+
+  --editor-tooltip-bg: #1e2937;
+  --editor-tooltip-text: #f1f5f9;
+  --editor-tooltip-shadow: rgba(0, 0, 0, 0.5);
+
+  --editor-content-bg: rgb(15, 23, 42);
+  --editor-content-border: rgba(51, 65, 85, 0.5);
+
+  --editor-placeholder: #64748b;
+
+  --editor-shadow-color: rgba(0, 0, 0, 0.3);
+  --editor-shadow-strong: rgba(0, 0, 0, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+@keyframes bubbleIn {
+  from { opacity: 0; transform: scale(0.95) translateY(4px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes slashItemIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes rotateGradientAngle {
+  from { --gradient-angle: 32deg; }
+  to   { --gradient-angle: 392deg; }
+}
+
+@keyframes fadeScaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateY(-4px); }
+}
+
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROSEMIRROR BASE
+   ═══════════════════════════════════════════════════════════════ */
+
+.ProseMirror {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
+  color: var(--editor-text-heading);
+  caret-color: var(--editor-accent);
+}
+
+.ProseMirror > * + * {
+  margin-top: 0.75em;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: var(--editor-placeholder);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  opacity: 0.7;
+  font-style: italic;
+  transition: opacity 0.3s;
+}
+
+.ProseMirror-focused p.is-editor-empty:first-child::before {
+  opacity: 0.4;
+}
+
+.ProseMirror ::selection {
+  background: rgba(59, 130, 246, 0.15);
+  color: inherit;
+  text-shadow: none;
+}
+
+.ProseMirror-selectednode {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.ProseMirror [data-node-view-wrapper] {
+  outline: none !important;
+}
+
+.ProseMirror [data-node-view-wrapper]:focus,
+.ProseMirror [data-node-view-wrapper]:focus-within,
+.ProseMirror [data-node-view-wrapper]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.ProseMirror [class^="block-"]:focus,
+.ProseMirror [class^="block-"]:focus-within,
+.ProseMirror [class*=" block-"]:focus,
+.ProseMirror [class*=" block-"]:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.ProseMirror .is-dragging {
+  opacity: 0.4;
+  background: var(--editor-surface-active);
+  border-radius: 4px;
+}
+
+.ProseMirror .ai-canva-bubble-menu,
+.ProseMirror .tippy-box {
+  position: fixed !important;
+  transform: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DRAG HANDLE
+   ═══════════════════════════════════════════════════════════════ */
+
+.editor-drag-handle {
+  position: fixed;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--editor-drag-bg);
+  border: 1px solid var(--editor-border);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 150ms, visibility 150ms;
+  z-index: 10000;
+  pointer-events: none;
+  user-select: none;
+  overflow: hidden;
+  padding: 0 2px;
+  box-shadow: 0 2px 8px var(--editor-shadow-color);
+  margin-right: 30px;
+  transform: translateY(4px);
+  transition: opacity 150ms, transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.editor-drag-handle.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.editor-drag-handle.is-dragging {
+  opacity: 0.6;
+}
+
+.editor-content-inner .ProseMirror > *.is-dragging {
+  background: var(--editor-accent-light);
+  border-radius: 6px;
+  outline: 2px solid var(--editor-accent);
+  outline-offset: -2px;
+  opacity: 0.7;
+}
+
+.editor-drag-handle .drag-grip {
+  width: 24px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  color: var(--editor-text-muted);
+  transition: background 150ms, color 150ms;
+  border-radius: 6px 0 0 6px;
+  flex-shrink: 0;
+}
+
+.editor-drag-handle .drag-grip:hover {
+  background: var(--editor-drag-hover);
+  color: var(--editor-text-muted);
+}
+
+.editor-drag-handle .drag-grip:active,
+.editor-drag-handle.is-dragging .drag-grip {
+  cursor: grabbing;
+  background: var(--editor-drag-active);
+  color: var(--editor-text);
+}
+
+.editor-drag-handle .action-btn {
+  width: 0;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--editor-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    width 150ms,
+    opacity 150ms,
+    visibility 150ms,
+    background 150ms,
+    color 150ms;
+  overflow: visible;
+  flex-shrink: 0;
+  position: relative;
+  border-radius: 4px;
+}
+
+.editor-drag-handle:hover .action-btn {
+  width: 26px;
+  opacity: 1;
+  visibility: visible;
+}
+
+.editor-drag-handle .action-btn svg {
+  flex-shrink: 0;
+}
+
+.editor-drag-handle .action-btn:hover {
+  background: var(--editor-drag-hover);
+  color: var(--editor-text);
+}
+
+.editor-drag-handle .action-btn:active {
+  background: var(--editor-drag-active);
+}
+
+.editor-drag-handle .clear-btn:hover {
+  background: var(--editor-warning-light);
+  color: var(--editor-warning);
+}
+
+.editor-drag-handle .clear-btn:active {
+  background: var(--editor-warning-light);
+  color: var(--editor-warning);
+}
+
+.editor-drag-handle .delete-btn:hover {
+  background: var(--editor-danger-light);
+  color: var(--editor-danger);
+}
+
+.editor-drag-handle .delete-btn:active {
+  background: var(--editor-danger-light);
+  color: var(--editor-danger);
+}
+
+.editor-drag-handle .tooltip-text {
+  position: fixed;
+  background: var(--editor-tooltip-bg);
+  color: var(--editor-tooltip-text);
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 200ms;
+  box-shadow:
+    0 10px 15px -3px var(--editor-tooltip-shadow),
+    0 4px 6px -4px var(--editor-tooltip-shadow);
+  outline: 1px solid var(--editor-border-subtle);
+  z-index: 10001;
+  transform: translateX(-50%);
+}
+
+.editor-drag-handle .action-btn:hover .tooltip-text {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ─── Drop Indicator ─── */
+.editor-drop-indicator {
+  position: fixed;
+  height: 2px;
+  background: var(--editor-accent);
+  border-radius: 1px;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 9999;
+  pointer-events: none;
+  transition: opacity 100ms;
+}
+
+.editor-drop-indicator::before,
+.editor-drop-indicator::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--editor-accent);
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.editor-drop-indicator::before {
+  left: -3px;
+}
+
+.editor-drop-indicator::after {
+  right: -3px;
+}
+
+.editor-drop-indicator.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TIPPY.JS BASE
+   ═══════════════════════════════════════════════════════════════ */
+
+.tippy-box {
+  position: relative;
+  background-color: var(--editor-surface);
+  color: var(--editor-text);
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: normal;
+  outline: 0;
+  border: 1px solid var(--editor-border);
+  transition-property: transform, visibility, opacity;
+}
+
+.tippy-box[data-placement^="top"] > .tippy-arrow {
+  bottom: 0;
+}
+
+.tippy-box[data-placement^="bottom"] > .tippy-arrow {
+  top: 0;
+}
+
+.tippy-box[data-placement^="left"] > .tippy-arrow {
+  right: 0;
+}
+
+.tippy-box[data-placement^="right"] > .tippy-arrow {
+  left: 0;
+}
+
+.tippy-arrow {
+  width: 16px;
+  height: 16px;
+  color: var(--editor-surface);
+}
+
+.tippy-arrow::before {
+  content: "";
+  position: absolute;
+  border-color: transparent;
+  border-style: solid;
+}
+
+.tippy-content {
+  position: relative;
+  padding: 5px 9px;
+  z-index: 1;
+  background-color: var(--editor-surface);
+}
+
+.tippy-box[data-animation="shift-away"][data-state="hidden"] {
+  opacity: 0;
+}
+
+.tippy-box[data-animation="shift-away"][data-state="hidden"][data-placement^="top"] {
+  transform: translateY(5px);
+}
+
+.tippy-box[data-animation="shift-away"][data-state="hidden"][data-placement^="bottom"] {
+  transform: translateY(-5px);
+}
+
+.tippy-box[data-animation="shift-away"][data-state="hidden"][data-placement^="left"] {
+  transform: translateX(5px);
+}
+
+.tippy-box[data-animation="shift-away"][data-state="hidden"][data-placement^="right"] {
+  transform: translateX(-5px);
+}
+
+.tippy-box[data-theme~="slash-commands"] {
+  background: var(--editor-surface) !important;
+  border: 1px solid var(--editor-border) !important;
+  box-shadow: 0 4px 16px var(--editor-shadow-strong) !important;
+  padding: 0;
+  border-radius: 8px;
+}
+
+.tippy-box[data-theme~="slash-commands"] > .tippy-content {
+  padding: 0;
+}
+
+.tippy-box[data-theme~="slash-commands"] > .tippy-arrow {
+  display: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SLASH COMMANDS
+   ═══════════════════════════════════════════════════════════════ */
+
+.slash-commands-menu {
+  max-height: 320px;
+  overflow-y: auto;
+  width: 280px;
+  padding: 6px;
+  background: var(--editor-surface-hover);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.slash-commands-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.slash-commands-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.slash-commands-menu::-webkit-scrollbar-thumb {
+  background: var(--editor-border);
+  border-radius: 3px;
+}
+
+.slash-commands-menu::-webkit-scrollbar-thumb:hover {
+  background: var(--editor-text-faint);
+}
+
+.slash-commands-category {
+  margin-bottom: 6px;
+}
+
+.slash-commands-category:last-child {
+  margin-bottom: 0;
+}
+
+.slash-commands-category-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--editor-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 6px 10px 4px;
+}
+
+.slash-commands-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+  color: var(--editor-text);
+  animation: slashItemIn 0.2s ease both;
+}
+
+.slash-commands-item:hover {
+  background: var(--editor-surface-hover);
+}
+
+.slash-commands-item.is-selected {
+  background: var(--editor-surface-active);
+}
+
+.slash-commands-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--editor-surface-hover);
+  border: 1px solid var(--editor-border);
+  border-radius: 6px;
+  margin-right: 10px;
+  color: var(--editor-text);
+  flex-shrink: 0;
+}
+
+.slash-commands-item.is-selected .slash-commands-item-icon {
+  background: var(--editor-surface);
+}
+
+.slash-commands-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.slash-commands-item-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--editor-text-heading);
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.slash-commands-item-description {
+  font-size: 11px;
+  color: var(--editor-text-muted);
+  line-height: 1.3;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slash-commands-empty {
+  padding: 16px;
+  text-align: center;
+  color: var(--editor-text-muted);
+  font-size: 13px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   AI BUBBLE MENU
+   ═══════════════════════════════════════════════════════════════ */
+
+.ai-canva-bubble-menu {
+  position: fixed !important;
+  z-index: var(--z-editor-bubble) !important;
+  pointer-events: auto !important;
+}
+
+.tippy-box[data-theme~="ai-canva"] {
+  position: fixed !important;
+  z-index: var(--z-editor-bubble) !important;
+  backdrop-filter: blur(12px);
+  background: rgba(var(--editor-surface-rgb), 0.85);
+  animation: bubbleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOOLBAR BUTTONS
+   ═══════════════════════════════════════════════════════════════ */
+
+.editor-tool-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  min-width: 25px;
+  min-height: 25px;
+  padding: 5px;
+  margin: 5px;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(1);
+  flex-shrink: 0;
+  color: var(--editor-text-muted);
+  box-shadow:
+    0 4px 6px -1px var(--editor-shadow-color),
+    0 2px 4px -2px var(--editor-shadow-color);
+  outline: 1px solid var(--editor-border-subtle);
+}
+
+.editor-tool-btn svg {
+  padding: 1px;
+}
+
+.editor-tool-btn.is-active {
+  background: var(--editor-surface-active);
+  color: var(--editor-text-heading);
+  outline: 1px solid var(--editor-border);
+}
+
+.editor-tool-btn.is-active:hover {
+  background: var(--editor-surface-hover);
+  cursor: pointer;
+}
+
+.editor-tool-btn:hover {
+  background: var(--editor-surface-hover);
+  cursor: pointer;
+  transform: scale(1.05);
+}
+
+.editor-tool-btn:active {
+  transform: scale(0.96);
+}
+
+@media (max-width: 1200px) {
+  .editor-tool-btn {
+    min-width: 24px;
+    height: 24px;
+    padding: 4px;
+  }
+}
+
+/* Magic button with gradient animation */
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 32deg;
+  inherits: false;
+}
+
+.editor-tool-btn-magic {
+  position: relative;
+  background: conic-gradient(
+    from var(--gradient-angle) at 53.75% 50%,
+    rgb(35, 40, 93) 4deg,
+    rgba(20, 0, 52, 0.95) 59deg,
+    rgba(164, 45, 238, 0.88) 281deg
+  );
+  color: white;
+  outline: none;
+  border-radius: 6px;
+  animation: rotateGradientAngle 20s linear infinite;
+  box-shadow: 0 2px 8px -2px rgba(164, 45, 238, 0.4);
+  padding: 6px;
+}
+
+.editor-tool-btn-magic:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px -2px rgba(164, 45, 238, 0.5);
+  cursor: pointer;
+}
+
+.editor-tool-btn-magic img {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.editor-tool-btn-magic-disabled {
+  filter: grayscale(100%);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.editor-tool-btn-magic-disabled:hover {
+  transform: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BLOCK COMPONENTS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Flipcard 3D */
+.flipcard-container {
+  perspective: 1000px;
+}
+
+.flipcard-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.7s ease-in-out;
+  transform-style: preserve-3d;
+}
+
+.flipcard-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.flipcard-front,
+.flipcard-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 12px;
+}
+
+.flipcard-back {
+  transform: rotateY(180deg);
+}
+
+/* Block wrapper hover effects */
+.image-block-wrapper,
+.video-block-wrapper,
+.callout-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.image-block-wrapper:hover,
+.video-block-wrapper:hover,
+.callout-wrapper:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+}
+
+[data-theme="dark"] .image-block-wrapper,
+[data-theme="dark"] .video-block-wrapper,
+[data-theme="dark"] .callout-wrapper {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+[data-theme="dark"] .image-block-wrapper:hover,
+[data-theme="dark"] .video-block-wrapper:hover,
+[data-theme="dark"] .callout-wrapper:hover {
+  box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   EDITOR LAYOUT
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Activity editor layout */
+.activity-editor-page {
+  height: 100vh;
+  width: 100%;
+  padding-top: 30px;
+  position: relative;
+  background-image:
+    radial-gradient(var(--editor-bg-dot) 1px, transparent 1px),
+    radial-gradient(var(--editor-bg-dot) 1px, transparent 1px);
+  background-position: 0 0, 25px 25px;
+  background-size: 50px 50px;
+  background-attachment: fixed;
+  background-repeat: repeat;
+  background-color: var(--editor-bg);
+}
+
+/* Premium: subtle noise overlay */
+.activity-editor-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  z-index: 0;
+}
+
+@media (max-width: 1200px) {
+  .activity-editor-page {
+    padding-top: 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  .activity-editor-page {
+    padding-top: 15px;
+  }
+}
+
+.activity-editor-content-wrapper {
+  margin: 20px 10px;
+  position: relative;
+  z-index: 1;
+}
+
+[data-theme="dark"] .activity-editor-content-wrapper {
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05),
+    0 2px 4px rgba(0,0,0,0.2),
+    0 12px 24px rgba(0,0,0,0.3);
+}
+
+/* Standalone editor shell */
+.meroedu-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-image:
+    radial-gradient(var(--editor-bg-dot) 1px, transparent 1px),
+    radial-gradient(var(--editor-bg-dot) 1px, transparent 1px);
+  background-position: 0 0, 25px 25px;
+  background-size: 50px 50px;
+  background-attachment: fixed;
+  background-repeat: repeat;
+  background-color: var(--editor-bg);
+  animation: pageEnter 0.4s ease;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY CLASSES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Saving indicator pulse */
+.editor-saving-pulse {
+  background: var(--editor-accent-light);
+  color: var(--editor-accent);
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  animation: fadeScaleIn 0.2s ease, fadeOut 0.3s 0.5s forwards;
+}
+
+/* Empty state */
+.editor-empty-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: var(--editor-text-muted);
+  font-size: 16px;
+  animation: fadeScaleIn 0.3s ease;
+  pointer-events: none;
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 1rem;
+  opacity: 0.6;
+}
+
+.empty-state-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--editor-text-heading);
+  margin: 0 0 0.5rem 0;
+}
+
+.empty-state-hint {
+  font-size: 14px;
+  margin: 0 0 1.5rem 0;
+  opacity: 0.8;
+}
+
+.empty-state-hint kbd {
+  background: var(--editor-surface-hover);
+  border: 1px solid var(--editor-border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: monospace;
+  font-size: 13px;
+}
+
+.empty-state-actions {
+  pointer-events: auto;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.empty-state-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--editor-surface);
+  border: 1px solid var(--editor-border);
+  border-radius: 6px;
+  color: var(--editor-text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.empty-state-action:hover {
+  background: var(--editor-surface-hover);
+  border-color: var(--editor-accent);
+  color: var(--editor-accent);
+}
+
+/* Saving indicator */
+.editor-saving-indicator {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.saving-pulse {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--editor-surface);
+  border: 1px solid var(--editor-border);
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--editor-text-muted);
+  box-shadow: 0 2px 8px var(--editor-shadow-color);
+  animation: fadeScaleIn 0.2s ease;
+}
+
+.saving-pulse::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: var(--editor-accent);
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+}
