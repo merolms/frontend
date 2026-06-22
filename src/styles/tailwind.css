@@ -1610,8 +1610,8 @@
 .activity-editor-content-wrapper .ProseMirror {
   padding: 20px;
   color: var(--editor-text-heading);
-  outline: 0.5px solid var(--color-primary);
-  border-radius: 10px;
+  /* outline: 0.5px solid var(--color-primary); */
+  /* border-radius: 10px; */
 }
 .activity-editor-content-wrapper .ProseMirror:focus {
   outline: none !important;
@@ -2120,7 +2120,7 @@
 }
 .editor-content-inner .ProseMirror:focus {
   outline: none !important;
-  /* box-shadow: none !important; */
+  box-shadow: none !important;
 }
 .editor-content-inner .ProseMirror h1 {
   font-size: 32px;

@@ -659,11 +659,11 @@ const CourseBuilder = () => {
           )}
 
           {/* Scrollable canvas */}
-          <main className="bg-muted/30 flex-1 overflow-x-hidden overflow-y-auto p-4 sm:p-6 lg:p-8">
+          <main className="bg-muted/30 flex-1 overflow-x-hidden overflow-y-auto p-4 sm:p-6 lg:p-8 p-2.5">
             {/* Document card */}
-            <div className="bg-background border-border/50 mx-auto flex w-full max-w-5xl min-w-[760px] flex-shrink-0 flex-col rounded-xl border shadow-lg">
+            <div className="bg-background border-border/50 mx-auto flex flex-shrink-0 flex-col rounded-xl border shadow-lg">
               {/* Lesson header */}
-              <div className="border-border/30 mb-8 border-b pb-5">
+              <div className="border-border/30 mb-2 border-b pb-2 pl-5 pt-5">
                 <div className="text-muted-foreground mb-1.5 text-[10px] font-bold tracking-wider uppercase">
                   Lesson {lessonIndex >= 0 ? lessonIndex + 1 : 1}
                 </div>
