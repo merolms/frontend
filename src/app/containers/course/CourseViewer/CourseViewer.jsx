@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, BookOpen, Loader } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Loader2, Sparkles, Lock } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 import { useToast } from "@/app/context/ToastContext";
 import { hasPermission } from "@/app/services/authService";
 import CourseCompletionCelebration from "@/components/CourseCompletionCelebration";
-import { ReaderLayout } from "@/components/layouts/ReaderLayout";
 import { Badge } from "@/components/ui/badge";
 import MeroEduEditor from "@/editor/Editor";
 import { loadLessonDoc } from "@/editor/utils/lessonContent";
@@ -18,13 +17,16 @@ import {
   useMarkLessonComplete,
   useMyLessonCompletions,
 } from "@/hooks/queries/useEnrollments";
-import { t } from "@/styles/theme";
+import RoleBasedSidebar from "@/components/layouts/RoleBasedSidebar";
+import { useSidebar } from "@/contexts/SidebarContext";
+import { cn } from "@/lib/utils";
 
 const CourseViewer = () => {
   usePageTitle("Course Viewer");
   const { id } = useParams();
   const { addToast } = useToast();
   const user = useSelector((s) => s.auth.user);
+  const { isExpanded, isMobileOpen, setIsMobileOpen } = useSidebar();
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [lessonContents, setLessonContents] = useState({});
@@ -236,28 +238,34 @@ const CourseViewer = () => {
 
   if (loading) {
     return (
-      <div
-        style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}
-      >
-        <Loader className="text-text-muted animate-spin" size={24} />
+      <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+        <RoleBasedSidebar />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <span className="text-sm text-muted-foreground">Loading course…</span>
+          </div>
+        </main>
       </div>
     );
   }
   if (error) {
     return (
-      <div
-        style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}
-      >
-        <p style={{ color: "var(--error)" }}>{error}</p>
+      <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+        <RoleBasedSidebar />
+        <main className="flex-1 flex items-center justify-center">
+          <p className="text-red-500">{error}</p>
+        </main>
       </div>
     );
   }
   if (!course) {
     return (
-      <div
-        style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}
-      >
-        <p>Course not found.</p>
+      <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+        <RoleBasedSidebar />
+        <main className="flex-1 flex items-center justify-center">
+          <p className="text-muted-foreground">Course not found.</p>
+        </main>
       </div>
     );
   }
@@ -271,192 +279,140 @@ const CourseViewer = () => {
     // draft/archived: show info message instead of enroll button (unless admin)
     if (!ispublished && !isAdmin) {
       return (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100vh",
-            background: t("bg-secondary"),
-          }}
-        >
-          <div
-            style={{
-              background: t("bg-surface"),
-              borderRadius: 12,
-              padding: 40,
-              textAlign: "center",
-              maxWidth: 420,
-              boxShadow: t("shadow-md"),
-            }}
-          >
-            <BookOpen size={48} style={{ color: t("text-muted"), marginBottom: 16 }} />
-            <h2 style={{ color: t("text-primary"), margin: "0 0 8px" }}>{course.title}</h2>
-            <p style={{ color: t("text-muted"), fontSize: 14, marginBottom: 8 }}>
-              {course.status === "draft"
-                ? "This course is not yet available. It is currently being prepared."
-                : "This course is no longer available for enrollment."}
-            </p>
-            <Badge variant={course.status === "draft" ? "gray" : "orange"}>
-              {course.status === "draft" ? "draft" : "archived"}
-            </Badge>
-          </div>
+        <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+          <RoleBasedSidebar />
+          <main className="flex-1 flex items-center justify-center p-4">
+            <div className="bg-background rounded-xl p-10 text-center max-w-md shadow-lg border border-border/50">
+              <BookOpen size={48} className="text-muted-foreground mx-auto mb-4" />
+              <h2 className="text-xl font-semibold text-foreground mb-2">{course.title}</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                {course.status === "draft"
+                  ? "This course is not yet available. It is currently being prepared."
+                  : "This course is no longer available for enrollment."}
+              </p>
+              <Badge variant={course.status === "draft" ? "secondary" : "destructive"}>
+                {course.status === "draft" ? "draft" : "archived"}
+              </Badge>
+            </div>
+          </main>
         </div>
       );
     }
 
     return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100vh",
-          background: t("bg-secondary"),
-        }}
-      >
-        <div
-          style={{
-            background: t("bg-surface"),
-            borderRadius: 12,
-            padding: 40,
-            textAlign: "center",
-            maxWidth: 420,
-            boxShadow: t("shadow-md"),
-          }}
-        >
-          <BookOpen size={48} style={{ color: t("text-muted"), marginBottom: 16 }} />
-          <h2 style={{ color: t("text-primary"), margin: "0 0 8px" }}>{course.title}</h2>
-          <p style={{ color: t("text-muted"), fontSize: 14, marginBottom: 24 }}>
-            Enroll to track your progress and mark lessons complete.
-          </p>
-          <button
-            onClick={handleEnroll}
-            disabled={enrollMutation.isPending || !ispublished}
-            className="bg-primary hover:bg-primary-hover text-secondary rounded-md px-6 py-2 text-sm font-medium disabled:opacity-50"
-          >
-            {enrollMutation.isPending
-              ? "Enrolling…"
-              : !ispublished
-                ? "Enrollment closed"
-                : "Enroll Now"}
-          </button>
-        </div>
+      <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+        <RoleBasedSidebar />
+        <main className="flex-1 flex items-center justify-center p-4">
+          <div className="bg-background rounded-xl p-10 text-center max-w-md shadow-lg border border-border/50">
+            <BookOpen size={48} className="text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-foreground mb-2">{course.title}</h2>
+            <p className="text-sm text-muted-foreground mb-6">
+              Enroll to track your progress and mark lessons complete.
+            </p>
+            <button
+              onClick={handleEnroll}
+              disabled={enrollMutation.isPending || !ispublished}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-6 py-2 text-sm font-medium disabled:opacity-50 transition-all"
+            >
+              {enrollMutation.isPending
+                ? "Enrolling…"
+                : !ispublished
+                  ? "Enrollment closed"
+                  : "Enroll Now"}
+            </button>
+          </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <>
-      <ReaderLayout
-        course={course}
-        lessons={sortedLessons}
-        activeIndex={activeIndex}
-        onGoToLesson={goToLesson}
-        enrollment={enrollment}
-        onMarkLessonComplete={handleMarkLessonComplete}
-        onMarkCourseComplete={handleMarkCourseComplete}
-        lessonCompletionStatus={lessonCompletionStatus}
-      >
+    <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+      <RoleBasedSidebar />
+      
+      {/* Mobile backdrop */}
+      {isMobileOpen && (
         <div
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            margin: "0 auto",
-            padding: "32px 40px",
-          }}
-        >
-          <div
-            style={{
-              marginBottom: 24,
-              paddingBottom: 16,
-              borderBottom: `1px solid ${t("border-secondary")}`,
-            }}
-          >
-            <p
-              style={{
-                fontSize: 10,
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.07em",
-                color: "var(--text-muted)",
-                marginBottom: 4,
-              }}
-            >
-              Lesson {activeIndex + 1}
-            </p>
-            <h2
-              style={{
-                color: "var(--text-primary)",
-                margin: 0,
-                fontSize: "1.5rem",
-                fontWeight: 700,
-                lineHeight: 1.3,
-              }}
-            >
-              {activeLesson?.title || "Untitled Lesson"}
-            </h2>
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
+
+      <main
+        onClick={() => isMobileOpen && setIsMobileOpen(false)}
+        className={cn(
+          "flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out",
+          "lg:ml-16",
+          isExpanded && "lg:ml-64"
+        )}
+      >
+        {/* Course content */}
+        <div className="flex-1 flex flex-col">
+          {/* Lesson header */}
+          <div className="border-b border-border/30 bg-gradient-to-r from-background via-background/95 to-background px-4 sm:px-6 lg:px-8 py-4">
+            <div className="max-w-4xl mx-auto">
+              <p className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground mb-1">
+                Lesson {activeIndex + 1}
+              </p>
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground">
+                {activeLesson?.title || "Untitled Lesson"}
+              </h2>
+            </div>
           </div>
 
-          {activeContent ? (
-            <div style={{ flex: 1 }}>
-              <MeroEduEditor
-                initialContent={activeContent}
-                editable={false}
-                showToolbar={false}
-                lessonId={activeLesson?.id}
-              />
+          {/* Content area */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+              {activeContent ? (
+                <div>
+                  <MeroEduEditor
+                    initialContent={activeContent}
+                    editable={false}
+                    showToolbar={false}
+                    lessonId={activeLesson?.id}
+                  />
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center min-h-[300px] text-muted-foreground">
+                  <BookOpen size={32} className="opacity-30 mb-3" />
+                  <span>This lesson has no content yet.</span>
+                </div>
+              )}
             </div>
-          ) : (
-            <div
-              className="text-text-muted flex flex-1 items-center justify-center"
-              style={{ minHeight: 300 }}
-            >
-              <BookOpen size={32} style={{ opacity: 0.3, marginRight: 12 }} />
-              <span>This lesson has no content yet.</span>
-            </div>
-          )}
+          </div>
 
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginTop: 32,
-              paddingTop: 16,
-              borderTop: `1px solid ${t("border-secondary")}`,
-              flexShrink: 0,
-            }}
-          >
-            <button
-              onClick={() => goToLesson(activeIndex - 1)}
-              disabled={activeIndex === 0}
-              className="text-text-secondary hover:bg-bg-surface-hover flex items-center gap-1 rounded-md px-3 py-1.5 text-xs disabled:opacity-50"
-            >
-              <ArrowLeft size={14} /> Previous
-            </button>
-            <span className="text-text-muted text-xs">
-              {activeIndex + 1} / {lessons.length}
-            </span>
-            <button
-              onClick={() => goToLesson(activeIndex + 1)}
-              disabled={activeIndex >= lessons.length - 1}
-              className="text-text-secondary hover:bg-bg-surface-hover flex items-center gap-1 rounded-md px-3 py-1.5 text-xs disabled:opacity-50"
-            >
-              Next <ArrowRight size={14} />
-            </button>
+          {/* Navigation footer */}
+          <div className="border-t border-border/30 bg-gradient-to-r from-background via-background/95 to-background px-4 sm:px-6 lg:px-8 py-4">
+            <div className="max-w-4xl mx-auto flex items-center justify-between">
+              <button
+                onClick={() => goToLesson(activeIndex - 1)}
+                disabled={activeIndex === 0}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                <ArrowLeft size={14} /> Previous
+              </button>
+              <span className="text-xs text-muted-foreground">
+                {activeIndex + 1} / {lessons.length}
+              </span>
+              <button
+                onClick={() => goToLesson(activeIndex + 1)}
+                disabled={activeIndex >= lessons.length - 1}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                Next <ArrowRight size={14} />
+              </button>
+            </div>
           </div>
         </div>
-      </ReaderLayout>
+      </main>
+      
       {showCelebration && (
         <CourseCompletionCelebration
           courseTitle={course?.title}
           onClose={() => setShowCelebration(false)}
         />
       )}
-    </>
+    </div>
   );
 };
 

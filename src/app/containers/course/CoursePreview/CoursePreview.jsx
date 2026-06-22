@@ -1,22 +1,21 @@
-import { ArrowLeft, ArrowRight, BookOpen, Pencil } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Pencil, Loader2, Menu, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import ThemeSwitcher from "@/app/components/ThemeSwitcher";
-import SideBar from "@/app/containers/SideBar/SideBar";
-import { ReaderLayout } from "@/components/layouts/ReaderLayout";
-import { Button } from "@/components/ui/Button";
-import { Skeleton } from "@/components/ui/skeleton";
 import MeroEduEditor from "@/editor/Editor";
 import { loadLessonDoc } from "@/editor/utils/lessonContent";
 import { usePageTitle } from "@/hooks";
 import { useCourse, useCourseLessons } from "@/hooks/queries/useCourses";
-import { t } from "@/styles/theme";
+import RoleBasedSidebar from "@/components/layouts/RoleBasedSidebar";
+import { useSidebar } from "@/contexts/SidebarContext";
+import { cn } from "@/lib/utils";
 
 const CoursePreview = () => {
   usePageTitle("Course Preview");
   const navigate = useNavigate();
   const { id, lessonId } = useParams();
+  const { isExpanded, isMobileOpen, setIsMobileOpen } = useSidebar();
 
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
@@ -98,33 +97,25 @@ const CoursePreview = () => {
 
   if (loading) {
     return (
-      <div style={{ display: "flex", height: "100vh" }}>
-        <SideBar />
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: t("bg-secondary"),
-          }}
-        >
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-            <Skeleton className="h-8 w-48" />
-            <span style={{ color: t("text-muted"), fontSize: 14 }}>Loading preview…</span>
+      <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+        <RoleBasedSidebar />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <span className="text-sm text-muted-foreground">Loading preview…</span>
           </div>
-        </div>
+        </main>
       </div>
     );
   }
 
   if (displayError) {
     return (
-      <div style={{ display: "flex", height: "100vh" }}>
-        <SideBar />
-        <div style={{ flex: 1, padding: 24 }}>
-          <p style={{ color: "var(--error)" }}>{displayError}</p>
-        </div>
+      <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+        <RoleBasedSidebar />
+        <main className="flex-1 flex items-center justify-center p-6">
+          <p className="text-red-500">{displayError}</p>
+        </main>
       </div>
     );
   }

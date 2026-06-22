@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { ChevronRight, Save, Eye, AlertCircle, Check, Loader2, X, GripVertical, Menu } from "lucide-react";
 
 import ThemeSwitcher from "@/app/components/ThemeSwitcher";
-import SideBar from "@/app/containers/SideBar/SideBar";
-import { useTheme as useThemeContext } from "@/app/context/ThemeContext";
 import { saveLessonBlocks } from "@/app/services/blockService";
 import {
   createLesson,
@@ -16,100 +15,18 @@ import {
 import MeroEduEditor from "@/editor/Editor";
 import { loadLessonDoc } from "@/editor/utils/lessonContent";
 import { usePageTitle } from "@/hooks";
-import { t } from "@/styles/theme";
+import RoleBasedSidebar from "@/components/layouts/RoleBasedSidebar";
+import { useSidebar } from "@/contexts/SidebarContext";
+import { cn } from "@/lib/utils";
 
 import LessonPanel from "./components/LessonPanel";
-
-// ─── Icons ───────────────────────────────────────────────────────
-const SaveIcon = () => (
-  <svg
-    style={{ width: 14, height: 14 }}
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    strokeWidth={2}
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M17 16v4H7v-4m10-8v4a1 1 0 01-1 1H8a1 1 0 01-1-1V8m7-5H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V9l-4-4z"
-    />
-  </svg>
-);
-
-const EyeIcon = () => (
-  <svg
-    style={{ width: 14, height: 14 }}
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    strokeWidth={2}
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-    />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-  </svg>
-);
-
-const AlertIcon = () => (
-  <svg
-    style={{ width: 16, height: 16, flexShrink: 0 }}
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    strokeWidth={2}
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-    />
-  </svg>
-);
-
-const CheckIcon = () => (
-  <svg
-    style={{ width: 12, height: 12 }}
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    strokeWidth={2.5}
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-  </svg>
-);
-
-const Spinner = ({ size = 14 }) => (
-  <svg
-    style={{ width: size, height: size, animation: "spin 0.8s linear infinite" }}
-    fill="none"
-    viewBox="0 0 24 24"
-  >
-    <circle
-      style={{ opacity: 0.25 }}
-      cx="12"
-      cy="12"
-      r="10"
-      stroke="currentColor"
-      strokeWidth="4"
-    />
-    <path
-      style={{ opacity: 0.75 }}
-      fill="currentColor"
-      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-    />
-  </svg>
-);
 
 // ─── CourseBuilder ───────────────────────────────────────────────
 const CourseBuilder = () => {
   usePageTitle("Course Builder");
   const navigate = useNavigate();
   const { id, lessonId } = useParams();
-  const { resolvedTheme: theme } = useThemeContext();
+  const { isExpanded, isMobileOpen, setIsMobileOpen } = useSidebar();
 
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
@@ -145,7 +62,11 @@ const CourseBuilder = () => {
         }
         await loadLesson(targetLesson);
       } else {
-        // const newLesson = await createLesson({ courseId: Number(id), title: "Lesson 1", sort_order: 1  });
+        // Create first lesson automatically if course has no lessons
+        const newLesson = await createLesson(id, {
+          title: "Lesson 1",
+          sort_order: 1,
+        });
         setLessons([newLesson]);
         setSelectedLesson(newLesson);
         setContent("");
@@ -333,10 +254,16 @@ const CourseBuilder = () => {
   const handleAddLesson = async () => {
     try {
       setAddingLesson(true);
+      const nextSortOrder = lessons.length > 0 
+        ? Math.max(...lessons.map(l => l.sort_order || 0)) + 1 
+        : 1;
+      
       const newLesson = await createLesson(id, {
         title: `Lesson ${lessons.length + 1}`,
-        sort_order: lessons.length + 1,
+        sort_order: nextSortOrder,
       });
+      
+      // Add to state and select the new lesson
       setLessons([...lessons, newLesson]);
       await loadLesson(newLesson);
     } catch (err) {
@@ -374,14 +301,20 @@ const CourseBuilder = () => {
   const handleBulkDuplicateLessons = async (lessonIds) => {
     try {
       const newLessons = [...lessons];
+      const maxSortOrder = lessons.length > 0 
+        ? Math.max(...lessons.map(l => l.sort_order || 0)) 
+        : 0;
+      
+      let currentSortOrder = maxSortOrder + 1;
       for (const lessonId of lessonIds) {
         const original = lessons.find((l) => l.id === lessonId);
         if (original) {
           const duplicated = await createLesson(id, {
             title: `${original.title} (Copy)`,
-            sort_order: lessons.length + 1,
+            sort_order: currentSortOrder,
           });
           newLessons.push(duplicated);
+          currentSortOrder++;
         }
       }
       setLessons(newLessons);
@@ -395,164 +328,119 @@ const CourseBuilder = () => {
   // ─── Loading ───────────────────────────────────────────────────
   if (loading) {
     return (
-      <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-        <SideBar />
-        <div
-          style={{
-            marginLeft: 0,
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: t("bg-secondary"),
-          }}
-        >
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-            <Spinner size={32} />
-            <span style={{ color: t("text-muted"), fontSize: 14 }}>Loading editor…</span>
+      <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+        <RoleBasedSidebar />
+        <main className="flex-1 flex items-center justify-center p-8">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <span className="text-sm text-muted-foreground">Loading editor…</span>
           </div>
-        </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-      <SideBar />
+    <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+      <RoleBasedSidebar />
+      
+      {/* Mobile backdrop */}
+      {isMobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
 
-      <div
-        style={{
-          marginLeft: 0,
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-        }}
+      <main
+        onClick={() => isMobileOpen && setIsMobileOpen(false)}
+        className={cn(
+          "flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out",
+          "lg:ml-16",
+          isExpanded && "lg:ml-64"
+        )}
       >
         {/* Top bar */}
-        <header
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-            height: 52,
-            minHeight: 52,
-            background: t("bg-surface"),
-            borderBottom: `1px solid ${t("border-primary")}`,
-            boxShadow: t("shadow-sm"),
-            padding: "0 16px",
-            flexShrink: 0,
-            zIndex: 50,
-          }}
-        >
-          <nav
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              flex: 1,
-              minWidth: 0,
-              fontSize: 13,
-            }}
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border/30 bg-gradient-to-r from-background via-background/95 to-background backdrop-blur-xl shadow-sm px-4 sm:px-6">
+          {/* Mobile menu toggle */}
+          <button
+            onClick={() => setIsMobileOpen(!isMobileOpen)}
+            className="lg:hidden flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-accent hover:text-foreground"
+            aria-label="Toggle menu"
           >
-            <BreadcrumbButton onClick={() => navigate("/courses")}>Courses</BreadcrumbButton>
-            <span style={{ color: t("text-disabled") }}>/</span>
-            <BreadcrumbButton onClick={() => navigate(`/courses/${id}`)} maxWidth={160}>
-              {course?.title}
-            </BreadcrumbButton>
-            <span style={{ color: t("text-disabled") }}>/</span>
-            <span
-              style={{
-                color: t("text-primary"),
-                fontWeight: 600,
-                maxWidth: 200,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
+            {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+
+          {/* Breadcrumb navigation */}
+          <nav className="flex items-center gap-2 text-sm flex-1 min-w-0">
+            <button
+              onClick={() => navigate("/courses")}
+              className="text-muted-foreground hover:text-foreground transition-colors truncate"
             >
+              Courses
+            </button>
+            <ChevronRight size={14} className="text-muted-foreground flex-shrink-0" />
+            <button
+              onClick={() => navigate(`/courses/${id}`)}
+              className="text-muted-foreground hover:text-foreground transition-colors truncate max-w-[160px]"
+            >
+              {course?.title}
+            </button>
+            <ChevronRight size={14} className="text-muted-foreground flex-shrink-0" />
+            <span className="font-semibold text-foreground truncate max-w-[200px]">
               {selectedLesson?.title || "Untitled"}
             </span>
           </nav>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+
+          {/* Right side actions */}
+          <div className="flex items-center gap-2 flex-shrink-0">
             {words > 0 && (
-              <span
-                style={{
-                  fontSize: 11,
-                  color: t("text-muted"),
-                  background: t("bg-secondary"),
-                  borderRadius: 12,
-                  padding: "2px 8px",
-                  fontVariantNumeric: "tabular-nums",
-                }}
-              >
+              <span className="text-xs text-muted-foreground bg-accent/50 rounded-full px-2 py-1 font-mono">
                 {words} words
               </span>
             )}
             {autosaveStatus === "saved" && (
-              <span
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 4,
-                  fontSize: 12,
-                  color: t("text-primary"),
-                }}
-              >
-                <CheckIcon /> Saved
+              <span className="flex items-center gap-1.5 text-xs text-foreground">
+                <Check size={12} /> Saved
               </span>
             )}
-            <TopBarButton
+            <button
               onClick={() =>
                 navigate(`/courses/${id}/preview/${selectedLesson?.id || lessonId || ""}`)
               }
-              variant="ghost"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-muted-foreground transition-all hover:bg-accent hover:text-foreground"
             >
-              <EyeIcon /> Preview
-            </TopBarButton>
-            <TopBarButton onClick={handleSave} disabled={saving} variant="secondary">
-              {saving ? <Spinner /> : <SaveIcon />} Save
-            </TopBarButton>
-            <ThemeSwitcher />
+              <Eye size={14} /> Preview
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-primary text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save
+            </button>
+            <div className="flex h-9 w-9 items-center justify-center">
+              <ThemeSwitcher />
+            </div>
           </div>
         </header>
 
         {/* Error bar */}
         {error && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "9px 16px",
-              background: t("error-light"),
-              borderBottom: `1px solid ${t("error")}33`,
-              color: t("error"),
-              fontSize: 13,
-              flexShrink: 0,
-            }}
-          >
-            <AlertIcon />
-            <span style={{ flex: 1 }}>{error}</span>
+          <div className="flex items-center gap-3 px-4 py-2.5 bg-red-500/10 border-b border-red-500/20 text-red-600 dark:text-red-400 text-sm flex-shrink-0">
+            <AlertCircle size={16} className="flex-shrink-0" />
+            <span className="flex-1">{error}</span>
             <button
               onClick={() => setError(null)}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: t("error"),
-                fontSize: 18,
-                lineHeight: 1,
-                padding: 0,
-              }}
+              className="flex-shrink-0 p-1 rounded hover:bg-red-500/20 transition-colors"
             >
-              ×
+              <X size={16} />
             </button>
           </div>
         )}
 
         {/* ── Editor layout (fills remaining height, scrollable) ── */}
-        <div style={{ flex: 1, minHeight: 0, display: "flex", overflow: "hidden" }}>
+        <div className="flex-1 flex overflow-hidden min-h-0">
           <LessonPanel
             lessons={lessons}
             selectedLessonId={selectedLesson?.id}
@@ -571,86 +459,30 @@ const CourseBuilder = () => {
           {/* Resize handle */}
           <div
             onMouseDown={handleResizeStart}
-            style={{
-              width: 6,
-              flexShrink: 0,
-              cursor: "col-resize",
-              background: isResizing ? t("bg-active") : "transparent",
-              transition: "background 0.15s",
-              userSelect: "none",
-            }}
-            onMouseEnter={(e) => {
-              if (!isResizing) e.currentTarget.style.background = t("bg-hover");
-            }}
-            onMouseLeave={(e) => {
-              if (!isResizing) e.currentTarget.style.background = "transparent";
-            }}
+            className={cn(
+              "w-1.5 flex-shrink-0 cursor-col-resize transition-colors select-none",
+              isResizing ? "bg-primary/30" : "bg-transparent hover:bg-border/50"
+            )}
           />
 
           {/* Scrollable canvas */}
-          <main
-            style={{
-              flex: 1,
-              minWidth: 0,
-              overflowY: "auto",
-              overflowX: "hidden",
-              background: t("bg-secondary"),
-              backgroundImage: `radial-gradient(circle, ${t("border-secondary")} 1px, transparent 1px)`,
-              backgroundSize: "24px 24px",
-              display: "flex",
-              justifyContent: "center",
-              padding: "40px 24px",
-            }}
-          >
+          <main className="flex-1 overflow-y-auto overflow-x-hidden bg-muted/30 p-4 sm:p-6 lg:p-8">
             {/* Document card */}
-            <div
-              style={{
-                width: "100%",
-                minWidth: 760,
-                background: t("bg-surface"),
-                borderRadius: t("radius-lg"),
-                boxShadow: t("shadow-md"),
-                display: "flex",
-                flexDirection: "column",
-                flexShrink: 0,
-              }}
-            >
-              <div
-                style={{
-                  marginBottom: 32,
-                  paddingBottom: 20,
-                  borderBottom: `1px solid ${t("border-secondary")}`,
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 700,
-                    letterSpacing: "0.07em",
-                    textTransform: "uppercase",
-                    color: t("text-disabled"),
-                    marginBottom: 6,
-                  }}
-                >
+            <div className="w-full min-w-[760px] max-w-5xl mx-auto bg-background rounded-xl shadow-lg border border-border/50 flex flex-col flex-shrink-0">
+              {/* Lesson header */}
+              <div className="mb-8 pb-5 border-b border-border/30">
+                <div className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground mb-1.5">
                   Lesson {lessonIndex >= 0 ? lessonIndex + 1 : 1}
                 </div>
-                <h1
-                  style={{
-                    fontSize: "1.8em",
-                    fontWeight: 700,
-                    color: t("text-primary"),
-                    margin: 0,
-                    lineHeight: 1.25,
-                  }}
-                >
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground leading-tight">
                   {selectedLesson?.title || "Untitled Lesson"}
                 </h1>
               </div>
-              {/* <TipTapEditor onSave={handleSave} editable={true} /> */}
+              
+              {/* Editor */}
               <MeroEduEditor
                 key={selectedLesson?.id} // remount editor when lesson changes to reset state
                 initialContent={content}
-                theme={theme}
                 onContentChange={handleContentChange}
                 onStatsChange={handleStatsChange}
                 lessonId={selectedLesson?.id}
@@ -658,79 +490,8 @@ const CourseBuilder = () => {
             </div>
           </main>
         </div>
-      </div>
+      </main>
     </div>
-  );
-};
-
-// ─── Small helper components ──────────────────────────────────────
-
-const BreadcrumbButton = ({ onClick, children, maxWidth = 120 }) => {
-  const [hovered, setHovered] = React.useState(false);
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        background: "none",
-        border: "none",
-        cursor: "pointer",
-        color: hovered ? t("text-primary") : t("text-muted"),
-        padding: 0,
-        fontSize: 13,
-        maxWidth,
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-        transition: "color 0.15s",
-      }}
-    >
-      {children}
-    </button>
-  );
-};
-
-const TopBarButton = ({ onClick, disabled, variant, children }) => {
-  const [hovered, setHovered] = React.useState(false);
-
-  const base = {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 5,
-    padding: "5px 13px",
-    border: "none",
-    borderRadius: t("radius-sm"),
-    fontSize: 13,
-    fontWeight: 500,
-    cursor: disabled ? "default" : "pointer",
-    transition: "background 0.15s, opacity 0.15s",
-  };
-
-  const styles =
-    variant === "primary"
-      ? {
-          ...base,
-          background: hovered && !disabled ? "#000" : t("text-primary"),
-          color: t("text-inverse"),
-          opacity: disabled ? 0.7 : 1,
-        }
-      : {
-          ...base,
-          background: hovered ? t("bg-hover") : t("bg-secondary"),
-          color: t("text-secondary"),
-        };
-
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={styles}
-    >
-      {children}
-    </button>
   );
 };
 
