@@ -14,6 +14,7 @@ import {
   lessonGetAll,
   lessonUpdate,
   reorderLessons as orvalReorderLessons,
+  getLessonsByCourse,
 } from "@/app/api/orval";
 
 // ==================== COURSES ====================
@@ -149,13 +150,26 @@ export const markCourseImportant = async (id) => {
 // ==================== LESSONS ====================
 
 /**
- * Get lessons for a course
+ * Get lessons for a course with pagination support
+ * @param {number} courseId - The course ID
+ * @param {object} params - Pagination parameters (start, limit)
  */
-export const fetchLessons = async (courseId) => {
+export const fetchLessons = async (courseId, params = {}) => {
   try {
-    const data = await lessonGetAll({ courseId: parseInt(courseId, 10) });
-    const list = data?.data || [];
-    return list;
+    const { start = 0, limit = 100 } = params;
+    // Use URL search params to pass pagination
+    const url = `/courses/${courseId}/lessons?start=${start}&limit=${limit}`;
+    const { request } = await import("@/app/services/http");
+    const data = await request(url);
+    
+    // The request function already unwraps { message, data } envelope
+    // So data is the actual response data from backend
+    const lessons = Array.isArray(data) ? data : (data?.lessons || []);
+    return {
+      lessons,
+      total: data?.total || lessons.length,
+      hasMore: data?.hasMore || false,
+    };
   } catch (error) {
     console.error("Error fetching lessons:", error);
     throw error;

@@ -29,6 +29,7 @@ import type {
   AddAttendeeBody,
   AddMemberBody,
   AdminResetPasswordHandlerBody,
+  AssignPermissionToRoleHandlerBody,
   AssignmentGradeBody,
   AssignmentPublishBody,
   AssignmentSubmit201,
@@ -63,9 +64,13 @@ import type {
   CreateLessonForCourseBody,
   CreateLessonPrerequisite201,
   CreateLessonPrerequisiteBody,
+  CreatePermissionHandler201,
+  CreatePermissionHandlerBody,
   CreatePreferenceBody,
   CreateReply201,
   CreateReplyBody,
+  CreateRoleHandler201,
+  CreateRoleHandlerBody,
   CreateRubric201,
   CreateRubricBody,
   CreateTemplateBody,
@@ -84,8 +89,11 @@ import type {
   EventCreateBody,
   EventUpdateBody,
   GenerateContentBody,
+  GetAllAssignmentsHandler200,
   GetAllAttachments200,
   GetAllAttachmentsParams,
+  GetAllPermissionsHandler200,
+  GetAllRolesHandler200,
   GetAllUsersHandler200,
   GetAllUsersHandlerParams,
   GetAttachments200,
@@ -129,11 +137,16 @@ import type {
   GetOrgCertificatesParams,
   GetOrgEventsParams,
   GetOrgInsights200,
+  GetPermissionByIDHandler200,
   GetReactions200,
   GetReply200,
+  GetRoleByIDHandler200,
+  GetRolePermissionsHandler200,
   GetRubricByID200,
   GetSubmissionByID200,
   GetSubmissionByIDBody,
+  GetTeamRolesHandler200,
+  GetTeamRolesInScopeHandler200,
   GetThread200,
   GetThreadReplies200,
   GetThreadRepliesParams,
@@ -142,6 +155,8 @@ import type {
   GetUserCertificatesParams,
   GetUserEventsParams,
   GetUserHandler200,
+  GetUserRolesHandler200,
+  GetUserRolesInScopeHandler200,
   GradeTeamBody,
   HttpResponseError,
   IssueCertificateBody,
@@ -192,11 +207,15 @@ import type {
   UpdateFolderBody,
   UpdateForum200,
   UpdateForumBody,
+  UpdatePermissionHandler200,
+  UpdatePermissionHandlerBody,
   UpdatePreferenceBody,
   UpdateProfileHandler200,
   UpdateProfileHandlerBody,
   UpdateReply200,
   UpdateReplyBody,
+  UpdateRoleHandler200,
+  UpdateRoleHandlerBody,
   UpdateRubric200,
   UpdateRubricBody,
   UpdateTemplateBody,
@@ -19884,6 +19903,2673 @@ export const useMarkAsRead = <TError = HttpResponseError,
         TContext
       > => {
       return useMutation(getMarkAsReadMutationOptions(options), queryClient);
+    }
+
+export type getAllPermissionsHandlerResponse200 = {
+  data: GetAllPermissionsHandler200
+  status: 200
+}
+
+export type getAllPermissionsHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getAllPermissionsHandlerResponseSuccess = (getAllPermissionsHandlerResponse200) & {
+  headers: Headers;
+};
+export type getAllPermissionsHandlerResponseError = (getAllPermissionsHandlerResponse401) & {
+  headers: Headers;
+};
+
+export type getAllPermissionsHandlerResponse = (getAllPermissionsHandlerResponseSuccess | getAllPermissionsHandlerResponseError)
+
+export const getGetAllPermissionsHandlerUrl = () => {
+
+
+
+
+  return `/permissions`
+}
+
+/**
+ * Get a list of all available permissions in the system
+ * @summary List all permissions
+ */
+export const getAllPermissionsHandler = async ( options?: RequestInit): Promise<getAllPermissionsHandlerResponse> => {
+
+  return customFetcher<getAllPermissionsHandlerResponse>(getGetAllPermissionsHandlerUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetAllPermissionsHandlerQueryKey = () => {
+    return [
+    `/permissions`
+    ] as const;
+    }
+
+
+export const getGetAllPermissionsHandlerQueryOptions = <TData = Awaited<ReturnType<typeof getAllPermissionsHandler>>, TError = HttpResponseError>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllPermissionsHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAllPermissionsHandlerQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAllPermissionsHandler>>> = ({ signal }) => getAllPermissionsHandler({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAllPermissionsHandler>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetAllPermissionsHandlerQueryResult = NonNullable<Awaited<ReturnType<typeof getAllPermissionsHandler>>>
+export type GetAllPermissionsHandlerQueryError = HttpResponseError
+
+
+export function useGetAllPermissionsHandler<TData = Awaited<ReturnType<typeof getAllPermissionsHandler>>, TError = HttpResponseError>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllPermissionsHandler>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAllPermissionsHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getAllPermissionsHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAllPermissionsHandler<TData = Awaited<ReturnType<typeof getAllPermissionsHandler>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllPermissionsHandler>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAllPermissionsHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getAllPermissionsHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAllPermissionsHandler<TData = Awaited<ReturnType<typeof getAllPermissionsHandler>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllPermissionsHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List all permissions
+ */
+
+export function useGetAllPermissionsHandler<TData = Awaited<ReturnType<typeof getAllPermissionsHandler>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllPermissionsHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetAllPermissionsHandlerQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type createPermissionHandlerResponse201 = {
+  data: CreatePermissionHandler201
+  status: 201
+}
+
+export type createPermissionHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type createPermissionHandlerResponse422 = {
+  data: HttpResponseError
+  status: 422
+}
+
+export type createPermissionHandlerResponseSuccess = (createPermissionHandlerResponse201) & {
+  headers: Headers;
+};
+export type createPermissionHandlerResponseError = (createPermissionHandlerResponse401 | createPermissionHandlerResponse422) & {
+  headers: Headers;
+};
+
+export type createPermissionHandlerResponse = (createPermissionHandlerResponseSuccess | createPermissionHandlerResponseError)
+
+export const getCreatePermissionHandlerUrl = () => {
+
+
+
+
+  return `/permissions`
+}
+
+/**
+ * Create a new permission
+ * @summary Create a new permission
+ */
+export const createPermissionHandler = async (createPermissionHandlerBody: CreatePermissionHandlerBody, options?: RequestInit): Promise<createPermissionHandlerResponse> => {
+
+  return customFetcher<createPermissionHandlerResponse>(getCreatePermissionHandlerUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createPermissionHandlerBody)
+  }
+);}
+
+
+
+
+export const getCreatePermissionHandlerMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPermissionHandler>>, TError,{data: CreatePermissionHandlerBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof createPermissionHandler>>, TError,{data: CreatePermissionHandlerBody}, TContext> => {
+
+const mutationKey = ['createPermissionHandler'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createPermissionHandler>>, {data: CreatePermissionHandlerBody}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createPermissionHandler(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreatePermissionHandlerMutationResult = NonNullable<Awaited<ReturnType<typeof createPermissionHandler>>>
+    export type CreatePermissionHandlerMutationBody = CreatePermissionHandlerBody
+    export type CreatePermissionHandlerMutationError = HttpResponseError
+
+    /**
+ * @summary Create a new permission
+ */
+export const useCreatePermissionHandler = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPermissionHandler>>, TError,{data: CreatePermissionHandlerBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createPermissionHandler>>,
+        TError,
+        {data: CreatePermissionHandlerBody},
+        TContext
+      > => {
+      return useMutation(getCreatePermissionHandlerMutationOptions(options), queryClient);
+    }
+
+export type deletePermissionHandlerResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type deletePermissionHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type deletePermissionHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type deletePermissionHandlerResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type deletePermissionHandlerResponseSuccess = (deletePermissionHandlerResponse200) & {
+  headers: Headers;
+};
+export type deletePermissionHandlerResponseError = (deletePermissionHandlerResponse400 | deletePermissionHandlerResponse401 | deletePermissionHandlerResponse404) & {
+  headers: Headers;
+};
+
+export type deletePermissionHandlerResponse = (deletePermissionHandlerResponseSuccess | deletePermissionHandlerResponseError)
+
+export const getDeletePermissionHandlerUrl = (id: number,) => {
+
+
+
+
+  return `/permissions/${id}`
+}
+
+/**
+ * Delete a permission by ID
+ * @summary Delete a permission
+ */
+export const deletePermissionHandler = async (id: number, options?: RequestInit): Promise<deletePermissionHandlerResponse> => {
+
+  return customFetcher<deletePermissionHandlerResponse>(getDeletePermissionHandlerUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeletePermissionHandlerMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePermissionHandler>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof deletePermissionHandler>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deletePermissionHandler'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deletePermissionHandler>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deletePermissionHandler(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeletePermissionHandlerMutationResult = NonNullable<Awaited<ReturnType<typeof deletePermissionHandler>>>
+
+    export type DeletePermissionHandlerMutationError = HttpResponseError
+
+    /**
+ * @summary Delete a permission
+ */
+export const useDeletePermissionHandler = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePermissionHandler>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deletePermissionHandler>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getDeletePermissionHandlerMutationOptions(options), queryClient);
+    }
+
+export type getPermissionByIDHandlerResponse200 = {
+  data: GetPermissionByIDHandler200
+  status: 200
+}
+
+export type getPermissionByIDHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type getPermissionByIDHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getPermissionByIDHandlerResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type getPermissionByIDHandlerResponseSuccess = (getPermissionByIDHandlerResponse200) & {
+  headers: Headers;
+};
+export type getPermissionByIDHandlerResponseError = (getPermissionByIDHandlerResponse400 | getPermissionByIDHandlerResponse401 | getPermissionByIDHandlerResponse404) & {
+  headers: Headers;
+};
+
+export type getPermissionByIDHandlerResponse = (getPermissionByIDHandlerResponseSuccess | getPermissionByIDHandlerResponseError)
+
+export const getGetPermissionByIDHandlerUrl = (id: number,) => {
+
+
+
+
+  return `/permissions/${id}`
+}
+
+/**
+ * Get a specific permission by its ID
+ * @summary Get permission by ID
+ */
+export const getPermissionByIDHandler = async (id: number, options?: RequestInit): Promise<getPermissionByIDHandlerResponse> => {
+
+  return customFetcher<getPermissionByIDHandlerResponse>(getGetPermissionByIDHandlerUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetPermissionByIDHandlerQueryKey = (id: number,) => {
+    return [
+    `/permissions/${id}`
+    ] as const;
+    }
+
+
+export const getGetPermissionByIDHandlerQueryOptions = <TData = Awaited<ReturnType<typeof getPermissionByIDHandler>>, TError = HttpResponseError>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPermissionByIDHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPermissionByIDHandlerQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPermissionByIDHandler>>> = ({ signal }) => getPermissionByIDHandler(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPermissionByIDHandler>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetPermissionByIDHandlerQueryResult = NonNullable<Awaited<ReturnType<typeof getPermissionByIDHandler>>>
+export type GetPermissionByIDHandlerQueryError = HttpResponseError
+
+
+export function useGetPermissionByIDHandler<TData = Awaited<ReturnType<typeof getPermissionByIDHandler>>, TError = HttpResponseError>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPermissionByIDHandler>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPermissionByIDHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getPermissionByIDHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPermissionByIDHandler<TData = Awaited<ReturnType<typeof getPermissionByIDHandler>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPermissionByIDHandler>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getPermissionByIDHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getPermissionByIDHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetPermissionByIDHandler<TData = Awaited<ReturnType<typeof getPermissionByIDHandler>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPermissionByIDHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get permission by ID
+ */
+
+export function useGetPermissionByIDHandler<TData = Awaited<ReturnType<typeof getPermissionByIDHandler>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPermissionByIDHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetPermissionByIDHandlerQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type updatePermissionHandlerResponse200 = {
+  data: UpdatePermissionHandler200
+  status: 200
+}
+
+export type updatePermissionHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type updatePermissionHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type updatePermissionHandlerResponseSuccess = (updatePermissionHandlerResponse200) & {
+  headers: Headers;
+};
+export type updatePermissionHandlerResponseError = (updatePermissionHandlerResponse400 | updatePermissionHandlerResponse401) & {
+  headers: Headers;
+};
+
+export type updatePermissionHandlerResponse = (updatePermissionHandlerResponseSuccess | updatePermissionHandlerResponseError)
+
+export const getUpdatePermissionHandlerUrl = (id: number,) => {
+
+
+
+
+  return `/permissions/${id}`
+}
+
+/**
+ * Update an existing permission
+ * @summary Update a permission
+ */
+export const updatePermissionHandler = async (id: number,
+    updatePermissionHandlerBody: UpdatePermissionHandlerBody, options?: RequestInit): Promise<updatePermissionHandlerResponse> => {
+
+  return customFetcher<updatePermissionHandlerResponse>(getUpdatePermissionHandlerUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(updatePermissionHandlerBody)
+  }
+);}
+
+
+
+
+export const getUpdatePermissionHandlerMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePermissionHandler>>, TError,{id: number;data: UpdatePermissionHandlerBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof updatePermissionHandler>>, TError,{id: number;data: UpdatePermissionHandlerBody}, TContext> => {
+
+const mutationKey = ['updatePermissionHandler'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updatePermissionHandler>>, {id: number;data: UpdatePermissionHandlerBody}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updatePermissionHandler(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdatePermissionHandlerMutationResult = NonNullable<Awaited<ReturnType<typeof updatePermissionHandler>>>
+    export type UpdatePermissionHandlerMutationBody = UpdatePermissionHandlerBody
+    export type UpdatePermissionHandlerMutationError = HttpResponseError
+
+    /**
+ * @summary Update a permission
+ */
+export const useUpdatePermissionHandler = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePermissionHandler>>, TError,{id: number;data: UpdatePermissionHandlerBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updatePermissionHandler>>,
+        TError,
+        {id: number;data: UpdatePermissionHandlerBody},
+        TContext
+      > => {
+      return useMutation(getUpdatePermissionHandlerMutationOptions(options), queryClient);
+    }
+
+export type getAllAssignmentsHandlerResponse200 = {
+  data: GetAllAssignmentsHandler200
+  status: 200
+}
+
+export type getAllAssignmentsHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getAllAssignmentsHandlerResponseSuccess = (getAllAssignmentsHandlerResponse200) & {
+  headers: Headers;
+};
+export type getAllAssignmentsHandlerResponseError = (getAllAssignmentsHandlerResponse401) & {
+  headers: Headers;
+};
+
+export type getAllAssignmentsHandlerResponse = (getAllAssignmentsHandlerResponseSuccess | getAllAssignmentsHandlerResponseError)
+
+export const getGetAllAssignmentsHandlerUrl = () => {
+
+
+
+
+  return `/role-assignments`
+}
+
+/**
+ * Get a list of all role assignments
+ * @summary List all role assignments
+ */
+export const getAllAssignmentsHandler = async ( options?: RequestInit): Promise<getAllAssignmentsHandlerResponse> => {
+
+  return customFetcher<getAllAssignmentsHandlerResponse>(getGetAllAssignmentsHandlerUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetAllAssignmentsHandlerQueryKey = () => {
+    return [
+    `/role-assignments`
+    ] as const;
+    }
+
+
+export const getGetAllAssignmentsHandlerQueryOptions = <TData = Awaited<ReturnType<typeof getAllAssignmentsHandler>>, TError = HttpResponseError>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllAssignmentsHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAllAssignmentsHandlerQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAllAssignmentsHandler>>> = ({ signal }) => getAllAssignmentsHandler({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAllAssignmentsHandler>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetAllAssignmentsHandlerQueryResult = NonNullable<Awaited<ReturnType<typeof getAllAssignmentsHandler>>>
+export type GetAllAssignmentsHandlerQueryError = HttpResponseError
+
+
+export function useGetAllAssignmentsHandler<TData = Awaited<ReturnType<typeof getAllAssignmentsHandler>>, TError = HttpResponseError>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllAssignmentsHandler>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAllAssignmentsHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getAllAssignmentsHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAllAssignmentsHandler<TData = Awaited<ReturnType<typeof getAllAssignmentsHandler>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllAssignmentsHandler>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAllAssignmentsHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getAllAssignmentsHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAllAssignmentsHandler<TData = Awaited<ReturnType<typeof getAllAssignmentsHandler>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllAssignmentsHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List all role assignments
+ */
+
+export function useGetAllAssignmentsHandler<TData = Awaited<ReturnType<typeof getAllAssignmentsHandler>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllAssignmentsHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetAllAssignmentsHandlerQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type getTeamRolesHandlerResponse200 = {
+  data: GetTeamRolesHandler200
+  status: 200
+}
+
+export type getTeamRolesHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type getTeamRolesHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getTeamRolesHandlerResponseSuccess = (getTeamRolesHandlerResponse200) & {
+  headers: Headers;
+};
+export type getTeamRolesHandlerResponseError = (getTeamRolesHandlerResponse400 | getTeamRolesHandlerResponse401) & {
+  headers: Headers;
+};
+
+export type getTeamRolesHandlerResponse = (getTeamRolesHandlerResponseSuccess | getTeamRolesHandlerResponseError)
+
+export const getGetTeamRolesHandlerUrl = (id: number,) => {
+
+
+
+
+  return `/role-assignments/team/${id}`
+}
+
+/**
+ * Get all roles assigned to a team
+ * @summary Get team roles
+ */
+export const getTeamRolesHandler = async (id: number, options?: RequestInit): Promise<getTeamRolesHandlerResponse> => {
+
+  return customFetcher<getTeamRolesHandlerResponse>(getGetTeamRolesHandlerUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetTeamRolesHandlerQueryKey = (id: number,) => {
+    return [
+    `/role-assignments/team/${id}`
+    ] as const;
+    }
+
+
+export const getGetTeamRolesHandlerQueryOptions = <TData = Awaited<ReturnType<typeof getTeamRolesHandler>>, TError = HttpResponseError>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTeamRolesHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetTeamRolesHandlerQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTeamRolesHandler>>> = ({ signal }) => getTeamRolesHandler(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTeamRolesHandler>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetTeamRolesHandlerQueryResult = NonNullable<Awaited<ReturnType<typeof getTeamRolesHandler>>>
+export type GetTeamRolesHandlerQueryError = HttpResponseError
+
+
+export function useGetTeamRolesHandler<TData = Awaited<ReturnType<typeof getTeamRolesHandler>>, TError = HttpResponseError>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTeamRolesHandler>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTeamRolesHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getTeamRolesHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetTeamRolesHandler<TData = Awaited<ReturnType<typeof getTeamRolesHandler>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTeamRolesHandler>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTeamRolesHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getTeamRolesHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetTeamRolesHandler<TData = Awaited<ReturnType<typeof getTeamRolesHandler>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTeamRolesHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get team roles
+ */
+
+export function useGetTeamRolesHandler<TData = Awaited<ReturnType<typeof getTeamRolesHandler>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTeamRolesHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetTeamRolesHandlerQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type getTeamRolesInScopeHandlerResponse200 = {
+  data: GetTeamRolesInScopeHandler200
+  status: 200
+}
+
+export type getTeamRolesInScopeHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type getTeamRolesInScopeHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getTeamRolesInScopeHandlerResponseSuccess = (getTeamRolesInScopeHandlerResponse200) & {
+  headers: Headers;
+};
+export type getTeamRolesInScopeHandlerResponseError = (getTeamRolesInScopeHandlerResponse400 | getTeamRolesInScopeHandlerResponse401) & {
+  headers: Headers;
+};
+
+export type getTeamRolesInScopeHandlerResponse = (getTeamRolesInScopeHandlerResponseSuccess | getTeamRolesInScopeHandlerResponseError)
+
+export const getGetTeamRolesInScopeHandlerUrl = (id: number,
+    scopeType: string,
+    scopeId: number,) => {
+
+
+
+
+  return `/role-assignments/team/${id}/scope/${scopeType}/${scopeId}`
+}
+
+/**
+ * Get all roles assigned to a team within a specific scope
+ * @summary Get team roles in scope
+ */
+export const getTeamRolesInScopeHandler = async (id: number,
+    scopeType: string,
+    scopeId: number, options?: RequestInit): Promise<getTeamRolesInScopeHandlerResponse> => {
+
+  return customFetcher<getTeamRolesInScopeHandlerResponse>(getGetTeamRolesInScopeHandlerUrl(id,scopeType,scopeId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetTeamRolesInScopeHandlerQueryKey = (id: number,
+    scopeType: string,
+    scopeId: number,) => {
+    return [
+    `/role-assignments/team/${id}/scope/${scopeType}/${scopeId}`
+    ] as const;
+    }
+
+
+export const getGetTeamRolesInScopeHandlerQueryOptions = <TData = Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>, TError = HttpResponseError>(id: number,
+    scopeType: string,
+    scopeId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetTeamRolesInScopeHandlerQueryKey(id,scopeType,scopeId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>> = ({ signal }) => getTeamRolesInScopeHandler(id,scopeType,scopeId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined && scopeType !== null && scopeType !== undefined && scopeId !== null && scopeId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetTeamRolesInScopeHandlerQueryResult = NonNullable<Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>>
+export type GetTeamRolesInScopeHandlerQueryError = HttpResponseError
+
+
+export function useGetTeamRolesInScopeHandler<TData = Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>, TError = HttpResponseError>(
+ id: number,
+    scopeType: string,
+    scopeId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetTeamRolesInScopeHandler<TData = Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>, TError = HttpResponseError>(
+ id: number,
+    scopeType: string,
+    scopeId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetTeamRolesInScopeHandler<TData = Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>, TError = HttpResponseError>(
+ id: number,
+    scopeType: string,
+    scopeId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get team roles in scope
+ */
+
+export function useGetTeamRolesInScopeHandler<TData = Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>, TError = HttpResponseError>(
+ id: number,
+    scopeType: string,
+    scopeId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTeamRolesInScopeHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetTeamRolesInScopeHandlerQueryOptions(id,scopeType,scopeId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type removeRoleFromTeamHandlerResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type removeRoleFromTeamHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type removeRoleFromTeamHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type removeRoleFromTeamHandlerResponseSuccess = (removeRoleFromTeamHandlerResponse200) & {
+  headers: Headers;
+};
+export type removeRoleFromTeamHandlerResponseError = (removeRoleFromTeamHandlerResponse400 | removeRoleFromTeamHandlerResponse401) & {
+  headers: Headers;
+};
+
+export type removeRoleFromTeamHandlerResponse = (removeRoleFromTeamHandlerResponseSuccess | removeRoleFromTeamHandlerResponseError)
+
+export const getRemoveRoleFromTeamHandlerUrl = (teamId: number,
+    roleId: number,) => {
+
+
+
+
+  return `/role-assignments/team/${teamId}/role/${roleId}`
+}
+
+/**
+ * Remove a role from a team
+ * @summary Remove role from team
+ */
+export const removeRoleFromTeamHandler = async (teamId: number,
+    roleId: number, options?: RequestInit): Promise<removeRoleFromTeamHandlerResponse> => {
+
+  return customFetcher<removeRoleFromTeamHandlerResponse>(getRemoveRoleFromTeamHandlerUrl(teamId,roleId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getRemoveRoleFromTeamHandlerMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeRoleFromTeamHandler>>, TError,{teamId: number;roleId: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof removeRoleFromTeamHandler>>, TError,{teamId: number;roleId: number}, TContext> => {
+
+const mutationKey = ['removeRoleFromTeamHandler'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeRoleFromTeamHandler>>, {teamId: number;roleId: number}> = (props) => {
+          const {teamId,roleId} = props ?? {};
+
+          return  removeRoleFromTeamHandler(teamId,roleId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RemoveRoleFromTeamHandlerMutationResult = NonNullable<Awaited<ReturnType<typeof removeRoleFromTeamHandler>>>
+
+    export type RemoveRoleFromTeamHandlerMutationError = HttpResponseError
+
+    /**
+ * @summary Remove role from team
+ */
+export const useRemoveRoleFromTeamHandler = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeRoleFromTeamHandler>>, TError,{teamId: number;roleId: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof removeRoleFromTeamHandler>>,
+        TError,
+        {teamId: number;roleId: number},
+        TContext
+      > => {
+      return useMutation(getRemoveRoleFromTeamHandlerMutationOptions(options), queryClient);
+    }
+
+export type assignRoleToTeamHandlerResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type assignRoleToTeamHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type assignRoleToTeamHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type assignRoleToTeamHandlerResponseSuccess = (assignRoleToTeamHandlerResponse200) & {
+  headers: Headers;
+};
+export type assignRoleToTeamHandlerResponseError = (assignRoleToTeamHandlerResponse400 | assignRoleToTeamHandlerResponse401) & {
+  headers: Headers;
+};
+
+export type assignRoleToTeamHandlerResponse = (assignRoleToTeamHandlerResponseSuccess | assignRoleToTeamHandlerResponseError)
+
+export const getAssignRoleToTeamHandlerUrl = (teamId: number,
+    roleId: number,) => {
+
+
+
+
+  return `/role-assignments/team/${teamId}/role/${roleId}`
+}
+
+/**
+ * Assign a role to a team globally
+ * @summary Assign role to team
+ */
+export const assignRoleToTeamHandler = async (teamId: number,
+    roleId: number, options?: RequestInit): Promise<assignRoleToTeamHandlerResponse> => {
+
+  return customFetcher<assignRoleToTeamHandlerResponse>(getAssignRoleToTeamHandlerUrl(teamId,roleId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getAssignRoleToTeamHandlerMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignRoleToTeamHandler>>, TError,{teamId: number;roleId: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof assignRoleToTeamHandler>>, TError,{teamId: number;roleId: number}, TContext> => {
+
+const mutationKey = ['assignRoleToTeamHandler'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof assignRoleToTeamHandler>>, {teamId: number;roleId: number}> = (props) => {
+          const {teamId,roleId} = props ?? {};
+
+          return  assignRoleToTeamHandler(teamId,roleId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AssignRoleToTeamHandlerMutationResult = NonNullable<Awaited<ReturnType<typeof assignRoleToTeamHandler>>>
+
+    export type AssignRoleToTeamHandlerMutationError = HttpResponseError
+
+    /**
+ * @summary Assign role to team
+ */
+export const useAssignRoleToTeamHandler = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignRoleToTeamHandler>>, TError,{teamId: number;roleId: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof assignRoleToTeamHandler>>,
+        TError,
+        {teamId: number;roleId: number},
+        TContext
+      > => {
+      return useMutation(getAssignRoleToTeamHandlerMutationOptions(options), queryClient);
+    }
+
+export type assignRoleToTeamWithScopeHandlerResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type assignRoleToTeamWithScopeHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type assignRoleToTeamWithScopeHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type assignRoleToTeamWithScopeHandlerResponseSuccess = (assignRoleToTeamWithScopeHandlerResponse200) & {
+  headers: Headers;
+};
+export type assignRoleToTeamWithScopeHandlerResponseError = (assignRoleToTeamWithScopeHandlerResponse400 | assignRoleToTeamWithScopeHandlerResponse401) & {
+  headers: Headers;
+};
+
+export type assignRoleToTeamWithScopeHandlerResponse = (assignRoleToTeamWithScopeHandlerResponseSuccess | assignRoleToTeamWithScopeHandlerResponseError)
+
+export const getAssignRoleToTeamWithScopeHandlerUrl = (teamId: number,
+    roleId: number,
+    scopeType: string,
+    scopeId: number,) => {
+
+
+
+
+  return `/role-assignments/team/${teamId}/role/${roleId}/scope/${scopeType}/${scopeId}`
+}
+
+/**
+ * Assign a role to a team within a specific scope
+ * @summary Assign role to team in scope
+ */
+export const assignRoleToTeamWithScopeHandler = async (teamId: number,
+    roleId: number,
+    scopeType: string,
+    scopeId: number, options?: RequestInit): Promise<assignRoleToTeamWithScopeHandlerResponse> => {
+
+  return customFetcher<assignRoleToTeamWithScopeHandlerResponse>(getAssignRoleToTeamWithScopeHandlerUrl(teamId,roleId,scopeType,scopeId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getAssignRoleToTeamWithScopeHandlerMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignRoleToTeamWithScopeHandler>>, TError,{teamId: number;roleId: number;scopeType: string;scopeId: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof assignRoleToTeamWithScopeHandler>>, TError,{teamId: number;roleId: number;scopeType: string;scopeId: number}, TContext> => {
+
+const mutationKey = ['assignRoleToTeamWithScopeHandler'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof assignRoleToTeamWithScopeHandler>>, {teamId: number;roleId: number;scopeType: string;scopeId: number}> = (props) => {
+          const {teamId,roleId,scopeType,scopeId} = props ?? {};
+
+          return  assignRoleToTeamWithScopeHandler(teamId,roleId,scopeType,scopeId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AssignRoleToTeamWithScopeHandlerMutationResult = NonNullable<Awaited<ReturnType<typeof assignRoleToTeamWithScopeHandler>>>
+
+    export type AssignRoleToTeamWithScopeHandlerMutationError = HttpResponseError
+
+    /**
+ * @summary Assign role to team in scope
+ */
+export const useAssignRoleToTeamWithScopeHandler = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignRoleToTeamWithScopeHandler>>, TError,{teamId: number;roleId: number;scopeType: string;scopeId: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof assignRoleToTeamWithScopeHandler>>,
+        TError,
+        {teamId: number;roleId: number;scopeType: string;scopeId: number},
+        TContext
+      > => {
+      return useMutation(getAssignRoleToTeamWithScopeHandlerMutationOptions(options), queryClient);
+    }
+
+export type getUserRolesHandlerResponse200 = {
+  data: GetUserRolesHandler200
+  status: 200
+}
+
+export type getUserRolesHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type getUserRolesHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getUserRolesHandlerResponseSuccess = (getUserRolesHandlerResponse200) & {
+  headers: Headers;
+};
+export type getUserRolesHandlerResponseError = (getUserRolesHandlerResponse400 | getUserRolesHandlerResponse401) & {
+  headers: Headers;
+};
+
+export type getUserRolesHandlerResponse = (getUserRolesHandlerResponseSuccess | getUserRolesHandlerResponseError)
+
+export const getGetUserRolesHandlerUrl = (id: number,) => {
+
+
+
+
+  return `/role-assignments/user/${id}`
+}
+
+/**
+ * Get all roles assigned to a user
+ * @summary Get user roles
+ */
+export const getUserRolesHandler = async (id: number, options?: RequestInit): Promise<getUserRolesHandlerResponse> => {
+
+  return customFetcher<getUserRolesHandlerResponse>(getGetUserRolesHandlerUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetUserRolesHandlerQueryKey = (id: number,) => {
+    return [
+    `/role-assignments/user/${id}`
+    ] as const;
+    }
+
+
+export const getGetUserRolesHandlerQueryOptions = <TData = Awaited<ReturnType<typeof getUserRolesHandler>>, TError = HttpResponseError>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserRolesHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetUserRolesHandlerQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserRolesHandler>>> = ({ signal }) => getUserRolesHandler(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUserRolesHandler>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetUserRolesHandlerQueryResult = NonNullable<Awaited<ReturnType<typeof getUserRolesHandler>>>
+export type GetUserRolesHandlerQueryError = HttpResponseError
+
+
+export function useGetUserRolesHandler<TData = Awaited<ReturnType<typeof getUserRolesHandler>>, TError = HttpResponseError>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserRolesHandler>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUserRolesHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getUserRolesHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetUserRolesHandler<TData = Awaited<ReturnType<typeof getUserRolesHandler>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserRolesHandler>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUserRolesHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getUserRolesHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetUserRolesHandler<TData = Awaited<ReturnType<typeof getUserRolesHandler>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserRolesHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get user roles
+ */
+
+export function useGetUserRolesHandler<TData = Awaited<ReturnType<typeof getUserRolesHandler>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserRolesHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetUserRolesHandlerQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type getUserRolesInScopeHandlerResponse200 = {
+  data: GetUserRolesInScopeHandler200
+  status: 200
+}
+
+export type getUserRolesInScopeHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type getUserRolesInScopeHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getUserRolesInScopeHandlerResponseSuccess = (getUserRolesInScopeHandlerResponse200) & {
+  headers: Headers;
+};
+export type getUserRolesInScopeHandlerResponseError = (getUserRolesInScopeHandlerResponse400 | getUserRolesInScopeHandlerResponse401) & {
+  headers: Headers;
+};
+
+export type getUserRolesInScopeHandlerResponse = (getUserRolesInScopeHandlerResponseSuccess | getUserRolesInScopeHandlerResponseError)
+
+export const getGetUserRolesInScopeHandlerUrl = (id: number,
+    scopeType: string,
+    scopeId: number,) => {
+
+
+
+
+  return `/role-assignments/user/${id}/scope/${scopeType}/${scopeId}`
+}
+
+/**
+ * Get all roles assigned to a user within a specific scope
+ * @summary Get user roles in scope
+ */
+export const getUserRolesInScopeHandler = async (id: number,
+    scopeType: string,
+    scopeId: number, options?: RequestInit): Promise<getUserRolesInScopeHandlerResponse> => {
+
+  return customFetcher<getUserRolesInScopeHandlerResponse>(getGetUserRolesInScopeHandlerUrl(id,scopeType,scopeId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetUserRolesInScopeHandlerQueryKey = (id: number,
+    scopeType: string,
+    scopeId: number,) => {
+    return [
+    `/role-assignments/user/${id}/scope/${scopeType}/${scopeId}`
+    ] as const;
+    }
+
+
+export const getGetUserRolesInScopeHandlerQueryOptions = <TData = Awaited<ReturnType<typeof getUserRolesInScopeHandler>>, TError = HttpResponseError>(id: number,
+    scopeType: string,
+    scopeId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserRolesInScopeHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetUserRolesInScopeHandlerQueryKey(id,scopeType,scopeId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserRolesInScopeHandler>>> = ({ signal }) => getUserRolesInScopeHandler(id,scopeType,scopeId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined && scopeType !== null && scopeType !== undefined && scopeId !== null && scopeId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUserRolesInScopeHandler>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetUserRolesInScopeHandlerQueryResult = NonNullable<Awaited<ReturnType<typeof getUserRolesInScopeHandler>>>
+export type GetUserRolesInScopeHandlerQueryError = HttpResponseError
+
+
+export function useGetUserRolesInScopeHandler<TData = Awaited<ReturnType<typeof getUserRolesInScopeHandler>>, TError = HttpResponseError>(
+ id: number,
+    scopeType: string,
+    scopeId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserRolesInScopeHandler>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUserRolesInScopeHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getUserRolesInScopeHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetUserRolesInScopeHandler<TData = Awaited<ReturnType<typeof getUserRolesInScopeHandler>>, TError = HttpResponseError>(
+ id: number,
+    scopeType: string,
+    scopeId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserRolesInScopeHandler>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUserRolesInScopeHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getUserRolesInScopeHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetUserRolesInScopeHandler<TData = Awaited<ReturnType<typeof getUserRolesInScopeHandler>>, TError = HttpResponseError>(
+ id: number,
+    scopeType: string,
+    scopeId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserRolesInScopeHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get user roles in scope
+ */
+
+export function useGetUserRolesInScopeHandler<TData = Awaited<ReturnType<typeof getUserRolesInScopeHandler>>, TError = HttpResponseError>(
+ id: number,
+    scopeType: string,
+    scopeId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserRolesInScopeHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetUserRolesInScopeHandlerQueryOptions(id,scopeType,scopeId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type removeRoleFromUserHandlerResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type removeRoleFromUserHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type removeRoleFromUserHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type removeRoleFromUserHandlerResponseSuccess = (removeRoleFromUserHandlerResponse200) & {
+  headers: Headers;
+};
+export type removeRoleFromUserHandlerResponseError = (removeRoleFromUserHandlerResponse400 | removeRoleFromUserHandlerResponse401) & {
+  headers: Headers;
+};
+
+export type removeRoleFromUserHandlerResponse = (removeRoleFromUserHandlerResponseSuccess | removeRoleFromUserHandlerResponseError)
+
+export const getRemoveRoleFromUserHandlerUrl = (userId: number,
+    roleId: number,) => {
+
+
+
+
+  return `/role-assignments/user/${userId}/role/${roleId}`
+}
+
+/**
+ * Remove a role from a user
+ * @summary Remove role from user
+ */
+export const removeRoleFromUserHandler = async (userId: number,
+    roleId: number, options?: RequestInit): Promise<removeRoleFromUserHandlerResponse> => {
+
+  return customFetcher<removeRoleFromUserHandlerResponse>(getRemoveRoleFromUserHandlerUrl(userId,roleId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getRemoveRoleFromUserHandlerMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeRoleFromUserHandler>>, TError,{userId: number;roleId: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof removeRoleFromUserHandler>>, TError,{userId: number;roleId: number}, TContext> => {
+
+const mutationKey = ['removeRoleFromUserHandler'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeRoleFromUserHandler>>, {userId: number;roleId: number}> = (props) => {
+          const {userId,roleId} = props ?? {};
+
+          return  removeRoleFromUserHandler(userId,roleId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RemoveRoleFromUserHandlerMutationResult = NonNullable<Awaited<ReturnType<typeof removeRoleFromUserHandler>>>
+
+    export type RemoveRoleFromUserHandlerMutationError = HttpResponseError
+
+    /**
+ * @summary Remove role from user
+ */
+export const useRemoveRoleFromUserHandler = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeRoleFromUserHandler>>, TError,{userId: number;roleId: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof removeRoleFromUserHandler>>,
+        TError,
+        {userId: number;roleId: number},
+        TContext
+      > => {
+      return useMutation(getRemoveRoleFromUserHandlerMutationOptions(options), queryClient);
+    }
+
+export type assignRoleToUserHandlerResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type assignRoleToUserHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type assignRoleToUserHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type assignRoleToUserHandlerResponseSuccess = (assignRoleToUserHandlerResponse200) & {
+  headers: Headers;
+};
+export type assignRoleToUserHandlerResponseError = (assignRoleToUserHandlerResponse400 | assignRoleToUserHandlerResponse401) & {
+  headers: Headers;
+};
+
+export type assignRoleToUserHandlerResponse = (assignRoleToUserHandlerResponseSuccess | assignRoleToUserHandlerResponseError)
+
+export const getAssignRoleToUserHandlerUrl = (userId: number,
+    roleId: number,) => {
+
+
+
+
+  return `/role-assignments/user/${userId}/role/${roleId}`
+}
+
+/**
+ * Assign a role to a user globally
+ * @summary Assign role to user
+ */
+export const assignRoleToUserHandler = async (userId: number,
+    roleId: number, options?: RequestInit): Promise<assignRoleToUserHandlerResponse> => {
+
+  return customFetcher<assignRoleToUserHandlerResponse>(getAssignRoleToUserHandlerUrl(userId,roleId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getAssignRoleToUserHandlerMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignRoleToUserHandler>>, TError,{userId: number;roleId: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof assignRoleToUserHandler>>, TError,{userId: number;roleId: number}, TContext> => {
+
+const mutationKey = ['assignRoleToUserHandler'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof assignRoleToUserHandler>>, {userId: number;roleId: number}> = (props) => {
+          const {userId,roleId} = props ?? {};
+
+          return  assignRoleToUserHandler(userId,roleId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AssignRoleToUserHandlerMutationResult = NonNullable<Awaited<ReturnType<typeof assignRoleToUserHandler>>>
+
+    export type AssignRoleToUserHandlerMutationError = HttpResponseError
+
+    /**
+ * @summary Assign role to user
+ */
+export const useAssignRoleToUserHandler = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignRoleToUserHandler>>, TError,{userId: number;roleId: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof assignRoleToUserHandler>>,
+        TError,
+        {userId: number;roleId: number},
+        TContext
+      > => {
+      return useMutation(getAssignRoleToUserHandlerMutationOptions(options), queryClient);
+    }
+
+export type assignRoleToUserWithScopeHandlerResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type assignRoleToUserWithScopeHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type assignRoleToUserWithScopeHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type assignRoleToUserWithScopeHandlerResponseSuccess = (assignRoleToUserWithScopeHandlerResponse200) & {
+  headers: Headers;
+};
+export type assignRoleToUserWithScopeHandlerResponseError = (assignRoleToUserWithScopeHandlerResponse400 | assignRoleToUserWithScopeHandlerResponse401) & {
+  headers: Headers;
+};
+
+export type assignRoleToUserWithScopeHandlerResponse = (assignRoleToUserWithScopeHandlerResponseSuccess | assignRoleToUserWithScopeHandlerResponseError)
+
+export const getAssignRoleToUserWithScopeHandlerUrl = (userId: number,
+    roleId: number,
+    scopeType: string,
+    scopeId: number,) => {
+
+
+
+
+  return `/role-assignments/user/${userId}/role/${roleId}/scope/${scopeType}/${scopeId}`
+}
+
+/**
+ * Assign a role to a user within a specific scope
+ * @summary Assign role to user in scope
+ */
+export const assignRoleToUserWithScopeHandler = async (userId: number,
+    roleId: number,
+    scopeType: string,
+    scopeId: number, options?: RequestInit): Promise<assignRoleToUserWithScopeHandlerResponse> => {
+
+  return customFetcher<assignRoleToUserWithScopeHandlerResponse>(getAssignRoleToUserWithScopeHandlerUrl(userId,roleId,scopeType,scopeId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getAssignRoleToUserWithScopeHandlerMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignRoleToUserWithScopeHandler>>, TError,{userId: number;roleId: number;scopeType: string;scopeId: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof assignRoleToUserWithScopeHandler>>, TError,{userId: number;roleId: number;scopeType: string;scopeId: number}, TContext> => {
+
+const mutationKey = ['assignRoleToUserWithScopeHandler'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof assignRoleToUserWithScopeHandler>>, {userId: number;roleId: number;scopeType: string;scopeId: number}> = (props) => {
+          const {userId,roleId,scopeType,scopeId} = props ?? {};
+
+          return  assignRoleToUserWithScopeHandler(userId,roleId,scopeType,scopeId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AssignRoleToUserWithScopeHandlerMutationResult = NonNullable<Awaited<ReturnType<typeof assignRoleToUserWithScopeHandler>>>
+
+    export type AssignRoleToUserWithScopeHandlerMutationError = HttpResponseError
+
+    /**
+ * @summary Assign role to user in scope
+ */
+export const useAssignRoleToUserWithScopeHandler = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignRoleToUserWithScopeHandler>>, TError,{userId: number;roleId: number;scopeType: string;scopeId: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof assignRoleToUserWithScopeHandler>>,
+        TError,
+        {userId: number;roleId: number;scopeType: string;scopeId: number},
+        TContext
+      > => {
+      return useMutation(getAssignRoleToUserWithScopeHandlerMutationOptions(options), queryClient);
+    }
+
+export type getAllRolesHandlerResponse200 = {
+  data: GetAllRolesHandler200
+  status: 200
+}
+
+export type getAllRolesHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getAllRolesHandlerResponseSuccess = (getAllRolesHandlerResponse200) & {
+  headers: Headers;
+};
+export type getAllRolesHandlerResponseError = (getAllRolesHandlerResponse401) & {
+  headers: Headers;
+};
+
+export type getAllRolesHandlerResponse = (getAllRolesHandlerResponseSuccess | getAllRolesHandlerResponseError)
+
+export const getGetAllRolesHandlerUrl = () => {
+
+
+
+
+  return `/roles`
+}
+
+/**
+ * Get a list of all available roles in the system
+ * @summary List all roles
+ */
+export const getAllRolesHandler = async ( options?: RequestInit): Promise<getAllRolesHandlerResponse> => {
+
+  return customFetcher<getAllRolesHandlerResponse>(getGetAllRolesHandlerUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetAllRolesHandlerQueryKey = () => {
+    return [
+    `/roles`
+    ] as const;
+    }
+
+
+export const getGetAllRolesHandlerQueryOptions = <TData = Awaited<ReturnType<typeof getAllRolesHandler>>, TError = HttpResponseError>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllRolesHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAllRolesHandlerQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAllRolesHandler>>> = ({ signal }) => getAllRolesHandler({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAllRolesHandler>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetAllRolesHandlerQueryResult = NonNullable<Awaited<ReturnType<typeof getAllRolesHandler>>>
+export type GetAllRolesHandlerQueryError = HttpResponseError
+
+
+export function useGetAllRolesHandler<TData = Awaited<ReturnType<typeof getAllRolesHandler>>, TError = HttpResponseError>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllRolesHandler>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAllRolesHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getAllRolesHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAllRolesHandler<TData = Awaited<ReturnType<typeof getAllRolesHandler>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllRolesHandler>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAllRolesHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getAllRolesHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetAllRolesHandler<TData = Awaited<ReturnType<typeof getAllRolesHandler>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllRolesHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List all roles
+ */
+
+export function useGetAllRolesHandler<TData = Awaited<ReturnType<typeof getAllRolesHandler>>, TError = HttpResponseError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllRolesHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetAllRolesHandlerQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type createRoleHandlerResponse201 = {
+  data: CreateRoleHandler201
+  status: 201
+}
+
+export type createRoleHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type createRoleHandlerResponse422 = {
+  data: HttpResponseError
+  status: 422
+}
+
+export type createRoleHandlerResponseSuccess = (createRoleHandlerResponse201) & {
+  headers: Headers;
+};
+export type createRoleHandlerResponseError = (createRoleHandlerResponse401 | createRoleHandlerResponse422) & {
+  headers: Headers;
+};
+
+export type createRoleHandlerResponse = (createRoleHandlerResponseSuccess | createRoleHandlerResponseError)
+
+export const getCreateRoleHandlerUrl = () => {
+
+
+
+
+  return `/roles`
+}
+
+/**
+ * Create a new role with permissions
+ * @summary Create a new role
+ */
+export const createRoleHandler = async (createRoleHandlerBody: CreateRoleHandlerBody, options?: RequestInit): Promise<createRoleHandlerResponse> => {
+
+  return customFetcher<createRoleHandlerResponse>(getCreateRoleHandlerUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createRoleHandlerBody)
+  }
+);}
+
+
+
+
+export const getCreateRoleHandlerMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createRoleHandler>>, TError,{data: CreateRoleHandlerBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof createRoleHandler>>, TError,{data: CreateRoleHandlerBody}, TContext> => {
+
+const mutationKey = ['createRoleHandler'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createRoleHandler>>, {data: CreateRoleHandlerBody}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createRoleHandler(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateRoleHandlerMutationResult = NonNullable<Awaited<ReturnType<typeof createRoleHandler>>>
+    export type CreateRoleHandlerMutationBody = CreateRoleHandlerBody
+    export type CreateRoleHandlerMutationError = HttpResponseError
+
+    /**
+ * @summary Create a new role
+ */
+export const useCreateRoleHandler = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createRoleHandler>>, TError,{data: CreateRoleHandlerBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createRoleHandler>>,
+        TError,
+        {data: CreateRoleHandlerBody},
+        TContext
+      > => {
+      return useMutation(getCreateRoleHandlerMutationOptions(options), queryClient);
+    }
+
+export type deleteRoleHandlerResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type deleteRoleHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type deleteRoleHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type deleteRoleHandlerResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type deleteRoleHandlerResponseSuccess = (deleteRoleHandlerResponse200) & {
+  headers: Headers;
+};
+export type deleteRoleHandlerResponseError = (deleteRoleHandlerResponse400 | deleteRoleHandlerResponse401 | deleteRoleHandlerResponse404) & {
+  headers: Headers;
+};
+
+export type deleteRoleHandlerResponse = (deleteRoleHandlerResponseSuccess | deleteRoleHandlerResponseError)
+
+export const getDeleteRoleHandlerUrl = (id: number,) => {
+
+
+
+
+  return `/roles/${id}`
+}
+
+/**
+ * Delete a role by ID
+ * @summary Delete a role
+ */
+export const deleteRoleHandler = async (id: number, options?: RequestInit): Promise<deleteRoleHandlerResponse> => {
+
+  return customFetcher<deleteRoleHandlerResponse>(getDeleteRoleHandlerUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteRoleHandlerMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteRoleHandler>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteRoleHandler>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteRoleHandler'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteRoleHandler>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteRoleHandler(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteRoleHandlerMutationResult = NonNullable<Awaited<ReturnType<typeof deleteRoleHandler>>>
+
+    export type DeleteRoleHandlerMutationError = HttpResponseError
+
+    /**
+ * @summary Delete a role
+ */
+export const useDeleteRoleHandler = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteRoleHandler>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteRoleHandler>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getDeleteRoleHandlerMutationOptions(options), queryClient);
+    }
+
+export type getRoleByIDHandlerResponse200 = {
+  data: GetRoleByIDHandler200
+  status: 200
+}
+
+export type getRoleByIDHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type getRoleByIDHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getRoleByIDHandlerResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type getRoleByIDHandlerResponseSuccess = (getRoleByIDHandlerResponse200) & {
+  headers: Headers;
+};
+export type getRoleByIDHandlerResponseError = (getRoleByIDHandlerResponse400 | getRoleByIDHandlerResponse401 | getRoleByIDHandlerResponse404) & {
+  headers: Headers;
+};
+
+export type getRoleByIDHandlerResponse = (getRoleByIDHandlerResponseSuccess | getRoleByIDHandlerResponseError)
+
+export const getGetRoleByIDHandlerUrl = (id: number,) => {
+
+
+
+
+  return `/roles/${id}`
+}
+
+/**
+ * Get a specific role by its ID
+ * @summary Get role by ID
+ */
+export const getRoleByIDHandler = async (id: number, options?: RequestInit): Promise<getRoleByIDHandlerResponse> => {
+
+  return customFetcher<getRoleByIDHandlerResponse>(getGetRoleByIDHandlerUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetRoleByIDHandlerQueryKey = (id: number,) => {
+    return [
+    `/roles/${id}`
+    ] as const;
+    }
+
+
+export const getGetRoleByIDHandlerQueryOptions = <TData = Awaited<ReturnType<typeof getRoleByIDHandler>>, TError = HttpResponseError>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoleByIDHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetRoleByIDHandlerQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRoleByIDHandler>>> = ({ signal }) => getRoleByIDHandler(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getRoleByIDHandler>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetRoleByIDHandlerQueryResult = NonNullable<Awaited<ReturnType<typeof getRoleByIDHandler>>>
+export type GetRoleByIDHandlerQueryError = HttpResponseError
+
+
+export function useGetRoleByIDHandler<TData = Awaited<ReturnType<typeof getRoleByIDHandler>>, TError = HttpResponseError>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoleByIDHandler>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getRoleByIDHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getRoleByIDHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetRoleByIDHandler<TData = Awaited<ReturnType<typeof getRoleByIDHandler>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoleByIDHandler>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getRoleByIDHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getRoleByIDHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetRoleByIDHandler<TData = Awaited<ReturnType<typeof getRoleByIDHandler>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoleByIDHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get role by ID
+ */
+
+export function useGetRoleByIDHandler<TData = Awaited<ReturnType<typeof getRoleByIDHandler>>, TError = HttpResponseError>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoleByIDHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetRoleByIDHandlerQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type updateRoleHandlerResponse200 = {
+  data: UpdateRoleHandler200
+  status: 200
+}
+
+export type updateRoleHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type updateRoleHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type updateRoleHandlerResponseSuccess = (updateRoleHandlerResponse200) & {
+  headers: Headers;
+};
+export type updateRoleHandlerResponseError = (updateRoleHandlerResponse400 | updateRoleHandlerResponse401) & {
+  headers: Headers;
+};
+
+export type updateRoleHandlerResponse = (updateRoleHandlerResponseSuccess | updateRoleHandlerResponseError)
+
+export const getUpdateRoleHandlerUrl = (id: number,) => {
+
+
+
+
+  return `/roles/${id}`
+}
+
+/**
+ * Update an existing role
+ * @summary Update a role
+ */
+export const updateRoleHandler = async (id: number,
+    updateRoleHandlerBody: UpdateRoleHandlerBody, options?: RequestInit): Promise<updateRoleHandlerResponse> => {
+
+  return customFetcher<updateRoleHandlerResponse>(getUpdateRoleHandlerUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(updateRoleHandlerBody)
+  }
+);}
+
+
+
+
+export const getUpdateRoleHandlerMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateRoleHandler>>, TError,{id: number;data: UpdateRoleHandlerBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateRoleHandler>>, TError,{id: number;data: UpdateRoleHandlerBody}, TContext> => {
+
+const mutationKey = ['updateRoleHandler'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateRoleHandler>>, {id: number;data: UpdateRoleHandlerBody}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateRoleHandler(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateRoleHandlerMutationResult = NonNullable<Awaited<ReturnType<typeof updateRoleHandler>>>
+    export type UpdateRoleHandlerMutationBody = UpdateRoleHandlerBody
+    export type UpdateRoleHandlerMutationError = HttpResponseError
+
+    /**
+ * @summary Update a role
+ */
+export const useUpdateRoleHandler = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateRoleHandler>>, TError,{id: number;data: UpdateRoleHandlerBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateRoleHandler>>,
+        TError,
+        {id: number;data: UpdateRoleHandlerBody},
+        TContext
+      > => {
+      return useMutation(getUpdateRoleHandlerMutationOptions(options), queryClient);
+    }
+
+export type getRolePermissionsHandlerResponse200 = {
+  data: GetRolePermissionsHandler200
+  status: 200
+}
+
+export type getRolePermissionsHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type getRolePermissionsHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type getRolePermissionsHandlerResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type getRolePermissionsHandlerResponseSuccess = (getRolePermissionsHandlerResponse200) & {
+  headers: Headers;
+};
+export type getRolePermissionsHandlerResponseError = (getRolePermissionsHandlerResponse400 | getRolePermissionsHandlerResponse401 | getRolePermissionsHandlerResponse404) & {
+  headers: Headers;
+};
+
+export type getRolePermissionsHandlerResponse = (getRolePermissionsHandlerResponseSuccess | getRolePermissionsHandlerResponseError)
+
+export const getGetRolePermissionsHandlerUrl = (roleId: number,) => {
+
+
+
+
+  return `/roles/${roleId}/permissions`
+}
+
+/**
+ * Get all permissions assigned to a specific role
+ * @summary Get permissions for a role
+ */
+export const getRolePermissionsHandler = async (roleId: number, options?: RequestInit): Promise<getRolePermissionsHandlerResponse> => {
+
+  return customFetcher<getRolePermissionsHandlerResponse>(getGetRolePermissionsHandlerUrl(roleId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetRolePermissionsHandlerQueryKey = (roleId: number,) => {
+    return [
+    `/roles/${roleId}/permissions`
+    ] as const;
+    }
+
+
+export const getGetRolePermissionsHandlerQueryOptions = <TData = Awaited<ReturnType<typeof getRolePermissionsHandler>>, TError = HttpResponseError>(roleId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRolePermissionsHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetRolePermissionsHandlerQueryKey(roleId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRolePermissionsHandler>>> = ({ signal }) => getRolePermissionsHandler(roleId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: roleId !== null && roleId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getRolePermissionsHandler>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetRolePermissionsHandlerQueryResult = NonNullable<Awaited<ReturnType<typeof getRolePermissionsHandler>>>
+export type GetRolePermissionsHandlerQueryError = HttpResponseError
+
+
+export function useGetRolePermissionsHandler<TData = Awaited<ReturnType<typeof getRolePermissionsHandler>>, TError = HttpResponseError>(
+ roleId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRolePermissionsHandler>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getRolePermissionsHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getRolePermissionsHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetRolePermissionsHandler<TData = Awaited<ReturnType<typeof getRolePermissionsHandler>>, TError = HttpResponseError>(
+ roleId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRolePermissionsHandler>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getRolePermissionsHandler>>,
+          TError,
+          Awaited<ReturnType<typeof getRolePermissionsHandler>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetRolePermissionsHandler<TData = Awaited<ReturnType<typeof getRolePermissionsHandler>>, TError = HttpResponseError>(
+ roleId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRolePermissionsHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get permissions for a role
+ */
+
+export function useGetRolePermissionsHandler<TData = Awaited<ReturnType<typeof getRolePermissionsHandler>>, TError = HttpResponseError>(
+ roleId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRolePermissionsHandler>>, TError, TData>>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetRolePermissionsHandlerQueryOptions(roleId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export type assignPermissionToRoleHandlerResponse201 = {
+  data: DomainResponse
+  status: 201
+}
+
+export type assignPermissionToRoleHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type assignPermissionToRoleHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type assignPermissionToRoleHandlerResponse422 = {
+  data: HttpResponseError
+  status: 422
+}
+
+export type assignPermissionToRoleHandlerResponseSuccess = (assignPermissionToRoleHandlerResponse201) & {
+  headers: Headers;
+};
+export type assignPermissionToRoleHandlerResponseError = (assignPermissionToRoleHandlerResponse400 | assignPermissionToRoleHandlerResponse401 | assignPermissionToRoleHandlerResponse422) & {
+  headers: Headers;
+};
+
+export type assignPermissionToRoleHandlerResponse = (assignPermissionToRoleHandlerResponseSuccess | assignPermissionToRoleHandlerResponseError)
+
+export const getAssignPermissionToRoleHandlerUrl = (roleId: number,) => {
+
+
+
+
+  return `/roles/${roleId}/permissions`
+}
+
+/**
+ * Assign a permission to a role
+ * @summary Assign permission to role
+ */
+export const assignPermissionToRoleHandler = async (roleId: number,
+    assignPermissionToRoleHandlerBody: AssignPermissionToRoleHandlerBody, options?: RequestInit): Promise<assignPermissionToRoleHandlerResponse> => {
+
+  return customFetcher<assignPermissionToRoleHandlerResponse>(getAssignPermissionToRoleHandlerUrl(roleId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(assignPermissionToRoleHandlerBody)
+  }
+);}
+
+
+
+
+export const getAssignPermissionToRoleHandlerMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignPermissionToRoleHandler>>, TError,{roleId: number;data: AssignPermissionToRoleHandlerBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof assignPermissionToRoleHandler>>, TError,{roleId: number;data: AssignPermissionToRoleHandlerBody}, TContext> => {
+
+const mutationKey = ['assignPermissionToRoleHandler'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof assignPermissionToRoleHandler>>, {roleId: number;data: AssignPermissionToRoleHandlerBody}> = (props) => {
+          const {roleId,data} = props ?? {};
+
+          return  assignPermissionToRoleHandler(roleId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AssignPermissionToRoleHandlerMutationResult = NonNullable<Awaited<ReturnType<typeof assignPermissionToRoleHandler>>>
+    export type AssignPermissionToRoleHandlerMutationBody = AssignPermissionToRoleHandlerBody
+    export type AssignPermissionToRoleHandlerMutationError = HttpResponseError
+
+    /**
+ * @summary Assign permission to role
+ */
+export const useAssignPermissionToRoleHandler = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof assignPermissionToRoleHandler>>, TError,{roleId: number;data: AssignPermissionToRoleHandlerBody}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof assignPermissionToRoleHandler>>,
+        TError,
+        {roleId: number;data: AssignPermissionToRoleHandlerBody},
+        TContext
+      > => {
+      return useMutation(getAssignPermissionToRoleHandlerMutationOptions(options), queryClient);
+    }
+
+export type removePermissionFromRoleHandlerResponse200 = {
+  data: DomainResponse
+  status: 200
+}
+
+export type removePermissionFromRoleHandlerResponse400 = {
+  data: HttpResponseError
+  status: 400
+}
+
+export type removePermissionFromRoleHandlerResponse401 = {
+  data: HttpResponseError
+  status: 401
+}
+
+export type removePermissionFromRoleHandlerResponse404 = {
+  data: HttpResponseError
+  status: 404
+}
+
+export type removePermissionFromRoleHandlerResponseSuccess = (removePermissionFromRoleHandlerResponse200) & {
+  headers: Headers;
+};
+export type removePermissionFromRoleHandlerResponseError = (removePermissionFromRoleHandlerResponse400 | removePermissionFromRoleHandlerResponse401 | removePermissionFromRoleHandlerResponse404) & {
+  headers: Headers;
+};
+
+export type removePermissionFromRoleHandlerResponse = (removePermissionFromRoleHandlerResponseSuccess | removePermissionFromRoleHandlerResponseError)
+
+export const getRemovePermissionFromRoleHandlerUrl = (roleId: number,
+    permissionId: number,) => {
+
+
+
+
+  return `/roles/${roleId}/permissions/${permissionId}`
+}
+
+/**
+ * Remove a permission from a role
+ * @summary Remove permission from role
+ */
+export const removePermissionFromRoleHandler = async (roleId: number,
+    permissionId: number, options?: RequestInit): Promise<removePermissionFromRoleHandlerResponse> => {
+
+  return customFetcher<removePermissionFromRoleHandlerResponse>(getRemovePermissionFromRoleHandlerUrl(roleId,permissionId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getRemovePermissionFromRoleHandlerMutationOptions = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removePermissionFromRoleHandler>>, TError,{roleId: number;permissionId: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof removePermissionFromRoleHandler>>, TError,{roleId: number;permissionId: number}, TContext> => {
+
+const mutationKey = ['removePermissionFromRoleHandler'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removePermissionFromRoleHandler>>, {roleId: number;permissionId: number}> = (props) => {
+          const {roleId,permissionId} = props ?? {};
+
+          return  removePermissionFromRoleHandler(roleId,permissionId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RemovePermissionFromRoleHandlerMutationResult = NonNullable<Awaited<ReturnType<typeof removePermissionFromRoleHandler>>>
+
+    export type RemovePermissionFromRoleHandlerMutationError = HttpResponseError
+
+    /**
+ * @summary Remove permission from role
+ */
+export const useRemovePermissionFromRoleHandler = <TError = HttpResponseError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removePermissionFromRoleHandler>>, TError,{roleId: number;permissionId: number}, TContext>, request?: SecondParameter<typeof customFetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof removePermissionFromRoleHandler>>,
+        TError,
+        {roleId: number;permissionId: number},
+        TContext
+      > => {
+      return useMutation(getRemovePermissionFromRoleHandlerMutationOptions(options), queryClient);
     }
 
 export type listRubricsResponse200 = {

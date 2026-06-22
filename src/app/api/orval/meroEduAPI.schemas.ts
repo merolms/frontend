@@ -226,6 +226,8 @@ export type DomainStatus = typeof DomainStatus[keyof typeof DomainStatus];
 
 
 export const DomainStatus = {
+  Success: 'success',
+  Error: 'error',
   CourseInDraft: 'draft',
   CourseArchived: 'archived',
   CourseAssigned: 'assigned',
@@ -233,13 +235,11 @@ export const DomainStatus = {
   CoursePublic: 'public',
   CourseCreated: 'created',
   CourseComplete: 'completed',
-  StatusSuccess: 'success',
-  StatusQueued: 'queued',
-  StatusSending: 'sending',
-  StatusUnknown: 'unknown',
-  StatusScheduled: 'scheduled',
-  StatusRetry: 'retrying',
-  Success: 'error',
+  StatusSuccess: 'queued',
+  StatusQueued: 'sending',
+  StatusSending: 'unknown',
+  StatusUnknown: 'scheduled',
+  StatusScheduled: 'retrying',
 } as const;
 
 export interface DomainCourse {
@@ -634,6 +634,16 @@ export interface DomainPasswordChangeRequest {
   newPassword: string;
 }
 
+export interface DomainPermission {
+  /** e.g., "course.create", "lesson.update" */
+  code?: string;
+  /** e.g., "Allows creating new courses" */
+  description?: string;
+  id?: number;
+  /** e.g., "Create Course", "Update Lesson" */
+  name?: string;
+}
+
 export interface DomainProfileUpdateRequest {
   avatar?: string;
   bio?: string;
@@ -672,6 +682,44 @@ export interface DomainRevokeCertificateRequest {
      * @maxLength 500
      */
   revokeReason: string;
+}
+
+export interface DomainRole {
+  /** e.g., "admin", "instructor" */
+  code?: string;
+  /** For UI display */
+  color?: string;
+  createdAt?: string;
+  createdBy?: number;
+  description?: string;
+  id?: number;
+  /** Built-in roles cannot be deleted */
+  isSystem?: boolean;
+  /** e.g., "Administrator", "Course Instructor" */
+  name?: string;
+  /** For role inheritance */
+  parentRoleId?: number;
+  updatedAt?: string;
+}
+
+export interface DomainRoleAssignment {
+  assignedAt?: string;
+  assignedBy?: number;
+  expiresAt?: string;
+  id?: number;
+  roleId?: number;
+  /** Optional: resource ID */
+  scopeId?: number;
+  /** Optional: "course", "organization", etc. */
+  scopeType?: string;
+  subjectId?: number;
+  /** "user" or "team" */
+  subjectType?: string;
+}
+
+export interface DomainRolePermission {
+  permissionId?: number;
+  roleId?: number;
 }
 
 export interface DomainRubricLevel {
@@ -1643,6 +1691,86 @@ export type NotificationCreateBody = { [key: string]: unknown } | DomainCreateNo
 export type CreatePreferenceBody = { [key: string]: unknown } | DomainCreateNotificationPreferenceRequest;
 
 export type UpdatePreferenceBody = { [key: string]: unknown } | DomainUpdateNotificationPreferenceRequest;
+
+export type GetAllPermissionsHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type CreatePermissionHandlerBody = { [key: string]: unknown } | DomainPermission;
+
+export type CreatePermissionHandler201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type GetPermissionByIDHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type UpdatePermissionHandlerBody = { [key: string]: unknown } | DomainPermission;
+
+export type UpdatePermissionHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type GetAllAssignmentsHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type GetTeamRolesHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type GetTeamRolesInScopeHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type GetUserRolesHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type GetUserRolesInScopeHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type GetAllRolesHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type CreateRoleHandlerBody = { [key: string]: unknown } | DomainRole;
+
+export type CreateRoleHandler201 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type GetRoleByIDHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type UpdateRoleHandlerBody = { [key: string]: unknown } | DomainRole;
+
+export type UpdateRoleHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type GetRolePermissionsHandler200 = Data & {
+  data?: unknown;
+  message?: DomainStatus;
+};
+
+export type AssignPermissionToRoleHandlerBody = { [key: string]: unknown } | DomainRolePermission;
 
 export type ListRubricsParams = {
 /**

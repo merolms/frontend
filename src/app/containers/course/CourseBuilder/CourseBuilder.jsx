@@ -50,8 +50,12 @@ const CourseBuilder = () => {
       setError(null);
       const courseData = await fetchCourseById(id);
       setCourse(courseData);
-      const lessonList = await fetchLessons(id);
+      
+      // Fetch lessons with pagination
+      const result = await fetchLessons(id, { start: 0, limit: 100 });
+      const lessonList = result.lessons || [];
       lessonList.sort((a, b) => (a.displayOrder || a.sort_order || 0) - (b.displayOrder || b.sort_order || 0));
+      
       if (lessonList?.length > 0) {
         setLessons(lessonList);
         // If URL has a lessonId, try to select that lesson; otherwise fall back to first

@@ -39,7 +39,8 @@ export const useCourse = (id) => {
 export const useCourseLessons = (courseId) => {
   return useQuery({
     queryKey: queryKeys.courses.lessons(courseId),
-    queryFn: () => fetchLessons(courseId),
+    queryFn: () => fetchLessons(courseId, { start: 0, limit: 100 }),
+    select: (data) => data.lessons || [],
     enabled: !!courseId,
   });
 };
