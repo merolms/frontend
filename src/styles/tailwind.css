@@ -1590,9 +1590,9 @@
   /* border-radius: 10px; */
   position: relative;
   z-index: 1;
-  box-shadow:
+  /* box-shadow:
     0 4px 6px -1px var(--editor-shadow-color),
-    0 2px 4px -2px var(--editor-shadow-color);
+    0 2px 4px -2px var(--editor-shadow-color); */
 }
 @media (max-width: 1200px) {
   .activity-editor-content-wrapper {
@@ -2104,9 +2104,9 @@
   /* background: var(--editor-content-bg); */
   /* border-radius: 10px; */
   opacity: 2;
-  box-shadow:
+  /* box-shadow:
     0 4px 6px -1px var(--editor-shadow-color),
-    0 2px 4px -2px var(--editor-shadow-color);
+    0 2px 4px -2px var(--editor-shadow-color); */
   /* outline: 1px solid var(--editor-content-border); */
   padding: 20px;
   min-height: 600px;

@@ -16,6 +16,7 @@ import TaskList from "@tiptap/extension-task-list";
 import Text from "@tiptap/extension-text";
 import TextAlign from "@tiptap/extension-text-align";
 import { TextStyleKit } from "@tiptap/extension-text-style";
+import { LineHeight } from "@tiptap/extension-text-style/line-height";
 import Underline from "@tiptap/extension-underline";
 import { EditorProvider } from "@tiptap/react";
 import { ReactNodeViewRenderer } from "@tiptap/react";
@@ -106,6 +107,7 @@ const extensions = [
   SlashCommand,
   Image,
   ResizableImage,
+  LineHeight,
 ];
 
 export const TipTapEditor = ({

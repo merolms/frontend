@@ -6,7 +6,7 @@ import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
 import TableRow from "@tiptap/extension-table-row";
 import TextAlign from "@tiptap/extension-text-align";
-import { TextStyleKit } from "@tiptap/extension-text-style";
+import { TextStyleKit, LineHeight } from "@tiptap/extension-text-style";
 import Youtube from "@tiptap/extension-youtube";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -67,6 +67,7 @@ function MeroEduEditor({
       }),
       // Color.configure({ types: [TextStyleKit.name, ListItem.name] }),
       TextStyleKit,
+      LineHeight,
       Callout,
       InfoCallout.configure({ editable }),
       WarningCallout.configure({ editable }),
