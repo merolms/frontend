@@ -36,10 +36,11 @@ export const useCourse = (id) => {
   });
 };
 
-export const useCourseLessons = (courseId) => {
+export const useCourseLessons = (courseId, params = {}) => {
+  const { start = 0, limit = 10 } = params;
   return useQuery({
     queryKey: queryKeys.courses.lessons(courseId),
-    queryFn: () => fetchLessons(courseId, { start: 0, limit: 100 }),
+    queryFn: () => fetchLessons(courseId, { start, limit }),
     select: (data) => data.lessons || [],
     enabled: !!courseId,
   });

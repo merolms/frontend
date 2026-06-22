@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from "react";
-import { Book, Copy, Trash2, Loader2, Plus, GripVertical, Check, X, Pencil } from "lucide-react";
+import { Book, Copy, Trash2, Loader2, Plus, GripVertical, Check, X, Pencil, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -16,6 +16,8 @@ const LessonPanel = ({
   adding = false,
   width = 300,
   isDragging = false,
+  pagination = { currentPage: 1, totalPages: 1, totalLessons: 0 },
+  onPageChange,
 }) => {
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState("");
@@ -161,6 +163,11 @@ const LessonPanel = ({
             <span className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground">
               Lessons
             </span>
+            {(pagination.totalPages > 1) && (
+              <span className="text-[10px] text-muted-foreground font-normal">
+                ({pagination.currentPage}/{pagination.totalPages})
+              </span>
+            )}
           </div>
         </div>
 
@@ -249,9 +256,35 @@ const LessonPanel = ({
       {/* Footer */}
       {lessons.length > 0 && (
         <div className="flex-shrink-0 px-4 py-2 border-t border-border/30 bg-gradient-to-r from-accent/20 via-transparent to-accent/20">
-          <span className="text-[10px] text-muted-foreground">
-            {lessons.length} {lessons.length === 1 ? "lesson" : "lessons"}
-          </span>
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] text-muted-foreground">
+              {pagination.totalLessons} {pagination.totalLessons === 1 ? "lesson" : "lessons"}
+            </span>
+            
+            {(pagination.totalPages > 1) && (
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => onPageChange?.(pagination.currentPage - 1)}
+                  disabled={pagination.currentPage === 1}
+                  className="flex h-5 w-5 items-center justify-center rounded transition-colors hover:bg-accent text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+                  title="Previous page"
+                >
+                  <ChevronLeft size={12} />
+                </button>
+                <span className="text-[10px] text-muted-foreground min-w-[40px] text-center">
+                  {pagination.currentPage} / {pagination.totalPages}
+                </span>
+                <button
+                  onClick={() => onPageChange?.(pagination.currentPage + 1)}
+                  disabled={pagination.currentPage === pagination.totalPages}
+                  className="flex h-5 w-5 items-center justify-center rounded transition-colors hover:bg-accent text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+                  title="Next page"
+                >
+                  <ChevronRight size={12} />
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </aside>

@@ -1401,7 +1401,7 @@
 }
 
 /* Optional: smooth focus ring for ProseMirror */
-.ProseMirror-focused {
+/* .ProseMirror-focused {
   border-radius: 10px;
   box-shadow: var(--color-primary) 0px 0px 0px 2px !important;
-}
+} */

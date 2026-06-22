@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { ChevronRight, Save, Eye, AlertCircle, Check, Loader2, X, GripVertical, Menu, Book } from "lucide-react";
 
 import ThemeSwitcher from "@/app/components/ThemeSwitcher";
@@ -26,6 +26,15 @@ const CourseBuilder = () => {
   usePageTitle("Course Builder");
   const navigate = useNavigate();
   const { id, lessonId } = useParams();
+  const location = useLocation();
+  
+  // Get page from URL search params
+  const getPageFromUrl = () => {
+    const searchParams = new URLSearchParams(location.search);
+    const pageParam = searchParams.get('page');
+    return pageParam ? parseInt(pageParam, 10) : 1;
+  };
+  
   const { isExpanded, isMobileOpen, setIsMobileOpen } = useSidebar();
 
   const [course, setCourse] = useState(null);
@@ -44,17 +53,38 @@ const CourseBuilder = () => {
   const [error, setError] = useState(null);
   const [words, setWords] = useState(0);
 
-  const loadData = useCallback(async () => {
+  // Pagination state
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalLessons: 0,
+    lessonsPerPage: 10,
+  });
+
+  const loadData = useCallback(async (page = 1) => {
     try {
       setLoading(true);
       setError(null);
       const courseData = await fetchCourseById(id);
       setCourse(courseData);
       
+      // Calculate pagination
+      const lessonsPerPage = 10; // Fixed at 10
+      const start = (page - 1) * lessonsPerPage;
+      const limit = lessonsPerPage;
+      
       // Fetch lessons with pagination
-      const result = await fetchLessons(id, { start: 0, limit: 100 });
+      const result = await fetchLessons(id, { start, limit });
       const lessonList = result.lessons || [];
       lessonList.sort((a, b) => (a.displayOrder || a.sort_order || 0) - (b.displayOrder || b.sort_order || 0));
+      
+      // Update pagination state with backend-provided metadata
+      setPagination((prev) => ({
+        ...prev,
+        currentPage: result.currentPage || page,
+        totalPages: result.totalPages || 1,
+        totalLessons: result.total || lessonList.length,
+      }));
       
       if (lessonList?.length > 0) {
         setLessons(lessonList);
@@ -78,6 +108,12 @@ const CourseBuilder = () => {
       setLoading(false);
     }
   }, [id, lessonId, navigate]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.totalPages) {
+      loadData(newPage);
+    }
+  };
 
   const loadLesson = useCallback(
     async (lesson) => {
@@ -254,19 +290,23 @@ const CourseBuilder = () => {
   const handleAddLesson = async () => {
     try {
       setAddingLesson(true);
-      const nextDisplayOrder = lessons.length > 0 
-        ? Math.max(...lessons.map(l => l.displayOrder || l.sort_order || 0)) + 1 
+      // Use totalLessons for title generation instead of current page count
+      const nextDisplayOrder = pagination.totalLessons > 0 
+        ? pagination.totalLessons + 1 
         : 1;
       
       const newLesson = await createLesson(id, {
         courseId: parseInt(id, 10),
-        title: `Lesson ${lessons.length + 1}`,
+        title: `Lesson ${nextDisplayOrder}`,
         displayOrder: nextDisplayOrder,
       });
       
       // Add to state and select the new lesson
       setLessons([...lessons, newLesson]);
       await loadLesson(newLesson);
+      
+      // Refresh to update pagination state
+      loadData(pagination.currentPage);
     } catch (err) {
       setError(err.message || "Failed to add lesson.");
     } finally {
@@ -302,8 +342,8 @@ const CourseBuilder = () => {
   const handleBulkDuplicateLessons = async (lessonIds) => {
     try {
       const newLessons = [...lessons];
-      const maxDisplayOrder = lessons.length > 0 
-        ? Math.max(...lessons.map(l => l.displayOrder || l.sort_order || 0)) 
+      const maxDisplayOrder = pagination.totalLessons > 0 
+        ? pagination.totalLessons 
         : 0;
       
       let currentDisplayOrder = maxDisplayOrder + 1;
@@ -320,6 +360,8 @@ const CourseBuilder = () => {
         }
       }
       setLessons(newLessons);
+      // Refresh to update pagination
+      loadData(pagination.currentPage);
     } catch (err) {
       setError(err.message || "Failed to duplicate lessons.");
     }
@@ -456,6 +498,8 @@ const CourseBuilder = () => {
             adding={addingLesson}
             width={panelWidth}
             isDragging={isDragging}
+            pagination={pagination}
+            onPageChange={handlePageChange}
           />
 
           {/* Resize handle */}

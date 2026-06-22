@@ -156,19 +156,36 @@ export const markCourseImportant = async (id) => {
  */
 export const fetchLessons = async (courseId, params = {}) => {
   try {
-    const { start = 0, limit = 100 } = params;
+    const { start = 0, limit = 10 } = params;
     // Use URL search params to pass pagination
     const url = `/courses/${courseId}/lessons?start=${start}&limit=${limit}`;
-    const { request } = await import("@/app/services/http");
-    const data = await request(url);
+    const { API_BASE, request } = await import("@/app/services/http");
     
-    // The request function already unwraps { message, data } envelope
-    // So data is the actual response data from backend
-    const lessons = Array.isArray(data) ? data : (data?.lessons || []);
+    // Custom fetch to get full response including pagination metadata
+    const token = localStorage.getItem("auth_token");
+    const response = await fetch(`${API_BASE}${url}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const body = await response.json();
+    
+    // The backend returns { message, data: [...], total, page, pageSize, totalPages, hasNext, hasPrev }
+    const lessons = body.data || [];
     return {
       lessons,
-      total: data?.total || lessons.length,
-      hasMore: data?.hasMore || false,
+      total: body.total || lessons.length,
+      currentPage: body.page || 1,
+      totalPages: body.totalPages || 1,
+      hasNext: body.hasNext || false,
+      hasPrev: body.hasPrev || false,
     };
   } catch (error) {
     console.error("Error fetching lessons:", error);
