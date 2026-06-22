@@ -138,7 +138,7 @@ const LessonPanel = ({
         "flex flex-col overflow-hidden bg-background border-r border-border/30",
         isDragging && "border-r-2 border-primary/50"
       )}
-      style={{ width, flexShrink: 0 }}
+      style={{ width, flexShrink: 0, height: "fit-content" }}
     >
       {/* Header */}
       <div className="flex flex-shrink-0 items-center justify-between px-4 py-3 border-b border-border/30 bg-gradient-to-r from-accent/30 via-transparent to-accent/30">

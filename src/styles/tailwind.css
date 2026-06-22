@@ -1297,15 +1297,15 @@
 /* ... rest of activity editor layout stays the same ... */
 
 .activity-editor-content-wrapper {
-  margin: 40px;
-  margin-top: 97px;
+  margin: 20px 10px;
+  /* margin-top: 97px; */
   position: relative;
   z-index: 1;
   /* Premium layered shadow */
-  box-shadow:
+  /* box-shadow:
     0 0 0 1px rgba(0,0,0,0.03),
     0 2px 4px rgba(0,0,0,0.02),
-    0 12px 24px rgba(0,0,0,0.04);
+    0 12px 24px rgba(0,0,0,0.04); */
 }
 [data-theme="dark"] .activity-editor-content-wrapper {
   box-shadow:
