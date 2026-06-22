@@ -37,11 +37,12 @@ const CourseEdit = () => {
 
   // Sync form when course data loads
   if (course && !formInitialized) {
+    console.log("course data is ", course)
     setForm({
       title: course.title || "",
       description: course.description || "",
       category: course.categoryId || null,
-      imageUrl: course.imageUrl || course.imageURL || "",
+      imageUrl: course.imageUrl || "",
       duration: course.duration || "",
       status: course.status || "draft",
     });

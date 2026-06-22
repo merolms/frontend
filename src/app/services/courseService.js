@@ -9,7 +9,7 @@ import {
   courseGetAll,
   courseGetByID,
   courseUpdate,
-  lessonCreate,
+  createLessonForCourse,
   lessonDelete,
   lessonGetAll,
   lessonUpdate,
@@ -90,7 +90,7 @@ export const createCourse = async (courseData) => {
       duration: parseInt(courseData.duration, 10) || 0,
       status: courseData.status || "draft",
     };
-    const data = await courseCreate({ ...payload });
+    const data = await courseCreate(payload);
     return data;
   } catch (error) {
     console.error("Error creating course:", error);
@@ -111,7 +111,7 @@ export const updateCourse = async (id, courseData) => {
       duration: parseInt(courseData.duration, 10) || 0,
       status: courseData.status || "draft",
     };
-    const data = await courseUpdate(id, {  ...payload });
+    const data = await courseUpdate(parseInt(id, 10), payload);
     return data;
   } catch (error) {
     console.error("Error updating course:", error);
@@ -153,8 +153,7 @@ export const markCourseImportant = async (id) => {
  */
 export const fetchLessons = async (courseId) => {
   try {
-    const orvalParams = { courseId: parseInt(courseId, 10) };
-    const data = await lessonGetAll(orvalParams);
+    const data = await lessonGetAll({ courseId: parseInt(courseId, 10) });
     const list = data?.data || [];
     return list;
   } catch (error) {
@@ -164,11 +163,13 @@ export const fetchLessons = async (courseId) => {
 };
 
 /**
- * Create a lesson
+ * Create a lesson for a course
+ * @param {number} courseId - The course ID to create the lesson for
+ * @param {object} lessonData - The lesson data (title, displayOrder, etc.)
  */
-export const createLesson = async (lessonData) => {
+export const createLesson = async (courseId, lessonData) => {
   try {
-    const data = await lessonCreate({ ...lessonData });
+    const data = await createLessonForCourse(parseInt(courseId, 10), lessonData);
     return data;
   } catch (error) {
     console.error("Error creating lesson:", error);
@@ -181,7 +182,7 @@ export const createLesson = async (lessonData) => {
  */
 export const updateLesson = async (courseId, lessonId, lessonData) => {
   try {
-    const data = await lessonUpdate(lessonId, { data: lessonData });
+    const data = await lessonUpdate(lessonId, lessonData);
     return data;
   } catch (error) {
     console.error("Error updating lesson:", error);
@@ -206,8 +207,11 @@ export const deleteLesson = async (courseId, lessonId) => {
  */
 export const reorderLessons = async (courseId, lessons) => {
   try {
-    const payload = lessons.map((l, i) => ({ id: l.id, orderNumber: i + 1 }));
-    const data = await orvalReorderLessons(courseId, payload);
+    const payload = lessons.map((l, i) => ({ 
+      id: l.id, 
+      displayOrder: i + 1 
+    }));
+    const data = await orvalReorderLessons(parseInt(courseId, 10), payload);
     return data;
   } catch (error) {
     console.error("Error reordering lessons:", error);

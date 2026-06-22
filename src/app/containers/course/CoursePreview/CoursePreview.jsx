@@ -39,7 +39,7 @@ const CoursePreview = () => {
     if (!lessonsData.length) return;
     try {
       const sorted = [...lessonsData].sort(
-        (a, b) => (a.sortOrder || a.sort_order || 0) - (b.sortOrder || b.sort_order || 0)
+        (a, b) => (a.displayOrder || a.sortOrder || a.sort_order || 0) - (b.displayOrder || b.sortOrder || b.sort_order || 0)
       );
       setLessons(sorted);
 
@@ -120,73 +120,75 @@ const CoursePreview = () => {
     );
   }
 
-  const topBarRight = (
-    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <ThemeSwitcher />
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => navigate(`/courses/${id}/builder/${selectedLesson?.id || lessonId || ""}`)}
-      >
-        <Pencil size={14} /> Edit
-      </Button>
-    </div>
-  );
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
-      <SideBar />
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        <ReaderLayout
-          course={course}
-          lessons={lessons}
-          activeIndex={Math.max(0, lessonIndex)}
-          onGoToLesson={handleSelectLesson}
-          topBarRight={topBarRight}
-        >
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              width: "100%",
-              margin: "0 auto",
-              padding: "32px 40px",
-            }}
-          >
-            <div
-              style={{
-                marginBottom: 24,
-                paddingBottom: 16,
-                borderBottom: `1px solid ${t("border-secondary")}`,
-              }}
+    <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-background/95">
+      <RoleBasedSidebar />
+      
+      {/* Mobile backdrop */}
+      {isMobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
+
+      <main
+        onClick={() => isMobileOpen && setIsMobileOpen(false)}
+        className={cn(
+          "flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out",
+          "lg:ml-16",
+          isExpanded && "lg:ml-64"
+        )}
+      >
+        {/* Header */}
+        <header className="sticky top-0 z-30 border-b border-border/30 bg-gradient-to-r from-background via-background/95 to-background backdrop-blur-xl shadow-sm px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between max-w-4xl mx-auto">
+            {/* Mobile menu toggle */}
+            <button
+              onClick={() => setIsMobileOpen(!isMobileOpen)}
+              className="lg:hidden flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-accent hover:text-foreground"
+              aria-label="Toggle menu"
             >
-              <p
-                style={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.07em",
-                  color: "var(--text-muted)",
-                  marginBottom: 4,
-                }}
-              >
-                Lesson {lessonIndex >= 0 ? lessonIndex + 1 : 1}
-              </p>
-              <h2
-                style={{
-                  color: "var(--text-primary)",
-                  margin: 0,
-                  fontSize: "1.5rem",
-                  fontWeight: 700,
-                  lineHeight: 1.3,
-                }}
-              >
-                {selectedLesson?.title || "Untitled Lesson"}
-              </h2>
+              {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+
+            {/* Course title */}
+            <div className="flex-1 lg:ml-0">
+              <h1 className="text-lg sm:text-xl font-semibold text-foreground">
+                {course?.title}
+              </h1>
             </div>
 
+            {/* Right side actions */}
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <ThemeSwitcher />
+              <button
+                onClick={() => navigate(`/courses/${id}/builder/${selectedLesson?.id || lessonId || ""}`)}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground transition-all hover:bg-primary/90"
+              >
+                <Pencil size={14} /> Edit
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {/* Lesson header */}
+        <div className="border-b border-border/30 px-4 sm:px-6 lg:px-8 py-4">
+          <div className="max-w-4xl mx-auto">
+            <p className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground mb-1">
+              Lesson {lessonIndex >= 0 ? lessonIndex + 1 : 1}
+            </p>
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground">
+              {selectedLesson?.title || "Untitled Lesson"}
+            </h2>
+          </div>
+        </div>
+
+        {/* Content area */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
             {selectedLesson?._content ? (
-              <div style={{ flex: 1, marginLeft: "-35px" }}>
+              <div>
                 <MeroEduEditor
                   initialContent={selectedLesson._content}
                   editable={false}
@@ -195,49 +197,37 @@ const CoursePreview = () => {
                 />
               </div>
             ) : (
-              <div
-                className="text-text-muted flex flex-1 items-center justify-center"
-                style={{ minHeight: 300 }}
-              >
-                <BookOpen size={32} style={{ opacity: 0.3, marginRight: 12 }} />
+              <div className="flex flex-col items-center justify-center min-h-[300px] text-muted-foreground">
+                <BookOpen size={32} className="opacity-30 mb-3" />
                 <span>This lesson has no content yet.</span>
               </div>
             )}
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginTop: 32,
-                paddingTop: 16,
-                borderTop: `1px solid ${t("border-secondary")}`,
-                flexShrink: 0,
-              }}
-            >
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleSelectLesson(lessonIndex - 1)}
-                disabled={lessonIndex <= 0}
-              >
-                <ArrowLeft size={14} /> Previous
-              </Button>
-              <span className="text-text-muted text-xs">
-                {lessonIndex + 1} / {lessons.length}
-              </span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleSelectLesson(lessonIndex + 1)}
-                disabled={lessonIndex < 0 || lessonIndex >= lessons.length - 1}
-              >
-                Next <ArrowRight size={14} />
-              </Button>
-            </div>
           </div>
-        </ReaderLayout>
-      </div>
+        </div>
+
+        {/* Navigation footer */}
+        <div className="border-t border-border/30 bg-gradient-to-r from-background via-background/95 to-background px-4 sm:px-6 lg:px-8 py-4">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => handleSelectLesson(lessonIndex - 1)}
+              disabled={lessonIndex <= 0}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              <ArrowLeft size={14} /> Previous
+            </button>
+            <span className="text-xs text-muted-foreground">
+              {lessonIndex + 1} / {lessons.length}
+            </span>
+            <button
+              onClick={() => handleSelectLesson(lessonIndex + 1)}
+              disabled={lessonIndex < 0 || lessonIndex >= lessons.length - 1}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              Next <ArrowRight size={14} />
+            </button>
+          </div>
+        </div>
+      </main>
     </div>
   );
 };

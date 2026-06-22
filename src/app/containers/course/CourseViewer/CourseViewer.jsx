@@ -1,7 +1,7 @@
-import { ArrowLeft, ArrowRight, BookOpen, Loader2, Sparkles, Lock } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Loader2, Sparkles, Lock, Menu, X, Settings } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import { useToast } from "@/app/context/ToastContext";
 import { hasPermission } from "@/app/services/authService";
@@ -20,10 +20,12 @@ import {
 import RoleBasedSidebar from "@/components/layouts/RoleBasedSidebar";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { cn } from "@/lib/utils";
+import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 
 const CourseViewer = () => {
   usePageTitle("Course Viewer");
   const { id } = useParams();
+  const navigate = useNavigate();
   const { addToast } = useToast();
   const user = useSelector((s) => s.auth.user);
   const { isExpanded, isMobileOpen, setIsMobileOpen } = useSidebar();
@@ -49,7 +51,7 @@ const CourseViewer = () => {
 
   // Sort lessons by order
   const sortedLessons = [...lessons].sort(
-    (a, b) => (a.sortOrder || a.sort_order || 0) - (b.sortOrder || b.sort_order || 0)
+    (a, b) => (a.displayOrder || a.sortOrder || a.sort_order || 0) - (b.displayOrder || b.sortOrder || b.sort_order || 0)
   );
 
   // Build completion status from completions data
@@ -348,6 +350,39 @@ const CourseViewer = () => {
       >
         {/* Course content */}
         <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <header className="sticky top-0 z-30 border-b border-border/30 bg-gradient-to-r from-background via-background/95 to-background backdrop-blur-xl shadow-sm px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between max-w-4xl mx-auto">
+              {/* Mobile menu toggle */}
+              <button
+                onClick={() => setIsMobileOpen(!isMobileOpen)}
+                className="lg:hidden flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-accent hover:text-foreground"
+                aria-label="Toggle menu"
+              >
+                {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+
+              {/* Course title */}
+              <div className="flex-1 lg:ml-0">
+                <h1 className="text-lg sm:text-xl font-semibold text-foreground">
+                  {course?.title}
+                </h1>
+              </div>
+
+              {/* Right side actions */}
+              <div className="flex items-center gap-3 flex-shrink-0">
+                <ThemeSwitcher />
+                <button
+                  onClick={() => navigate("/settings")}
+                  className="lg:hidden flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-accent hover:text-foreground"
+                  aria-label="Settings"
+                >
+                  <Settings size={18} />
+                </button>
+              </div>
+            </div>
+          </header>
+
           {/* Lesson header */}
           <div className="border-b border-border/30 bg-gradient-to-r from-background via-background/95 to-background px-4 sm:px-6 lg:px-8 py-4">
             <div className="max-w-4xl mx-auto">

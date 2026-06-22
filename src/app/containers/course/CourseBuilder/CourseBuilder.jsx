@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ChevronRight, Save, Eye, AlertCircle, Check, Loader2, X, GripVertical, Menu } from "lucide-react";
+import { ChevronRight, Save, Eye, AlertCircle, Check, Loader2, X, GripVertical, Menu, Book } from "lucide-react";
 
 import ThemeSwitcher from "@/app/components/ThemeSwitcher";
 import { saveLessonBlocks } from "@/app/services/blockService";
@@ -51,7 +51,7 @@ const CourseBuilder = () => {
       const courseData = await fetchCourseById(id);
       setCourse(courseData);
       const lessonList = await fetchLessons(id);
-      lessonList.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+      lessonList.sort((a, b) => (a.displayOrder || a.sort_order || 0) - (b.displayOrder || b.sort_order || 0));
       if (lessonList?.length > 0) {
         setLessons(lessonList);
         // If URL has a lessonId, try to select that lesson; otherwise fall back to first
@@ -62,15 +62,11 @@ const CourseBuilder = () => {
         }
         await loadLesson(targetLesson);
       } else {
-        // Create first lesson automatically if course has no lessons
-        const newLesson = await createLesson(id, {
-          title: "Lesson 1",
-          sort_order: 1,
-        });
-        setLessons([newLesson]);
-        setSelectedLesson(newLesson);
+        // Only create first lesson if we have no lessons at all
+        // Don't auto-create - let the user click the add button
+        setLessons([]);
+        setSelectedLesson(null);
         setContent("");
-        navigate(`/courses/${id}/builder/${newLesson.id}`, { replace: true });
       }
     } catch (err) {
       setError(err.message || "Failed to load course.");
@@ -102,7 +98,7 @@ const CourseBuilder = () => {
 
   useEffect(() => {
     loadData();
-  }, [loadData]);
+  }, [id, lessonId]);
 
   const handleSave = async () => {
     if (!selectedLesson) return;
@@ -172,7 +168,7 @@ const CourseBuilder = () => {
   const handleReorderLessons = useCallback(
     async (newLessons) => {
       const previousLessons = lessons;
-      const reordered = newLessons.map((l, i) => ({ ...l, sort_order: i + 1 }));
+      const reordered = newLessons.map((l, i) => ({ ...l, displayOrder: i + 1 }));
       setLessons(reordered);
       try {
         await reorderLessons(id, reordered);
@@ -254,13 +250,14 @@ const CourseBuilder = () => {
   const handleAddLesson = async () => {
     try {
       setAddingLesson(true);
-      const nextSortOrder = lessons.length > 0 
-        ? Math.max(...lessons.map(l => l.sort_order || 0)) + 1 
+      const nextDisplayOrder = lessons.length > 0 
+        ? Math.max(...lessons.map(l => l.displayOrder || l.sort_order || 0)) + 1 
         : 1;
       
       const newLesson = await createLesson(id, {
+        courseId: parseInt(id, 10),
         title: `Lesson ${lessons.length + 1}`,
-        sort_order: nextSortOrder,
+        displayOrder: nextDisplayOrder,
       });
       
       // Add to state and select the new lesson
@@ -301,20 +298,21 @@ const CourseBuilder = () => {
   const handleBulkDuplicateLessons = async (lessonIds) => {
     try {
       const newLessons = [...lessons];
-      const maxSortOrder = lessons.length > 0 
-        ? Math.max(...lessons.map(l => l.sort_order || 0)) 
+      const maxDisplayOrder = lessons.length > 0 
+        ? Math.max(...lessons.map(l => l.displayOrder || l.sort_order || 0)) 
         : 0;
       
-      let currentSortOrder = maxSortOrder + 1;
+      let currentDisplayOrder = maxDisplayOrder + 1;
       for (const lessonId of lessonIds) {
         const original = lessons.find((l) => l.id === lessonId);
         if (original) {
           const duplicated = await createLesson(id, {
+            courseId: parseInt(id, 10),
             title: `${original.title} (Copy)`,
-            sort_order: currentSortOrder,
+            displayOrder: currentDisplayOrder,
           });
           newLessons.push(duplicated);
-          currentSortOrder++;
+          currentDisplayOrder++;
         }
       }
       setLessons(newLessons);
@@ -480,13 +478,23 @@ const CourseBuilder = () => {
               </div>
               
               {/* Editor */}
-              <MeroEduEditor
-                key={selectedLesson?.id} // remount editor when lesson changes to reset state
-                initialContent={content}
-                onContentChange={handleContentChange}
-                onStatsChange={handleStatsChange}
-                lessonId={selectedLesson?.id}
-              />
+              {lessons.length > 0 && selectedLesson ? (
+                <MeroEduEditor
+                  key={selectedLesson?.id} // remount editor when lesson changes to reset state
+                  initialContent={content}
+                  onContentChange={handleContentChange}
+                  onStatsChange={handleStatsChange}
+                  lessonId={selectedLesson?.id}
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center min-h-[400px] text-muted-foreground">
+                  <Book size={48} className="opacity-30 mb-4" />
+                  <h2 className="text-xl font-semibold mb-2">No lessons yet</h2>
+                  <p className="text-sm max-w-md text-center">
+                    Click the + button in the sidebar to create your first lesson
+                  </p>
+                </div>
+              )}
             </div>
           </main>
         </div>

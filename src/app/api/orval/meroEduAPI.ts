@@ -11420,7 +11420,7 @@ export const getCreateLessonForCourseUrl = (id: number,) => {
 }
 
 /**
- * Create a new lesson scoped to a specific course
+ * Create a new lesson scoped to a specific course. This is the ONLY way to create lessons.
  * @summary Create a lesson for a course
  */
 export const createLessonForCourse = async (id: number,

@@ -7,7 +7,7 @@ const DEFAULT_COURSE_IMAGE =
  * CourseCard — Reusable card for displaying course information.
  *
  * Props:
- *   course      - Course object with title, category, coverImage, etc.
+ *   course      - Course object with title, category, imageUrl, etc.
  *   onEdit      - Optional edit handler
  *   onClick     - Main click handler
  *   showStatus  - Whether to show status badge (default: true for instructor)

@@ -127,7 +127,7 @@ export default function DashboardLayout({ children, title, subtitle }) {
               {/* Mobile menu toggle */}
               <button
                 onClick={() => setIsMobileOpen(!isMobileOpen)}
-                className="lg:hidden flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-accent hover:text-foreground"
+                className="lg:hidden flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-accent hover:text-foreground"
                 aria-label="Toggle menu"
               >
                 {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -145,7 +145,9 @@ export default function DashboardLayout({ children, title, subtitle }) {
             </div>
 
             {/* Right: notifications + theme switcher */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-3">
+              <ThemeSwitcher />
+              
               {/* Notification bell */}
               <div className="relative" ref={bellRef}>
                 <button
@@ -159,7 +161,7 @@ export default function DashboardLayout({ children, title, subtitle }) {
                   aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
                   aria-expanded={showDropdown}
                   aria-haspopup="true"
-                  className="group relative flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-all duration-300 hover:bg-accent hover:text-foreground hover:shadow-md"
+                  className="group relative flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-all duration-300 hover:bg-accent hover:text-foreground hover:shadow-md"
                 >
                   <Bell size={18} className="transition-transform duration-300 group-hover:scale-110" />
                   {unreadCount > 0 && (
@@ -270,11 +272,6 @@ export default function DashboardLayout({ children, title, subtitle }) {
                     )}
                   </div>
                 )}
-              </div>
-
-              {/* Theme switcher */}
-              <div className="flex h-9 w-9 items-center justify-center">
-                <ThemeSwitcher />
               </div>
             </div>
           </div>
