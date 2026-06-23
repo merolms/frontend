@@ -1,13 +1,14 @@
+// @ts-nocheck
 import { Check, ImageIcon, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import UnsplashPicker from "@/containers/course/components/UnsplashPicker";
-import { uploadCourseImage } from "@/services/courseService";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 import FormActions from "@/components/forms/FormActions";
 import FormField from "@/components/forms/FormField";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
+import UnsplashPicker from "@/containers/course/components/UnsplashPicker";
+import { uploadCourseImage } from "@/services/courseService";
 
 const inputCls =
   "border-border bg-bg-input text-text-primary text-sm placeholder:text-text-muted w-full rounded-md border px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";

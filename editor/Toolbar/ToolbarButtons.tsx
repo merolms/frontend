@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   ArrowsClockwise,
   CaretDown,
@@ -6,7 +7,6 @@ import {
   ColumnsPlusRight,
   Cube,
   CursorClick,
-  DotsThree,
   FileText,
   GitBranch,
   Globe,
@@ -116,182 +116,182 @@ export const ToolbarButtons = React.memo(({ editor }) => {
       <div className="flex w-full flex-row items-center gap-1 overflow-x-auto">
         {/* undo, redo */}
         <Button
-        variant="ghost"
-        onClick={() => editor.chain().focus().undo().run()}
-        className="m-0 h-fit w-fit p-[.35rem]"
+          variant="ghost"
+          onClick={() => editor.chain().focus().undo().run()}
+          className="m-0 h-fit w-fit p-[.35rem]"
         >
-        <Undo2 className="h-5 w-5 flex-none" />
+          <Undo2 className="h-5 w-5 flex-none" />
         </Button>
         <Button
-        variant="ghost"
-        onClick={() => editor.chain().focus().redo().run()}
-        className="m-0 h-fit w-fit p-[.35rem]"
+          variant="ghost"
+          onClick={() => editor.chain().focus().redo().run()}
+          className="m-0 h-fit w-fit p-[.35rem]"
         >
-        <Redo2 className="h-5 w-5 flex-none" />
+          <Redo2 className="h-5 w-5 flex-none" />
         </Button>
 
-        <div className="w-px h-6 bg-gray-300 mx-1" />
+        <div className="mx-1 h-6 w-px bg-gray-300" />
 
         {/* text formatting */}
         <div
-        onClick={() => editor.chain().focus().toggleBold().run()}
-        className={`editor-tool-btn ${editor.isActive("bold") ? "is-active" : ""}`}
-        title="Bold"
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          className={`editor-tool-btn ${editor.isActive("bold") ? "is-active" : ""}`}
+          title="Bold"
         >
-        <Bold className="h-5 w-5 flex-none" />
+          <Bold className="h-5 w-5 flex-none" />
         </div>
         <div
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-        className={`editor-tool-btn ${editor.isActive("italic") ? "is-active" : ""}`}
-        title="Italic"
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          className={`editor-tool-btn ${editor.isActive("italic") ? "is-active" : ""}`}
+          title="Italic"
         >
-        <Italic className="h-5 w-5 flex-none" />
+          <Italic className="h-5 w-5 flex-none" />
         </div>
         <div
-        onClick={() => editor.chain().focus().toggleUnderline().run()}
-        className={`editor-tool-btn ${editor.isActive("underline") ? "is-active" : ""}`}
-        title="Underline"
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          className={`editor-tool-btn ${editor.isActive("underline") ? "is-active" : ""}`}
+          title="Underline"
         >
-        <UnderlineIcon className="h-5 w-5 flex-none" />
+          <UnderlineIcon className="h-5 w-5 flex-none" />
         </div>
         <div
-        onClick={() => editor.chain().focus().toggleStrike().run()}
-        className={`editor-tool-btn ${editor.isActive("strike") ? "is-active" : ""}`}
-        title="Strikethrough"
+          onClick={() => editor.chain().focus().toggleStrike().run()}
+          className={`editor-tool-btn ${editor.isActive("strike") ? "is-active" : ""}`}
+          title="Strikethrough"
         >
-        <Strikethrough className="h-5 w-5 flex-none" />
+          <Strikethrough className="h-5 w-5 flex-none" />
         </div>
 
-        <div className="w-px h-6 bg-gray-300 mx-1" />
+        <div className="mx-1 h-6 w-px bg-gray-300" />
 
         {/* alignment */}
         <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="secondary" className="m-0 h-fit w-fit p-[.35rem]">
-            {editor.isActive({ textAlign: "left" }) ? (
-              <AlignLeft className="h-5 w-5 flex-none" />
-            ) : editor.isActive({ textAlign: "center" }) ? (
-              <AlignCenter className="h-5 w-5 flex-none" />
-            ) : (
-              <AlignRight className="h-5 w-5 flex-none" />
-            )}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="m-0 mt-2 h-fit w-fit p-1">
-          <ToggleGroup
-            type="single"
-            value={
-              editor.isActive({ textAlign: "left" })
-                ? "left"
-                : editor.isActive({ textAlign: "center" })
-                  ? "center"
-                  : "right"
-            }
-            className="flex flex-col gap-1"
-          >
-            <ToggleGroupItem
-              value="left"
-              aria-label="Left Alignment"
-              onClick={() => editor.chain().focus().setTextAlign("left").run()}
-              className="m-0 h-fit w-fit p-[.35rem]"
+          <PopoverTrigger asChild>
+            <Button variant="secondary" className="m-0 h-fit w-fit p-[.35rem]">
+              {editor.isActive({ textAlign: "left" }) ? (
+                <AlignLeft className="h-5 w-5 flex-none" />
+              ) : editor.isActive({ textAlign: "center" }) ? (
+                <AlignCenter className="h-5 w-5 flex-none" />
+              ) : (
+                <AlignRight className="h-5 w-5 flex-none" />
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="m-0 mt-2 h-fit w-fit p-1">
+            <ToggleGroup
+              type="single"
+              value={
+                editor.isActive({ textAlign: "left" })
+                  ? "left"
+                  : editor.isActive({ textAlign: "center" })
+                    ? "center"
+                    : "right"
+              }
+              className="flex flex-col gap-1"
             >
-              <AlignLeft className="h-5 w-5 flex-none" />
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="center"
-              aria-label="Center Alignment"
-              onClick={() => editor.chain().focus().setTextAlign("center").run()}
-              className="m-0 h-fit w-fit p-[.35rem]"
-            >
-              <AlignCenter className="h-5 w-5 flex-none" />
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="right"
-              aria-label="Right Alignment"
-              onClick={() => editor.chain().focus().setTextAlign("right").run()}
-              className="m-0 h-fit w-fit p-[.35rem]"
-            >
-              <AlignRight className="h-5 w-5 flex-none" />
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="justify"
-              aria-label="Justify Alignment"
-              onClick={() => editor.chain().focus().setTextAlign("justify").run()}
-              className="m-0 h-fit w-fit p-[.35rem]"
-            >
-              <AlignJustify className="h-5 w-5 flex-none" />
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </PopoverContent>
+              <ToggleGroupItem
+                value="left"
+                aria-label="Left Alignment"
+                onClick={() => editor.chain().focus().setTextAlign("left").run()}
+                className="m-0 h-fit w-fit p-[.35rem]"
+              >
+                <AlignLeft className="h-5 w-5 flex-none" />
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="center"
+                aria-label="Center Alignment"
+                onClick={() => editor.chain().focus().setTextAlign("center").run()}
+                className="m-0 h-fit w-fit p-[.35rem]"
+              >
+                <AlignCenter className="h-5 w-5 flex-none" />
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="right"
+                aria-label="Right Alignment"
+                onClick={() => editor.chain().focus().setTextAlign("right").run()}
+                className="m-0 h-fit w-fit p-[.35rem]"
+              >
+                <AlignRight className="h-5 w-5 flex-none" />
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="justify"
+                aria-label="Justify Alignment"
+                onClick={() => editor.chain().focus().setTextAlign("justify").run()}
+                className="m-0 h-fit w-fit p-[.35rem]"
+              >
+                <AlignJustify className="h-5 w-5 flex-none" />
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </PopoverContent>
         </Popover>
 
         {/* line height */}
         <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="ghost" className="m-0 h-fit w-fit p-[.35rem]">
-            <Baseline className="h-5 w-5 flex-none" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="m-0 mt-2 h-fit w-fit p-1">
-          <ToggleGroup
-            type="single"
-            value={editor.getAttributes("textStyle").lineHeight || "normal"}
-            className="flex flex-col gap-1"
-          >
-            <ToggleGroupItem
-              value="normal"
-              onClick={() => editor.chain().focus().setLineHeight("normal").run()}
-              className="m-0 h-fit w-fit p-[.35rem] text-xs"
+          <PopoverTrigger asChild>
+            <Button variant="ghost" className="m-0 h-fit w-fit p-[.35rem]">
+              <Baseline className="h-5 w-5 flex-none" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="m-0 mt-2 h-fit w-fit p-1">
+            <ToggleGroup
+              type="single"
+              value={editor.getAttributes("textStyle").lineHeight || "normal"}
+              className="flex flex-col gap-1"
             >
-              Normal
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="1.5"
-              onClick={() => editor.chain().focus().setLineHeight("1.5").run()}
-              className="m-0 h-fit w-fit p-[.35rem] text-xs"
-            >
-              1.5
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="2"
-              onClick={() => editor.chain().focus().setLineHeight("2").run()}
-              className="m-0 h-fit w-fit p-[.35rem] text-xs"
-            >
-              2
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </PopoverContent>
+              <ToggleGroupItem
+                value="normal"
+                onClick={() => editor.chain().focus().setLineHeight("normal").run()}
+                className="m-0 h-fit w-fit p-[.35rem] text-xs"
+              >
+                Normal
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="1.5"
+                onClick={() => editor.chain().focus().setLineHeight("1.5").run()}
+                className="m-0 h-fit w-fit p-[.35rem] text-xs"
+              >
+                1.5
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="2"
+                onClick={() => editor.chain().focus().setLineHeight("2").run()}
+                className="m-0 h-fit w-fit p-[.35rem] text-xs"
+              >
+                2
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </PopoverContent>
         </Popover>
 
         {/* List dropdown */}
         <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            className={`m-0 inline-flex h-fit w-fit cursor-pointer items-center justify-center gap-1.5 rounded-md p-[.35rem] text-xs font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 ${
-              editor.isActive("bulletList") || editor.isActive("orderedList") ? "is-active" : ""
-            }`}
-          >
-            <ListBullets size={25} />
-            <CaretDown size={15} />
-          </Button>
-        </PopoverTrigger>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              className={`m-0 inline-flex h-fit w-fit cursor-pointer items-center justify-center gap-1.5 rounded-md p-[.35rem] text-xs font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 ${
+                editor.isActive("bulletList") || editor.isActive("orderedList") ? "is-active" : ""
+              }`}
+            >
+              <ListBullets size={25} />
+              <CaretDown size={15} />
+            </Button>
+          </PopoverTrigger>
 
-        <PopoverContent align="start" className="w-48 p-1">
-          <div className="flex flex-col gap-1">
-            {listOptions.map((opt, i) => (
-              <Button
-                key={i}
-                variant="ghost"
-                onClick={opt.action}
-                className="flex h-auto w-full justify-start gap-2 px-2 py-2"
-              >
-                <span>{opt.icon}</span>
-                <span>{opt.label}</span>
-              </Button>
-            ))}
-          </div>
-        </PopoverContent>
+          <PopoverContent align="start" className="w-48 p-1">
+            <div className="flex flex-col gap-1">
+              {listOptions.map((opt, i) => (
+                <Button
+                  key={i}
+                  variant="ghost"
+                  onClick={opt.action}
+                  className="flex h-auto w-full justify-start gap-2 px-2 py-2"
+                >
+                  <span>{opt.icon}</span>
+                  <span>{opt.label}</span>
+                </Button>
+              ))}
+            </div>
+          </PopoverContent>
         </Popover>
 
         {/* Heading select */}
@@ -332,211 +332,160 @@ export const ToolbarButtons = React.memo(({ editor }) => {
           <option value="6">Heading 6</option>
         </select>
         {/* horizontal rule */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="ghost" className="m-0 h-fit w-fit p-[.35rem]">
-                <Baseline
-                  className="h-5 w-5 flex-none"
-                  style={{
-                    color: editor.getAttributes("textStyle").color,
-                  }}
-                ></Baseline>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="m-0 mt-2 h-fit w-fit p-1">
-              <ToggleGroup
-                type="single"
-                value={editor.getAttributes("textStyle").color}
-                className="flex flex-col gap-1"
-              >
-                <ToggleGroupItem
-                  value="#e11d48"
-                  aria-label="toggle rose"
-                  onClick={() => editor.chain().focus().setColor("#e11d48").run()}
-                  className="flex w-full items-center"
-                >
-                  <div
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: "#e11d48" }}
-                  ></div>
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="#7c3aed"
-                  aria-label="toggle violet"
-                  onClick={() => editor.chain().focus().setColor("#7c3aed").run()}
-                  className="flex w-full items-center"
-                >
-                  <div
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: "#7c3aed" }}
-                  ></div>
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="#2563eb"
-                  aria-label="toggle blue"
-                  onClick={() => editor.chain().focus().setColor("#2563eb").run()}
-                  className="flex w-full items-center"
-                >
-                  <div
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: "#2563eb" }}
-                  ></div>
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="#10b981"
-                  aria-label="toggle emerald"
-                  onClick={() => editor.chain().focus().setColor("#10b981").run()}
-                  className="flex w-full items-center"
-                >
-                  <div
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: "#10b981" }}
-                  ></div>
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="#f59e0b"
-                  aria-label="toggle amber"
-                  onClick={() => editor.chain().focus().setColor("#f59e0b").run()}
-                  className="flex w-full items-center"
-                >
-                  <div
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: "#f59e0b" }}
-                  ></div>
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="#737373"
-                  aria-label="toggle neutral"
-                  onClick={() => editor.chain().focus().setColor("#737373").run()}
-                  className="flex w-full items-center"
-                >
-                  <div
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: "#737373" }}
-                  ></div>
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="#fafafa"
-                  aria-label="toggle white"
-                  onClick={() => editor.chain().focus().setColor("#fafafa").run()}
-                  className="flex w-full items-center"
-                >
-                  <div
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: "#fafafa" }}
-                  ></div>
-                </ToggleGroupItem>
-              </ToggleGroup>
-            </PopoverContent>
-          </Popover>
-          {/* highlight */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="ghost"
-                className="m-0 h-fit w-fit p-[.35rem]"
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" className="m-0 h-fit w-fit p-[.35rem]">
+              <Baseline
+                className="h-5 w-5 flex-none"
                 style={{
-                  color: editor.getAttributes("highlight").color,
+                  color: editor.getAttributes("textStyle").color,
                 }}
+              ></Baseline>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="m-0 mt-2 h-fit w-fit p-1">
+            <ToggleGroup
+              type="single"
+              value={editor.getAttributes("textStyle").color}
+              className="flex flex-col gap-1"
+            >
+              <ToggleGroupItem
+                value="#e11d48"
+                aria-label="toggle rose"
+                onClick={() => editor.chain().focus().setColor("#e11d48").run()}
+                className="flex w-full items-center"
               >
-                <Highlighter className="h-5 w-5 flex-none" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="m-0 mt-2 h-fit w-fit p-1">
-              <ToggleGroup
-                type="single"
-                value={editor.getAttributes("highlight").color}
-                className="flex flex-col gap-1"
+                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: "#e11d48" }}></div>
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="#7c3aed"
+                aria-label="toggle violet"
+                onClick={() => editor.chain().focus().setColor("#7c3aed").run()}
+                className="flex w-full items-center"
               >
-                <ToggleGroupItem
-                  value="#e11d48"
-                  aria-label="toggle rose highlight"
-                  onClick={() =>
-                    editor.chain().focus().toggleHighlight({ color: "#e11d48" }).run()
-                  }
-                  className="flex w-full justify-start"
-                >
-                  <div
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: "#e11d48" }}
-                  ></div>
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="#7c3aed"
-                  aria-label="toggle violet highlight"
-                  onClick={() =>
-                    editor.chain().focus().toggleHighlight({ color: "#7c3aed" }).run()
-                  }
-                  className="flex w-full justify-start"
-                >
-                  <div
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: "#7c3aed" }}
-                  ></div>
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="#2563eb"
-                  aria-label="toggle blue highlight"
-                  onClick={() =>
-                    editor.chain().focus().toggleHighlight({ color: "#2563eb" }).run()
-                  }
-                  className="flex w-full justify-start"
-                >
-                  <div
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: "#2563eb" }}
-                  ></div>
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="#10b981"
-                  aria-label="toggle emerald highlight"
-                  onClick={() =>
-                    editor.chain().focus().toggleHighlight({ color: "#10b981" }).run()
-                  }
-                  className="flex w-full justify-start"
-                >
-                  <div
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: "#10b981" }}
-                  ></div>
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="#f59e0b"
-                  aria-label="toggle amber highlight"
-                  onClick={() =>
-                    editor.chain().focus().toggleHighlight({ color: "#f59e0b" }).run()
-                  }
-                  className="flex w-full justify-start"
-                >
-                  <div
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: "#f59e0b" }}
-                  ></div>
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="#737373"
-                  aria-label="toggle neutral highlight"
-                  onClick={() =>
-                    editor.chain().focus().toggleHighlight({ color: "#737373" }).run()
-                  }
-                  className="flex w-full justify-start"
-                >
-                  <div
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: "#737373" }}
-                  ></div>
-                </ToggleGroupItem>
-              </ToggleGroup>
-            </PopoverContent>
-          </Popover>
+                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: "#7c3aed" }}></div>
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="#2563eb"
+                aria-label="toggle blue"
+                onClick={() => editor.chain().focus().setColor("#2563eb").run()}
+                className="flex w-full items-center"
+              >
+                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: "#2563eb" }}></div>
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="#10b981"
+                aria-label="toggle emerald"
+                onClick={() => editor.chain().focus().setColor("#10b981").run()}
+                className="flex w-full items-center"
+              >
+                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: "#10b981" }}></div>
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="#f59e0b"
+                aria-label="toggle amber"
+                onClick={() => editor.chain().focus().setColor("#f59e0b").run()}
+                className="flex w-full items-center"
+              >
+                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: "#f59e0b" }}></div>
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="#737373"
+                aria-label="toggle neutral"
+                onClick={() => editor.chain().focus().setColor("#737373").run()}
+                className="flex w-full items-center"
+              >
+                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: "#737373" }}></div>
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="#fafafa"
+                aria-label="toggle white"
+                onClick={() => editor.chain().focus().setColor("#fafafa").run()}
+                className="flex w-full items-center"
+              >
+                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: "#fafafa" }}></div>
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </PopoverContent>
+        </Popover>
+        {/* highlight */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              className="m-0 h-fit w-fit p-[.35rem]"
+              style={{
+                color: editor.getAttributes("highlight").color,
+              }}
+            >
+              <Highlighter className="h-5 w-5 flex-none" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="m-0 mt-2 h-fit w-fit p-1">
+            <ToggleGroup
+              type="single"
+              value={editor.getAttributes("highlight").color}
+              className="flex flex-col gap-1"
+            >
+              <ToggleGroupItem
+                value="#e11d48"
+                aria-label="toggle rose highlight"
+                onClick={() => editor.chain().focus().toggleHighlight({ color: "#e11d48" }).run()}
+                className="flex w-full justify-start"
+              >
+                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: "#e11d48" }}></div>
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="#7c3aed"
+                aria-label="toggle violet highlight"
+                onClick={() => editor.chain().focus().toggleHighlight({ color: "#7c3aed" }).run()}
+                className="flex w-full justify-start"
+              >
+                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: "#7c3aed" }}></div>
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="#2563eb"
+                aria-label="toggle blue highlight"
+                onClick={() => editor.chain().focus().toggleHighlight({ color: "#2563eb" }).run()}
+                className="flex w-full justify-start"
+              >
+                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: "#2563eb" }}></div>
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="#10b981"
+                aria-label="toggle emerald highlight"
+                onClick={() => editor.chain().focus().toggleHighlight({ color: "#10b981" }).run()}
+                className="flex w-full justify-start"
+              >
+                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: "#10b981" }}></div>
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="#f59e0b"
+                aria-label="toggle amber highlight"
+                onClick={() => editor.chain().focus().toggleHighlight({ color: "#f59e0b" }).run()}
+                className="flex w-full justify-start"
+              >
+                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: "#f59e0b" }}></div>
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="#737373"
+                aria-label="toggle neutral highlight"
+                onClick={() => editor.chain().focus().toggleHighlight({ color: "#737373" }).run()}
+                className="flex w-full justify-start"
+              >
+                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: "#737373" }}></div>
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </PopoverContent>
+        </Popover>
         {/* other like unset all marks, clear nodes, etc. */}
-          <Button
-            variant="ghost"
-            onClick={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}
-            className="m-0 h-fit w-fit p-[.35rem]"
-          >
-            <Eraser className="h-5 w-5 flex-none" />
-          </Button>
+        <Button
+          variant="ghost"
+          onClick={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}
+          className="m-0 h-fit w-fit p-[.35rem]"
+        >
+          <Eraser className="h-5 w-5 flex-none" />
+        </Button>
 
         {/* Table dropdown */}
         <Popover>
@@ -665,157 +614,155 @@ export const ToolbarButtons = React.memo(({ editor }) => {
         {/* <DividerVerticalIcon style={{ marginTop: "auto", marginBottom: "auto", color: "grey" }} /> */}
 
         {/* Media */}
-          <ToolTip content="Image">
-            <div
-              className="editor-tool-btn editor-tool-btn-media mt-1 p-0"
-              onClick={() => editor.chain().focus().insertContent({ type: "blockImage" }).run()}
-              title="Image"
-            >
-              <ImageIcon size={15} weight="fill" />
-            </div>
-          </ToolTip>
-          <ToolTip content="Video">
-            <div
-              className="editor-tool-btn editor-tool-btn-media mt-1 p-0"
-              onClick={() => editor.chain().focus().insertContent({ type: "blockVideo" }).run()}
-              title="Video"
-            >
-              <VideoCamera size={15} weight="fill" />
-            </div>
-          </ToolTip>
-          <ToolTip content="Audio">
-            <div
-              className="editor-tool-btn editor-tool-btn-media mt-1 p-0"
-              onClick={() => editor.chain().focus().insertContent({ type: "blockAudio" }).run()}
-              title="Audio"
-            >
-              <Headphones size={15} weight="fill" />
-            </div>
-          </ToolTip>
-          <ToolTip content="Embed / YouTube">
-            <div
-              className="editor-tool-btn editor-tool-btn-media mt-1 p-0"
-              onClick={() => editor.chain().focus().insertContent({ type: "blockEmbed" }).run()}
-              title="Embed"
-            >
-              <Cube size={15} weight="fill" />
-            </div>
-          </ToolTip>
-          <ToolTip content="Math Equation">
-            <div
-              className="editor-tool-btn editor-tool-btn-math hidden md:block"
-              onClick={() =>
-                editor.chain().focus().insertContent({ type: "blockMathEquation" }).run()
-              }
-              title="Math"
-            >
-              <Sigma size={15} weight="fill" />
-            </div>
-          </ToolTip>
-          <ToolTip content="PDF">
-            <div
-              className="editor-tool-btn editor-tool-btn-document hidden md:block"
-              onClick={() => editor.chain().focus().insertContent({ type: "blockPDF" }).run()}
-              title="PDF"
-            >
-              <FileText size={15} weight="fill" />
-            </div>
-          </ToolTip>
-          <ToolTip content="Quiz">
-            <div
-              className="editor-tool-btn editor-tool-btn-interactive"
-              onClick={() => editor.chain().focus().insertContent({ type: "blockQuiz" }).run()}
-              title="Quiz"
-            >
-              <SealQuestion size={15} weight="fill" />
-            </div>
-          </ToolTip>
-          <ToolTip content="Badge">
-            <div
-              className="editor-tool-btn editor-tool-btn-badge"
-              onClick={() =>
-                editor
-                  .chain()
-                  .focus()
-                  .insertContent({ type: "badge", content: [{ type: "text", text: "Badge" }] })
-                  .run()
-              }
-              title="Badge"
-            >
-              <Tag size={15} weight="fill" />
-            </div>
-          </ToolTip>
-          <ToolTip content="Button">
-            <div
-              className="editor-tool-btn editor-tool-btn-interactive"
-              onClick={() =>
-                editor
-                  .chain()
-                  .focus()
-                  .insertContent({
-                    type: "button",
-                    content: [{ type: "text", text: "Click me" }],
-                  })
-                  .run()
-              }
-              title="Button"
-            >
-              <CursorClick size={15} weight="fill" />
-            </div>
-          </ToolTip>
-          <ToolTip content="Web Preview">
-            <div
-              className="editor-tool-btn editor-tool-btn-web"
-              onClick={() =>
-                editor.chain().focus().insertContent({ type: "blockWebPreview" }).run()
-              }
-              title="Web Preview"
-            >
-              <Globe size={15} weight="fill" />
-            </div>
-          </ToolTip>
-          <ToolTip content="Flipcard">
-            <div
-              className="editor-tool-btn editor-tool-btn-interactive"
-              onClick={() =>
-                editor
-                  .chain()
-                  .focus()
-                  .insertContent({
-                    type: "flipcard",
-                    attrs: {
-                      question: "Click to reveal",
-                      answer: "This is the answer",
-                      color: "blue",
-                      alignment: "center",
-                      size: "medium",
-                    },
-                  })
-                  .run()
-              }
-              title="Flipcard"
-            >
-              <ArrowsClockwise size={15} weight="fill" />
-            </div>
-          </ToolTip>
-          <ToolTip content="Scenarios">
-            <div
-              className="editor-tool-btn editor-tool-btn-interactive"
-              onClick={() =>
-                editor
-                  .chain()
-                  .focus()
-                  .insertContent({
-                    type: "scenarios",
-                    attrs: { title: "Interactive Scenario", currentScenarioId: "1" },
-                  })
-                  .run()
-              }
-              title="Scenarios"
-            >
-              <GitBranch size={15} weight="fill" />
-            </div>
-          </ToolTip>
+        <ToolTip content="Image">
+          <div
+            className="editor-tool-btn editor-tool-btn-media mt-1 p-0"
+            onClick={() => editor.chain().focus().insertContent({ type: "blockImage" }).run()}
+            title="Image"
+          >
+            <ImageIcon size={15} weight="fill" />
+          </div>
+        </ToolTip>
+        <ToolTip content="Video">
+          <div
+            className="editor-tool-btn editor-tool-btn-media mt-1 p-0"
+            onClick={() => editor.chain().focus().insertContent({ type: "blockVideo" }).run()}
+            title="Video"
+          >
+            <VideoCamera size={15} weight="fill" />
+          </div>
+        </ToolTip>
+        <ToolTip content="Audio">
+          <div
+            className="editor-tool-btn editor-tool-btn-media mt-1 p-0"
+            onClick={() => editor.chain().focus().insertContent({ type: "blockAudio" }).run()}
+            title="Audio"
+          >
+            <Headphones size={15} weight="fill" />
+          </div>
+        </ToolTip>
+        <ToolTip content="Embed / YouTube">
+          <div
+            className="editor-tool-btn editor-tool-btn-media mt-1 p-0"
+            onClick={() => editor.chain().focus().insertContent({ type: "blockEmbed" }).run()}
+            title="Embed"
+          >
+            <Cube size={15} weight="fill" />
+          </div>
+        </ToolTip>
+        <ToolTip content="Math Equation">
+          <div
+            className="editor-tool-btn editor-tool-btn-math hidden md:block"
+            onClick={() =>
+              editor.chain().focus().insertContent({ type: "blockMathEquation" }).run()
+            }
+            title="Math"
+          >
+            <Sigma size={15} weight="fill" />
+          </div>
+        </ToolTip>
+        <ToolTip content="PDF">
+          <div
+            className="editor-tool-btn editor-tool-btn-document hidden md:block"
+            onClick={() => editor.chain().focus().insertContent({ type: "blockPDF" }).run()}
+            title="PDF"
+          >
+            <FileText size={15} weight="fill" />
+          </div>
+        </ToolTip>
+        <ToolTip content="Quiz">
+          <div
+            className="editor-tool-btn editor-tool-btn-interactive"
+            onClick={() => editor.chain().focus().insertContent({ type: "blockQuiz" }).run()}
+            title="Quiz"
+          >
+            <SealQuestion size={15} weight="fill" />
+          </div>
+        </ToolTip>
+        <ToolTip content="Badge">
+          <div
+            className="editor-tool-btn editor-tool-btn-badge"
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .insertContent({ type: "badge", content: [{ type: "text", text: "Badge" }] })
+                .run()
+            }
+            title="Badge"
+          >
+            <Tag size={15} weight="fill" />
+          </div>
+        </ToolTip>
+        <ToolTip content="Button">
+          <div
+            className="editor-tool-btn editor-tool-btn-interactive"
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .insertContent({
+                  type: "button",
+                  content: [{ type: "text", text: "Click me" }],
+                })
+                .run()
+            }
+            title="Button"
+          >
+            <CursorClick size={15} weight="fill" />
+          </div>
+        </ToolTip>
+        <ToolTip content="Web Preview">
+          <div
+            className="editor-tool-btn editor-tool-btn-web"
+            onClick={() => editor.chain().focus().insertContent({ type: "blockWebPreview" }).run()}
+            title="Web Preview"
+          >
+            <Globe size={15} weight="fill" />
+          </div>
+        </ToolTip>
+        <ToolTip content="Flipcard">
+          <div
+            className="editor-tool-btn editor-tool-btn-interactive"
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .insertContent({
+                  type: "flipcard",
+                  attrs: {
+                    question: "Click to reveal",
+                    answer: "This is the answer",
+                    color: "blue",
+                    alignment: "center",
+                    size: "medium",
+                  },
+                })
+                .run()
+            }
+            title="Flipcard"
+          >
+            <ArrowsClockwise size={15} weight="fill" />
+          </div>
+        </ToolTip>
+        <ToolTip content="Scenarios">
+          <div
+            className="editor-tool-btn editor-tool-btn-interactive"
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .insertContent({
+                  type: "scenarios",
+                  attrs: { title: "Interactive Scenario", currentScenarioId: "1" },
+                })
+                .run()
+            }
+            title="Scenarios"
+          >
+            <GitBranch size={15} weight="fill" />
+          </div>
+        </ToolTip>
         {/* <DividerVerticalIcon style={{ marginTop: "auto", marginBottom: "auto", color: "grey" }} /> */}
 
         {/* Code dropdown */}

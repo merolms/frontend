@@ -85,7 +85,10 @@ export const parseBlocks = (content: unknown): unknown[] => {
  * POST /lessons/{id}/blocks body: LessonBlockRequest { lessonId, snapshot }
  * Returns Response { data: { id, lessonId, userId, snapshot, createdAt } }
  */
-export const saveLessonBlocks = async (lessonId: string | number, snapshot: string): Promise<unknown> => {
+export const saveLessonBlocks = async (
+  lessonId: string | number,
+  snapshot: string
+): Promise<unknown> => {
   try {
     return await apiPost(`/lessons/${lessonId}/blocks`, { lessonId, snapshot });
   } catch (error) {
@@ -134,7 +137,10 @@ export const fetchBlockById = async (blockId: string | number): Promise<unknown>
  * Update a block.
  * PUT /blocks/{id} returns Response { data: Block }
  */
-export const updateBlock = async (blockId: string | number, blockData: unknown): Promise<unknown> => {
+export const updateBlock = async (
+  blockId: string | number,
+  blockData: unknown
+): Promise<unknown> => {
   try {
     return await apiPut(`/blocks/${blockId}`, blockData);
   } catch (error) {
@@ -160,7 +166,10 @@ export const deleteBlock = async (blockId: string | number): Promise<unknown> =>
  * Reorder blocks within a lesson.
  * PUT /lessons/{id}/blocks/reorder body: { blockIds: integer[] }
  */
-export const reorderBlocks = async (lessonId: string | number, blockIds: number[]): Promise<unknown> => {
+export const reorderBlocks = async (
+  lessonId: string | number,
+  blockIds: number[]
+): Promise<unknown> => {
   try {
     return await apiPut(`/lessons/${lessonId}/blocks/reorder`, { blockIds });
   } catch (error) {
@@ -186,7 +195,10 @@ export const fetchBlockVersions = async (blockId: string | number): Promise<unkn
  * Restore a block to a previous version.
  * POST /blocks/{id}/restore body: { versionId }
  */
-export const restoreBlockVersion = async (blockId: string | number, versionId: string | number): Promise<unknown> => {
+export const restoreBlockVersion = async (
+  blockId: string | number,
+  versionId: string | number
+): Promise<unknown> => {
   try {
     return await apiPost(`/blocks/${blockId}/restore`, { versionId });
   } catch (error) {
@@ -202,7 +214,11 @@ export const restoreBlockVersion = async (blockId: string | number, versionId: s
  * POST /lessons/{id}/media returns Response { data: { url, ... } }
  * Returns the full URL to the uploaded file.
  */
-export const uploadBlockMedia = async (lessonId: string | number, blockId: string | number, file: File): Promise<string> => {
+export const uploadBlockMedia = async (
+  lessonId: string | number,
+  blockId: string | number,
+  file: File
+): Promise<string> => {
   try {
     const formData = new FormData();
     formData.append("file", file);
@@ -224,7 +240,12 @@ export const uploadBlockMedia = async (lessonId: string | number, blockId: strin
  * POST /ai/generate body: AIGenerationRequest { blockType, lessonId, prompt, context }
  * Returns Response { data: { content, ... } }
  */
-export const generateAIContent = async (lessonId: string | number, blockType: string, prompt: string, context = ""): Promise<{ content: string; data: unknown }> => {
+export const generateAIContent = async (
+  lessonId: string | number,
+  blockType: string,
+  prompt: string,
+  context = ""
+): Promise<{ content: string; data: unknown }> => {
   try {
     const data = await apiPost("/ai/generate", {
       lessonId,
@@ -244,7 +265,10 @@ export const generateAIContent = async (lessonId: string | number, blockType: st
 
 // ─── MOCK DATA (fallback for dev) ──────────────────────────────
 
-export const mockSaveAutosave = async (lessonId: string | number, snapshot: string): Promise<{ id: number; lessonId: string | number; snapshot: string }> => {
+export const mockSaveAutosave = async (
+  lessonId: string | number,
+  snapshot: string
+): Promise<{ id: number; lessonId: string | number; snapshot: string }> => {
   console.log("[mock] saveAutosave", lessonId, snapshot?.slice(0, 60));
   return Promise.resolve({ id: Date.now(), lessonId, snapshot });
 };

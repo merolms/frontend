@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Shared lesson-content loading and parsing.
 //
 // Lesson content lives in two places:

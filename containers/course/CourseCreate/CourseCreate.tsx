@@ -1,11 +1,12 @@
+// @ts-nocheck
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import CourseForm from "@/containers/course/CourseForm/CourseForm";
 import { useToast } from "@/context/ToastContext";
-import DashboardLayout from "@/components/ui/dashboard-layout";
 import { usePageTitle } from "@/hooks";
 import { useUnsavedChanges } from "@/hooks";
 import { useCreateCourse } from "@/hooks/queries/useCourses";

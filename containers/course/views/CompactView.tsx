@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 

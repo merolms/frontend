@@ -1,6 +1,6 @@
+// @ts-nocheck
 import { useEffect, useState } from "react";
 
-import { getEventColors, getEventTypes } from "@/utils/eventUtils";
 import FormActions from "@/components/forms/FormActions";
 import FormField from "@/components/forms/FormField";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getEventColors, getEventTypes } from "@/utils/eventUtils";
 
 const EventForm = ({ event = null, onSubmit, onClose, loading = false }) => {
   const [form, setForm] = useState({

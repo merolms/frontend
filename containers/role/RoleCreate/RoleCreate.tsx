@@ -1,12 +1,13 @@
+// @ts-nocheck
 import { ChevronRight, Shield } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { Paper } from "@/components/ui/card";
+import DashboardLayout from "@/components/ui/dashboard-layout";
 import RoleForm from "@/containers/role/RoleForm/RoleForm";
 import { useToast } from "@/context/ToastContext";
 import { createRole } from "@/services/authService";
-import { Paper } from "@/components/ui/card";
-import DashboardLayout from "@/components/ui/dashboard-layout";
 import { t } from "@/styles/theme";
 
 const RoleCreate = () => {

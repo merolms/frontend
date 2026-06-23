@@ -1,8 +1,8 @@
 "use client";
 
-import Profile from "@/containers/user/Profile/Profile";
-import ProtectedRoute from "@/components/ProtectedRoute";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import Profile from "@/containers/user/Profile/Profile";
 
 export default function ProfilePage() {
   return (

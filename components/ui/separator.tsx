@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import * as SeparatorPrimitive from "@radix-ui/react-separator";

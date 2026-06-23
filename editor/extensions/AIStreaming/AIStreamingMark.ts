@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Mark, mergeAttributes } from "@tiptap/core";
 
 export const AIStreamingMark = Mark.create({

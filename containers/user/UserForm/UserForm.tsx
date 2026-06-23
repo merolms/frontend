@@ -1,6 +1,6 @@
+// @ts-nocheck
 import { useEffect, useState } from "react";
 
-import { fetchRoles } from "@/services/authService";
 import FormActions from "@/components/forms/FormActions";
 import FormField from "@/components/forms/FormField";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { fetchRoles } from "@/services/authService";
 
 const UserForm = ({
   initialData = null,

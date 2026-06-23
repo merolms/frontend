@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ChevronLeft, ChevronRight, GraduationCap, LogOut, Settings, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";

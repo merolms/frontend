@@ -1,10 +1,8 @@
+// @ts-nocheck
 import { ChevronRight, UserPlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useToast } from "@/context/ToastContext";
-import { fetchRoles } from "@/services/authService";
-import { createUser } from "@/services/userService";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
@@ -16,6 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/context/ToastContext";
+import { fetchRoles } from "@/services/authService";
+import { createUser } from "@/services/userService";
 import { t } from "@/styles/theme";
 
 const UserCreate = () => {

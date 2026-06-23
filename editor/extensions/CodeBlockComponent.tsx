@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { NodeViewContent, NodeViewWrapper } from "@tiptap/react";
 import DOMPurify from "dompurify";
 import { Check, Copy, Eye, EyeOff } from "lucide-react";

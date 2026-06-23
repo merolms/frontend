@@ -13,7 +13,11 @@ export const nullInt64 = (field: unknown): number | null => {
   if (typeof field === "number") return field;
   if (typeof field === "object") {
     if ((field as { valid?: boolean }).valid === false) return null;
-    const val = (field as { int64?: number; Int64?: number; value?: number }).int64 ?? (field as { Int64?: number }).Int64 ?? (field as { value?: number }).value ?? null;
+    const val =
+      (field as { int64?: number; Int64?: number; value?: number }).int64 ??
+      (field as { Int64?: number }).Int64 ??
+      (field as { value?: number }).value ??
+      null;
     return val !== null ? Number(val) : null;
   }
   const parsed = Number(field);

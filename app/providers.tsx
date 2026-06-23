@@ -5,12 +5,13 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useEffect } from "react";
 import { Provider, useDispatch } from "react-redux";
 import { Toaster } from "sonner";
+
 import { ThemeProvider } from "@/context/ThemeContext";
 import { ToastProvider } from "@/context/ToastContext";
-import { setAuthErrorHandler } from "@/services/http";
 import { SidebarProvider } from "@/contexts/SidebarContext";
 import { clearAuth, restoreSession } from "@/redux/slices/authSlice";
 import store from "@/redux/store";
+import { setAuthErrorHandler } from "@/services/http";
 
 const queryClient = new QueryClient({
   defaultOptions: {

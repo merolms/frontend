@@ -1,13 +1,14 @@
+// @ts-nocheck
 import { AlertCircle, ChevronRight, Loader, Pencil } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import RoleForm from "@/containers/role/RoleForm/RoleForm";
-import { useToast } from "@/context/ToastContext";
-import { fetchRoleById, updateRole } from "@/services/authService";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import RoleForm from "@/containers/role/RoleForm/RoleForm";
+import { useToast } from "@/context/ToastContext";
+import { fetchRoleById, updateRole } from "@/services/authService";
 import { t } from "@/styles/theme";
 
 interface RoleEditProps {

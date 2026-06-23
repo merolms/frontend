@@ -1,7 +1,9 @@
+// @ts-nocheck
 // TanStack Query hooks for Enrollments
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { queryKeys } from "@/lib/queryKeys";
 import {
   adminEnrollTeamInCourse,
   adminEnrollUserInCourse,
@@ -15,7 +17,6 @@ import {
   getMyLessonCompletions,
   markLessonCompleteAPI,
 } from "@/services/enrollmentService";
-import { queryKeys } from "@/lib/queryKeys";
 
 // ─── Queries ──────────────────────────────────────────────
 

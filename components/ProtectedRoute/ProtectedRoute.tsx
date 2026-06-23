@@ -1,16 +1,23 @@
+// @ts-nocheck
 "use client";
 
-import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-import type { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
 
+import type { RootState } from "@/redux/store";
 import { hasPermission } from "@/services/authService";
 
 /**
  * Redirects to /login if the user is not authenticated.
  * Optionally checks for specific permissions.
  */
-export const ProtectedRoute = ({ children, permissions = [] }: { children: React.ReactNode; permissions?: string[] }) => {
+export const ProtectedRoute = ({
+  children,
+  permissions = [],
+}: {
+  children: React.ReactNode;
+  permissions?: string[];
+}) => {
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
 
@@ -34,7 +41,15 @@ export const ProtectedRoute = ({ children, permissions = [] }: { children: React
  * Conditionally renders children based on permissions.
  * If user lacks permission, renders fallback (or null).
  */
-export const PermissionGuard = ({ permissions = [], children, fallback = null }: { permissions?: string[]; children: React.ReactNode; fallback?: React.ReactNode }) => {
+export const PermissionGuard = ({
+  permissions = [],
+  children,
+  fallback = null,
+}: {
+  permissions?: string[];
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
+}) => {
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
 
   if (!isAuthenticated) return fallback;

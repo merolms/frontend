@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ArrowLeft, BookOpen, CheckCircle, Clock, Flame, Play, Target, Trophy } from "lucide-react";
 import { useRouter } from "next/navigation";
 

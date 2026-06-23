@@ -1,9 +1,9 @@
 "use client";
 
-import LearningPathForm from "@/containers/learningPath/LearningPathForm";
-import ProtectedRoute from "@/components/ProtectedRoute";
 import RoleGuard from "@/components/auth/RoleGuard";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import LearningPathForm from "@/containers/learningPath/LearningPathForm";
 
 export default function LearningPathEditPage({ params }: { params: { id: string } }) {
   return (

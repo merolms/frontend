@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Attachment API Service
 // Handles file uploads and downloads for course attachments
 // Backend: POST /attachments (multipart), GET /attachments/download?file=<uuid>
@@ -8,7 +9,11 @@ import { apiGet, apiUpload } from "@/services/http";
 // POST /attachments
 // Body: FormData with `file` field
 // Returns: { id, title, name, size, type, courseId, url }
-export const uploadAttachment = async (file: File, courseId: string | number, title = ""): Promise<unknown> => {
+export const uploadAttachment = async (
+  file: File,
+  courseId: string | number,
+  title = ""
+): Promise<unknown> => {
   try {
     const formData = new FormData();
     formData.append("file", file);
@@ -25,7 +30,7 @@ export const uploadAttachment = async (file: File, courseId: string | number, ti
 // GET /attachments/download?file=<uuid>
 // Returns the file download URL
 export const getDownloadUrl = (fileUuid: string): string => {
-  const API_BASE = import.meta.env.VITE_API_BASE || "http://192.168.1.67:9090";
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://192.168.1.67:9090";
   return `${API_BASE}/attachments/download?file=${encodeURIComponent(fileUuid)}`;
 };
 

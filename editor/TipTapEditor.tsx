@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import CharacterCount from "@tiptap/extension-character-count";

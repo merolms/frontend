@@ -1,9 +1,9 @@
 "use client";
 
-import RoleEdit from "@/containers/role/RoleEdit/RoleEdit";
-import ProtectedRoute from "@/components/ProtectedRoute";
 import RoleGuard from "@/components/auth/RoleGuard";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import RoleEdit from "@/containers/role/RoleEdit/RoleEdit";
 
 export default function AdminRoleEditPage({ params }: { params: { id: string } }) {
   return (

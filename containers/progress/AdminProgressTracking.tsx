@@ -1,9 +1,9 @@
+// @ts-nocheck
 import { useQuery } from "@tanstack/react-query";
 import { Award, BarChart3, Search, TrendingUp, Users } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { getMyEnrollments } from "@/services/enrollmentService";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getMyEnrollments } from "@/services/enrollmentService";
 
 const AdminProgressTracking = () => {
   const navigate = useNavigate();

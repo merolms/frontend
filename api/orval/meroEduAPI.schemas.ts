@@ -26,14 +26,13 @@ export interface DomainAIGenerationRequest {
   prompt: string;
 }
 
-export type DomainAddressType = typeof DomainAddressType[keyof typeof DomainAddressType];
-
+export type DomainAddressType = (typeof DomainAddressType)[keyof typeof DomainAddressType];
 
 export const DomainAddressType = {
-  AddressTypeBilling: 'billing',
-  AddressTypeShipping: 'shipping',
-  AddressTypeMain: 'main',
-  AddressTypeOther: 'other',
+  AddressTypeBilling: "billing",
+  AddressTypeShipping: "shipping",
+  AddressTypeMain: "main",
+  AddressTypeOther: "other",
 } as const;
 
 export interface DomainAddress {
@@ -58,29 +57,6 @@ export interface DomainAdminResetPasswordRequest {
   userId: number;
 }
 
-export interface DomainAssignmentAttachment {
-  assignmentId?: number;
-  createdAt?: string;
-  id?: number;
-  mediaId?: number;
-}
-
-export interface DomainAssignmentEnrollment {
-  assignmentId?: number;
-  enrolledAt?: string;
-  enrolledBy?: number;
-  id?: number;
-  userId?: number;
-}
-
-export interface DomainAssignmentTeamEnrollment {
-  assignmentId?: number;
-  enrolledAt?: string;
-  enrolledBy?: number;
-  id?: number;
-  teamId?: number;
-}
-
 export interface DomainAttachment {
   courseId?: number;
   createdAt?: string;
@@ -95,16 +71,15 @@ export interface DomainAttachment {
   updatedAt?: string;
 }
 
-export type DomainAttendeeStatus = typeof DomainAttendeeStatus[keyof typeof DomainAttendeeStatus];
-
+export type DomainAttendeeStatus = (typeof DomainAttendeeStatus)[keyof typeof DomainAttendeeStatus];
 
 export const DomainAttendeeStatus = {
-  AttendeeStatusInvited: 'invited',
-  AttendeeStatusAccepted: 'accepted',
-  AttendeeStatusDeclined: 'declined',
-  AttendeeStatusTentative: 'tentative',
-  AttendeeStatusAttended: 'attended',
-  AttendeeStatusMissed: 'missed',
+  AttendeeStatusInvited: "invited",
+  AttendeeStatusAccepted: "accepted",
+  AttendeeStatusDeclined: "declined",
+  AttendeeStatusTentative: "tentative",
+  AttendeeStatusAttended: "attended",
+  AttendeeStatusMissed: "missed",
 } as const;
 
 export interface DomainAuditLog {
@@ -137,12 +112,12 @@ export interface DomainCategory {
   updatedAt?: string;
 }
 
-export type DomainCertificateOrientation = typeof DomainCertificateOrientation[keyof typeof DomainCertificateOrientation];
-
+export type DomainCertificateOrientation =
+  (typeof DomainCertificateOrientation)[keyof typeof DomainCertificateOrientation];
 
 export const DomainCertificateOrientation = {
-  CertificateOrientationLandscape: 'landscape',
-  CertificateOrientationPortrait: 'portrait',
+  CertificateOrientationLandscape: "landscape",
+  CertificateOrientationPortrait: "portrait",
 } as const;
 
 export interface DomainContentRevision {
@@ -155,23 +130,22 @@ export interface DomainContentRevision {
   snapshot?: string;
 }
 
-export type DomainContentType = typeof DomainContentType[keyof typeof DomainContentType];
-
+export type DomainContentType = (typeof DomainContentType)[keyof typeof DomainContentType];
 
 export const DomainContentType = {
-  ContentTypeMarkdown: 'markdown',
-  ContentTypeHTML: 'html',
-  ContentTypePlain: 'plain',
+  ContentTypeMarkdown: "markdown",
+  ContentTypeHTML: "html",
+  ContentTypePlain: "plain",
 } as const;
 
-export type DomainCourseEnrollmentType = typeof DomainCourseEnrollmentType[keyof typeof DomainCourseEnrollmentType];
-
+export type DomainCourseEnrollmentType =
+  (typeof DomainCourseEnrollmentType)[keyof typeof DomainCourseEnrollmentType];
 
 export const DomainCourseEnrollmentType = {
-  open: 'open',
-  approval: 'approval',
-  invite_only: 'invite_only',
-  paid: 'paid',
+  open: "open",
+  approval: "approval",
+  invite_only: "invite_only",
+  paid: "paid",
 } as const;
 
 export interface DomainUser {
@@ -222,24 +196,23 @@ export interface DomainLesson {
   updatedAt?: string;
 }
 
-export type DomainStatus = typeof DomainStatus[keyof typeof DomainStatus];
-
+export type DomainStatus = (typeof DomainStatus)[keyof typeof DomainStatus];
 
 export const DomainStatus = {
-  Success: 'success',
-  Error: 'error',
-  CourseInDraft: 'draft',
-  CourseArchived: 'archived',
-  CourseAssigned: 'assigned',
-  CoursePublished: 'published',
-  CoursePublic: 'public',
-  CourseCreated: 'created',
-  CourseComplete: 'completed',
-  StatusSuccess: 'queued',
-  StatusQueued: 'sending',
-  StatusSending: 'unknown',
-  StatusUnknown: 'scheduled',
-  StatusScheduled: 'retrying',
+  Success: "success",
+  Error: "error",
+  CourseInDraft: "draft",
+  CourseArchived: "archived",
+  CourseAssigned: "assigned",
+  CoursePublished: "published",
+  CoursePublic: "public",
+  CourseCreated: "created",
+  CourseComplete: "completed",
+  StatusSuccess: "queued",
+  StatusQueued: "sending",
+  StatusSending: "unknown",
+  StatusUnknown: "scheduled",
+  StatusScheduled: "retrying",
 } as const;
 
 export interface DomainCourse {
@@ -250,9 +223,9 @@ export interface DomainCourse {
   categoryId?: DomainNullInt64;
   certificateEnabled?: boolean;
   /**
-     * @minimum 0
-     * @maximum 100
-     */
+   * @minimum 0
+   * @maximum 100
+   */
   completionThreshold?: number;
   createdAt?: string;
   deletedAt?: string;
@@ -269,9 +242,9 @@ export interface DomainCourse {
   lessons?: DomainLesson[];
   status?: DomainStatus;
   /**
-     * @minLength 3
-     * @maxLength 256
-     */
+   * @minLength 3
+   * @maxLength 256
+   */
   title: string;
   updatedAt?: string;
   users?: DomainUser[];
@@ -293,12 +266,12 @@ export interface DomainCourseInsights {
   totalQuizAttempts?: number;
 }
 
-export type DomainPrerequisiteType = typeof DomainPrerequisiteType[keyof typeof DomainPrerequisiteType];
-
+export type DomainPrerequisiteType =
+  (typeof DomainPrerequisiteType)[keyof typeof DomainPrerequisiteType];
 
 export const DomainPrerequisiteType = {
-  PrerequisiteTypeRequired: 'required',
-  PrerequisiteTypeRecommended: 'recommended',
+  PrerequisiteTypeRequired: "required",
+  PrerequisiteTypeRecommended: "recommended",
 } as const;
 
 export interface DomainCoursePrerequisite {
@@ -330,9 +303,9 @@ export interface DomainCreateCertificateRequest {
   score?: string;
   templateId?: number;
   /**
-     * @minLength 1
-     * @maxLength 256
-     */
+   * @minLength 1
+   * @maxLength 256
+   */
   title: string;
   userId: number;
   verificationCode?: string;
@@ -343,9 +316,9 @@ export interface DomainCreateCertificateTemplateRequest {
   htmlTemplate: string;
   isDefault?: boolean;
   /**
-     * @minLength 2
-     * @maxLength 256
-     */
+   * @minLength 2
+   * @maxLength 256
+   */
   name: string;
   organizationId: number;
   orientation?: DomainCertificateOrientation;
@@ -357,17 +330,16 @@ export interface DomainCreateEventAttendeeRequest {
   userId: number;
 }
 
-export type DomainEventType = typeof DomainEventType[keyof typeof DomainEventType];
-
+export type DomainEventType = (typeof DomainEventType)[keyof typeof DomainEventType];
 
 export const DomainEventType = {
-  EventTypeLiveSession: 'live_session',
-  EventTypeOfficeHours: 'office_hours',
-  EventTypeAssignmentDue: 'assignment_due',
-  EventTypeQuizDue: 'quiz_due',
-  EventTypeWebinar: 'webinar',
-  EventTypeMeeting: 'meeting',
-  EventTypeOther: 'other',
+  EventTypeLiveSession: "live_session",
+  EventTypeOfficeHours: "office_hours",
+  EventTypeAssignmentDue: "assignment_due",
+  EventTypeQuizDue: "quiz_due",
+  EventTypeWebinar: "webinar",
+  EventTypeMeeting: "meeting",
+  EventTypeOther: "other",
 } as const;
 
 export interface DomainCreateEventRequest {
@@ -385,21 +357,20 @@ export interface DomainCreateEventRequest {
   startTime: string;
   timezone?: string;
   /**
-     * @minLength 1
-     * @maxLength 256
-     */
+   * @minLength 1
+   * @maxLength 256
+   */
   title: string;
 }
 
-export type DomainForumType = typeof DomainForumType[keyof typeof DomainForumType];
-
+export type DomainForumType = (typeof DomainForumType)[keyof typeof DomainForumType];
 
 export const DomainForumType = {
-  ForumTypeCourse: 'course',
-  ForumTypeLesson: 'lesson',
-  ForumTypeAnnouncement: 'announcement',
-  ForumTypeQA: 'qa',
-  ForumTypeOpen: 'open',
+  ForumTypeCourse: "course",
+  ForumTypeLesson: "lesson",
+  ForumTypeAnnouncement: "announcement",
+  ForumTypeQA: "qa",
+  ForumTypeOpen: "open",
 } as const;
 
 export interface DomainCreateForumRequest {
@@ -409,9 +380,9 @@ export interface DomainCreateForumRequest {
   isModerated?: boolean;
   lessonId?: number;
   /**
-     * @minLength 3
-     * @maxLength 256
-     */
+   * @minLength 3
+   * @maxLength 256
+   */
   title: string;
 }
 
@@ -423,27 +394,26 @@ export interface DomainCreateNotificationPreferenceRequest {
   userId: number;
 }
 
-export type DomainSentVia = typeof DomainSentVia[keyof typeof DomainSentVia];
-
+export type DomainSentVia = (typeof DomainSentVia)[keyof typeof DomainSentVia];
 
 export const DomainSentVia = {
-  SentViaInApp: 'in_app',
-  SentViaEmail: 'email',
-  SentViaPush: 'push',
+  SentViaInApp: "in_app",
+  SentViaEmail: "email",
+  SentViaPush: "push",
 } as const;
 
-export type DomainNotificationType = typeof DomainNotificationType[keyof typeof DomainNotificationType];
-
+export type DomainNotificationType =
+  (typeof DomainNotificationType)[keyof typeof DomainNotificationType];
 
 export const DomainNotificationType = {
-  NotificationTypeAssignmentDue: 'assignment_due',
-  NotificationTypeGradePosted: 'grade_posted',
-  NotificationTypeReply: 'reply',
-  NotificationTypeBadge: 'badge',
-  NotificationTypeCourseUpdated: 'course_updated',
-  NotificationTypeEnrollment: 'enrollment',
-  NotificationTypeMention: 'mention',
-  NotificationTypeSystem: 'system',
+  NotificationTypeAssignmentDue: "assignment_due",
+  NotificationTypeGradePosted: "grade_posted",
+  NotificationTypeReply: "reply",
+  NotificationTypeBadge: "badge",
+  NotificationTypeCourseUpdated: "course_updated",
+  NotificationTypeEnrollment: "enrollment",
+  NotificationTypeMention: "mention",
+  NotificationTypeSystem: "system",
 } as const;
 
 export interface DomainCreateNotificationRequest {
@@ -454,9 +424,9 @@ export interface DomainCreateNotificationRequest {
   organizationId?: number;
   sentVia?: DomainSentVia[];
   /**
-     * @minLength 1
-     * @maxLength 256
-     */
+   * @minLength 1
+   * @maxLength 256
+   */
   title: string;
   type: DomainNotificationType;
   userId: number;
@@ -474,9 +444,9 @@ export interface DomainCreateThreadRequest {
   contentType?: DomainContentType;
   forumId: number;
   /**
-     * @minLength 3
-     * @maxLength 512
-     */
+   * @minLength 3
+   * @maxLength 512
+   */
   title: string;
 }
 
@@ -531,14 +501,14 @@ export interface DomainDiscussionThread {
   viewCount?: number;
 }
 
-export type DomainExportRequestStatus = typeof DomainExportRequestStatus[keyof typeof DomainExportRequestStatus];
-
+export type DomainExportRequestStatus =
+  (typeof DomainExportRequestStatus)[keyof typeof DomainExportRequestStatus];
 
 export const DomainExportRequestStatus = {
-  ExportRequestStatusPending: 'pending',
-  ExportRequestStatusProcessing: 'processing',
-  ExportRequestStatusCompleted: 'completed',
-  ExportRequestStatusFailed: 'failed',
+  ExportRequestStatusPending: "pending",
+  ExportRequestStatusProcessing: "processing",
+  ExportRequestStatusCompleted: "completed",
+  ExportRequestStatusFailed: "failed",
 } as const;
 
 export interface DomainLessonBlockRequest {
@@ -678,9 +648,9 @@ export type DomainResponse = Data & {
 
 export interface DomainRevokeCertificateRequest {
   /**
-     * @minLength 1
-     * @maxLength 500
-     */
+   * @minLength 1
+   * @maxLength 500
+   */
   revokeReason: string;
 }
 
@@ -722,93 +692,11 @@ export interface DomainRolePermission {
   roleId?: number;
 }
 
-export interface DomainRubricLevel {
-  criteriaId?: number;
-  id?: number;
-  points?: number;
-  sortOrder?: number;
-  title: string;
-}
-
-export interface DomainRubricCriteria {
-  description?: string;
-  id?: number;
-  levels?: DomainRubricLevel[];
-  maxPoints?: number;
-  rubricId?: number;
-  sortOrder?: number;
-  title: string;
-}
-
-export interface DomainRubric {
-  createdAt?: string;
-  createdBy?: number;
-  criteria?: DomainRubricCriteria[];
-  description?: string;
-  id?: number;
-  isTemplate?: boolean;
-  maxPoints?: number;
-  organizationId?: number;
-  title: string;
-  updatedAt?: string;
-}
-
-export interface DomainRubricGrade {
-  criteriaId?: number;
-  feedback?: string;
-  id?: number;
-  levelId?: number;
-  points?: number;
-  submissionId?: number;
-}
-
 export interface DomainStatsResponse {
   categoryCount?: number;
   courseCount?: number;
   teamCount?: number;
   userCount?: number;
-}
-
-export type DomainSubmissionStatus = typeof DomainSubmissionStatus[keyof typeof DomainSubmissionStatus];
-
-
-export const DomainSubmissionStatus = {
-  SubmissionSubmitted: 'submitted',
-  SubmissionGraded: 'graded',
-  SubmissionReturned: 'returned',
-} as const;
-
-/**
- * USER or TEAM
- */
-export type DomainSubmissionType = typeof DomainSubmissionType[keyof typeof DomainSubmissionType];
-
-
-export const DomainSubmissionType = {
-  SubmissionTypeUser: 'user',
-  SubmissionTypeTeam: 'team',
-} as const;
-
-export interface DomainSubmission {
-  assignmentId?: number;
-  /** comma-separated file URLs */
-  attachmentURLs?: string;
-  attemptNumber?: number;
-  /** text content or file URLs */
-  content?: string;
-  feedback?: string;
-  gradedAt?: string;
-  gradedBy?: number;
-  id?: number;
-  isLate?: boolean;
-  score?: number;
-  status?: DomainSubmissionStatus;
-  submissionType?: DomainSubmissionType;
-  submittedAt?: string;
-  submittedBy?: number;
-  teamId?: number;
-  user?: DomainUser;
-  userId?: number;
 }
 
 export interface DomainSummaries {
@@ -931,14 +819,14 @@ export type GetOrgInsights200 = Data & {
 };
 
 export type ListTopStreaksParams = {
-/**
- * Limit
- */
-limit?: number;
-/**
- * Offset
- */
-offset?: number;
+  /**
+   * Limit
+   */
+  limit?: number;
+  /**
+   * Offset
+   */
+  offset?: number;
 };
 
 export type ListTopStreaks200 = Data & {
@@ -953,75 +841,15 @@ export type GetLearnerStreak200 = Data & {
 
 export type GenerateContentBody = { [key: string]: unknown } | DomainAIGenerationRequest;
 
-export type DeleteAttachmentBody = { [key: string]: unknown };
-
-export type GetSubmissionByIDBody = { [key: string]: unknown };
-
-export type GetSubmissionByID200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type AssignmentGradeBody = { [key: string]: unknown };
-
-export type GradeTeamBody = { [key: string]: unknown };
-
-export type GetAttachmentsBody = { [key: string]: unknown };
-
-export type GetAttachments200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type AddAttachmentBody = { [key: string]: unknown };
-
-export type EnrollTeamBody = { [key: string]: unknown };
-
-export type RemoveTeamEnrollmentBody = { [key: string]: unknown };
-
-export type EnrollUserBody = { [key: string]: unknown };
-
-export type RemoveUserEnrollmentBody = { [key: string]: unknown };
-
-export type GetEnrolledTeamsBody = { [key: string]: unknown };
-
-export type GetEnrolledTeams200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type GetEnrolledUsersBody = { [key: string]: unknown };
-
-export type GetEnrolledUsers200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type AssignmentPublishBody = { [key: string]: unknown };
-
-export type AssignmentSubmitBody = { [key: string]: unknown };
-
-export type AssignmentSubmit201 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type SubmitTeamBody = { [key: string]: unknown };
-
-export type SubmitTeam201 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
 export type GetAllAttachmentsParams = {
-/**
- * Pagination offset
- */
-start?: number;
-/**
- * Page size
- */
-limit?: number;
+  /**
+   * Pagination offset
+   */
+  start?: number;
+  /**
+   * Page size
+   */
+  limit?: number;
 };
 
 export type GetAllAttachments200 = Data & {
@@ -1030,50 +858,54 @@ export type GetAllAttachments200 = Data & {
 };
 
 export type DownloadAttachmentParams = {
-/**
- * uuid-encoded file name
- */
-file: string;
+  /**
+   * uuid-encoded file name
+   */
+  file: string;
 };
 
 export type GetAuditLogsParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
-/**
- * Filter by user ID
- */
-userId?: number;
-/**
- * Filter by organization ID
- */
-orgId?: number;
-/**
- * Filter by entity type
- */
-entityType?: string;
-/**
- * Filter by entity ID
- */
-entityId?: number;
-/**
- * Filter by action
- */
-action?: string;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
+  /**
+   * Filter by user ID
+   */
+  userId?: number;
+  /**
+   * Filter by organization ID
+   */
+  orgId?: number;
+  /**
+   * Filter by entity type
+   */
+  entityType?: string;
+  /**
+   * Filter by entity ID
+   */
+  entityId?: number;
+  /**
+   * Filter by action
+   */
+  action?: string;
 };
 
 export type CreateAuditLogBody = { [key: string]: unknown } | DomainAuditLog;
 
 export type CreateDataExportRequestBody = { [key: string]: unknown };
 
-export type UpdateDataExportRequestBody = { [key: string]: unknown } | DomainUpdateDataExportRequest;
+export type UpdateDataExportRequestBody =
+  | { [key: string]: unknown }
+  | DomainUpdateDataExportRequest;
 
-export type AdminResetPasswordHandlerBody = { [key: string]: unknown } | DomainAdminResetPasswordRequest;
+export type AdminResetPasswordHandlerBody =
+  | { [key: string]: unknown }
+  | DomainAdminResetPasswordRequest;
 
 export type LoginHandlerBody = { [key: string]: unknown } | DomainLoginRequest;
 
@@ -1109,18 +941,18 @@ export type GetBlockVersions200 = Data & {
 };
 
 export type CategoryGetAllParams = {
-/**
- * Search by name
- */
-search?: string;
-/**
- * Offset
- */
-start?: number;
-/**
- * Page size
- */
-limit?: number;
+  /**
+   * Search by name
+   */
+  search?: string;
+  /**
+   * Offset
+   */
+  start?: number;
+  /**
+   * Page size
+   */
+  limit?: number;
 };
 
 export type CategoryGetAllBody = { [key: string]: unknown };
@@ -1128,27 +960,27 @@ export type CategoryGetAllBody = { [key: string]: unknown };
 export type CategoryCreateBody = { [key: string]: unknown } | DomainCategory;
 
 export type CategoryGetChildrenParams = {
-/**
- * Offset
- */
-start?: number;
-/**
- * Page size
- */
-limit?: number;
+  /**
+   * Offset
+   */
+  start?: number;
+  /**
+   * Page size
+   */
+  limit?: number;
 };
 
 export type CategoryGetChildrenBody = { [key: string]: unknown };
 
 export type CategoryGetRootsParams = {
-/**
- * Offset
- */
-start?: number;
-/**
- * Page size
- */
-limit?: number;
+  /**
+   * Offset
+   */
+  start?: number;
+  /**
+   * Page size
+   */
+  limit?: number;
 };
 
 export type CategoryGetRootsBody = { [key: string]: unknown };
@@ -1159,48 +991,54 @@ export type CategoryGetByIDBody = { [key: string]: unknown };
 
 export type CategoryUpdateBody = { [key: string]: unknown } | DomainCategory;
 
-export type CategorySetParentBody = { [key: string]: unknown } | {
-  parentId?: number;
-};
+export type CategorySetParentBody =
+  | { [key: string]: unknown }
+  | {
+      parentId?: number;
+    };
 
 export type GetUserCertificatesParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type IssueCertificateBody = { [key: string]: unknown } | DomainCreateCertificateRequest;
 
 export type GetCourseCertificatesParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetOrgCertificatesParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
-export type CreateTemplateBody = { [key: string]: unknown } | DomainCreateCertificateTemplateRequest;
+export type CreateTemplateBody =
+  | { [key: string]: unknown }
+  | DomainCreateCertificateTemplateRequest;
 
-export type UpdateTemplateBody = { [key: string]: unknown } | DomainUpdateCertificateTemplateRequest;
+export type UpdateTemplateBody =
+  | { [key: string]: unknown }
+  | DomainUpdateCertificateTemplateRequest;
 
 export type CertificateUpdateBody = { [key: string]: unknown } | DomainUpdateCertificateRequest;
 
@@ -1214,14 +1052,14 @@ export type CreateCoursePrerequisite201 = Data & {
 };
 
 export type GetCoursePrerequisitesParams = {
-/**
- * Page number
- */
-page?: number;
-/**
- * Page size
- */
-pageSize?: number;
+  /**
+   * Page number
+   */
+  page?: number;
+  /**
+   * Page size
+   */
+  pageSize?: number;
 };
 
 export type GetCoursePrerequisites200 = Data & {
@@ -1243,14 +1081,14 @@ export type CreateLessonPrerequisite201 = Data & {
 };
 
 export type GetLessonPrerequisitesParams = {
-/**
- * Page number
- */
-page?: number;
-/**
- * Page size
- */
-pageSize?: number;
+  /**
+   * Page number
+   */
+  page?: number;
+  /**
+   * Page size
+   */
+  pageSize?: number;
 };
 
 export type GetLessonPrerequisites200 = Data & {
@@ -1272,14 +1110,14 @@ export type CreateContentRevision201 = Data & {
 };
 
 export type GetBlockRevisionsParams = {
-/**
- * Limit
- */
-limit?: number;
-/**
- * Offset
- */
-offset?: number;
+  /**
+   * Limit
+   */
+  limit?: number;
+  /**
+   * Offset
+   */
+  offset?: number;
 };
 
 export type GetBlockRevisions200 = Data & {
@@ -1299,14 +1137,14 @@ export type GetLatestContentRevision200 = Data & {
 };
 
 export type GetLessonRevisionsParams = {
-/**
- * Limit
- */
-limit?: number;
-/**
- * Offset
- */
-offset?: number;
+  /**
+   * Limit
+   */
+  limit?: number;
+  /**
+   * Offset
+   */
+  offset?: number;
 };
 
 export type GetLessonRevisions200 = Data & {
@@ -1333,14 +1171,14 @@ export type CreateCourseVersion201 = Data & {
 };
 
 export type GetCourseVersionsParams = {
-/**
- * Limit
- */
-limit?: number;
-/**
- * Offset
- */
-offset?: number;
+  /**
+   * Limit
+   */
+  limit?: number;
+  /**
+   * Offset
+   */
+  offset?: number;
 };
 
 export type GetCourseVersions200 = Data & {
@@ -1365,14 +1203,14 @@ export type GetCourseVersion200 = Data & {
 };
 
 export type CourseGetAllParams = {
-/**
- * start
- */
-start: number;
-/**
- * limit
- */
-limit: number;
+  /**
+   * start
+   */
+  start: number;
+  /**
+   * limit
+   */
+  limit: number;
 };
 
 export type CourseCreateBody = { [key: string]: unknown } | DomainCourse;
@@ -1411,14 +1249,14 @@ export type CreateForum201 = Data & {
 };
 
 export type GetForumThreadsParams = {
-/**
- * Page number
- */
-page?: number;
-/**
- * Thread limit per page
- */
-limit?: number;
+  /**
+   * Page number
+   */
+  page?: number;
+  /**
+   * Thread limit per page
+   */
+  limit?: number;
 };
 
 export type GetForumThreads200 = Data & {
@@ -1434,18 +1272,18 @@ export type CreateThread201 = Data & {
 };
 
 export type SearchThreadsParams = {
-/**
- * Search query string
- */
-q: string;
-/**
- * Page number
- */
-page?: number;
-/**
- * Page size
- */
-limit?: number;
+  /**
+   * Search query string
+   */
+  q: string;
+  /**
+   * Page number
+   */
+  page?: number;
+  /**
+   * Page size
+   */
+  limit?: number;
 };
 
 export type SearchThreads200 = Data & {
@@ -1465,9 +1303,9 @@ export type UpdateForum200 = Data & {
   message?: DomainStatus;
 };
 
-export type RemoveReactionBody = { [key: string]: unknown } | {[key: string]: unknown};
+export type RemoveReactionBody = { [key: string]: unknown } | { [key: string]: unknown };
 
-export type ReactBody = { [key: string]: unknown } | {[key: string]: unknown};
+export type ReactBody = { [key: string]: unknown } | { [key: string]: unknown };
 
 export type GetReactions200 = Data & {
   data?: unknown;
@@ -1487,15 +1325,15 @@ export type UpdateReply200 = Data & {
 };
 
 export type MarkAsAnswerParams = {
-/**
- * Is it correct answer
- */
-isAnswer: boolean;
+  /**
+   * Is it correct answer
+   */
+  isAnswer: boolean;
 };
 
-export type UnsubscribeBody = { [key: string]: unknown } | {[key: string]: unknown};
+export type UnsubscribeBody = { [key: string]: unknown } | { [key: string]: unknown };
 
-export type SubscribeBody = { [key: string]: unknown } | {[key: string]: unknown};
+export type SubscribeBody = { [key: string]: unknown } | { [key: string]: unknown };
 
 export type GetThread200 = Data & {
   data?: unknown;
@@ -1510,28 +1348,28 @@ export type UpdateThread200 = Data & {
 };
 
 export type LockThreadParams = {
-/**
- * Locked status
- */
-lock: boolean;
+  /**
+   * Locked status
+   */
+  lock: boolean;
 };
 
 export type PinThreadParams = {
-/**
- * Pinned status
- */
-pin: boolean;
+  /**
+   * Pinned status
+   */
+  pin: boolean;
 };
 
 export type GetThreadRepliesParams = {
-/**
- * Page number
- */
-page?: number;
-/**
- * Limit number
- */
-limit?: number;
+  /**
+   * Page number
+   */
+  page?: number;
+  /**
+   * Limit number
+   */
+  limit?: number;
 };
 
 export type GetThreadReplies200 = Data & {
@@ -1546,121 +1384,123 @@ export type CreateReply201 = Data & {
   message?: DomainStatus;
 };
 
-export type VoteBody = { [key: string]: unknown } | {[key: string]: unknown};
+export type VoteBody = { [key: string]: unknown } | { [key: string]: unknown };
 
 export type GetOrgEventsParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type EventCreateBody = { [key: string]: unknown } | DomainCreateEventRequest;
 
 export type GetCourseEventsParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetEventsInTimeRangeParams = {
-/**
- * Start time (Unix timestamp)
- */
-startTime: number;
-/**
- * End time (Unix timestamp)
- */
-endTime: number;
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * Start time (Unix timestamp)
+   */
+  startTime: number;
+  /**
+   * End time (Unix timestamp)
+   */
+  endTime: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetEventsByTypeParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetUpcomingEventsParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetUserEventsParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetUserAttendeesParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type GetEventAttendeesParams = {
-/**
- * start
- */
-start?: number;
-/**
- * limit
- */
-limit?: number;
+  /**
+   * start
+   */
+  start?: number;
+  /**
+   * limit
+   */
+  limit?: number;
 };
 
 export type AddAttendeeBody = { [key: string]: unknown } | DomainCreateEventAttendeeRequest;
 
-export type UpdateAttendeeStatusBody = { [key: string]: unknown } | DomainUpdateEventAttendeeRequest;
+export type UpdateAttendeeStatusBody =
+  | { [key: string]: unknown }
+  | DomainUpdateEventAttendeeRequest;
 
 export type EventUpdateBody = { [key: string]: unknown } | DomainUpdateEventRequest;
 
 export type LessonGetAllParams = {
-/**
- * start
- */
-start: number;
-/**
- * limit
- */
-limit: number;
+  /**
+   * start
+   */
+  start: number;
+  /**
+   * limit
+   */
+  limit: number;
 };
 
 export type LessonCreateBody = { [key: string]: unknown } | DomainLesson;
@@ -1674,10 +1514,10 @@ export type UploadBlockMediaBodyTwo = { [key: string]: unknown };
 export type UploadLessonMediaBodyTwo = { [key: string]: unknown };
 
 export type GetFoldersParams = {
-/**
- * Parent folder ID for nested folders
- */
-parentId?: number;
+  /**
+   * Parent folder ID for nested folders
+   */
+  parentId?: number;
 };
 
 export type CreateFolderBody = { [key: string]: unknown } | DomainMediaFolder;
@@ -1688,9 +1528,13 @@ export type MediaUploadBodyTwo = { [key: string]: unknown };
 
 export type NotificationCreateBody = { [key: string]: unknown } | DomainCreateNotificationRequest;
 
-export type CreatePreferenceBody = { [key: string]: unknown } | DomainCreateNotificationPreferenceRequest;
+export type CreatePreferenceBody =
+  | { [key: string]: unknown }
+  | DomainCreateNotificationPreferenceRequest;
 
-export type UpdatePreferenceBody = { [key: string]: unknown } | DomainUpdateNotificationPreferenceRequest;
+export type UpdatePreferenceBody =
+  | { [key: string]: unknown }
+  | DomainUpdateNotificationPreferenceRequest;
 
 export type GetAllPermissionsHandler200 = Data & {
   data?: unknown;
@@ -1772,67 +1616,20 @@ export type GetRolePermissionsHandler200 = Data & {
 
 export type AssignPermissionToRoleHandlerBody = { [key: string]: unknown } | DomainRolePermission;
 
-export type ListRubricsParams = {
-/**
- * Limit results
- */
-limit?: number;
-/**
- * Offset results
- */
-offset?: number;
-};
-
-export type ListRubrics200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type CreateRubricBody = { [key: string]: unknown } | DomainRubric;
-
-export type CreateRubric201 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type SaveRubricGradeBody = { [key: string]: unknown } | DomainRubricGrade;
-
-export type SaveRubricGrade200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type GetGradesBySubmission200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type GetRubricByID200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
-export type UpdateRubricBody = { [key: string]: unknown } | DomainRubric;
-
-export type UpdateRubric200 = Data & {
-  data?: unknown;
-  message?: DomainStatus;
-};
-
 export type StatsGet200 = Data & {
   data?: unknown;
   message?: DomainStatus;
 };
 
 export type TeamGetAllParams = {
-/**
- * Pagination offset
- */
-start?: number;
-/**
- * Page size
- */
-limit?: number;
+  /**
+   * Pagination offset
+   */
+  start?: number;
+  /**
+   * Page size
+   */
+  limit?: number;
 };
 
 export type TeamGetAll200 = Data & {
@@ -1860,18 +1657,18 @@ export type TeamUpdate200 = Data & {
 };
 
 export type GetAvailableUsersParams = {
-/**
- * Search by name or email
- */
-search?: string;
-/**
- * Pagination offset
- */
-start?: number;
-/**
- * Page size
- */
-limit?: number;
+  /**
+   * Search by name or email
+   */
+  search?: string;
+  /**
+   * Pagination offset
+   */
+  start?: number;
+  /**
+   * Page size
+   */
+  limit?: number;
 };
 
 export type GetAvailableUsers200 = Data & {
@@ -1887,14 +1684,14 @@ export type GetMembers200 = Data & {
 export type AddMemberBody = { [key: string]: unknown } | DomainTeamMember;
 
 export type GetAllUsersHandlerParams = {
-/**
- * Pagination offset
- */
-start?: number;
-/**
- * Page size
- */
-limit?: number;
+  /**
+   * Pagination offset
+   */
+  start?: number;
+  /**
+   * Page size
+   */
+  limit?: number;
 };
 
 export type GetAllUsersHandler200 = Data & {
@@ -1908,4 +1705,3 @@ export type GetUserHandler200 = Data & {
 };
 
 export type UpdateUserHandlerBody = { [key: string]: unknown } | DomainUser;
-

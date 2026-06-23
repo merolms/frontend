@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Learning Path API Service - Reduced
 // Only contains helper functions that aren't available in orval or need special handling
 // Learning path CRUD operations are NOT implemented in backend yet

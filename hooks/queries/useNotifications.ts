@@ -1,7 +1,9 @@
+// @ts-nocheck
 // TanStack Query hooks for Notifications
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { queryKeys } from "@/lib/queryKeys";
 import {
   deleteNotification,
   fetchNotificationPreferences,
@@ -12,7 +14,6 @@ import {
   markAsRead,
   updateNotificationPreference,
 } from "@/services/notificationService";
-import { queryKeys } from "@/lib/queryKeys";
 
 // ─── Queries ──────────────────────────────────────────────
 

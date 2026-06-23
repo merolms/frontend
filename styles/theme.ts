@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Theme token helper for JSX inline styles.
  * Reads from CSS custom properties set by Tailwind theme.

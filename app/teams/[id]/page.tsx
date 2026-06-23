@@ -1,9 +1,9 @@
 "use client";
 
-import TeamDetail from "@/containers/team/TeamDetail/TeamDetail";
-import ProtectedRoute from "@/components/ProtectedRoute";
 import RoleGuard from "@/components/auth/RoleGuard";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import TeamDetail from "@/containers/team/TeamDetail/TeamDetail";
 
 export default function TeamDetailPage({ params }: { params: { id: string } }) {
   return (

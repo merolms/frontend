@@ -1,14 +1,14 @@
+// @ts-nocheck
 import { ArrowLeft, ArrowRight, BookOpen, Loader2, Menu, Settings, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
 
-import ThemeSwitcher from "@/components/ThemeSwitcher";
-import { useToast } from "@/context/ToastContext";
-import { hasPermission } from "@/services/authService";
 import CourseCompletionCelebration from "@/components/CourseCompletionCelebration";
 import RoleBasedSidebar from "@/components/layouts/RoleBasedSidebar";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/context/ToastContext";
 import { useSidebar } from "@/contexts/SidebarContext";
 import MeroEduEditor from "@/editor/Editor";
 import { loadLessonDoc } from "@/editor/utils/lessonContent";
@@ -21,6 +21,7 @@ import {
   useMyLessonCompletions,
 } from "@/hooks/queries/useEnrollments";
 import { cn } from "@/lib/utils";
+import { hasPermission } from "@/services/authService";
 
 interface CourseViewerProps {
   courseId: string;

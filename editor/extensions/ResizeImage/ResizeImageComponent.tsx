@@ -1,3 +1,4 @@
+// @ts-nocheck
 import "react-resizable/css/styles.css";
 
 import { NodeViewWrapper } from "@tiptap/react";

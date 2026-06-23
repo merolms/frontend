@@ -9,7 +9,10 @@ interface CourseCompletionCelebrationProps {
   onClose: () => void;
 }
 
-const CourseCompletionCelebration = ({ courseTitle, onClose }: CourseCompletionCelebrationProps) => {
+const CourseCompletionCelebration = ({
+  courseTitle,
+  onClose,
+}: CourseCompletionCelebrationProps) => {
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,

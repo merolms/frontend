@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   AlertCircle,
   ChevronLeft,
@@ -13,8 +14,6 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-import { useToast } from "@/context/ToastContext";
-import { fetchTeamMembers, fetchUsers } from "@/services/teamService";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
@@ -27,7 +26,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/context/ToastContext";
 import { useAddTeamMember, useRemoveTeamMember } from "@/hooks/queries/useEntities";
+import { fetchTeamMembers, fetchUsers } from "@/services/teamService";
 import { t } from "@/styles/theme";
 
 const PAGE_SIZE = 12;

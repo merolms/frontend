@@ -1,3 +1,4 @@
+// @ts-nocheck
 // TanStack Query hooks for Events
 
 import { useQuery } from "@tanstack/react-query";

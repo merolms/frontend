@@ -7,7 +7,7 @@ const uid = () => `${++nextId}`;
 
 // ==================== INITIAL MOCK DATA ====================
 
-let mockCoursesWithStructure = {
+const mockCoursesWithStructure = {
   1: {
     id: 1,
     title: "Introduction to React",

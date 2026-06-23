@@ -5,7 +5,7 @@
 // - Throws ApiError on non-2xx responses
 // - Calls onAuthError callback on 401/403 responses
 
-const API_BASE: string = (import.meta as any).env.VITE_API_BASE || "http://192.168.1.67:9090";
+const API_BASE: string = process.env.NEXT_PUBLIC_API_BASE || "http://192.168.1.67:9090";
 
 export type AuthErrorHandler = (message: string, status: number) => void;
 

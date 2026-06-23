@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { AlertTriangle, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";

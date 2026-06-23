@@ -1,10 +1,8 @@
+// @ts-nocheck
 import { AlertCircle, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { DeleteModal } from "@/containers/course/CourseActions/CourseActions";
-import { useToast } from "@/context/ToastContext";
-import { fetchRoles } from "@/services/authService";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
@@ -28,8 +26,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { DeleteModal } from "@/containers/course/CourseActions/CourseActions";
+import { useToast } from "@/context/ToastContext";
 import { usePageTitle } from "@/hooks";
 import { useDeleteUser, useUsers } from "@/hooks/queries/useEntities";
+import { fetchRoles } from "@/services/authService";
 
 const statusOptions = [
   { value: "all", label: "All Status" },

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Extension } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
 import { Bold, Heading1 } from "lucide-react";

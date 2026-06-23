@@ -1,9 +1,9 @@
 "use client";
 
-import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { RoleGuard } from "@/components/auth/RoleGuard";
-import CourseEdit from "@/containers/course/CourseEdit";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import CourseEdit from "@/containers/course/CourseEdit";
 
 export default function CourseEditPage({ params }: { params: { id: string } }) {
   return (

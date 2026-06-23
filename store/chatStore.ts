@@ -199,7 +199,7 @@ const seedMessages = {
 
 // ─── Store ───────────────────────────────────────────────────
 
-let state = {
+const state = {
   channels: [],
   messages: {},
   activeChannel: "general",

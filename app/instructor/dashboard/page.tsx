@@ -1,9 +1,9 @@
 "use client";
 
-import InstructorDashboard from "@/containers/instructor/Dashboard";
-import ProtectedRoute from "@/components/ProtectedRoute";
 import RoleGuard from "@/components/auth/RoleGuard";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import InstructorDashboard from "@/containers/instructor/Dashboard";
 
 export default function InstructorDashboardPage() {
   return (

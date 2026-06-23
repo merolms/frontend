@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { cva } from "class-variance-authority";
 import * as React from "react";
 

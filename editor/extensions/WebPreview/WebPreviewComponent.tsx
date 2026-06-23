@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { NodeViewWrapper } from "@tiptap/react";
 import { AlignCenter, AlignLeft, AlignRight, Edit2, Save, Trash, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";

@@ -1,16 +1,23 @@
 import { Button } from "@/components/ui/Button";
 
+interface FormActionsProps {
+  onCancel?: () => void;
+  loading?: boolean;
+  submitLabel?: string;
+  showCancel?: boolean;
+  disabled?: boolean;
+}
+
 /**
  * FormActions — Standardized form action buttons (Cancel + Submit).
- *
- * Props:
- *   onCancel   - Cancel callback
- *   loading    - Loading state for submit button
- *   submitLabel - Submit button label (default: "Save")
- *   showCancel - Whether to show cancel button (default: true when onCancel provided)
- *   disabled   - Disabled state for submit button
  */
-const FormActions = ({ onCancel, loading, submitLabel = "Save", showCancel, disabled }) => {
+const FormActions = ({
+  onCancel,
+  loading,
+  submitLabel = "Save",
+  showCancel,
+  disabled,
+}: FormActionsProps) => {
   const showCancelBtn = showCancel !== undefined ? showCancel : !!onCancel;
 
   return (

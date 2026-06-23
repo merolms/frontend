@@ -1,9 +1,9 @@
 "use client";
 
-import CategoryManagement from "@/containers/category/CategoryManagement/CategoryManagement";
-import ProtectedRoute from "@/components/ProtectedRoute";
 import RoleGuard from "@/components/auth/RoleGuard";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import CategoryManagement from "@/containers/category/CategoryManagement/CategoryManagement";
 
 export default function AdminCategoriesPage() {
   return (

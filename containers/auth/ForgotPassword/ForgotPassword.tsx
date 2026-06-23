@@ -2,8 +2,8 @@ import { ArrowLeft, Check, Mail } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { forgotPassword } from "@/services/authService";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
+import { forgotPassword } from "@/services/authService";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");

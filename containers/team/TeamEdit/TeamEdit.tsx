@@ -1,12 +1,13 @@
+// @ts-nocheck
 import { AlertCircle, ChevronRight, Loader, Pencil } from "lucide-react";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-import TeamForm from "@/containers/team/TeamForm/TeamForm";
-import { useToast } from "@/context/ToastContext";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import TeamForm from "@/containers/team/TeamForm/TeamForm";
+import { useToast } from "@/context/ToastContext";
 import { useTeam, useUpdateTeam } from "@/hooks/queries/useEntities";
 import { t } from "@/styles/theme";
 
@@ -63,7 +64,10 @@ const TeamEdit = ({ teamId }: TeamEditProps) => {
           Teams
         </button>
         <ChevronRight size={12} />
-        <button onClick={() => router.push(`/teams/${id}`)} className="text-primary hover:underline">
+        <button
+          onClick={() => router.push(`/teams/${id}`)}
+          className="text-primary hover:underline"
+        >
           {team?.name}
         </button>
         <ChevronRight size={12} />

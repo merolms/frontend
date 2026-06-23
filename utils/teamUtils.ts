@@ -33,7 +33,10 @@ export const prepareTeamData = (teamData: TeamFormData, defaultColor: string = "
  * @param defaultColor - Default color from theme
  * @returns API-ready team update data
  */
-export const prepareTeamUpdateData = (teamData: TeamFormData, defaultColor: string = "#6366F1"): any => ({
+export const prepareTeamUpdateData = (
+  teamData: TeamFormData,
+  defaultColor: string = "#6366F1"
+): any => ({
   id: typeof teamData.id === "string" ? parseInt(teamData.id) : teamData.id,
   name: teamData.name || "",
   description: teamData.description || "",

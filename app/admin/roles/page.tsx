@@ -1,9 +1,9 @@
 "use client";
 
-import RoleManagement from "@/containers/role/RoleManagement/RoleManagement";
-import ProtectedRoute from "@/components/ProtectedRoute";
 import RoleGuard from "@/components/auth/RoleGuard";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import RoleManagement from "@/containers/role/RoleManagement/RoleManagement";
 
 export default function AdminRolesPage() {
   return (

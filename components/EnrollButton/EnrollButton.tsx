@@ -1,16 +1,22 @@
 import { CheckCircle, Loader2, Play } from "lucide-react";
 import { useState } from "react";
 
+interface Enrollment {
+  status: string;
+  progress: number;
+}
+
+interface EnrollButtonProps {
+  enrollment: Enrollment | null;
+  onEnroll?: () => Promise<void>;
+  onContinue?: () => void;
+  onReview?: () => void;
+}
+
 /**
  * EnrollButton — shows enrollment state and handles enroll/continue/completed actions.
- *
- * Props:
- *   enrollment  - enrollment object or null (from isEnrolled / getEnrollment)
- *   onEnroll    - async callback to enroll
- *   onContinue  - callback to navigate to course
- *   onReview    - callback to review completed course
  */
-const EnrollButton = ({ enrollment, onEnroll, onContinue, onReview }) => {
+const EnrollButton = ({ enrollment, onEnroll, onContinue, onReview }: EnrollButtonProps) => {
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
@@ -31,7 +37,7 @@ const EnrollButton = ({ enrollment, onEnroll, onContinue, onReview }) => {
 
   // Determine button state
   let label = "Enroll";
-  let variant = "primary";
+  let variant: "primary" | "success" | "outline" = "primary";
   let icon = null;
 
   if (loading) {

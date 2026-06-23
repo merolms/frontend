@@ -3,16 +3,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import RoleBasedSidebar from "@/components/layouts/RoleBasedSidebar";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import { useSidebar } from "@/contexts/SidebarContext";
+import { cn } from "@/lib/utils";
 import {
   fetchNotifications,
   getTimeAgo,
   markAllAsRead,
   markAsRead,
 } from "@/services/notificationService";
-import RoleBasedSidebar from "@/components/layouts/RoleBasedSidebar";
-import { useSidebar } from "@/contexts/SidebarContext";
-import { cn } from "@/lib/utils";
 
 const typeColors = {
   enrollment: "#22C55E",

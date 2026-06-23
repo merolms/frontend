@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
-import type { RootState } from "@/redux/store";
 
+import type { RootState } from "@/redux/store";
 import { hasPermission } from "@/services/authService";
 
 /**

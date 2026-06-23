@@ -1,9 +1,9 @@
 "use client";
 
-import CourseBuilder from "@/containers/course/CourseBuilder/CourseBuilder";
-import ProtectedRoute from "@/components/ProtectedRoute";
 import RoleGuard from "@/components/auth/RoleGuard";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import CourseBuilder from "@/containers/course/CourseBuilder/CourseBuilder";
 
 export default function CourseBuilderPage({ params }: { params: { id: string } }) {
   return (

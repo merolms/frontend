@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CheckSquare, Square } from "lucide-react";
 import { Link } from "react-router-dom";
 

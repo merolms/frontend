@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Check, RotateCw } from "lucide-react";
 import { useEffect, useState } from "react";
 

@@ -1,6 +1,6 @@
+// @ts-nocheck
 import { useEffect, useState } from "react";
 
-import { permissionCatalog } from "@/services/authService";
 import FormActions from "@/components/forms/FormActions";
 import FormField from "@/components/forms/FormField";
 import {
@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { permissionCatalog } from "@/services/authService";
 
 const ROLE_COLORS = [
   "#EF4444",

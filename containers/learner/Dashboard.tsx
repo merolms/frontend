@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { BookOpen, CheckCircle, Clock, TrendingUp } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";

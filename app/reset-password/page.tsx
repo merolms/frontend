@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { resetPassword } from "@/services/authService";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
+import { resetPassword } from "@/services/authService";
 
 export default function ResetPasswordPage() {
   const router = useRouter();

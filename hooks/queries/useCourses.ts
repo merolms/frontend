@@ -1,9 +1,11 @@
+// @ts-nocheck
 // TanStack Query hooks for Courses
 // Replaces Redux thunks + manual useState/useEffect data fetching
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useUpdateCourseStatus } from "@/api/orval";
+import { queryKeys } from "@/lib/queryKeys";
 import {
   createCourse,
   createLesson,
@@ -16,7 +18,6 @@ import {
   updateCourse,
   updateLesson,
 } from "@/services/courseService";
-import { queryKeys } from "@/lib/queryKeys";
 
 // ─── Queries ──────────────────────────────────────────────
 

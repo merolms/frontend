@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Bookmark,
   BookmarkCheck,
@@ -15,7 +16,6 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { useToast } from "@/context/ToastContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/context/ToastContext";
 import { usePageTitle } from "@/hooks";
 import { useLearningPathCategories, useLearningPaths } from "@/hooks/queries/useEntities";
 

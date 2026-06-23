@@ -1,4 +1,5 @@
-const API_BASE = import.meta.env.VITE_API_BASE || "http://192.168.1.67:9090";
+// @ts-nocheck
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://192.168.1.67:9090";
 
 /**
  * Returns a URL with ?token=<jwt> for same-origin media URLs.

@@ -1,1 +1,1 @@
-export { default as CourseViewer } from './CourseViewer';
+export { default as CourseViewer } from "./CourseViewer";

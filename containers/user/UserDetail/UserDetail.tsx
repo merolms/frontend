@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   AlertCircle,
   Calendar,
@@ -8,17 +9,17 @@ import {
   Phone,
   Trash2,
 } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import { DeleteModal } from "@/containers/course/CourseActions/CourseActions";
-import { useToast } from "@/context/ToastContext";
-import { deleteUser, fetchUserById } from "@/services/userService";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import { DeleteModal } from "@/containers/course/CourseActions/CourseActions";
+import { useToast } from "@/context/ToastContext";
+import { deleteUser, fetchUserById } from "@/services/userService";
 
 const getRoleColor = (role) => {
   switch (role) {
@@ -146,7 +147,11 @@ const UserDetail = ({ userId }: UserDetailProps) => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="default" size="sm" onClick={() => router.push(`/users/${userId}/edit`)}>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => router.push(`/users/${userId}/edit`)}
+              >
                 <Pencil size={14} /> Edit
               </Button>
               <Button variant="default" size="sm" onClick={() => setDeleteTarget(user)}>

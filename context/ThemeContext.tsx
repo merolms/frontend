@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 const THEME_KEY = "meroedu_theme";

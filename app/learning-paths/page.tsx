@@ -1,8 +1,8 @@
 "use client";
 
-import LearningPathList from "@/containers/learningPath/LearningPathList";
-import ProtectedRoute from "@/components/ProtectedRoute";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import LearningPathList from "@/containers/learningPath/LearningPathList";
 
 export default function LearningPathsPage() {
   return (

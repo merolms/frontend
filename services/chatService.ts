@@ -93,7 +93,10 @@ const getMockResponse = (userText: string): string => {
 
 const delay = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 
-export const sendMessage = async (messages: Message[], options: SendMessageOptions = {}): Promise<SendMessageResult> => {
+export const sendMessage = async (
+  messages: Message[],
+  options: SendMessageOptions = {}
+): Promise<SendMessageResult> => {
   const { onChunk, stream = false } = options;
   const settings = getChatSettings();
 

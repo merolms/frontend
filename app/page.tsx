@@ -2,10 +2,10 @@
 
 import { useSelector } from "react-redux";
 
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import AdminDashboard from "@/containers/admin/Dashboard";
 import InstructorDashboard from "@/containers/instructor/Dashboard";
 import LearnerDashboard from "@/containers/learner/Dashboard";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 /**
  * Dashboard — Role-based entry point.

@@ -1,9 +1,9 @@
 "use client";
 
-import UserEdit from "@/containers/user/UserEdit/UserEdit";
-import ProtectedRoute from "@/components/ProtectedRoute";
 import RoleGuard from "@/components/auth/RoleGuard";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import UserEdit from "@/containers/user/UserEdit/UserEdit";
 
 export default function AdminUserEditPage({ params }: { params: { id: string } }) {
   return (

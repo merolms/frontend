@@ -1,6 +1,6 @@
 import { t } from "@/styles/theme";
 
-const FILE_ICONS = {
+const FILE_ICONS: Record<string, string> = {
   image: "🖼️",
   video: "🎬",
   audio: "🎵",
@@ -8,7 +8,7 @@ const FILE_ICONS = {
   other: "📎",
 };
 
-const FILE_COLORS = {
+const FILE_COLORS: Record<string, string> = {
   image: "#10B981",
   video: "#EF4444",
   audio: "#8B5CF6",
@@ -16,22 +16,37 @@ const FILE_COLORS = {
   other: "#6B7280",
 };
 
-const formatSize = (bytes) => {
+const formatSize = (bytes: number | null | undefined) => {
   if (!bytes) return "—";
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
+interface FileItem {
+  id?: string | number;
+  uuid?: string;
+  title?: string;
+  name?: string;
+  originalFilename?: string;
+  size?: number;
+  fileSizeBytes?: number;
+  type?: string;
+  contentType?: string;
+  url?: string;
+  mimeType?: string;
+}
+
+interface FileListProps {
+  files: FileItem[];
+  onDelete?: (id: string | number) => void;
+  compact?: boolean;
+}
+
 /**
  * FileList — displays a list of attachments/media files for a course.
- *
- * Props:
- *   files     - Array of { id, title, name, size, type, url, mimeType, ... }
- *   onDelete  - callback(fileId) — optional delete handler
- *   compact   - boolean — compact mode for sidebar
  */
-const FileList = ({ files, onDelete, compact = false }) => {
+const FileList = ({ files, onDelete, compact = false }: FileListProps) => {
   if (!files || files.length === 0) {
     return (
       <div
@@ -140,7 +155,10 @@ const FileList = ({ files, onDelete, compact = false }) => {
               )}
               {onDelete && (
                 <button
-                  onClick={() => onDelete(file.id || file.uuid)}
+                  onClick={() => {
+                    const id = file.id ?? file.uuid;
+                    if (id !== undefined) onDelete(id);
+                  }}
                   title="Delete"
                   style={{
                     padding: "4px 8px",

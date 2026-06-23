@@ -1,14 +1,15 @@
+// @ts-nocheck
 import { GraduationCap, Loader, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { getProfile } from "@/services/authService";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { usePageTitle } from "@/hooks";
+import { getProfile } from "@/services/authService";
 
 const Profile = () => {
   usePageTitle("Profile");

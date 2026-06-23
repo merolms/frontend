@@ -9,12 +9,12 @@ module.exports = {
       ),
     },
     output: {
-      target: "src/app/api/orval",
+      target: "./api/orval",
       client: "react-query",
       mode: "split",
       override: {
         mutator: {
-          path: "src/app/api/orval/http.ts",
+          path: "./api/orval/http.ts",
           name: "customFetcher",
         },
       },

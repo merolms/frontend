@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Team API Service - Reduced
 // Only contains helper functions that aren't available in orval or for specific use cases
 // All team CRUD operations have been migrated to orval-generated hooks

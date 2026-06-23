@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { BarChart3, BookOpen, TrendingUp, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

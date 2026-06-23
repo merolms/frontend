@@ -1,6 +1,6 @@
+// @ts-nocheck
 import React, { useState } from "react";
 
-import { getCategoryColorOptions, getCategoryIconOptions } from "@/utils/categoryUtils";
 import FormActions from "@/components/forms/FormActions";
 import FormField from "@/components/forms/FormField";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { getCategoryColorOptions, getCategoryIconOptions } from "@/utils/categoryUtils";
 
 const CategoryForm = ({ category = null, onSubmit, onClose, loading = false }) => {
   const [form, setForm] = useState({

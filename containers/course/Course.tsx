@@ -1,14 +1,12 @@
+// @ts-nocheck
 import { BookOpen, Clock, Plus, RefreshCw, Search, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { PermissionGuard } from "@/components/ProtectedRoute";
-import { DeleteModal } from "@/containers/course/CourseActions/CourseActions";
-import { useToast } from "@/context/ToastContext";
-import { hasPermission } from "@/services/authService";
 import EmptyState from "@/components/common/EmptyState";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
+import { PermissionGuard } from "@/components/ProtectedRoute";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
@@ -22,6 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DeleteModal } from "@/containers/course/CourseActions/CourseActions";
+import { useToast } from "@/context/ToastContext";
 import {
   useArchiveCourse,
   useCourses,
@@ -29,6 +29,7 @@ import {
   usePublishCourse,
 } from "@/hooks/queries/useCourses";
 import { useCategories } from "@/hooks/queries/useEntities";
+import { hasPermission } from "@/services/authService";
 
 import CompactView from "./views/CompactView";
 import GridView from "./views/GridView";

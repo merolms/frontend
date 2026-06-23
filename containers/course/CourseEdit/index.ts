@@ -1,2 +1,2 @@
-export { default } from './CourseEdit';
-export { CourseEdit } from './CourseEdit';
+export { default } from "./CourseEdit";
+export { CourseEdit } from "./CourseEdit";

@@ -4,8 +4,8 @@ import { ArrowLeft, Check, Mail } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { forgotPassword } from "@/services/authService";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
+import { forgotPassword } from "@/services/authService";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");

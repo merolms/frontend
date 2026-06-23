@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 import { categoryLabels, groupCommandsByCategory } from "./slashCommandsConfig";

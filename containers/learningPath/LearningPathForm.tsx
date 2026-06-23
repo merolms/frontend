@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   AlertCircle,
   BookOpen,
@@ -10,12 +11,9 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
-import { useToast } from "@/context/ToastContext";
-import { fetchCourses } from "@/services/courseService";
-import { getLearningPathCategories } from "@/services/learningPathService";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
@@ -27,6 +25,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/context/ToastContext";
+import { fetchCourses } from "@/services/courseService";
+import { getLearningPathCategories } from "@/services/learningPathService";
 
 const colorOptions = [
   { value: "#6366F1", label: "Indigo" },

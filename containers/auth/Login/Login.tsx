@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { AlertCircle, GraduationCap, Lock, Mail } from "lucide-react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

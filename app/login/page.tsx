@@ -1,8 +1,8 @@
 "use client";
 
 import { AlertCircle, GraduationCap, Lock, Mail } from "lucide-react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -43,7 +43,7 @@ export default function LoginPage() {
       storeAuth(user, token);
       // Redirect will happen via useEffect
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error("Login failed:", error);
     }
   };
 

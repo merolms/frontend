@@ -2,8 +2,8 @@ import { ArrowLeft, Check, Lock } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { resetPassword } from "@/services/authService";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
+import { resetPassword } from "@/services/authService";
 
 const ResetPassword = () => {
   const navigate = useNavigate();

@@ -1,9 +1,9 @@
 "use client";
 
-import AdminProgressTracking from "@/containers/progress/AdminProgressTracking";
-import ProtectedRoute from "@/components/ProtectedRoute";
 import RoleGuard from "@/components/auth/RoleGuard";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import AdminProgressTracking from "@/containers/progress/AdminProgressTracking";
 
 export default function AdminProgressPage() {
   return (

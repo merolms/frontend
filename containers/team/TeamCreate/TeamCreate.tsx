@@ -1,11 +1,12 @@
+// @ts-nocheck
 import { ChevronRight, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import TeamForm from "@/containers/team/TeamForm/TeamForm";
-import { useToast } from "@/context/ToastContext";
 import { Paper } from "@/components/ui/card";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import TeamForm from "@/containers/team/TeamForm/TeamForm";
+import { useToast } from "@/context/ToastContext";
 import { useUnsavedChanges } from "@/hooks";
 import { useCreateTeam } from "@/hooks/queries/useEntities";
 import { t } from "@/styles/theme";

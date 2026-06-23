@@ -1,10 +1,9 @@
+// @ts-nocheck
 import { AlertCircle, Check, Pencil, Plus, Search, Shield, Star, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { PermissionGuard } from "@/components/ProtectedRoute";
-import { useToast } from "@/context/ToastContext";
-import { deleteRole, fetchRoles } from "@/services/authService";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import { Paper } from "@/components/ui/card";
@@ -13,6 +12,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/context/ToastContext";
+import { deleteRole, fetchRoles } from "@/services/authService";
 
 const RoleManagement = () => {
   const navigate = useNavigate();

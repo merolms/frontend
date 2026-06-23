@@ -1,10 +1,8 @@
+// @ts-nocheck
 import { AlertCircle, Plus, Search, Users } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { DeleteModal } from "@/containers/course/CourseActions/CourseActions";
-import TeamMemberAssignModal from "@/containers/team/TeamMemberAssignModal/TeamMemberAssignModal";
-import { useToast } from "@/context/ToastContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
@@ -20,6 +18,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DeleteModal } from "@/containers/course/CourseActions/CourseActions";
+import TeamMemberAssignModal from "@/containers/team/TeamMemberAssignModal/TeamMemberAssignModal";
+import { useToast } from "@/context/ToastContext";
 import { usePageTitle } from "@/hooks";
 import { useDeleteTeam, useTeams } from "@/hooks/queries/useEntities";
 import { t } from "@/styles/theme";

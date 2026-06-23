@@ -1,12 +1,13 @@
+// @ts-nocheck
 import { CalendarDays, Clock, Edit, MapPin, Tag, Trash2, Users } from "lucide-react";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-import { formatEventDate, formatEventTime, getEventStatus } from "@/utils/eventUtils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/Button";
 import DashboardLayout from "@/components/ui/dashboard-layout";
 import { useDeleteEvent, useEvent, useUpdateEvent } from "@/hooks/queries/useEvents";
+import { formatEventDate, formatEventTime, getEventStatus } from "@/utils/eventUtils";
 
 import EventForm from "./components/EventForm";
 

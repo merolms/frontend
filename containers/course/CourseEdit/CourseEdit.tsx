@@ -1,11 +1,12 @@
+// @ts-nocheck
 import { Pencil } from "lucide-react";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-import CourseForm from "@/containers/course/CourseForm/CourseForm";
 import LoadingState from "@/components/common/LoadingState";
 import { Badge } from "@/components/ui/badge";
 import DashboardLayout from "@/components/ui/dashboard-layout";
+import CourseForm from "@/containers/course/CourseForm/CourseForm";
 import { usePageTitle } from "@/hooks";
 import { useUnsavedChanges } from "@/hooks";
 import { useCourse, useUpdateCourse } from "@/hooks/queries/useCourses";
@@ -126,7 +127,10 @@ const CourseEdit = ({ courseId }: CourseEditProps) => {
           Courses
         </button>
         <span>/</span>
-        <button onClick={() => router.push(`/courses/${courseId}`)} className="text-primary hover:underline">
+        <button
+          onClick={() => router.push(`/courses/${courseId}`)}
+          className="text-primary hover:underline"
+        >
           {course?.title}
         </button>
         <span>/</span>

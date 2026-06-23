@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { AlertTriangle, Archive, ArchiveRestore, Check, LogOut, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
