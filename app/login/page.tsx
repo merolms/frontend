@@ -6,7 +6,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { loginUser } from "@/redux/slices/authSlice";
+import { login, storeAuth } from "@/services/authService";
 
 const demoAccounts = [
   { role: "admin", label: "Admin", email: "admin@meroedu.com", password: "admin123" },
@@ -26,7 +26,7 @@ const inputCls =
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
+  const { loading, error, isAuthenticated } = useSelector((state: any) => state.auth);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -36,9 +36,15 @@ export default function LoginPage() {
     }
   }, [isAuthenticated, router]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(loginUser(email, password));
+    try {
+      const { user, token } = await login(email, password);
+      storeAuth(user, token);
+      // Redirect will happen via useEffect
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   return (

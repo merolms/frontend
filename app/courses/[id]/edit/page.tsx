@@ -2,7 +2,7 @@
 
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { RoleGuard } from "@/components/auth/RoleGuard";
-import CourseEdit from "@/app/containers/course/CourseEdit";
+import CourseEdit from "@/containers/course/CourseEdit";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
 
 export default function CourseEditPage({ params }: { params: { id: string } }) {

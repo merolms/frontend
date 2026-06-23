@@ -2,7 +2,7 @@
 
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { RoleGuard } from "@/components/auth/RoleGuard";
-import AdminDashboard from "@/app/containers/admin/Dashboard";
+import AdminDashboard from "@/containers/admin/Dashboard";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
 
 export default function AdminDashboardPage() {

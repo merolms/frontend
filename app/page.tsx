@@ -2,9 +2,9 @@
 
 import { useSelector } from "react-redux";
 
-import AdminDashboard from "@/app/containers/admin/Dashboard";
-import InstructorDashboard from "@/app/containers/instructor/Dashboard";
-import LearnerDashboard from "@/app/containers/learner/Dashboard";
+import AdminDashboard from "@/containers/admin/Dashboard";
+import InstructorDashboard from "@/containers/instructor/Dashboard";
+import LearnerDashboard from "@/containers/learner/Dashboard";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 /**
@@ -12,7 +12,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
  * Redirects to role-specific dashboard or renders inline.
  */
 export default function Dashboard() {
-  const { user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state: any) => state.auth);
 
   if (!user?.role) {
     return (

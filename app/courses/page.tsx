@@ -1,7 +1,7 @@
 "use client";
 
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import CourseContainer from "@/app/containers/course/Course";
+import CourseContainer from "@/containers/course/Course";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
 
 export default function CoursesPage() {

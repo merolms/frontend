@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { resetPassword } from "@/app/services/authService";
+import { resetPassword } from "@/services/authService";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 
 export default function ResetPasswordPage() {
@@ -13,10 +13,10 @@ export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | undefined>(undefined);
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
@@ -28,10 +28,10 @@ export default function ResetPasswordPage() {
     }
     try {
       setLoading(true);
-      setError(null);
+      setError(undefined);
       await resetPassword("mock-token", password);
       setSuccess(true);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || "Something went wrong.");
     } finally {
       setLoading(false);

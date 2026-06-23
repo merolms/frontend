@@ -5,9 +5,9 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useEffect } from "react";
 import { Provider, useDispatch } from "react-redux";
 import { Toaster } from "sonner";
-import { ThemeProvider } from "@/app/context/ThemeContext";
-import { ToastProvider } from "@/app/context/ToastContext";
-import { setAuthErrorHandler } from "@/app/services/http";
+import { ThemeProvider } from "@/context/ThemeContext";
+import { ToastProvider } from "@/context/ToastContext";
+import { setAuthErrorHandler } from "@/services/http";
 import { SidebarProvider } from "@/contexts/SidebarContext";
 import { clearAuth, restoreSession } from "@/redux/slices/authSlice";
 import store from "@/redux/store";
@@ -31,7 +31,7 @@ const AuthErrorBridge = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     setAuthErrorHandler(() => {
-      dispatch(clearAuth());
+      dispatch(clearAuth() as any);
       window.location.href = "/login";
     });
   }, [dispatch]);
@@ -42,7 +42,7 @@ const AuthErrorBridge = ({ children }: { children: React.ReactNode }) => {
 const AuthInitializer = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(restoreSession());
+    dispatch(restoreSession() as any);
   }, [dispatch]);
   return children;
 };

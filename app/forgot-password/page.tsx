@@ -4,23 +4,23 @@ import { ArrowLeft, Check, Mail } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { forgotPassword } from "@/app/services/authService";
+import { forgotPassword } from "@/services/authService";
 import FormErrorBanner from "@/components/common/FormErrorBanner";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | undefined>(undefined);
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setLoading(true);
-      setError(null);
+      setError(undefined);
       await forgotPassword(email);
       setSuccess(true);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || "Something went wrong.");
     } finally {
       setLoading(false);
