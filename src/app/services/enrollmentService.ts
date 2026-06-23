@@ -14,7 +14,7 @@ import { apiGet, apiPost } from "@/app/services/http";
 
 // ==================== ORVAL-BASED FUNCTIONS ====================
 
-export const enrollInCourse = async (courseId) => {
+export const enrollInCourse = async (courseId: string | number): Promise<unknown> => {
   try {
     return await enrollmentEnroll(courseId);
   } catch (error) {
@@ -23,7 +23,7 @@ export const enrollInCourse = async (courseId) => {
   }
 };
 
-export const getEnrollmentStatus = async (courseId) => {
+export const getEnrollmentStatus = async (courseId: string | number): Promise<unknown | null> => {
   try {
     return await enrollmentGet(courseId);
   } catch (error) {
@@ -32,7 +32,7 @@ export const getEnrollmentStatus = async (courseId) => {
   }
 };
 
-export const dropCourseAPI = async (courseId) => {
+export const dropCourseAPI = async (courseId: string | number): Promise<unknown> => {
   try {
     return await enrollmentDrop(courseId);
   } catch (error) {
@@ -41,7 +41,7 @@ export const dropCourseAPI = async (courseId) => {
   }
 };
 
-export const getMyEnrollments = async () => {
+export const getMyEnrollments = async (): Promise<unknown[]> => {
   try {
     const data = await orvalGetMyEnrollments();
     return data?.data || [];
@@ -53,7 +53,7 @@ export const getMyEnrollments = async () => {
 
 // ─── ADMIN ENROLLMENT API CALLS ───────────────────────────────────
 
-export const adminEnrollUserInCourse = async (courseId, userId) => {
+export const adminEnrollUserInCourse = async (courseId: string | number, userId: string | number): Promise<unknown> => {
   try {
     return await enrollmentAdminEnrollUser(courseId, { userId });
   } catch (error) {
@@ -62,7 +62,7 @@ export const adminEnrollUserInCourse = async (courseId, userId) => {
   }
 };
 
-export const adminEnrollTeamInCourse = async (courseId, teamId) => {
+export const adminEnrollTeamInCourse = async (courseId: string | number, teamId: string | number): Promise<unknown> => {
   try {
     return await enrollmentAdminEnrollTeam(courseId, { teamId });
   } catch (error) {
@@ -73,7 +73,7 @@ export const adminEnrollTeamInCourse = async (courseId, teamId) => {
 
 // ==================== CUSTOM FUNCTIONS (NOT IN ORVAL) ====================
 
-export const getCourseProgress = async (courseId) => {
+export const getCourseProgress = async (courseId: string | number): Promise<unknown | null> => {
   try {
     return await apiGet(`/courses/${courseId}/progress`);
   } catch (error) {
@@ -82,7 +82,7 @@ export const getCourseProgress = async (courseId) => {
   }
 };
 
-export const markLessonCompleteAPI = async (lessonId, timeSpentSeconds = 0) => {
+export const markLessonCompleteAPI = async (lessonId: string | number, timeSpentSeconds = 0): Promise<unknown> => {
   try {
     return await apiPost(`/lessons/${lessonId}/complete`, { timeSpentSeconds });
   } catch (error) {
@@ -92,7 +92,7 @@ export const markLessonCompleteAPI = async (lessonId, timeSpentSeconds = 0) => {
 };
 
 // Get the lessons the current user has completed in a course
-export const getMyLessonCompletions = async (courseId) => {
+export const getMyLessonCompletions = async (courseId: string | number): Promise<unknown[]> => {
   try {
     const completions = await apiGet(`/courses/${courseId}/completions`);
     return Array.isArray(completions) ? completions : [];
@@ -102,7 +102,7 @@ export const getMyLessonCompletions = async (courseId) => {
   }
 };
 
-export const getCourseEnrollments = async (courseId, params = {}) => {
+export const getCourseEnrollments = async (courseId: string | number, params: { start?: number; limit?: number } = {}): Promise<unknown[]> => {
   try {
     const queryParams = new URLSearchParams();
     if (params.start !== undefined) queryParams.append("start", params.start);
@@ -119,7 +119,7 @@ export const getCourseEnrollments = async (courseId, params = {}) => {
 };
 
 // Get per-lesson completion counts for a course (admin)
-export const getLessonCompletionCounts = async (courseId) => {
+export const getLessonCompletionCounts = async (courseId: string | number): Promise<Record<string, unknown>> => {
   try {
     const counts = await apiGet(`/courses/${courseId}/admin/lesson-completion-counts`);
     return counts || {};

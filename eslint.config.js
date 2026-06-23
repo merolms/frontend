@@ -7,6 +7,7 @@ import pluginReactHooks from "eslint-plugin-react-hooks";
 import pluginSimpleImportSort from "eslint-plugin-simple-import-sort";
 import unusedImports from "eslint-plugin-unused-imports";
 import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default defineConfig([
   gitignore({
@@ -14,7 +15,7 @@ export default defineConfig([
   }),
 
   {
-    files: ["**/*.{js,jsx,mjs,cjs}"],
+    files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -31,6 +32,7 @@ export default defineConfig([
   },
 
   js.configs.recommended,
+  ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   pluginReactHooks.configs.flat.recommended,
 
@@ -68,6 +70,8 @@ export default defineConfig([
       "react-hooks/immutability": "warn",
 
       "unused-imports/no-unused-imports": "error",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-explicit-any": "warn",
     },
   },
 

@@ -3,7 +3,12 @@
 
 import { t } from "@/styles/theme";
 
-export const getCategoryColorOptions = () => [
+export interface ColorOption {
+  value: string;
+  label: string;
+}
+
+export const getCategoryColorOptions = (): ColorOption[] => [
   { value: "#6366F1", label: "Indigo" },
   { value: "#8B5CF6", label: "Purple" },
   { value: "#EC4899", label: "Pink" },
@@ -14,7 +19,7 @@ export const getCategoryColorOptions = () => [
   { value: "#3B82F6", label: "Blue" },
 ];
 
-export const getCategoryIconOptions = [
+export const getCategoryIconOptions: string[] = [
   "code",
   "paint brush",
   "database",
@@ -36,21 +41,30 @@ export const getCategoryIconOptions = [
 
 /**
  * Generate a slug from a category name
- * @param {string} name - Category name
- * @returns {string} Generated slug
+ * @param name - Category name
+ * @returns Generated slug
  */
-export const generateCategorySlug = (name) => {
+export const generateCategorySlug = (name: string): string => {
   return name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 };
 
+export interface CategoryFormData {
+  name: string;
+  slug?: string;
+  description?: string;
+  color?: string;
+  icon?: string;
+  status?: number;
+}
+
 /**
  * Get default category values
- * @returns {object} Default category object
+ * @returns Default category object
  */
-export const getDefaultCategoryValues = () => ({
+export const getDefaultCategoryValues = (): CategoryFormData => ({
   name: "",
   slug: "",
   description: "",
@@ -61,10 +75,10 @@ export const getDefaultCategoryValues = () => ({
 
 /**
  * Prepare category data for API submission
- * @param {object} formData - Form data from CategoryForm
- * @returns {object} API-ready category data
+ * @param formData - Form data from CategoryForm
+ * @returns API-ready category data
  */
-export const prepareCategoryData = (formData) => ({
+export const prepareCategoryData = (formData: CategoryFormData): CategoryFormData => ({
   name: formData.name || "",
   slug: formData.slug || generateCategorySlug(formData.name),
   description: formData.description || "",

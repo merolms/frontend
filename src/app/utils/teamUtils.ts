@@ -1,13 +1,26 @@
 // Team utility functions
 // Non-API related helper functions for team management
 
+export interface TeamFormData {
+  id?: string | number;
+  name?: string;
+  description?: string;
+  color?: string;
+  status?: number;
+}
+
+export interface ColorOption {
+  value: string;
+  label: string;
+}
+
 /**
  * Prepare team data for API submission
- * @param {object} teamData - Form data from TeamForm
- * @param {string} defaultColor - Default color from theme
- * @returns {object} API-ready team data
+ * @param teamData - Form data from TeamForm
+ * @param defaultColor - Default color from theme
+ * @returns API-ready team data
  */
-export const prepareTeamData = (teamData, defaultColor = "#6366F1") => ({
+export const prepareTeamData = (teamData: TeamFormData, defaultColor: string = "#6366F1"): any => ({
   name: teamData.name || "",
   description: teamData.description || "",
   color: teamData.color || defaultColor,
@@ -16,19 +29,19 @@ export const prepareTeamData = (teamData, defaultColor = "#6366F1") => ({
 
 /**
  * Prepare team update data (only include changed fields)
- * @param {object} teamData - Form data from TeamForm
- * @param {string} defaultColor - Default color from theme
- * @returns {object} API-ready team update data
+ * @param teamData - Form data from TeamForm
+ * @param defaultColor - Default color from theme
+ * @returns API-ready team update data
  */
-export const prepareTeamUpdateData = (teamData, defaultColor = "#6366F1") => ({
-  id: parseInt(teamData.id),
+export const prepareTeamUpdateData = (teamData: TeamFormData, defaultColor: string = "#6366F1"): any => ({
+  id: typeof teamData.id === "string" ? parseInt(teamData.id) : teamData.id,
   name: teamData.name || "",
   description: teamData.description || "",
   color: teamData.color || defaultColor,
   status: teamData.status !== undefined ? teamData.status : 1,
 });
 
-export const getTeamColors = () => [
+export const getTeamColors = (): ColorOption[] => [
   { value: "#6366F1", label: "Indigo" },
   { value: "#8B5CF6", label: "Purple" },
   { value: "#EC4899", label: "Pink" },

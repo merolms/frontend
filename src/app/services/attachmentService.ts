@@ -8,7 +8,7 @@ import { apiGet, apiUpload } from "@/app/services/http";
 // POST /attachments
 // Body: FormData with `file` field
 // Returns: { id, title, name, size, type, courseId, url }
-export const uploadAttachment = async (file, courseId, title = "") => {
+export const uploadAttachment = async (file: File, courseId: string | number, title = ""): Promise<unknown> => {
   try {
     const formData = new FormData();
     formData.append("file", file);
@@ -24,7 +24,7 @@ export const uploadAttachment = async (file, courseId, title = "") => {
 // ==================== DOWNLOAD ====================
 // GET /attachments/download?file=<uuid>
 // Returns the file download URL
-export const getDownloadUrl = (fileUuid) => {
+export const getDownloadUrl = (fileUuid: string): string => {
   const API_BASE = import.meta.env.VITE_API_BASE || "http://192.168.1.67:9090";
   return `${API_BASE}/attachments/download?file=${encodeURIComponent(fileUuid)}`;
 };
@@ -32,7 +32,7 @@ export const getDownloadUrl = (fileUuid) => {
 // ==================== LIST BY COURSE ====================
 // GET /courses/:courseId/attachments (via course detail)
 // Attachments are returned as part of course detail response
-export const fetchAttachmentsByCourse = async (courseId) => {
+export const fetchAttachmentsByCourse = async (courseId: string | number): Promise<unknown[]> => {
   try {
     const course = await apiGet(`/courses/${courseId}`);
     return course.attachments || [];

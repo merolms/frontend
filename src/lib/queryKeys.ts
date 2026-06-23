@@ -1,0 +1,87 @@
+// Query key factory for TanStack Query
+// Centralized key management ensures consistent cache invalidation
+
+export const queryKeys = {
+  courses: {
+    all: ["courses"],
+    list: (params: unknown) => ["courses", "list", params],
+    detail: (id: string | number) => ["courses", "detail", id],
+    lessons: (id: string | number) => ["courses", "lessons", id],
+    progress: (id: string | number) => ["courses", "progress", id],
+    enrollment: (id: string | number) => ["courses", "enrollment", id],
+    enrollments: (id: string | number) => ["courses", "enrollments", id],
+    completionCounts: (id: string | number) => ["courses", "completionCounts", id],
+    stat: () => ["courses", "stat"],
+  },
+  lessons: {
+    all: ["lessons"],
+    detail: (id: string | number) => ["lessons", "detail", id],
+    blocks: (id: string | number) => ["lessons", "blocks", id],
+    completions: (courseId: string | number) => ["lessons", "completions", courseId],
+  },
+  assignments: {
+    all: ["assignments"],
+    list: (lessonId: string | number) => ["assignments", "list", lessonId],
+    detail: (id: string | number) => ["assignments", "detail", id],
+    submissions: (id: string | number) => ["assignments", "submissions", id],
+    attachments: (id: string | number) => ["assignments", "attachments", id],
+    enrolledUsers: (id: string | number) => ["assignments", "enrolledUsers", id],
+    enrolledTeams: (id: string | number) => ["assignments", "enrolledTeams", id],
+  },
+  events: {
+    all: ["events"],
+    list: (params: unknown) => ["events", "list", params],
+    detail: (id: string | number) => ["events", "detail", id],
+    attendees: (id: string | number) => ["events", "attendees", id],
+    attendeeCount: (id: string | number) => ["events", "attendeeCount", id],
+    stats: (id: string | number) => ["events", "stats", id],
+    user: () => ["events", "user"],
+    userAttendees: () => ["events", "userAttendees"],
+    upcoming: () => ["events", "upcoming"],
+  },
+  notifications: {
+    all: ["notifications"],
+    list: () => ["notifications", "list"],
+    unread: () => ["notifications", "unread"],
+    summary: () => ["notifications", "summary"],
+    detail: (id: string | number) => ["notifications", "detail", id],
+    preferences: () => ["notifications", "preferences"],
+  },
+  teams: {
+    all: ["teams"],
+    list: (params: unknown) => ["teams", "list", params],
+    detail: (id: string | number) => ["teams", "detail", id],
+    members: (id: string | number) => ["teams", "members", id],
+    availableUsers: (id: string | number) => ["teams", "availableUsers", id],
+    stat: () => ["teams", "stat"],
+  },
+  users: {
+    all: ["users"],
+    list: (params: unknown) => ["users", "list", params],
+    detail: (id: string | number) => ["users", "detail", id],
+    stat: () => ["users", "stat"],
+  },
+  categories: {
+    all: ["categories"],
+    list: (params: unknown) => ["categories", "list", params],
+    detail: (id: string | number) => ["categories", "detail", id],
+    stat: () => ["categories", "stat"],
+  },
+  learningPaths: {
+    all: ["learningPaths"],
+    list: (params: unknown) => ["learningPaths", "list", params],
+    detail: (id: string | number) => ["learningPaths", "detail", id],
+    progress: (id: string | number) => ["learningPaths", "progress", id],
+    enrollments: (id: string | number) => ["learningPaths", "enrollments", id],
+    categories: () => ["learningPaths", "categories"],
+    stat: () => ["learningPaths", "stat"],
+  },
+  enrollments: {
+    all: ["enrollments"],
+    my: () => ["enrollments", "my"],
+  },
+  stats: {
+    all: ["stats"],
+    dashboard: () => ["stats", "dashboard"],
+  },
+};

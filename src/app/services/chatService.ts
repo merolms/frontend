@@ -2,16 +2,56 @@
 // Direct fetch to any OpenAI-compatible API (OpenAI, Anthropic, OpenRouter, etc.)
 // No third-party SDK required. User provides their own API key.
 
+interface ChatSettings {
+  apiKey: string;
+  apiBase: string;
+  model: string;
+  enabled: boolean;
+}
+
+interface Message {
+  role: string;
+  content: string;
+}
+
+interface SendMessageOptions {
+  onChunk?: (chunk: string) => void;
+  stream?: boolean;
+}
+
+interface SendMessageResult {
+  stream: boolean;
+  text: string;
+  mock: boolean;
+}
+
+interface TestConnectionResult {
+  success: boolean;
+  error?: string;
+}
+
+interface Model {
+  id: string;
+  name: string;
+  provider: string;
+}
+
+interface ApiPreset {
+  name: string;
+  base: string;
+  models: string[];
+}
+
 const STORAGE_KEY = "meroedu_chat_settings";
 
-const DEFAULT_SETTINGS = {
+const DEFAULT_SETTINGS: ChatSettings = {
   apiKey: "",
   apiBase: "https://api.openai.com/v1",
   model: "gpt-4o-mini",
   enabled: false,
 };
 
-export const getChatSettings = () => {
+export const getChatSettings = (): ChatSettings => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     return stored ? { ...DEFAULT_SETTINGS, ...JSON.parse(stored) } : { ...DEFAULT_SETTINGS };
@@ -20,7 +60,7 @@ export const getChatSettings = () => {
   }
 };
 
-export const saveChatSettings = (settings) => {
+export const saveChatSettings = (settings: ChatSettings): void => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
   } catch {
@@ -40,7 +80,7 @@ const MOCK_RESPONSES = {
     "That's a great question! I'd be happy to help you with that. Could you tell me more about what you're looking for? I can assist with course recommendations, learning guidance, or platform features.",
 };
 
-const getMockResponse = (userText) => {
+const getMockResponse = (userText: string): string => {
   const lower = userText.toLowerCase();
   if (lower.includes("hello") || lower.includes("hi") || lower.includes("hey"))
     return MOCK_RESPONSES.greeting;
@@ -51,9 +91,9 @@ const getMockResponse = (userText) => {
   return MOCK_RESPONSES.default;
 };
 
-const delay = (ms) => new Promise((r) => setTimeout(r, ms));
+const delay = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 
-export const sendMessage = async (messages, options = {}) => {
+export const sendMessage = async (messages: Message[], options: SendMessageOptions = {}): Promise<SendMessageResult> => {
   const { onChunk, stream = false } = options;
   const settings = getChatSettings();
 
@@ -105,7 +145,7 @@ export const sendMessage = async (messages, options = {}) => {
     const text = data.choices?.[0]?.message?.content || "No response generated.";
     return { stream: false, text, mock: false };
   } catch (err) {
-    console.warn("API call failed:", err.message);
+    console.warn("API call failed:", err instanceof Error ? err.message : String(err));
     // Fallback to mock on error
     const lastMessage = messages[messages.length - 1];
     const responseText = getMockResponse(lastMessage?.content || "");
@@ -113,7 +153,7 @@ export const sendMessage = async (messages, options = {}) => {
   }
 };
 
-export const testConnection = async (settings) => {
+export const testConnection = async (settings: ChatSettings): Promise<TestConnectionResult> => {
   try {
     const response = await fetch(`${settings.apiBase}/models`, {
       headers: { Authorization: `Bearer ${settings.apiKey}` },
@@ -121,11 +161,11 @@ export const testConnection = async (settings) => {
     if (response.ok) return { success: true };
     return { success: false, error: `HTTP ${response.status}` };
   } catch (err) {
-    return { success: false, error: err.message };
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
   }
 };
 
-export const AVAILABLE_MODELS = [
+export const AVAILABLE_MODELS: Model[] = [
   { id: "gpt-4o-mini", name: "GPT-4o Mini", provider: "OpenAI" },
   { id: "gpt-4o", name: "GPT-4o", provider: "OpenAI" },
   { id: "gpt-3.5-turbo", name: "GPT-3.5 Turbo", provider: "OpenAI" },
@@ -136,7 +176,7 @@ export const AVAILABLE_MODELS = [
   { id: "deepseek-chat", name: "DeepSeek V3", provider: "DeepSeek" },
 ];
 
-export const API_PRESETS = [
+export const API_PRESETS: ApiPreset[] = [
   {
     name: "OpenAI",
     base: "https://api.openai.com/v1",
