@@ -14,3 +14,7 @@ unused_code/
 stats.html
 *storybook.log
 storybook-static
+
+# Next.js
+.next
+out
